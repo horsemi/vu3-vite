@@ -1,16 +1,18 @@
 <template>
-  <div>
-    <router-link :to="'/'" style="margin-right: 10px;">Dashboard</router-link>
-    <router-link :to="'/home'">Home</router-link>
-  </div>
-  <router-view />
+  <AppProvider>
+    <RouterView />
+  </AppProvider>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent } from 'vue';
+import { AppProvider } from '/@/components/Application';
 
 export default defineComponent({
   name: 'App',
+  components: {
+    AppProvider
+  }
 })
 </script>
 
