@@ -2,7 +2,7 @@
 import type { App } from 'Vue';
 
 import { createRouter, createWebHashHistory } from 'vue-router';
-import routes  from './routes';
+import {routes} from './routes';
 
 const WHITE_NAME_LIST = [''];
 

@@ -21,9 +21,9 @@ export interface ErrorState {
   errorListCountState: number;
 }
 
-const NAME = 'app-error';
-hotModuleUnregisterModule(NAME);
-@Module({ dynamic: true, namespaced: true, store, name: NAME })
+const NAME_SPACE = 'app-error';
+hotModuleUnregisterModule(NAME_SPACE);
+@Module({ dynamic: true, namespaced: true, store, name: NAME_SPACE })
 class Error extends VuexModule implements ErrorState {
   // error log list
   errorInfoState: ErrorInfo[] = [];

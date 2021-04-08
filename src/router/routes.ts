@@ -1,17 +1,34 @@
-import { RouteRecordRaw } from 'vue-router'
+import { RouteRecordRaw } from 'vue-router';
+import { LAYOUT } from './constant';
 
+import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from './modules/basic';
 
-const routes: Array<RouteRecordRaw> = [
+const viewRoutes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'Dashboard',
-    component: () => import('/@/views/dashboard/index.vue')
+    redirect: '/dashboard',
+    component: LAYOUT,
+    children: [
+      {
+        path: 'dashboard',
+        name: 'Dashboard',
+        component: () => import('/@/views/dashboard/index.vue')
+      }
+    ]
   },
   {
     path: '/home',
     name: 'Home',
-    component: () => import('/@/views/home/index.vue')
+    component: LAYOUT,
+    children: [
+      {
+        path: '',
+        name: 'Home',
+        component: () => import('/@/views/home/index.vue')
+      }
+    ]
   }
 ]
 
-export default routes;
+export const routes = [...viewRoutes, PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE];

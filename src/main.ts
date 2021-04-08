@@ -5,6 +5,9 @@ import App from './App.vue';
 import { setupStore } from './store';
 import { setupRouter } from './router';
 
+// router-guard
+import '/@/router/guard';
+
 const app = createApp(App);
 
 setupStore(app);

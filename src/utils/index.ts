@@ -1,5 +1,5 @@
 import { isObject } from '/@/utils/is';
-
+import type { RouteLocationNormalized, RouteRecordNormalized } from 'vue-router';
 /**
  * Add the object as a parameter to the URL
  * @param baseUrl url
@@ -31,4 +31,24 @@ export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
     src[key] = isObject(src[key]) ? deepMerge(src[key], target[key]) : (src[key] = target[key]);
   }
   return src;
+}
+
+/**
+ * @description 获取原生路由对象
+ * @param route 
+ * @returns 
+ */
+export function getRawRoute(route: RouteLocationNormalized): RouteLocationNormalized {
+  if (!route) return route;
+  const { matched, ...opt } = route;
+  return {
+    ...opt,
+    matched: (matched
+      ? matched.map((item) => ({
+          meta: item.meta,
+          name: item.name,
+          path: item.path,
+        }))
+      : undefined) as RouteRecordNormalized[],
+  };
 }

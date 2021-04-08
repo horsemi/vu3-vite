@@ -1,6 +1,8 @@
 <template>
-  <img alt="Vue logo" src="../../assets/logo.png" />
-  <HelloWorld :msg="'userId: ' + userId + ' userName: ' + userName" />
+  <div>
+      <img alt="Vue logo" src="../../assets/logo.png" />
+      <HelloWorld :msg="'userId: ' + userId + ' userName: ' + userName" />  
+  </div>
 </template>
 
 <script lang="ts">
