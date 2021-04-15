@@ -1,8 +1,14 @@
 <template>
   <div>
     <div>
-      <router-link :to="'/home'" >Home</router-link>
-      <router-link :to="'/'">Dashboard</router-link>
+      <router-link class="tab" :to="'/home/1'" >Home1</router-link>
+      <router-link class="tab" :to="'/home/2'" >Home2</router-link>
+      <router-link class="tab" :to="'/home/3'" >Home3</router-link>
+      <router-link class="tab" :to="'/home/index?test=1'" >Home</router-link>
+      <router-link class="tab" :to="'/home/index?test=2'" >Home</router-link>
+      <router-link class="tab" :to="'/home/index?test=3'" >Home</router-link>
+      <router-link class="tab" :to="'/home/index?test=4'" >Home</router-link>
+      <router-link class="tab" :to="'/'">Dashboard</router-link>
     </div>
     <div>
       {{ viewState }}
@@ -20,7 +26,7 @@ export default defineComponent({
   name: 'Layout',
   components: { LayoutContent },
   setup() {
-    const viewState = computed(() => viewStore.getCacheViewsState);
+    const viewState = computed(() => viewStore.getViewsState);
 
     return {
       viewState
@@ -28,3 +34,9 @@ export default defineComponent({
   },
 })
 </script>
+
+<style lang="less" scoped>
+.tab {
+  margin-right: 5px;
+}
+</style>

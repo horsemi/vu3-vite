@@ -23,7 +23,12 @@ const viewRoutes: Array<RouteRecordRaw> = [
     component: LAYOUT,
     children: [
       {
-        path: '',
+        path: 'index',
+        name: 'Home',
+        component: () => import('/@/views/home/index.vue')
+      },
+      {
+        path: ':id',
         name: 'Home',
         component: () => import('/@/views/home/index.vue')
       }
