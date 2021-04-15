@@ -25,6 +25,8 @@ class View extends VuexModule {
 
   lastDragEndIndexState = 0;
 
+  loadingZindex = 2000;
+
   get getViewsState() {
     return this.viewsState;
   }
@@ -40,6 +42,10 @@ class View extends VuexModule {
 
   get getLastDragEndIndexState(): number {
     return this.lastDragEndIndexState;
+  }
+
+  get getLoadingZindex() {
+    return this.loadingZindex;
   }
 
   @Mutation
@@ -166,6 +172,16 @@ class View extends VuexModule {
     }
     const redo = useRedo();
     await redo();
+  }
+
+  @Mutation
+  commitNextLoadingZindex() {
+    return ++this.loadingZindex;
+  }
+
+  @Action
+  nextLoadingZindexAction() {
+    return this.commitNextLoadingZindex();
   }
 
   @Action
