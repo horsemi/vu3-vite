@@ -1,4 +1,3 @@
-
 import type { App } from 'Vue';
 
 import { createRouter, createWebHashHistory } from 'vue-router';
