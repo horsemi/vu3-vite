@@ -176,12 +176,7 @@ class View extends VuexModule {
 
   @Mutation
   commitNextLoadingZindex() {
-    return ++this.loadingZindex;
-  }
-
-  @Action
-  nextLoadingZindexAction() {
-    return this.commitNextLoadingZindex();
+    ++this.loadingZindex;
   }
 
   @Action

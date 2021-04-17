@@ -25,7 +25,8 @@ const addStyle = async (options: ILoadingOptions, parent: HTMLElement, instance:
     instance.originalPosition.value = getStyle(document.body, 'position');
     instance.originalOverflow.value = getStyle(document.body, 'overflow');
     // tofix unknow
-    maskStyle.zIndex = viewStore.nextLoadingZindexAction().toString();
+    viewStore.commitNextLoadingZindex();
+    maskStyle.zIndex = viewStore.getLoadingZindex.toString();
   } else if (options.body && instance.originalPosition) {
     instance.originalPosition.value = getStyle(document.body, 'position');
     /**
