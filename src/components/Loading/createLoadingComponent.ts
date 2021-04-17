@@ -28,10 +28,8 @@ export function createLoadingComponent({
     }
     if (!target.vLoadingAddClassList) {
       let loadingNumber: number | string | null = target.getAttribute('loading-number');
-      if (!loadingNumber) {
-          return;
-      }
-      loadingNumber = Number.parseInt(loadingNumber, 10) - 1;
+
+      loadingNumber = Number.parseInt(loadingNumber as string, 10) - 1;
       if (!loadingNumber) {
         // class to fix
         removeClass(target, 'el-loading-parent--relative');
@@ -57,11 +55,10 @@ export function createLoadingComponent({
       globalLoadingOption.fullscreenLoading = undefined;
     }
     afterLeaveFlag.value = true;
-    if (!afterLeaveTimer) {
-        return;
+    if (afterLeaveTimer) {
+      clearTimeout(afterLeaveTimer);
     }
-    clearTimeout(afterLeaveTimer);
-
+    
     afterLeaveTimer = window.setTimeout(() => {
       if (afterLeaveFlag.value) {
         afterLeaveFlag.value = false;
