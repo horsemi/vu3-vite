@@ -1,14 +1,20 @@
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref, toRefs } from 'vue';
 import { createBreakpointListen } from '/@/hooks/event/useBreakpoint';
 import { createAppProviderContext } from './useAppContext';
+import { prefixCls } from '/@/settings/designSetting';
 
 export default defineComponent({
   name: 'AppProvider',
-  inheritAttrs: false,
+  inheritAttrs: false,  
+  props: {
+    prefixCls: {
+      type: String,
+      default: prefixCls
+    }
+  },
   setup(props, { slots }) {
     const isMobile = ref(false);
-    const isSetState = ref(false);
 
     createBreakpointListen(({ screenMap, sizeEnum, width }) => {
       const lgWidth = screenMap.get(sizeEnum.LG);
@@ -17,7 +23,8 @@ export default defineComponent({
       }
     });
 
-    createAppProviderContext({ isMobile });
+    const { prefixCls } = toRefs(props);
+    createAppProviderContext({ prefixCls, isMobile });
     return () => slots.default?.();
   },
 })

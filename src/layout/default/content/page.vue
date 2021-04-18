@@ -13,14 +13,18 @@
       </transition>
     </template>
   </RouterView>
+  <FrameLayout />
 </template>
 
 <script lang="ts">
 import { defineComponent, computed } from 'vue';
 import { viewStore } from '/@/store/modules/view';
 
+import FrameLayout from '/@/layout/iframe/index.vue';
+
 export default defineComponent({
   name: 'LayoutContent',
+  components: { FrameLayout },
   setup() {
     const openCache = true;
 

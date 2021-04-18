@@ -126,6 +126,21 @@
   resolved "https://registry.npm.taobao.org/@vue/shared/download/@vue/shared-3.0.7.tgz#96d52988efc07444c108c7c6803ba7cc93e40045"
   integrity sha1-ltUpiO/AdETBCMfGgDunzJPkAEU=
 
+"@vueuse/core@^4.8.2":
+  version "4.8.2"
+  resolved "https://registry.npm.taobao.org/@vueuse/core/download/@vueuse/core-4.8.2.tgz#b14e43ae640c38f59591db146d6e15c551368414"
+  integrity sha1-sU5DrmQMOPWVkdsUbW4VxVE2hBQ=
+  dependencies:
+    "@vueuse/shared" "4.8.2"
+    vue-demi latest
+
+"@vueuse/shared@4.8.2":
+  version "4.8.2"
+  resolved "https://registry.npm.taobao.org/@vueuse/shared/download/@vueuse/shared-4.8.2.tgz#7c9a738ddba9b60b3eb2e6702d657c2b4c94651c"
+  integrity sha1-fJpzjduptgs+suZwLWV8K0yUZRw=
+  dependencies:
+    vue-demi latest
+
 axios@^0.21.1:
   version "0.21.1"
   resolved "https://registry.npm.taobao.org/axios/download/axios-0.21.1.tgz?cache=0&sync_timestamp=1608609215811&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Faxios%2Fdownload%2Faxios-0.21.1.tgz#22563481962f4d6bde9a76d516ef0e5d3c09b2b8"
@@ -761,6 +776,11 @@ vite@^2.1.0:
     rollup "^2.38.5"
   optionalDependencies:
     fsevents "~2.3.1"
+
+vue-demi@latest:
+  version "0.7.5"
+  resolved "https://registry.npm.taobao.org/vue-demi/download/vue-demi-0.7.5.tgz#88dee7492fc99a0f911ff03fc02c658fa2a79af8"
+  integrity sha1-iN7nSS/Jmg+RH/A/wCxlj6Knmvg=
 
 vue-router@4.0.5:
   version "4.0.5"

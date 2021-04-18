@@ -1,5 +1,5 @@
 <template>
-  <AppProvider>
+  <AppProvider prefixCls="vue3-vite">
     <RouterView />
   </AppProvider>
 </template>

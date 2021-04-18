@@ -33,6 +33,22 @@ const viewRoutes: Array<RouteRecordRaw> = [
         component: () => import('/@/views/home/index.vue')
       }
     ]
+  },
+  {
+    path: '/frame',
+    name: 'Frame',
+    component: LAYOUT,
+    redirect: '/frame/doc',
+    children: [
+      {
+        path: 'doc',
+        name: 'Doc',
+        component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
+        meta: {
+          frameSrc: 'https://vvbin.cn/doc-next/'
+        }
+      }
+    ]
   }
 ]
 

@@ -31,13 +31,13 @@ export function createLoadingComponent({
 
       loadingNumber = Number.parseInt(loadingNumber as string, 10) - 1;
       if (!loadingNumber) {
-        // class to fix
+        // TO FIX 从element plus复制过来的样式
         removeClass(target, 'el-loading-parent--relative');
         target.removeAttribute('loading-number');
       } else {
         target.setAttribute('loading-number', loadingNumber.toString());
       }
-      // class to fix
+      // TO FIX 从element plus复制过来的样式
       removeClass(target, 'el-loading-parent--hidden');
     }
     if (vm && vm.el && vm.el.parentNode) {
@@ -95,11 +95,11 @@ export function createLoadingComponent({
       ])
 
       const noSpinner = h('i', { class: data.spinner });
-      // class to fix
+      // TO FIX 从element plus复制过来的样式
       const spinnerText = h('p', { class: 'el-loading-text' }, [data.text]);
 
       return h(Transition, {
-        // class to fix
+        // TO FIX 从element plus复制过来的样式
         name: 'el-loading-fade',
         onAfterLeave: handleAfterLeave,
       }, {
@@ -108,15 +108,15 @@ export function createLoadingComponent({
             backgroundColor: data.background || '',
           },
           class: [
-            // class to fix
+            // TO FIX 从element plus复制过来的样式
             'el-loading-mask',
             data.customClass,
-            // class to fix
+            // TO FIX 从element plus复制过来的样式
             data.fullscreen ? 'is-fullscreen' : '',
           ],
         }, [
           h('div', {
-            // class to fix
+            // TO FIX 从element plus复制过来的样式
             class: 'el-loading-spinner',
           }, [
             !data.spinner ? spinner : noSpinner,

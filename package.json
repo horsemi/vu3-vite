@@ -10,6 +10,7 @@
   "dependencies": {
     "@types/lodash-es": "^4.17.4",
     "@types/qs": "^6.9.6",
+    "@vueuse/core": "^4.8.2",
     "axios": "^0.21.1",
     "less": "^4.1.1",
     "lodash-es": "^4.17.21",
