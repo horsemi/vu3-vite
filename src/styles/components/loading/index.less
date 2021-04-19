@@ -1,13 +1,13 @@
 // TO FIX 从element plus复制过来的样式
-.el-loading-parent--relative {
+.v-loading-parent--relative {
   position: relative !important
 }
 
-.el-loading-parent--hidden {
+.v-loading-parent--hidden {
   overflow: hidden !important
 }
 
-.el-loading-mask {
+.v-loading-mask {
   position: absolute;
   z-index: 2000;
   background-color: rgba(255, 255, 255, .9);
@@ -20,20 +20,20 @@
   transition: opacity .3s
 }
 
-.el-loading-mask.is-fullscreen {
+.v-loading-mask.is-fullscreen {
   position: fixed
 }
 
-.el-loading-mask.is-fullscreen .el-loading-spinner {
+.v-loading-mask.is-fullscreen .v-loading-spinner {
   margin-top: -25px
 }
 
-.el-loading-mask.is-fullscreen .el-loading-spinner .circular {
+.v-loading-mask.is-fullscreen .v-loading-spinner .circular {
   height: 50px;
   width: 50px
 }
 
-.el-loading-spinner {
+.v-loading-spinner {
   top: 50%;
   margin-top: -21px;
   width: 100%;
@@ -41,20 +41,20 @@
   position: absolute
 }
 
-.el-loading-spinner .el-loading-text {
+.v-loading-spinner .v-loading-text {
   color: #409EFF;
   margin: 3px 0;
   font-size: 14px
 }
 
-.el-loading-spinner .circular {
+.v-loading-spinner .circular {
   height: 42px;
   width: 42px;
   -webkit-animation: loading-rotate 2s linear infinite;
   animation: loading-rotate 2s linear infinite
 }
 
-.el-loading-spinner .path {
+.v-loading-spinner .path {
   -webkit-animation: loading-dash 1.5s ease-in-out infinite;
   animation: loading-dash 1.5s ease-in-out infinite;
   stroke-dasharray: 90, 150;
@@ -64,12 +64,12 @@
   stroke-linecap: round
 }
 
-.el-loading-spinner i {
+.v-loading-spinner i {
   color: #409EFF
 }
 
-.el-loading-fade-enter-from,
-.el-loading-fade-leave-to {
+.v-loading-fade-enter-from,
+.v-loading-fade-leave-to {
   opacity: 0
 }
 
