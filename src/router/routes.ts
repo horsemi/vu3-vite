@@ -47,6 +47,14 @@ const viewRoutes: Array<RouteRecordRaw> = [
         meta: {
           frameSrc: 'https://vvbin.cn/doc-next/'
         }
+      },
+      {
+        path: 'baidu',
+        name: 'Baidu',
+        component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
+        meta: {
+          frameSrc: 'https://baidu.com/'
+        }
       }
     ]
   }

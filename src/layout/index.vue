@@ -10,6 +10,7 @@
       <router-link class="tab" :to="'/home/index?test=4'" >Home</router-link>
       <router-link class="tab" :to="'/'">Dashboard</router-link>
       <router-link class="tab" :to="'/frame/doc'">IFrame</router-link>
+      <router-link class="tab" :to="'/frame/baidu'">Baidu</router-link>
     </div>
     <div>
       {{ viewState }}
