@@ -56,17 +56,13 @@ const addStyle = async (options: ILoadingOptions, parent: HTMLElement, instance:
 
 const addClassList = (options: ILoadingOptions, parent: HTMLElement, instance: ILoadingInstance) => {
   if (instance.originalPosition && instance.originalPosition.value !== 'absolute' && instance.originalPosition.value !== 'fixed') {
-    // TO FIX 从element plus复制过来的样式
     addClass(parent, 'v-loading-parent--relative')
   } else {
-    // TO FIX 从element plus复制过来的样式
     removeClass(parent, 'v-loading-parent--relative')
   }
   if (options.fullscreen && options.lock) {
-    // TO FIX 从element plus复制过来的样式
     addClass(parent, 'v-loading-parent--hidden')
   } else {
-    // TO FIX 从element plus复制过来的样式
     removeClass(parent, 'v-loading-parent--hidden')
   }
 }
