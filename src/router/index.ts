@@ -1,3 +1,4 @@
+import type { RouteRecordRaw } from 'vue-router';
 import type { App } from 'Vue';
 
 import { createRouter, createWebHashHistory } from 'vue-router';
@@ -7,7 +8,7 @@ const WHITE_NAME_LIST = [''];
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes: routes,
+  routes: (routes as unknown) as RouteRecordRaw[],
   strict: true,
   scrollBehavior: () => ({ left: 0, top: 0 })
 });

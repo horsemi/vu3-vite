@@ -10,7 +10,7 @@ import store from '/@/store';
 import { useGo, useRedo } from '/@/hooks/web/usePage';
 import { getRawRoute } from '/@/utils';
 import { PageEnum } from '/@/enums/pageEnum';
-import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/modules/basic';
+import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
 
 const NAME_SPACE = 'view';
 

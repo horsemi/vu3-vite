@@ -59,3 +59,6 @@ export interface AppRouteRecordRaw extends Omit<RouteRecordRaw, 'meta'> {
   props?: Recordable;
   fullPath?: string;
 }
+
+// export type AppRouteModule = RouteModule | AppRouteRecordRaw;
+export type AppRouteModule = AppRouteRecordRaw;
