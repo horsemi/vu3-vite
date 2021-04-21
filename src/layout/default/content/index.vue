@@ -26,7 +26,6 @@ export default defineComponent({
 </script>
 <style lang="less">
   @import "src/styles/config.less";
-  
   @prefix-cls: ~'@{namespace}-layout-content';
 
   .@{prefix-cls} {
