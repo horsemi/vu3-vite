@@ -13,15 +13,15 @@ export type DebounceAndThrottleProcedureResult<T extends unknown[]> = [
  * @description: Applicable in components
  */
 export function useDebounce<T extends unknown[]>(
-  handle: DebounceAndThrottleProcedure<T>,
-  wait: number,
-  options: DebounceAndThrottleOptions = {}
+	handle: DebounceAndThrottleProcedure<T>,
+	wait: number,
+	options: DebounceAndThrottleOptions = {}
 ): DebounceAndThrottleProcedureResult<T> {
-  return useThrottle(
-    handle,
-    wait,
-    Object.assign(options, {
-      debounce: true,
-    })
-  );
+	return useThrottle(
+		handle,
+		wait,
+		Object.assign(options, {
+			debounce: true,
+		})
+	);
 }

@@ -10,13 +10,13 @@ import type { RouteLocationNormalized, RouteRecordNormalized } from 'vue-router'
  *  setObjToUrlParams('www.baidu.com', obj)
  *  ==>www.baidu.com?a=3&b=4
  */
- export function setObjToUrlParams(baseUrl: string, obj: any): string {
-  let parameters = '';
-  for (const key in obj) {
-    parameters += key + '=' + encodeURIComponent(obj[key]) + '&';
-  }
-  parameters = parameters.replace(/&$/, '');
-  return /\?$/.test(baseUrl) ? baseUrl + parameters : baseUrl.replace(/\/?$/, '?') + parameters;
+export function setObjToUrlParams(baseUrl: string, obj: Record<any, any>): string {
+	let parameters = '';
+	for (const key in obj) {
+		parameters += key + '=' + encodeURIComponent(obj[key]) + '&';
+	}
+	parameters = parameters.replace(/&$/, '');
+	return /\?$/.test(baseUrl) ? baseUrl + parameters : baseUrl.replace(/\/?$/, '?') + parameters;
 }
 
 /**
@@ -26,11 +26,11 @@ import type { RouteLocationNormalized, RouteRecordNormalized } from 'vue-router'
  * @returns 
  */
 export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
-  let key: string;
-  for (key in target) {
-    src[key] = isObject(src[key]) ? deepMerge(src[key], target[key]) : (src[key] = target[key]);
-  }
-  return src;
+	let key: string;
+	for (key in target) {
+		src[key] = isObject(src[key]) ? deepMerge(src[key], target[key]) : (src[key] = target[key]);
+	}
+	return src;
 }
 
 /**
@@ -39,16 +39,16 @@ export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
  * @returns 
  */
 export function getRawRoute(route: RouteLocationNormalized): RouteLocationNormalized {
-  if (!route) return route;
-  const { matched, ...opt } = route;
-  return {
-    ...opt,
-    matched: (matched
-      ? matched.map((item) => ({
-          meta: item.meta,
-          name: item.name,
-          path: item.path,
-        }))
-      : undefined) as RouteRecordNormalized[],
-  };
+	if (!route) return route;
+	const { matched, ...opt } = route;
+	return {
+		...opt,
+		matched: (matched
+			? matched.map((item) => ({
+				meta: item.meta,
+				name: item.name,
+				path: item.path,
+			}))
+			: undefined) as RouteRecordNormalized[],
+	};
 }

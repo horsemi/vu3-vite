@@ -6,72 +6,72 @@ import { formatToDateTime } from '/@/utils/date';
 import { ErrorTypeEnum } from '/@/enums/exceptionEnum';
 
 export interface ErrorInfo {
-  type: ErrorTypeEnum;
-  file: string;
-  name?: string;
-  message: string;
-  stack?: string;
-  detail: string;
-  url: string;
-  time?: string;
+type: ErrorTypeEnum;
+file: string;
+name?: string;
+message: string;
+stack?: string;
+detail: string;
+url: string;
+time?: string;
 }
 
 export interface ErrorState {
-  errorInfoState: ErrorInfo[] | null;
-  errorListCountState: number;
+errorInfoState: ErrorInfo[] | null;
+errorListCountState: number;
 }
 
 const NAME_SPACE = 'app-error';
 hotModuleUnregisterModule(NAME_SPACE);
 @Module({ dynamic: true, namespaced: true, store, name: NAME_SPACE })
 class Error extends VuexModule implements ErrorState {
-  // error log list
-  errorInfoState: ErrorInfo[] = [];
+// error log list
+errorInfoState: ErrorInfo[] = [];
 
-  // error log count
-  errorListCountState = 0;
+// error log count
+errorListCountState = 0;
 
-  get getErrorInfoState() {
-    return this.errorInfoState;
-  }
+get getErrorInfoState() {
+	return this.errorInfoState;
+}
 
-  get getErrorListCountState() {
-    return this.errorListCountState;
-  }
+get getErrorListCountState() {
+	return this.errorListCountState;
+}
 
-  @Mutation
-  commitErrorInfoState(info: ErrorInfo): void {
-    const item = {
-      ...info,
-      time: formatToDateTime(new Date()),
-    };
-    this.errorInfoState = [item, ...this.errorInfoState];
-    this.errorListCountState += 1;
-  }
+@Mutation
+commitErrorInfoState(info: ErrorInfo): void {
+	const item = {
+		...info,
+		time: formatToDateTime(new Date()),
+	};
+	this.errorInfoState = [item, ...this.errorInfoState];
+	this.errorListCountState += 1;
+}
 
-  @Mutation
-  commitErrorListCountState(count: number): void {
-    this.errorListCountState = count;
-  }
+@Mutation
+commitErrorListCountState(count: number): void {
+	this.errorListCountState = count;
+}
 
-  @Action
-  setupErrorHandle(error: any) {
-    const errInfo: Partial<ErrorInfo> = {
-      message: error.message,
-      type: ErrorTypeEnum.AJAX,
-    };
-    if (error.response) {
-      const {
-        config: { url = '', data: params = '', method = 'get', headers = {} } = {},
-        data = {},
-      } = error.response;
-      errInfo.url = url;
-      errInfo.name = 'Ajax Error!';
-      errInfo.file = '-';
-      errInfo.stack = JSON.stringify(data);
-      errInfo.detail = JSON.stringify({ params, method, headers });
-    }
-    this.commitErrorInfoState(errInfo as ErrorInfo);
-  }
+@Action
+setupErrorHandle(error: any) {
+	const errInfo: Partial<ErrorInfo> = {
+		message: error.message,
+		type: ErrorTypeEnum.AJAX,
+	};
+	if (error.response) {
+		const {
+			config: { url = '', data: params = '', method = 'get', headers = {} } = {},
+			data = {},
+		} = error.response;
+		errInfo.url = url;
+		errInfo.name = 'Ajax Error!';
+		errInfo.file = '-';
+		errInfo.stack = JSON.stringify(data);
+		errInfo.detail = JSON.stringify({ params, method, headers });
+	}
+	this.commitErrorInfoState(errInfo as ErrorInfo);
+}
 }
 export const errorStore = getModule<Error>(Error);

@@ -1,4 +1,4 @@
-import type { Ref, VNode } from 'vue'
+import type { Ref, VNode } from 'vue';
 
 export type ILoadingOptions = {
     parent?: ILoadingParentElement | null,

@@ -12,176 +12,176 @@ import { ContentTypeEnum, RequestEnum } from '/@/enums/httpEnum';
 import { errorResult } from './const';
 
 export class Request {
-  private axiosInstance: AxiosInstance;
-  private readonly options: CreateAxiosOptions;
+	private axiosInstance: AxiosInstance;
+	private readonly options: CreateAxiosOptions;
 
-  constructor(options: CreateAxiosOptions) {
-    this.options = options;
-    this.axiosInstance = axios.create(options);
-    this.setupInterceptors();
-  }
+	constructor(options: CreateAxiosOptions) {
+		this.options = options;
+		this.axiosInstance = axios.create(options);
+		this.setupInterceptors();
+	}
 
-  private setupInterceptors() {
-    const transform = this.getTransform();
-    if (!transform) {
-      return;
-    }
-    const {
-      requestInterceptors,
-      requestInterceptorsCatch,
-      responseInterceptors,
-      responseInterceptorsCatch,
-    } = transform;
-  
-    const axiosCanceler = new AxiosCanceler();
+	private setupInterceptors() {
+		const transform = this.getTransform();
+		if (!transform) {
+			return;
+		}
+		const {
+			requestInterceptors,
+			requestInterceptorsCatch,
+			responseInterceptors,
+			responseInterceptorsCatch,
+		} = transform;
 
-    // 请求拦截器配置
-    this.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
-      // 如果开启重复请求功能, 重复请求就会被禁止
-      const {
-        headers: { ignoreCancelToken },
-      } = config;
+		const axiosCanceler = new AxiosCanceler();
 
-      const ignoreCancel =
-        ignoreCancelToken !== undefined
-          ? ignoreCancelToken
-          : this.options.requestOptions?.ignoreCancelToken;
+		// 请求拦截器配置
+		this.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
+			// 如果开启重复请求功能, 重复请求就会被禁止
+			const {
+				headers: { ignoreCancelToken },
+			} = config;
 
-      !ignoreCancel && axiosCanceler.addPending(config);
-      if (requestInterceptors && isFunction(requestInterceptors)) {
-        config = requestInterceptors(config);
-      }
-      return config;
-    }, undefined);
+			const ignoreCancel =
+				ignoreCancelToken !== undefined
+					? ignoreCancelToken
+					: this.options.requestOptions?.ignoreCancelToken;
 
-    // 请求错误捕获拦截器
-    requestInterceptorsCatch &&
-      isFunction(requestInterceptorsCatch) &&
-      this.axiosInstance.interceptors.request.use(undefined, requestInterceptorsCatch);
+			!ignoreCancel && axiosCanceler.addPending(config);
+			if (requestInterceptors && isFunction(requestInterceptors)) {
+				config = requestInterceptors(config);
+			}
+			return config;
+		}, undefined);
 
-    // 处理响应结果拦截器
-    this.axiosInstance.interceptors.response.use((res: AxiosResponse<any>) => {
-      res && axiosCanceler.removePending(res.config);
-      if (responseInterceptors && isFunction(responseInterceptors)) {
-        res = responseInterceptors(res);
-      }
-      return res;
-    }, undefined);
+		// 请求错误捕获拦截器
+		requestInterceptorsCatch &&
+			isFunction(requestInterceptorsCatch) &&
+			this.axiosInstance.interceptors.request.use(undefined, requestInterceptorsCatch);
 
-    // 响应结果错误捕获拦截器
-    responseInterceptorsCatch &&
-      isFunction(responseInterceptorsCatch) &&
-      this.axiosInstance.interceptors.response.use(undefined, responseInterceptorsCatch);
-  }
+		// 处理响应结果拦截器
+		this.axiosInstance.interceptors.response.use((res: AxiosResponse<any>) => {
+			res && axiosCanceler.removePending(res.config);
+			if (responseInterceptors && isFunction(responseInterceptors)) {
+				res = responseInterceptors(res);
+			}
+			return res;
+		}, undefined);
 
-  private getTransform() {
-    const { transform } = this.options;
-    return transform;
-  }
+		// 响应结果错误捕获拦截器
+		responseInterceptorsCatch &&
+			isFunction(responseInterceptorsCatch) &&
+			this.axiosInstance.interceptors.response.use(undefined, responseInterceptorsCatch);
+	}
 
-  /**
-   * @description:  文件上传
-   */
-   uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams) {
-    const formData = new window.FormData();
+	private getTransform() {
+		const { transform } = this.options;
+		return transform;
+	}
 
-    if (params.data) {
-      Object.keys(params.data).forEach((key) => {
-        if (!params.data) return;
-        const value = params.data[key];
-        if (Array.isArray(value)) {
-          value.forEach((item) => {
-            formData.append(`${key}[]`, item);
-          });
-          return;
-        }
+	/**
+	 * @description:  文件上传
+	 */
+	uploadFile<T = any>(config: AxiosRequestConfig, params: UploadFileParams): Promise<AxiosResponse<T>> {
+		const formData = new window.FormData();
 
-        formData.append(key, params.data[key]);
-      });
-    }
+		if (params.data) {
+			Object.keys(params.data).forEach((key) => {
+				if (!params.data) return;
+				const value = params.data[key];
+				if (Array.isArray(value)) {
+					value.forEach((item) => {
+						formData.append(`${key}[]`, item);
+					});
+					return;
+				}
 
-    formData.append(params.name || 'file', params.file, params.filename);
+				formData.append(key, params.data[key]);
+			});
+		}
 
-    return this.axiosInstance.request<T>({
-      ...config,
-      method: 'POST',
-      data: formData,
-      headers: {
-        'Content-type': ContentTypeEnum.FORM_DATA,
-        ignoreCancelToken: true,
-      },
-    });
-  }
+		formData.append(params.name || 'file', params.file, params.filename);
 
-  // support form-data
-  supportFormData(config: AxiosRequestConfig) {
-    const headers = this.options?.headers;
-    const contentType = headers?.['Content-Type'] || headers?.['content-type'];
+		return this.axiosInstance.request<T>({
+			...config,
+			method: 'POST',
+			data: formData,
+			headers: {
+				'Content-type': ContentTypeEnum.FORM_DATA,
+				ignoreCancelToken: true,
+			},
+		});
+	}
 
-    if (
-      contentType !== ContentTypeEnum.FORM_URLENCODED ||
-      !Reflect.has(config, 'data') ||
-      config.method?.toUpperCase() === RequestEnum.GET
-    ) {
-      return config;
-    }
+	// support form-data
+	supportFormData(config: AxiosRequestConfig): AxiosRequestConfig {
+		const headers = this.options?.headers;
+		const contentType = headers?.['Content-Type'] || headers?.['content-type'];
 
-    return {
-      ...config,
-      data: qs.stringify(config.data),
-    };
-  }
+		if (
+			contentType !== ContentTypeEnum.FORM_URLENCODED ||
+			!Reflect.has(config, 'data') ||
+			config.method?.toUpperCase() === RequestEnum.GET
+		) {
+			return config;
+		}
 
-  get<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
-    return this.request({ ...config, method: 'GET' }, options);
-  }
+		return {
+			...config,
+			data: qs.stringify(config.data),
+		};
+	}
 
-  post<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
-    return this.request({ ...config, method: 'POST' }, options);
-  }
+	get<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
+		return this.request({ ...config, method: 'GET' }, options);
+	}
 
-  put<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
-    return this.request({ ...config, method: 'PUT' }, options);
-  }
+	post<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
+		return this.request({ ...config, method: 'POST' }, options);
+	}
 
-  delete<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
-    return this.request({ ...config, method: 'DELETE' }, options);
-  }
+	put<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
+		return this.request({ ...config, method: 'PUT' }, options);
+	}
 
-  request<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
-    let conf: AxiosRequestConfig = cloneDeep(config);
-    const transform = this.getTransform();
+	delete<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
+		return this.request({ ...config, method: 'DELETE' }, options);
+	}
 
-    const { requestOptions } = this.options;
+	request<T = any>(config: AxiosRequestConfig, options?: RequestOptions): Promise<T> {
+		let conf: AxiosRequestConfig = cloneDeep(config);
+		const transform = this.getTransform();
 
-    const opt: RequestOptions = Object.assign({}, requestOptions, options);
+		const { requestOptions } = this.options;
 
-    const { beforeRequestHook, requestCatchHook, transformRequestHook } = transform || {};
-    if (beforeRequestHook && isFunction(beforeRequestHook)) {
-      conf = beforeRequestHook(conf, opt);
-    }
+		const opt: RequestOptions = Object.assign({}, requestOptions, options);
 
-    conf = this.supportFormData(conf);
+		const { beforeRequestHook, requestCatchHook, transformRequestHook } = transform || {};
+		if (beforeRequestHook && isFunction(beforeRequestHook)) {
+			conf = beforeRequestHook(conf, opt);
+		}
 
-    return new Promise((resolve, reject) => {
-      this.axiosInstance
-        .request<any, AxiosResponse<Result>>(conf)
-        .then((res: AxiosResponse<Result>) => {
-          if (transformRequestHook && isFunction(transformRequestHook)) {
-            const ret = transformRequestHook(res, opt);
-            ret !== errorResult ? resolve(ret) : reject(new Error('request error!'));
-            return;
-          }
-          resolve((res as unknown) as Promise<T>);
-        })
-        .catch((e: Error) => {
-          if (requestCatchHook && isFunction(requestCatchHook)) {
-            reject(requestCatchHook(e));
-            return;
-          }
-          reject(e);
-        });
-    });
-  }
+		conf = this.supportFormData(conf);
+
+		return new Promise((resolve, reject) => {
+			this.axiosInstance
+				.request<any, AxiosResponse<Result>>(conf)
+				.then((res: AxiosResponse<Result>) => {
+					if (transformRequestHook && isFunction(transformRequestHook)) {
+						const ret = transformRequestHook(res, opt);
+						ret !== errorResult ? resolve(ret) : reject(new Error('request error!'));
+						return;
+					}
+					resolve((res as unknown) as Promise<T>);
+				})
+				.catch((e: Error) => {
+					if (requestCatchHook && isFunction(requestCatchHook)) {
+						reject(requestCatchHook(e));
+						return;
+					}
+					reject(e);
+				});
+		});
+	}
 
 }

@@ -1,3 +1,3 @@
 export function errorMessage(msg: string | Error) {
-  console.error(msg);
+	console.error(msg);
 }

@@ -17,49 +17,49 @@ export interface UserEvenParams {
 }
 
 export function useEventListener({
-  el = window,
-  name,
-  listener,
-  options,
-  autoRemove = true,
-  isDebounce = true,
-  wait = 80
+	el = window,
+	name,
+	listener,
+	options,
+	autoRemove = true,
+	isDebounce = true,
+	wait = 80
 }: UserEvenParams): { removeEvent: RemoveEventFn } {
-  let remove: RemoveEventFn = () => {};
-  const isAddRef = ref(false);
+	let remove: RemoveEventFn = () => { return; };
+	const isAddRef = ref(false);
 
-  if (el) {
-    const element: Ref<Element> = ref(el);
+	if (el) {
+		const element: Ref<Element> = ref(el);
 
-    const [handler] = isDebounce ? useDebounce(listener, wait) : useThrottle(listener, wait);
-    const realHandler = wait ? handler : listener;
-    const removeEventListener = (e: Element) => {
-      isAddRef.value = true;
-      e.removeEventListener(name, realHandler, options);
-    };
+		const [handler] = isDebounce ? useDebounce(listener, wait) : useThrottle(listener, wait);
+		const realHandler = wait ? handler : listener;
+		const removeEventListener = (e: Element) => {
+			isAddRef.value = true;
+			e.removeEventListener(name, realHandler, options);
+		};
 
-    const addEventListener = (e: Element) => {
-      e.addEventListener(name, realHandler, options);
-    }
+		const addEventListener = (e: Element) => {
+			e.addEventListener(name, realHandler, options);
+		};
 
-    const removeWatch = watch(
-      element,
-      (v, _ov, cleanUp) => {
-        if (v) {
-          !unref(isAddRef) && addEventListener(v);
-          cleanUp(() => {
-            autoRemove && removeEventListener(v);
-          });
-        }
-      },
-      { immediate: true }
-    );
+		const removeWatch = watch(
+			element,
+			(v, _ov, cleanUp) => {
+				if (v) {
+					!unref(isAddRef) && addEventListener(v);
+					cleanUp(() => {
+						autoRemove && removeEventListener(v);
+					});
+				}
+			},
+			{ immediate: true }
+		);
 
-    remove = () => {
-      removeEventListener(element.value);
-      removeWatch();
-    };
-  }
+		remove = () => {
+			removeEventListener(element.value);
+			removeWatch();
+		};
+	}
 
-  return { removeEvent: remove };
+	return { removeEvent: remove };
 }

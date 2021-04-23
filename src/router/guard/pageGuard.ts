@@ -5,8 +5,8 @@ import { unref } from 'vue';
 
 export function createPageGuard(router: Router) {
 
-  router.beforeEach(async (to) => {
-    viewStore.addViewAction(unref(to));
-    return true;
-  });
+	router.beforeEach(async (to) => {
+		viewStore.addViewAction(unref(to));
+		return true;
+	});
 }

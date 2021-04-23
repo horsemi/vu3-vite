@@ -11,8 +11,12 @@
   "dependencies": {
     "@types/lodash-es": "^4.17.4",
     "@types/qs": "^6.9.6",
+    "@typescript-eslint/eslint-plugin": "^4.22.0",
+    "@typescript-eslint/parser": "^4.22.0",
     "@vueuse/core": "^4.8.2",
     "axios": "^0.21.1",
+    "eslint": "^7.24.0",
+    "eslint-plugin-vue": "^7.9.0",
     "less": "^4.1.1",
     "lodash-es": "^4.17.21",
     "moment": "^2.29.1",
