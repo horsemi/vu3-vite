@@ -1,5 +1,8 @@
 <template>
-  <div :class="prefixCls" v-loading="getPageLoading">
+  <div
+    v-loading="getPageLoading"
+    :class="prefixCls"
+  >
     <PageLayout />
   </div>
 </template>
@@ -12,17 +15,17 @@ import PageLayout from './page.vue';
 import { appStore } from '/@/store/modules/app';
 
 export default defineComponent({
-  name: 'LayoutContent',
-  components: { PageLayout },
-  setup() {
-    const getPageLoading = computed(() => appStore.getPageLoading);
-    const { prefixCls } = useDesign('layout-content');
-    return {
-      getPageLoading,
-      prefixCls
-    }
-  },
-})
+	name: 'LayoutContent',
+	components: { PageLayout },
+	setup() {
+		const getPageLoading = computed(() => appStore.getPageLoading);
+		const { prefixCls } = useDesign('layout-content');
+		return {
+			getPageLoading,
+			prefixCls
+		};
+	},
+});
 </script>
 <style lang="less">
   @import "src/styles/config.less";

@@ -1,5 +1,5 @@
 <template>
-  <AppProvider prefixCls="vue3-vite">
+  <AppProvider prefix-cls="vue3-vite">
     <RouterView />
   </AppProvider>
 </template>
@@ -9,11 +9,11 @@ import { defineComponent } from 'vue';
 import { AppProvider } from '/@/components/Application';
 
 export default defineComponent({
-  name: 'App',
-  components: {
-    AppProvider
-  }
-})
+	name: 'App',
+	components: {
+		AppProvider
+	}
+});
 </script>
 
 <style>
