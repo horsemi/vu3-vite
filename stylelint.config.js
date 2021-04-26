@@ -1,16 +1,8 @@
 module.exports = {
   plugins: ['stylelint-order'],
-  extends: ['stylelint-config-standard'],
+  extends: ['stylelint-config-standard', 'stylelint-config-prettier'],
   rules: {
-    'order/order': [
-      [
-        'dollar-variables',
-        'custom-properties',
-        'at-rules',
-        'declarations',
-        'rules',
-      ]
-    ],
+    'order/order': [['dollar-variables', 'custom-properties', 'at-rules', 'declarations', 'rules']],
     // Specify the alphabetical order of the attributes in the declaration block
     'order/properties-order': [
       'position',
@@ -162,4 +154,4 @@ module.exports = {
     ],
   },
   ignoreFiles: ['**/*.js', '**/*.jsx', '**/*.tsx', '**/*.ts'],
-}
+};

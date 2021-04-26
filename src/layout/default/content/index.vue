@@ -1,34 +1,31 @@
 <template>
-  <div
-    v-loading="getPageLoading"
-    :class="prefixCls"
-  >
+  <div v-loading="getPageLoading" :class="prefixCls">
     <PageLayout />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent, computed } from 'vue';
+  import { defineComponent, computed } from 'vue';
 
-import { useDesign } from '/@/hooks/web/useDesign';
-import PageLayout from './page.vue';
-import { appStore } from '/@/store/modules/app';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  import PageLayout from './page.vue';
+  import { appStore } from '/@/store/modules/app';
 
-export default defineComponent({
-	name: 'LayoutContent',
-	components: { PageLayout },
-	setup() {
-		const getPageLoading = computed(() => appStore.getPageLoading);
-		const { prefixCls } = useDesign('layout-content');
-		return {
-			getPageLoading,
-			prefixCls
-		};
-	},
-});
+  export default defineComponent({
+    name: 'LayoutContent',
+    components: { PageLayout },
+    setup() {
+      const getPageLoading = computed(() => appStore.getPageLoading);
+      const { prefixCls } = useDesign('layout-content');
+      return {
+        getPageLoading,
+        prefixCls,
+      };
+    },
+  });
 </script>
 <style lang="less">
-  @import "src/styles/config.less";
+  @import 'src/styles/config.less';
   @prefix-cls: ~'@{namespace}-layout-content';
 
   .@{prefix-cls} {

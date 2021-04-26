@@ -981,6 +981,11 @@ escape-string-regexp@^1.0.5:
   resolved "https://registry.nlark.com/escape-string-regexp/download/escape-string-regexp-1.0.5.tgz#1b61c0562190a8dff6ae3bb2cf0200ca130b86d4"
   integrity sha1-G2HAViGQqN/2rjuyzwIAyhMLhtQ=
 
+eslint-config-prettier@^8.3.0:
+  version "8.3.0"
+  resolved "https://registry.nlark.com/eslint-config-prettier/download/eslint-config-prettier-8.3.0.tgz#f7471b20b6fe8a9a9254cc684454202886a2dd7a"
+  integrity sha1-90cbILb+ipqSVMxoRFQgKIai3Xo=
+
 eslint-plugin-vue@^7.9.0:
   version "7.9.0"
   resolved "https://registry.npm.taobao.org/eslint-plugin-vue/download/eslint-plugin-vue-7.9.0.tgz?cache=0&sync_timestamp=1618213545245&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Feslint-plugin-vue%2Fdownload%2Feslint-plugin-vue-7.9.0.tgz#f8e83a2a908f4c43fc8304f5401d4ff671f3d560"
@@ -2236,6 +2241,11 @@ prelude-ls@^1.2.1:
   resolved "https://registry.nlark.com/prelude-ls/download/prelude-ls-1.2.1.tgz#debc6489d7a6e6b0e7611888cec880337d316396"
   integrity sha1-3rxkidem5rDnYRiIzsiAM30xY5Y=
 
+prettier@2.2.1:
+  version "2.2.1"
+  resolved "https://registry.npm.taobao.org/prettier/download/prettier-2.2.1.tgz?cache=0&sync_timestamp=1606521141305&other_urls=https%3A%2F%2Fregistry.npm.taobao.org%2Fprettier%2Fdownload%2Fprettier-2.2.1.tgz#795a1a78dd52f073da0cd42b21f9c91381923ff5"
+  integrity sha1-eVoaeN1S8HPaDNQrIfnJE4GSP/U=
+
 process-nextick-args@~2.0.0:
   version "2.0.1"
   resolved "https://registry.npm.taobao.org/process-nextick-args/download/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
@@ -2579,6 +2589,11 @@ style-search@^0.1.0:
   version "0.1.0"
   resolved "https://registry.npm.taobao.org/style-search/download/style-search-0.1.0.tgz#7958c793e47e32e07d2b5cafe5c0bf8e12e77902"
   integrity sha1-eVjHk+R+MuB9K1yv5cC/jhLneQI=
+
+stylelint-config-prettier@^8.0.2:
+  version "8.0.2"
+  resolved "https://registry.npm.taobao.org/stylelint-config-prettier/download/stylelint-config-prettier-8.0.2.tgz#da9de33da4c56893cbe7e26df239a7374045e14e"
+  integrity sha1-2p3jPaTFaJPL5+Jt8jmnN0BF4U4=
 
 stylelint-config-recommended@^4.0.0:
   version "4.0.0"
