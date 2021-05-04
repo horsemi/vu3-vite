@@ -13,6 +13,8 @@ Object.keys(modules).forEach((key: string) => {
   routeModuleList.push(...modList);
 });
 
+export const asyncRoutes = [PAGE_NOT_FOUND_ROUTE, ...routeModuleList];
+
 const viewRoutes: Array<AppRouteRecordRaw> = [
   {
     path: '/',
@@ -28,7 +30,7 @@ const viewRoutes: Array<AppRouteRecordRaw> = [
         name: 'Dashboard',
         component: () => import('/@/views/dashboard/index.vue'),
         meta: {
-          title: '仪表盘',
+          title: '仪表盘'
         },
       },
     ],
@@ -46,7 +48,7 @@ const viewRoutes: Array<AppRouteRecordRaw> = [
         name: 'Home',
         component: () => import('/@/views/home/index.vue'),
         meta: {
-          title: '主页',
+          title: '主页'
         },
       },
       {
@@ -54,7 +56,7 @@ const viewRoutes: Array<AppRouteRecordRaw> = [
         name: 'Home',
         component: () => import('/@/views/home/index.vue'),
         meta: {
-          title: '带ID主页',
+          title: '带ID主页'
         },
       },
     ],

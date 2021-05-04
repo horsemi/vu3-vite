@@ -17,7 +17,6 @@
       HelloWorld,
     },
     setup() {
-      userStore.login();
       const { userId, userName } = userStore.getUserInfo;
       return {
         userId,

@@ -13,6 +13,8 @@ export interface RouteMeta {
   ignoreAuth?: boolean;
   // role info
   roles?: string[];
+  // permission info
+  permissions?: string[];
   // Whether not to cache
   ignoreKeepAlive?: boolean;
   // Is it fixed on tab

@@ -1,7 +1,9 @@
 import { VuexModule, getModule, Module, Mutation, Action } from 'vuex-module-decorators';
 import store from '/@/store';
 
+import { SystemConfig } from '/#/config';
 import { hotModuleUnregisterModule } from '/@/utils/helper/vuexHelper';
+import { PermissionModeEnum } from '/@/enums/appEnum';
 
 let timeId: TimeoutHandle;
 const NAME_SPACE = 'app';
@@ -11,8 +13,16 @@ class App extends VuexModule {
   // 页面加载控制变量
   private pageLoadingState = false;
 
+  private systemConfigState: SystemConfig = {
+    permissionMode: PermissionModeEnum.PERMISSION
+  };
+
   get getPageLoading() {
     return this.pageLoadingState;
+  }
+
+  get getSystemConfig() {
+    return this.systemConfigState;
   }
 
   @Mutation

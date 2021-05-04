@@ -21,6 +21,8 @@ class User extends VuexModule {
       this.userInfoState || {
         userId: 0,
         userName: '',
+        roles: [],
+        permissions: []
       }
     );
   }
@@ -44,12 +46,12 @@ class User extends VuexModule {
   @Action
   resetUserInfo(): void {
     this.setToken('');
-    this.setUserInfo({ userId: 0, userName: '' });
+    this.setUserInfo({ userId: 0, userName: '', roles: [], permissions: [] });
   }
 
   @Action
   login() {
-    this.setUserInfo({ userId: 1, userName: 'TEST' });
+    this.setUserInfo({ userId: 1, userName: 'TEST', roles: [], permissions: ['TEST'] });
     this.setToken('TEST');
   }
 }
