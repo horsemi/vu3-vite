@@ -16,6 +16,7 @@
 
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
+  import { userStore } from '/@/store/modules/user';
 
   export default defineComponent({
     name: 'Login',
@@ -30,7 +31,8 @@
     },
     methods: {
       onLogin() {
-        console.log(this.userName, this.password);
+        userStore.login();
+        this.$router.push({ name: 'Dashboard' });
       },
     },
   });

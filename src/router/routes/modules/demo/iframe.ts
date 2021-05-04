@@ -19,6 +19,7 @@ const iframe: Array<AppRouteRecordRaw> = [
         meta: {
           title: '外链文档',
           frameSrc: 'https://vvbin.cn/doc-next/',
+          permissions: ['TEST']
         },
       },
       {
@@ -28,6 +29,7 @@ const iframe: Array<AppRouteRecordRaw> = [
         meta: {
           title: '外链百度',
           frameSrc: 'https://baidu.com/',
+          permissions: ['NONE']
         },
       },
     ],
