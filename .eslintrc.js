@@ -10,7 +10,7 @@ module.exports = {
     'eslint:recommended',
     'plugin:vue/vue3-recommended',
     'plugin:@typescript-eslint/recommended',
-		'prettier',
+    'prettier',
   ],
   parserOptions: {
     ecmaVersion: 2020,
@@ -27,7 +27,7 @@ module.exports = {
     // 'no-use-before-define': 'off',
     '@typescript-eslint/no-use-before-define': 'off',
     '@typescript-eslint/ban-ts-comment': 'off',
-    // '@typescript-eslint/no-non-null-assertion': 'off',
+    '@typescript-eslint/no-non-null-assertion': 'off',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
     'linebreak-style': ['error', 'windows'],
     quotes: ['error', 'single'],

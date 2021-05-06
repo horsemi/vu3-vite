@@ -11,6 +11,7 @@
       <router-link class="tab" :to="'/'"> Dashboard </router-link>
       <router-link class="tab" :to="'/frame/doc'"> IFrame </router-link>
       <router-link class="tab" :to="'/frame/baidu'"> Baidu </router-link>
+      <button @click="logout">Logout</button>
     </div>
     <div>
       {{ viewState }}
@@ -23,6 +24,7 @@
   import { defineComponent, computed } from 'vue';
   import LayoutContent from './default/content/index.vue';
   import { viewStore } from '/@/store/modules/view';
+  import { userStore } from '/@/store/modules/user';
 
   export default defineComponent({
     name: 'Layout',
@@ -33,6 +35,11 @@
       return {
         viewState,
       };
+    },
+    methods: {
+      logout() {
+        userStore.logout(true);
+      },
     },
   });
 </script>

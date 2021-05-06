@@ -7,11 +7,15 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
   import { AppProvider } from '/@/components/Application';
+  import { initAppConfigStore } from '/@/logics/initAppConfig';
 
   export default defineComponent({
     name: 'App',
     components: {
       AppProvider,
+    },
+    setup() {
+      initAppConfigStore();
     },
   });
 </script>
