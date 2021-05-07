@@ -30,7 +30,7 @@ const viewRoutes: Array<AppRouteRecordRaw> = [
         name: 'Dashboard',
         component: () => import('/@/views/dashboard/index.vue'),
         meta: {
-          title: '仪表盘'
+          title: '仪表盘',
         },
       },
     ],
@@ -48,7 +48,7 @@ const viewRoutes: Array<AppRouteRecordRaw> = [
         name: 'Home',
         component: () => import('/@/views/home/index.vue'),
         meta: {
-          title: '主页'
+          title: '主页',
         },
       },
       {
@@ -56,7 +56,7 @@ const viewRoutes: Array<AppRouteRecordRaw> = [
         name: 'Home',
         component: () => import('/@/views/home/index.vue'),
         meta: {
-          title: '带ID主页'
+          title: '带ID主页',
         },
       },
     ],
@@ -72,10 +72,4 @@ export const LoginRoute: AppRouteRecordRaw = {
   },
 };
 
-export const routes = [
-  ...viewRoutes,
-  ...routeModuleList,
-  LoginRoute,
-  PAGE_NOT_FOUND_ROUTE,
-  REDIRECT_ROUTE,
-];
+export const routes = [LoginRoute, ...viewRoutes, ...routeModuleList, REDIRECT_ROUTE];
