@@ -30,9 +30,9 @@
       };
     },
     methods: {
-      onLogin() {
-        userStore.login();
-        this.$router.push({ name: 'Dashboard' });
+      async onLogin() {
+        await userStore.login();
+        this.$router.replace('/');
       },
     },
   });

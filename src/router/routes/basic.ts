@@ -1,4 +1,14 @@
 import type { AppRouteRecordRaw } from '/@/router/types';
+import { PageEnum } from '/@/enums/pageEnum';
+
+export const ROOT_ROUTE: AppRouteRecordRaw = {
+  path: '/',
+  name: 'Root',
+  redirect: PageEnum.BASE_HOME,
+  meta: {
+    title: 'Root',
+  },
+};
 
 export const PAGE_NOT_FOUND_ROUTE: AppRouteRecordRaw = {
   path: '/:path(.*)*',
@@ -15,5 +25,14 @@ export const REDIRECT_ROUTE: AppRouteRecordRaw = {
   component: () => import('/@/views/redirect/index.vue'),
   meta: {
     title: '跳转',
+  },
+};
+
+export const LOGIN_ROUTE: AppRouteRecordRaw = {
+  path: '/login',
+  name: 'Login',
+  component: () => import('/@/views/sys/login/index.vue'),
+  meta: {
+    title: '登录',
   },
 };

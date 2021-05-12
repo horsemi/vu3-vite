@@ -1,6 +1,6 @@
 <template>
   <div>
-    <img alt="Vue logo" src="../../assets/logo.png" />
+    <img alt="Vue logo" :src="LogoUrl" />
     <HelloWorld :msg="'userId: ' + userId + ' userName: ' + userName" />
   </div>
 </template>
@@ -8,11 +8,12 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
   import HelloWorld from '/@/components/HelloWorld.vue';
+  import LogoUrl from '/@/assets/logo.png';
 
   import { userStore } from '/@/store/modules/user';
 
   export default defineComponent({
-    name: 'Dashboard',
+    name: 'Analysis',
     components: {
       HelloWorld,
     },
@@ -21,6 +22,7 @@
       return {
         userId,
         userName,
+        LogoUrl,
       };
     },
   });

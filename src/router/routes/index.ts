@@ -1,7 +1,11 @@
-import type { AppRouteRecordRaw, AppRouteModule } from '/@/router/types';
+import type { AppRouteModule } from '/@/router/types';
 
-import { LAYOUT } from '/@/router/constant';
-import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
+import {
+  PAGE_NOT_FOUND_ROUTE,
+  REDIRECT_ROUTE,
+  LOGIN_ROUTE,
+  ROOT_ROUTE,
+} from '/@/router/routes/basic';
 
 const modules = import.meta.globEager('./modules/**/*.ts');
 
@@ -15,61 +19,4 @@ Object.keys(modules).forEach((key: string) => {
 
 export const asyncRoutes = [PAGE_NOT_FOUND_ROUTE, ...routeModuleList];
 
-const viewRoutes: Array<AppRouteRecordRaw> = [
-  {
-    path: '/',
-    name: 'Dashboard',
-    redirect: '/dashboard',
-    component: LAYOUT,
-    meta: {
-      title: '根页面',
-    },
-    children: [
-      {
-        path: 'dashboard',
-        name: 'Dashboard',
-        component: () => import('/@/views/dashboard/index.vue'),
-        meta: {
-          title: '仪表盘',
-        },
-      },
-    ],
-  },
-  {
-    path: '/home',
-    name: 'Home',
-    component: LAYOUT,
-    meta: {
-      title: '首页',
-    },
-    children: [
-      {
-        path: 'index',
-        name: 'Home',
-        component: () => import('/@/views/home/index.vue'),
-        meta: {
-          title: '主页',
-        },
-      },
-      {
-        path: ':id',
-        name: 'Home',
-        component: () => import('/@/views/home/index.vue'),
-        meta: {
-          title: '带ID主页',
-        },
-      },
-    ],
-  },
-];
-
-export const LoginRoute: AppRouteRecordRaw = {
-  path: '/login',
-  name: 'Login',
-  component: () => import('/@/views/sys/login/index.vue'),
-  meta: {
-    title: '登录',
-  },
-};
-
-export const routes = [LoginRoute, ...viewRoutes, ...routeModuleList, REDIRECT_ROUTE];
+export const basicRoutes = [LOGIN_ROUTE, ROOT_ROUTE, REDIRECT_ROUTE];

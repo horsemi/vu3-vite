@@ -56,7 +56,7 @@ class User extends VuexModule {
   }
 
   @Action
-  login() {
+  async login() {
     this.setUserInfo({ userId: 1, userName: 'TEST', roles: [], permissions: ['TEST'] });
     this.setToken('TEST');
   }
