@@ -8,8 +8,8 @@ import { RequestEnum, ResultEnum, ContentTypeEnum } from '/@/enums/httpEnum';
 import { isString } from '/@/utils/is';
 import { setObjToUrlParams, deepMerge } from '/@/utils';
 import { errorResult } from './const';
-import { userStore } from '/@/store/modules/user';
-import { errorStore } from '/@/store/modules/error';
+import { useUserStoreWidthOut } from '/@/store/modules/user';
+import { useErrorLogStoreWithOut } from '/@/store/modules/error';
 import { errorMessage } from '/@/hooks/web/useMessage';
 import { checkStatus } from './checkStatues';
 
@@ -109,6 +109,7 @@ const transform: AxiosTransform = {
    */
   requestInterceptors: (config) => {
     // 请求之前处理config
+    const userStore = useUserStoreWidthOut();
     const token = userStore.getToken;
     if (token) {
       // jwt token
@@ -121,7 +122,8 @@ const transform: AxiosTransform = {
    * @description: 响应错误处理
    */
   responseInterceptorsCatch: (error: any) => {
-    errorStore.setupErrorHandle(error);
+    const errorLogStore = useErrorLogStoreWithOut();
+    errorLogStore.addAjaxErrorInfo(error);
     const { response, code, message } = error || {};
     const msg: string = response?.data?.error?.message ?? '';
     const err: string = error?.toString?.() ?? '';

@@ -14,7 +14,7 @@
 
 <script lang="ts">
   import { defineComponent, computed } from 'vue';
-  import { viewStore } from '/@/store/modules/view';
+  import { useViewStore } from '/@/store/modules/view';
 
   import FrameLayout from '/@/layout/iframe/index.vue';
 
@@ -23,13 +23,13 @@
     components: { FrameLayout },
     setup() {
       const openCache = true;
-
+      const viewStore = useViewStore();
       const getCaches = computed((): string[] => {
         if (!openCache) {
           return [];
         }
 
-        const cacheTabs = viewStore.getCacheViewsState;
+        const cacheTabs = viewStore.getCacheList;
         return cacheTabs;
       });
 

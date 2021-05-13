@@ -9,12 +9,13 @@
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import PageLayout from './page.vue';
-  import { appStore } from '/@/store/modules/app';
+  import { useAppStore } from '/@/store/modules/app';
 
   export default defineComponent({
     name: 'LayoutContent',
     components: { PageLayout },
     setup() {
+      const appStore = useAppStore();
       const getPageLoading = computed(() => appStore.getPageLoading);
       const { prefixCls } = useDesign('layout-content');
       return {

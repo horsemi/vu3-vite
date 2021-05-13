@@ -1,7 +1,7 @@
 import { nextTick } from 'vue';
 import { createLoadingComponent } from './createLoadingComponent';
 import type { ILoadingGlobalConfig, ILoadingInstance, ILoadingOptions } from './loading.type';
-import { viewStore } from '/@/store/modules/view';
+import { useViewStore } from '/@/store/modules/view';
 import { addClass, getStyle, removeClass } from '/@/utils/dom';
 
 const defaults: ILoadingOptions = {
@@ -25,11 +25,12 @@ const addStyle = async (
   instance: ILoadingInstance
 ) => {
   const maskStyle: Partial<CSSStyleDeclaration> = {};
+  const viewStore = useViewStore();
   if (options.fullscreen && instance.originalPosition && instance.originalOverflow) {
     instance.originalPosition.value = getStyle(document.body, 'position');
     instance.originalOverflow.value = getStyle(document.body, 'overflow');
     // tofix unknow
-    viewStore.commitNextLoadingZindex();
+    viewStore.nextLoadingZindex();
     maskStyle.zIndex = viewStore.getLoadingZindex.toString();
   } else if (options.body && instance.originalPosition) {
     instance.originalPosition.value = getStyle(document.body, 'position');

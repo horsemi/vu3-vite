@@ -10,7 +10,7 @@
   import HelloWorld from '/@/components/HelloWorld.vue';
   import LogoUrl from '/@/assets/logo.png';
 
-  import { userStore } from '/@/store/modules/user';
+  import { useUserStore } from '/@/store/modules/user';
 
   export default defineComponent({
     name: 'Analysis',
@@ -18,6 +18,7 @@
       HelloWorld,
     },
     setup() {
+      const userStore = useUserStore();
       const { userId, userName } = userStore.getUserInfo;
       return {
         userId,

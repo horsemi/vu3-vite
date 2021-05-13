@@ -2328,6 +2328,11 @@ pify@^4.0.1:
   resolved "https://registry.npm.taobao.org/pify/download/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha1-SyzSXFDVmHNcUCkiJP2MbfQeMjE=
 
+pinia@^2.0.0-alpha.13:
+  version "2.0.0-alpha.13"
+  resolved "https://registry.nlark.com/pinia/download/pinia-2.0.0-alpha.13.tgz#d48e6efec11d38201e20770bc02b168e2157a9f7"
+  integrity sha1-1I5u/sEdOCAeIHcLwCsWjiFXqfc=
+
 please-upgrade-node@^3.2.0:
   version "3.2.0"
   resolved "https://registry.nlark.com/please-upgrade-node/download/please-upgrade-node-3.2.0.tgz#aeddd3f994c933e4ad98b99d9a556efa0e2fe942"
@@ -3275,11 +3280,6 @@ vue@^3.0.5:
     "@vue/compiler-dom" "3.0.11"
     "@vue/runtime-dom" "3.0.11"
     "@vue/shared" "3.0.11"
-
-vuex-module-decorators@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.npm.taobao.org/vuex-module-decorators/download/vuex-module-decorators-1.0.1.tgz#d34dafb5428a3636f1c26d3d014c15fc9659ccd0"
-  integrity sha1-002vtUKKNjbxwm09AUwV/JZZzNA=
 
 vuex@4.0.0:
   version "4.0.0"

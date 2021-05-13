@@ -2,8 +2,8 @@ import type { Router, RouteRecordRaw } from 'vue-router';
 
 import { PageEnum } from '/@/enums/pageEnum';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
-import { userStore } from '/@/store/modules/user';
-import { permissionStore } from '/@/store/modules/permission';
+import { useUserStoreWidthOut } from '/@/store/modules/user';
+import { usePermissionStoreWidthOut } from '/@/store/modules/permission';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
@@ -14,6 +14,8 @@ const permissionStrictState = true;
 
 export function createPermissionGuard(router: Router) {
   router.beforeEach(async (to, from, next) => {
+    const userStore = useUserStoreWidthOut();
+    const permissionStore = usePermissionStoreWidthOut();
     // Jump to the 404 page after processing the login
     if (from.path === LOGIN_PATH && to.name === PAGE_NOT_FOUND_ROUTE.name) {
       next(PageEnum.BASE_HOME);
@@ -61,7 +63,7 @@ export function createPermissionGuard(router: Router) {
       return;
     }
 
-    if (permissionStore.getIsDynamicAddedRouteState) {
+    if (permissionStore.getIsDynamicAddedRoute) {
       next();
       return;
     }
@@ -75,7 +77,7 @@ export function createPermissionGuard(router: Router) {
     const redirectPath = (from.query.redirect || to.path) as string;
     const redirect = decodeURIComponent(redirectPath);
     const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect };
-    permissionStore.commitDynamicAddedRouteState(true);
+    permissionStore.setDynamicAddedRoute(true);
     next(nextData);
   });
 }

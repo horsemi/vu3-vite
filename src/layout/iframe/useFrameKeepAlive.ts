@@ -2,7 +2,7 @@ import type { AppRouteRecordRaw } from '/@/router/types';
 
 import { computed, toRaw, unref } from 'vue';
 
-import { viewStore } from '/@/store/modules/view';
+import { useViewStore } from '/@/store/modules/view';
 
 import { uniqBy } from 'lodash-es';
 
@@ -11,6 +11,7 @@ import { useRouter } from 'vue-router';
 export function useFrameKeepAlive() {
   const router = useRouter();
   const { currentRoute } = router;
+  const viewStore = useViewStore();
   const getFramePages = computed(() => {
     const ret =
       getAllFramePages((toRaw(router.getRoutes()) as unknown) as AppRouteRecordRaw[]) || [];
@@ -18,7 +19,7 @@ export function useFrameKeepAlive() {
   });
 
   const getOpenTabList = computed((): string[] => {
-    return viewStore.getViewsState.reduce((prev: string[], next) => {
+    return viewStore.getViewList.reduce((prev: string[], next) => {
       if (next.meta && Reflect.has(next.meta, 'frameSrc')) {
         prev.push(next.name as string);
       }

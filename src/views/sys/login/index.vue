@@ -16,22 +16,24 @@
 
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
-  import { userStore } from '/@/store/modules/user';
+  import { useUserStore } from '/@/store/modules/user';
 
   export default defineComponent({
     name: 'Login',
     setup() {
+      const userStore = useUserStore();
       let userName = ref('');
       let password = ref('');
 
       return {
+        userStore,
         userName,
         password,
       };
     },
     methods: {
       async onLogin() {
-        await userStore.login();
+        await this.userStore.login();
         this.$router.replace('/');
       },
     },

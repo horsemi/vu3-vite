@@ -2,7 +2,7 @@ import type { SystemConfig } from '/#/config';
 
 import systemSetting from '/@/settings/systemSetting';
 import { SYSTEM_CFG_KEY } from '/@/enums/cacheEnum';
-import { appStore } from '/@/store/modules/app';
+import { useAppStore } from '/@/store/modules/app';
 import { Persistent } from '/@/utils/cache/persistent';
 import { getCommonStoragePrefix, getStorageShortName } from '/@/utils/env';
 import { deepMerge } from '/@/utils';
@@ -11,8 +11,8 @@ import { deepMerge } from '/@/utils';
 export function initAppConfigStore() {
   let systemCfg = Persistent.getLocal(SYSTEM_CFG_KEY) as SystemConfig;
   systemCfg = deepMerge(systemSetting, systemCfg || {});
-
-  appStore.commitSystemConfigState(systemCfg);
+  const appStore = useAppStore();
+  appStore.setSystemConfig(systemCfg);
 
   setTimeout(() => {
     clearObsoleteStorage();

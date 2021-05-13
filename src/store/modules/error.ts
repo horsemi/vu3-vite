@@ -1,11 +1,10 @@
-import store from '/@/store';
-import { hotModuleUnregisterModule } from '/@/utils/helper/vuexHelper';
-import { VuexModule, getModule, Module, Mutation, Action } from 'vuex-module-decorators';
+import { store } from '/@/store';
+import { defineStore } from 'pinia';
 
 import { formatToDateTime } from '/@/utils/date';
 import { ErrorTypeEnum } from '/@/enums/exceptionEnum';
 
-export interface ErrorInfo {
+export interface ErrorLogInfo {
   type: ErrorTypeEnum;
   file: string;
   name?: string;
@@ -16,62 +15,66 @@ export interface ErrorInfo {
   time?: string;
 }
 
-export interface ErrorState {
-  errorInfoState: ErrorInfo[] | null;
-  errorListCountState: number;
-}
-
-const NAME_SPACE = 'app-error';
-hotModuleUnregisterModule(NAME_SPACE);
-@Module({ dynamic: true, namespaced: true, store, name: NAME_SPACE })
-class Error extends VuexModule implements ErrorState {
+export interface ErrorLogState {
   // error log list
-  errorInfoState: ErrorInfo[] = [];
-
+  errorInfo: ErrorLogInfo[] | null;
   // error log count
-  errorListCountState = 0;
-
-  get getErrorInfoState() {
-    return this.errorInfoState;
-  }
-
-  get getErrorListCountState() {
-    return this.errorListCountState;
-  }
-
-  @Mutation
-  commitErrorInfoState(info: ErrorInfo): void {
-    const item = {
-      ...info,
-      time: formatToDateTime(new Date()),
-    };
-    this.errorInfoState = [item, ...this.errorInfoState];
-    this.errorListCountState += 1;
-  }
-
-  @Mutation
-  commitErrorListCountState(count: number): void {
-    this.errorListCountState = count;
-  }
-
-  @Action
-  setupErrorHandle(error: any) {
-    const errInfo: Partial<ErrorInfo> = {
-      message: error.message,
-      type: ErrorTypeEnum.AJAX,
-    };
-    if (error.response) {
-      const {
-        config: { url = '', data: params = '', method = 'get', headers = {} } = {},
-        data = {},
-      } = error.response;
-      errInfo.url = url;
-      errInfo.name = 'Ajax Error!';
-      errInfo.file = '-';
-      errInfo.stack = JSON.stringify(data);
-      errInfo.detail = JSON.stringify({ params, method, headers });
-    }
-    this.commitErrorInfoState(errInfo as ErrorInfo);
-  }
+  errorListCount: number;
 }
-export const errorStore = getModule<Error>(Error);
+
+export const useErrorLogStore = defineStore({
+  id: 'app-error-log',
+  state: (): ErrorLogState => ({
+    errorInfo: [],
+    errorListCount: 0,
+  }),
+  getters: {
+    getErrorInfo() {
+      return this.errorInfo;
+    },
+    getErrorListCount() {
+      return this.errorListCount;
+    },
+  },
+  actions: {
+    addErrorInfo(info: ErrorLogInfo): void {
+      const item = {
+        ...info,
+        time: formatToDateTime(new Date()),
+      };
+      this.errorInfo = [item, ...(this.errorInfo || [])];
+      this.errorListCount += 1;
+    },
+    setErrorListCount(count: number): void {
+      this.errorListCount = count;
+    },
+    /**
+     * Triggered after ajax request error
+     * @param error
+     * @returns
+     */
+    addAjaxErrorInfo(error: any) {
+      const errInfo: Partial<ErrorLogInfo> = {
+        message: error.message,
+        type: ErrorTypeEnum.AJAX,
+      };
+      if (error.response) {
+        const {
+          config: { url = '', data: params = '', method = 'get', headers = {} } = {},
+          data = {},
+        } = error.response;
+        errInfo.url = url;
+        errInfo.name = 'Ajax Error!';
+        errInfo.file = '-';
+        errInfo.stack = JSON.stringify(data);
+        errInfo.detail = JSON.stringify({ params, method, headers });
+      }
+      this.addErrorInfo(errInfo as ErrorLogInfo);
+    },
+  },
+});
+
+// Need to be used outside the setup
+export function useErrorLogStoreWithOut() {
+  return useErrorLogStore(store);
+}

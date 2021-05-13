@@ -23,22 +23,25 @@
 <script lang="ts">
   import { defineComponent, computed } from 'vue';
   import LayoutContent from './default/content/index.vue';
-  import { viewStore } from '/@/store/modules/view';
-  import { userStore } from '/@/store/modules/user';
+  import { useViewStore } from '/@/store/modules/view';
+  import { useUserStore } from '/@/store/modules/user';
 
   export default defineComponent({
     name: 'Layout',
     components: { LayoutContent },
     setup() {
-      const viewState = computed(() => viewStore.getViewsState);
+      const userStore = useUserStore();
+      const viewStore = useViewStore();
+      const viewState = computed(() => viewStore.getViewList);
 
       return {
+        userStore,
         viewState,
       };
     },
     methods: {
       logout() {
-        userStore.logout(true);
+        this.userStore.logout(true);
       },
     },
   });
