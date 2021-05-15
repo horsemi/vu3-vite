@@ -40,9 +40,10 @@ export function deepMerge<T = any>(src: any = {}, target: any = {}): T {
  */
 export function getRawRoute(route: RouteLocationNormalized): RouteLocationNormalized {
   if (!route) return route;
-  const { matched, ...opt } = route;
+  const { matched, redirectedFrom, ...opt } = route;
   return {
     ...opt,
+    redirectedFrom: redirectedFrom ? getRawRoute(redirectedFrom) : undefined,
     matched: (matched
       ? matched.map((item) => ({
           meta: item.meta,

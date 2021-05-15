@@ -22,6 +22,7 @@
 
 <style>
   #app {
+    height: 100%;
     margin-top: 60px;
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;

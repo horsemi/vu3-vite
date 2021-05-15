@@ -1,22 +1,24 @@
 <template>
-  <div>
-    <div>
-      <router-link class="tab" :to="'/home/1'"> Home1 </router-link>
-      <router-link class="tab" :to="'/home/2'"> Home2 </router-link>
-      <router-link class="tab" :to="'/home/3'"> Home3 </router-link>
-      <router-link class="tab" :to="'/home/index?test=1'"> Home </router-link>
-      <router-link class="tab" :to="'/home/index?test=2'"> Home </router-link>
-      <router-link class="tab" :to="'/home/index?test=3'"> Home </router-link>
-      <router-link class="tab" :to="'/home/index?test=4'"> Home </router-link>
+  <div style="height: 100%">
+    <div style="display: inline-block; width: 60px; height: 100%; vertical-align: top">
+      <router-link class="tab" :to="'/home/1'"> Home </router-link>
       <router-link class="tab" :to="'/dashboard'"> Dashboard </router-link>
       <router-link class="tab" :to="'/frame/doc'"> IFrame </router-link>
       <router-link class="tab" :to="'/frame/baidu'"> Baidu </router-link>
       <button @click="logout">Logout</button>
     </div>
-    <div>
-      {{ viewState }}
+    <div style="display: inline-block; width: calc(100% - 60px)">
+      <div>
+        <router-link
+          v-for="(item, index) in viewState"
+          :key="index"
+          :to="item.fullPath"
+          style="margin: 5px"
+          >{{ item.name }}</router-link
+        >
+      </div>
+      <LayoutContent />
     </div>
-    <LayoutContent />
   </div>
 </template>
 
