@@ -88,8 +88,6 @@
   });
 </script>
 <style lang="less" scoped>
-  @import 'src/styles/config.less';
-
   @prefix-cls: ~'@{namespace}-iframe-page';
 
   .@{prefix-cls} {

@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
 
 import { createAlias } from './build/vite/alias';
-// import { generateModifyVars } from './build/generate/generateModifyVars';
+import { generateModifyVars } from './build/generate/generateModifyVars';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,14 +16,14 @@ export default defineConfig({
       ['/#/', 'types'],
     ]),
   },
-  // css: {
-  //   preprocessorOptions: {
-  //     less: {
-  //       modifyVars: generateModifyVars(),
-  //       javascriptEnabled: true,
-  //     },
-  //   },
-  // },
+  css: {
+    preprocessorOptions: {
+      less: {
+        modifyVars: generateModifyVars(),
+        javascriptEnabled: true,
+      },
+    },
+  },
   server: {
     port: 8080,
     open: true,
