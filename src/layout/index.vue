@@ -9,6 +9,7 @@
     </div>
     <div style="display: inline-block; width: calc(100% - 60px)">
       <div>
+        <SvgIcon size="14" name="sun" />
         <router-link
           v-for="(item, index) in viewState"
           :key="index"
@@ -25,12 +26,13 @@
 <script lang="ts">
   import { defineComponent, computed } from 'vue';
   import LayoutContent from './default/content/index.vue';
+  import SvgIcon from '/@/components/Icon/SvgIcon.vue';
   import { useViewStore } from '/@/store/modules/view';
   import { useUserStore } from '/@/store/modules/user';
 
   export default defineComponent({
     name: 'Layout',
-    components: { LayoutContent },
+    components: { LayoutContent, SvgIcon },
     setup() {
       const userStore = useUserStore();
       const viewStore = useViewStore();

@@ -8,6 +8,8 @@ import { setupGlobDirectives } from '/@/directives';
 // router-guard
 import '/@/router/guard';
 
+import 'vite-plugin-svg-icons/register';
+
 const app = createApp(App);
 
 setupStore(app);
