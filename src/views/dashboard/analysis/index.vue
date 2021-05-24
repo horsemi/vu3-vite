@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="text-align: center">
     <img alt="Vue logo" :src="LogoUrl" />
     <HelloWorld :msg="'userId: ' + userId + ' userName: ' + userName" />
   </div>

@@ -41,9 +41,10 @@
           const { size } = props;
           let s = `${size}`;
           s = `${s.replace('px', '')}px`;
+          const sArray = s.split(' ');
           return {
-            width: s,
-            height: s,
+            width: sArray[0],
+            height: sArray.length === 2 ? sArray[1] : sArray[0],
           };
         }
       );

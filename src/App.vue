@@ -9,6 +9,9 @@
   import { AppProvider } from '/@/components/Application';
   import { initAppConfigStore } from '/@/logics/initAppConfig';
 
+  import zhMessages from 'devextreme/localization/messages/zh.json';
+  import { locale, loadMessages } from 'devextreme/localization';
+
   export default defineComponent({
     name: 'App',
     components: {
@@ -16,6 +19,8 @@
     },
     setup() {
       initAppConfigStore();
+      loadMessages(zhMessages);
+      locale(navigator.language);
     },
   });
 </script>
@@ -23,11 +28,9 @@
 <style>
   #app {
     height: 100%;
-    margin-top: 60px;
     font-family: Avenir, Helvetica, Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     color: #2c3e50;
-    text-align: center;
   }
 </style>

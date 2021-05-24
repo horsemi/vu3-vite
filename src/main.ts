@@ -10,6 +10,8 @@ import '/@/router/guard';
 
 import 'vite-plugin-svg-icons/register';
 
+import 'devextreme/dist/css/dx.light.css';
+
 const app = createApp(App);
 
 setupStore(app);

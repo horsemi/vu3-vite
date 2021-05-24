@@ -7,7 +7,7 @@
       <router-link class="tab" :to="'/frame/baidu'"> Baidu </router-link>
       <button @click="logout">Logout</button>
     </div>
-    <div style="display: inline-block; width: calc(100% - 60px)">
+    <div style="display: inline-block; width: calc(100% - 60px); text-align: center">
       <div>
         <SvgIcon size="14" name="sun" />
         <router-link
