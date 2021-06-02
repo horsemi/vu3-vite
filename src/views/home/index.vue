@@ -1,5 +1,5 @@
 <template>
-  <div v-loading.fullscreen="loading" element-loading-text="拼命加载中">
+  <div v-loading.fullscreen="loading" element-loading-text="拼命加载中" style="text-align: center">
     <h1>HOME</h1>
     <select v-model="selectData">
       <option>1</option>

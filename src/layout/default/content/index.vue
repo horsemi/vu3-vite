@@ -33,11 +33,6 @@
     flex: 1 1 auto;
     min-height: 0;
 
-    &.fixed {
-      width: 1200px;
-      margin: 0 auto;
-    }
-
     &-loading {
       position: absolute;
       top: 200px;

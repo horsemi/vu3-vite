@@ -1,15 +1,30 @@
 <template>
-  <div style="height: 100%">
-    <div style="display: inline-block; width: 60px; height: 100%; vertical-align: top">
-      <router-link class="tab" :to="'/home/1'"> Home </router-link>
-      <router-link class="tab" :to="'/dashboard'"> Dashboard </router-link>
-      <router-link class="tab" :to="'/frame/doc'"> IFrame </router-link>
-      <router-link class="tab" :to="'/frame/baidu'"> Baidu </router-link>
-      <button @click="logout">Logout</button>
+  <div class="side-nav-outer-toolbar">
+    <div>
+      <layout-header />
+    </div>
+    <DxDrawer v-model:opened="openState" class="layout-body" position="before" template="menulist">
+      <DxScrollView ref="scrollViewRef" class="with-footer">
+        <div>
+          <router-link
+            v-for="(item, index) in viewState"
+            :key="index"
+            :to="item.fullPath"
+            style="margin: 5px"
+            >{{ item.name }}</router-link
+          >
+        </div>
+        <LayoutContent />
+      </DxScrollView>
+      <template #menulist>
+        <LayoutMenu />
+      </template>
+    </DxDrawer>
+    <!-- <div style="display: inline-block; width: 60px; vertical-align: top">
+      <LayoutMenu />
     </div>
     <div style="display: inline-block; width: calc(100% - 60px); text-align: center">
       <div>
-        <SvgIcon size="14" name="sun" />
         <router-link
           v-for="(item, index) in viewState"
           :key="index"
@@ -19,40 +34,48 @@
         >
       </div>
       <LayoutContent />
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed } from 'vue';
+  import { defineComponent, computed, ref } from 'vue';
   import LayoutContent from './default/content/index.vue';
-  import SvgIcon from '/@/components/Icon/SvgIcon.vue';
+  import LayoutHeader from './default/header/index.vue';
+  import LayoutMenu from './default/menu/index.vue';
+  import DxDrawer from 'devextreme-vue/drawer';
+  import DxScrollView from 'devextreme-vue/scroll-view';
   import { useViewStore } from '/@/store/modules/view';
-  import { useUserStore } from '/@/store/modules/user';
 
   export default defineComponent({
     name: 'Layout',
-    components: { LayoutContent, SvgIcon },
+    components: { LayoutContent, LayoutHeader, LayoutMenu, DxDrawer, DxScrollView },
     setup() {
-      const userStore = useUserStore();
       const viewStore = useViewStore();
       const viewState = computed(() => viewStore.getViewList);
+      const openState = ref(true);
 
       return {
-        userStore,
         viewState,
+        openState,
       };
-    },
-    methods: {
-      logout() {
-        this.userStore.logout(true);
-      },
     },
   });
 </script>
 
 <style lang="less" scoped>
+  .side-nav-outer-toolbar {
+    flex-direction: column;
+    display: flex;
+    width: 100%;
+    height: 100%;
+  }
+
   .tab {
     margin-right: 5px;
+  }
+  .layout-body {
+    flex: 1;
+    min-height: 0;
   }
 </style>

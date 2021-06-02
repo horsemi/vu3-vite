@@ -24,7 +24,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
   },
   {
     path: '/home',
-    name: 'Home',
+    name: 'Main',
     redirect: '/home/index',
     component: LAYOUT,
     meta: {
