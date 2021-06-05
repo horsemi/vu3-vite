@@ -1,6 +1,7 @@
 @import 'var/index.less';
 @import 'transition/index.less';
 @import 'components/index.less';
+@import 'normalize.css';
 
 html {
   overflow: hidden;
@@ -26,10 +27,20 @@ span {
   outline: none !important;
 }
 
-.with-footer > .dx-scrollable-wrapper > .dx-scrollable-container > .dx-scrollable-content {
+input {
+  background: none;
+  outline: none;
+  border: none;
+}
+
+input:focus {
+  border: none;
+}
+
+.with-footer>.dx-scrollable-wrapper>.dx-scrollable-container>.dx-scrollable-content {
   height: 100%;
 
-  & > .dx-scrollview-content {
+  &>.dx-scrollview-content {
     display: flex;
     flex-direction: column;
     min-height: 100%;

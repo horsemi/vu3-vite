@@ -32,6 +32,7 @@
     position: relative;
     flex: 1 1 auto;
     min-height: 0;
+    background-color: @background-color-primary;
 
     &-loading {
       position: absolute;
