@@ -1,22 +1,26 @@
 <template>
   <div :class="[prefixCls]">
-    <DxSortable
-      item-orientation="horizontal"
-      drag-direction="horizontal"
-      @reorder="onTabDrop($event)"
-    >
-      <div
-        v-for="item in viewState"
-        :key="item.fullPath"
-        :class="`${prefixCls}-tabs__container`"
-        @click="handleItemClick(item)"
-      >
-        <div :class="[`${prefixCls}-tabs__wrapper`, isActive(item) ? 'active' : '']">
-          <span :class="`${prefixCls}-tabs-title__wrapper`">{{ item.meta.title }}</span>
-          <i class="dx-icon dx-icon-close" @click.stop="handleItemClose(item)" />
-        </div>
+    <DxScrollView show-scrollbar="onHover" direction="horizontal" :height="40">
+      <div style="white-space: nowrap">
+        <DxSortable
+          item-orientation="horizontal"
+          drag-direction="horizontal"
+          @reorder="onTabDrop($event)"
+        >
+          <div
+            v-for="item in viewState"
+            :key="item.fullPath"
+            :class="`${prefixCls}-tabs__container`"
+            @click="handleItemClick(item)"
+          >
+            <div :class="[`${prefixCls}-tabs__wrapper`, isActive(item) ? 'active' : '']">
+              <span :class="`${prefixCls}-tabs-title__wrapper`">{{ item.meta.title }}</span>
+              <i class="dx-icon dx-icon-close" @click.stop="handleItemClose(item)" />
+            </div>
+          </div>
+        </DxSortable>
       </div>
-    </DxSortable>
+    </DxScrollView>
   </div>
 </template>
 
@@ -31,10 +35,14 @@
   import { useGo } from '/@/hooks/web/usePage';
 
   import { DxSortable } from 'devextreme-vue/sortable';
+  import { DxScrollView } from 'devextreme-vue/scroll-view';
 
   export default defineComponent({
     name: 'MultipleTabs',
-    components: { DxSortable },
+    components: {
+      DxSortable,
+      DxScrollView,
+    },
     setup() {
       const { prefixCls } = useDesign('multiple-tabs');
       const viewStore = useViewStore();
