@@ -1,13 +1,20 @@
 <template>
   <header :class="[prefixCls]">
-    <AppLogo />
-    <button @click="logout">Logout</button>
+    <div class="header-item">
+      <AppLogo />
+    </div>
+    <div class="header-item">
+      <Search />
+      <Notice />
+      <User />
+      <!-- <button @click="logout">Logout</button> -->
+    </div>
   </header>
 </template>
 
 <script lang="ts">
   import { defineComponent } from 'vue';
-  import AppLogo from '/@/layout/default/header/component/app-logo.vue';
+  import { AppLogo, Notice, Search, User } from './component';
   import { useUserStore } from '/@/store/modules/user';
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -15,6 +22,9 @@
     name: 'LayoutHeader',
     components: {
       AppLogo,
+      Notice,
+      Search,
+      User
     },
     setup() {
       const userStore = useUserStore();
@@ -37,6 +47,15 @@
 
   .@{header-prefix-cls} {
     display: flex;
-    background-color: #1890ff;
+    justify-content: space-between;
+    align-items: center;
+    height: 50px;
+    padding: 0 20px;
+    box-sizing: border-box;
+    background-color: @color-primary;
+    .header-item {
+      display: flex;
+      align-items: center;
+    }
   }
 </style>
