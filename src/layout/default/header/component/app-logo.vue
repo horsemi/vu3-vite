@@ -1,7 +1,7 @@
 <template>
   <div :class="[prefixCls]">
     <SvgIcon size="100 24" name="logo-large"></SvgIcon>
-    <span class="logo-title">订单调度中心</span>
+    <span :class="`${prefixCls}-logo-title__container`">订单调度中心</span>
   </div>
 </template>
 
@@ -25,8 +25,10 @@
   .@{prefix-cls} {
     display: flex;
     align-items: center;
-    .logo-title {
+
+    &-logo-title__container {
       display: flex;
+      min-width: 110px;
       color: #fff;
       align-items: center;
       &::before {
