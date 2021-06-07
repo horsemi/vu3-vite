@@ -30,16 +30,15 @@
       position: absolute;
       top: 0;
       right: 0;
+      display: flex;
       width: 16px;
       height: 16px;
-      display: flex;
+      font-size: 12px;
+      color: #fff;
+      background-color: #f5222d;
+      border-radius: 100%;
       align-items: center;
       justify-content: center;
-      border-radius: 100%;
-      position: absolute;
-      color: #fff;
-      background-color: #F5222D;
-      font-size: 12px;
     }
   }
 </style>

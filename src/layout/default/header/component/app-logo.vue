@@ -26,16 +26,16 @@
     display: flex;
     align-items: center;
     .logo-title {
-      color: #fff;
       display: flex;
+      color: #fff;
       align-items: center;
       &::before {
-        content: '';
         display: inline-block;
         width: 2px;
         height: 20px;
-        background-color: #fff;
         margin: 0 12px;
+        background-color: #fff;
+        content: '';
       }
     }
   }

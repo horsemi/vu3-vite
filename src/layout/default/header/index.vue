@@ -24,7 +24,7 @@
       AppLogo,
       Notice,
       Search,
-      User
+      User,
     },
     setup() {
       const userStore = useUserStore();
@@ -47,12 +47,12 @@
 
   .@{header-prefix-cls} {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
     height: 50px;
     padding: 0 20px;
-    box-sizing: border-box;
     background-color: @color-primary;
+    box-sizing: border-box;
+    justify-content: space-between;
+    align-items: center;
     .header-item {
       display: flex;
       align-items: center;
