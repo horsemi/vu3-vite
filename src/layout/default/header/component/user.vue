@@ -1,14 +1,12 @@
 <template>
   <div :class="[prefixCls]">
+    <SvgIcon size="24" name="sun"></SvgIcon>
     <DxDropDownButton
+      display-expr="name"
       :items="items"
-      :drop-down-options="{ textAlign: center }"
-      text="Hi, 秋天"
+      :text="`Hi, ${userName}`"
       styling-mode="text"
     >
-      <template #icon>
-        <SvgIcon size="24" name="sun"></SvgIcon>
-      </template>
     </DxDropDownButton>
   </div>
 </template>
@@ -26,22 +24,51 @@
     setup() {
       const { prefixCls } = useDesign('header-user');
       const userStore = useUserStore();
-      console.log(userStore.getUserInfo);
-      // console.log(userInfo);
-      const items = ['登录记录', '退出登录'];
+      const { userName } = userStore.getUserInfo;
+      const items = [
+        {
+          name: '登录记录',
+          onClick: (e) => {
+            //
+          },
+        },
+        {
+          name: '退出登录',
+          onClick: (e) => {
+            userStore.logout(true);
+          },
+        },
+      ];
+
+      function onItemClick(e) {
+        console.log(e);
+      }
+
       return {
         prefixCls,
+        onItemClick,
         items,
+        userName,
       };
     },
   });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
   @prefix-cls: ~'@{namespace}-header-user';
 
   .@{prefix-cls} {
     display: flex;
     align-items: center;
+
+    .dx-button-mode-text {
+      & .dx-button-content {
+        color: #fff;
+      }
+
+      & .dx-icon {
+        color: #fff;
+      }
+    }
   }
 </style>

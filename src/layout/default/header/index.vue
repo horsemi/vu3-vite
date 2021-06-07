@@ -7,7 +7,6 @@
       <Search />
       <Notice />
       <User />
-      <!-- <button @click="logout">Logout</button> -->
     </div>
   </header>
 </template>
@@ -15,7 +14,6 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
   import { AppLogo, Notice, Search, User } from './component';
-  import { useUserStore } from '/@/store/modules/user';
   import { useDesign } from '/@/hooks/web/useDesign';
 
   export default defineComponent({
@@ -27,17 +25,10 @@
       User,
     },
     setup() {
-      const userStore = useUserStore();
       const { prefixCls } = useDesign('layout-header');
       return {
-        userStore,
         prefixCls,
       };
-    },
-    methods: {
-      logout() {
-        this.userStore.logout(true);
-      },
     },
   });
 </script>
