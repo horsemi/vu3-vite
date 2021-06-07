@@ -25,27 +25,36 @@ const dashboard: Array<AppRouteRecordRaw> = [
   {
     path: '/home',
     name: 'Main',
-    redirect: '/home/index',
+    redirect: '/home/demo/index',
     component: LAYOUT,
     meta: {
       title: '首页',
     },
     children: [
       {
-        path: 'index',
-        name: 'Home',
-        component: () => import('/@/views/home/index.vue'),
+        path: 'demo',
+        name: 'HomeDemo',
         meta: {
-          title: '主页',
+          title: 'Demo',
         },
-      },
-      {
-        path: ':id',
-        name: 'Home',
-        component: () => import('/@/views/home/index.vue'),
-        meta: {
-          title: '带ID主页',
-        },
+        children: [
+          {
+            path: 'index',
+            name: 'Home',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '主页',
+            },
+          },
+          {
+            path: ':id',
+            name: 'Home',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '带ID主页',
+            },
+          },
+        ],
       },
     ],
   },

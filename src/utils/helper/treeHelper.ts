@@ -28,3 +28,21 @@ export function filter<T = any>(
   }
   return listFilter(tree);
 }
+
+export function treeToList<T = any>(
+  tree: any,
+  config: Partial<TreeHelperConfig> = {},
+  formatterFn?: (result: any, children: string | undefined) => void
+): T {
+  config = getConfig(config);
+  const { children } = config;
+  const result: any = [...tree];
+  for (let i = 0; i < result.length; i++) {
+    if (!result[i][children!]) continue;
+    formatterFn?.(result[i], children);
+
+    result.splice(i + 1, 0, ...result[i][children!]);
+    delete result[i][children!];
+  }
+  return result;
+}

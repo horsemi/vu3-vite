@@ -8,7 +8,7 @@ import { asyncRoutes } from '/@/router/routes';
 import { useUserStore } from './user';
 import { useAppStoreWidthOut } from './app';
 import { PermissionModeEnum } from '/@/enums/appEnum';
-import { filter } from '/@/utils/helper/treeHelper';
+import { filter, treeToList } from '/@/utils/helper/treeHelper';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 
 interface PermissionState {
@@ -74,6 +74,19 @@ export const usePermissionStore = defineStore({
         routes = routes.filter(routeFilter);
       }
       routes.push(PAGE_NOT_FOUND_ROUTE);
+      routes.forEach((item) => {
+        item.children =
+          item.children &&
+          treeToList<AppRouteRecordRaw[]>(
+            item.children,
+            {},
+            (result: any, children: string | undefined) => {
+              result[children!].forEach((item) => {
+                item.path = `${result.path}/${item.path}`;
+              });
+            }
+          );
+      });
       return routes;
     },
   },
