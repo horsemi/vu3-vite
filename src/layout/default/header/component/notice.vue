@@ -1,7 +1,7 @@
 <template>
   <div :class="[prefixCls]">
-    <SvgIcon size="24" name="sun"></SvgIcon>
-    <span class="notice-num">5</span>
+    <SvgIcon size="24" name="notice"></SvgIcon>
+    <span :class="`${prefixCls}-notice-num__wrapper`">5</span>
   </div>
 </template>
 
@@ -25,20 +25,20 @@
 
   .@{prefix-cls} {
     position: relative;
-    margin: 0 20px;
-    .notice-num {
+    margin: 0 25px;
+    cursor: pointer;
+
+    &-notice-num__wrapper {
       position: absolute;
-      top: 0;
-      right: 0;
-      display: flex;
+      top: -5px;
+      right: -5px;
       width: 16px;
       height: 16px;
       font-size: 12px;
       color: #fff;
+      text-align: center;
       background-color: #f5222d;
       border-radius: 100%;
-      align-items: center;
-      justify-content: center;
     }
   }
 </style>

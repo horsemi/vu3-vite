@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="19px" height="21px" viewBox="0 0 19 21" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>user</title>
+    <desc>Created with Sketch.</desc>
+    <g id="发货通知单详情" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" opacity="0.879999995">
+        <g transform="translate(-1309.000000, -18.000000)" id="top" stroke="#F5F6FA" stroke-width="2">
+            <g>
+                <g id="编组">
+                    <g transform="translate(1310.000000, 19.000000)">
+                        <path d="M0.194,19 C0.076,18.486 0,17.956 0,17.406 C0,13.471 3.19,10.281 7.125,10.281 L9.875,10.281 C13.81,10.281 17,13.471 17,17.406 C17,17.956 16.924,18.486 16.806,19 L0.194,19 Z" id="路径"></path>
+                        <path d="M8.516,0 C11.079,0 13.156,2.127 13.156,4.75 C13.156,7.373 11.079,9.5 8.516,9.5 C5.953,9.5 3.875,7.373 3.875,4.75 C3.875,2.127 5.953,0 8.516,0 Z" id="路径"></path>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

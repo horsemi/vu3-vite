@@ -1,7 +1,7 @@
 <template>
   <div :class="[prefixCls]">
     <input placeholder="请输入搜索关键字" :class="`${prefixCls}__input`" />
-    <SvgIcon size="16" name="sun"></SvgIcon>
+    <SvgIcon size="16" name="search"></SvgIcon>
   </div>
 </template>
 
@@ -35,6 +35,10 @@
     align-items: center;
     &__input {
       width: 100%;
+    }
+
+    & > .vue3-vite-svg-icon {
+      cursor: pointer;
     }
   }
 </style>

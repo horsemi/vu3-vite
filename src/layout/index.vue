@@ -16,23 +16,8 @@
       <div class="layout-body-content">
         <div class="menu-button">
           <div class="menu-button-box" @click="toggleMenu">
-            <svg-icon
-              v-if="opened"
-              name="sidebar-arrow"
-              width="15px"
-              height="15px"
-              color="#808080"
-              class="menu-button-icon"
-            />
-            <svg-icon
-              v-else
-              name="sidebar-arrow"
-              dir="down"
-              width="15px"
-              height="15px"
-              color="#808080"
-              class="menu-button-icon"
-            />
+            <SvgIcon v-if="openState" name="sidebar-arrow" size="15" class="menu-button-icon" />
+            <SvgIcon v-else name="sidebar-arrow" class="menu-button-icon menu-button-icon__down" />
           </div>
         </div>
         <div class="content-wrap">
@@ -137,6 +122,11 @@
           left: -3px;
           margin: 0;
           vertical-align: middle;
+        }
+
+        .menu-button-icon__down {
+          transform: rotate(180deg);
+          transition: transform 0.2s;
         }
       }
 

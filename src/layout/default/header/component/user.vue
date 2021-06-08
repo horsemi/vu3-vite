@@ -1,7 +1,8 @@
 <template>
   <div :class="[prefixCls]">
-    <SvgIcon size="24" name="sun"></SvgIcon>
+    <SvgIcon size="22" name="user"></SvgIcon>
     <DxDropDownButton
+      :height="50"
       display-expr="name"
       :items="items"
       :text="`Hi, ${userName}`"
@@ -62,6 +63,10 @@
     align-items: center;
 
     .dx-button-mode-text {
+      & .dx-button-text {
+        font-size: 16px;
+      }
+
       & .dx-button-content {
         color: #fff;
       }

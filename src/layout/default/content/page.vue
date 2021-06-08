@@ -19,7 +19,7 @@
   import FrameLayout from '/@/layout/iframe/index.vue';
 
   export default defineComponent({
-    name: 'LayoutContent',
+    name: 'LayoutContentPage',
     components: { FrameLayout },
     setup() {
       const openCache = true;
