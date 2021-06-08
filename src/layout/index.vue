@@ -5,8 +5,8 @@
     </div>
     <DxDrawer
       v-model:opened="openState"
-      opened-state-mode="shrink"
-      reveal-mode="expand"
+      opened-state-mode="push"
+      reveal-mode="slide"
       class="layout-body"
       position="before"
       template="menulist"
@@ -105,7 +105,7 @@
         display: flex;
         align-items: center;
         width: 20px;
-        height: calc(100vh - 50px);
+        height: calc(100vh - 56px);
         background: @background-color-primary;
 
         .menu-button-box {
