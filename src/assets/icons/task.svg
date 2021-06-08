@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="24px" viewBox="0 0 22 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>计划icon</title>
+    <desc>Created with Sketch.</desc>
+    <g id="发货单" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="弹出菜单" transform="translate(-32.000000, -247.000000)" stroke="#1890FF" stroke-width="2">
+            <g id="编组-7" transform="translate(27.000000, 86.000000)">
+                <g id="计划icon" transform="translate(6.000000, 162.000000)">
+                    <path d="M4.16666667,1.875 L16.0419048,1.875 C18.1457143,1.875 19.8514286,3.63036607 19.8514286,5.79541556 L19.8514286,17.9545844 C19.8514286,20.1196339 18.1457143,21.875 16.0419048,21.875 L4.16666667,21.875 C2.06285714,21.875 0.357142857,20.1196339 0.357142857,17.9545844 L0.357142857,5.79541556 C0.357142857,3.63036607 2.06285714,1.875 4.16666667,1.875 Z" id="路径"></path>
+                    <path d="M6.84857143,14.707 L8.48050288,16.1306112 C8.87219506,16.4723028 9.46035157,16.456945 9.83367774,16.0952773 L13.3590476,12.68 L13.3590476,12.68" id="路径" stroke-linecap="round"></path>
+                    <line x1="5.23809524" y1="0" x2="5.23809524" y2="4" id="路径" stroke-linecap="round"></line>
+                    <line x1="14.7619048" y1="0" x2="14.7619048" y2="4" id="路径" stroke-linecap="round"></line>
+                    <line x1="1.34380952" y1="8.242" x2="18.4866667" y2="8.242" id="路径" fill="#D8D8D8" stroke-linecap="round"></line>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

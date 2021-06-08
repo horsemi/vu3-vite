@@ -10,7 +10,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '根页面',
-      icon: 'sun',
+      icon: 'order',
     },
     children: [
       {
@@ -30,7 +30,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '首页',
-      icon: 'sun',
+      icon: 'home',
     },
     children: [
       {

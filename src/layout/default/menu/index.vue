@@ -3,42 +3,21 @@
     <div
       v-for="(item, index) in menuList"
       :key="item.name"
-      :class="[`${prefixCls}__sub`, activeIndex === index && `${prefixCls}__sub--active`]"
+      :class="[
+        `${prefixCls}-item__container`,
+        activeIndex === index && `${prefixCls}-item__container--active`,
+      ]"
       @click.stop="handleMenuClick(item, index)"
     >
-      <SvgIcon size="20" :name="item.meta.icon"></SvgIcon>
-      <span :class="`${prefixCls}-sub-title__inner`">{{ item.meta.title }}</span>
+      <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
+      <span :class="`${prefixCls}-item-title__inner`">{{ item.meta.title }}</span>
       <transition name="zoom-in-left">
         <div
           v-show="item.meta.showSub"
           :class="`${prefixCls}-popup__container`"
           :style="{ top: getSubTop(index), left: getSubLeft() }"
         >
-          <div :class="`${prefixCls}-popup__wrap`">
-            <div
-              v-for="(itemSub, indxeSub) in item.children"
-              :key="indxeSub"
-              :class="`${prefixCls}__titlebox`"
-            >
-              <div v-if="!itemSub.meta.hideMenu">
-                <div
-                  :class="`${prefixCls}__titlebox__subTitle`"
-                  @click="handleItemClick(itemSub)"
-                  >{{ itemSub.meta.title }}</div
-                >
-                <div
-                  v-for="(subChild, indexChild) in itemSub.children"
-                  :key="indexChild"
-                  :class="`${prefixCls}__titlebox__childTitle`"
-                  @click="handleItemClick(subChild)"
-                >
-                  <span v-if="!subChild.meta.hideMenu">
-                    {{ subChild.meta.title }}
-                  </span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <MenuPopup :menu-item-data="item.children" />
         </div>
       </transition>
     </div>
@@ -53,8 +32,11 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { usePermissionStore } from '/@/store/modules/permission';
 
+  import MenuPopup from './component/submenu/index.vue';
+
   export default defineComponent({
     name: 'LayoutMenu',
+    components: { MenuPopup },
     props: {
       openState: Boolean,
       menuSize: {
@@ -130,7 +112,7 @@
     padding-top: 10px;
     overflow: auto;
 
-    &__sub {
+    &-item__container {
       position: relative;
       display: flex;
       align-items: center;
@@ -139,17 +121,17 @@
       padding: 0 20px;
       font-size: 16px;
       color: #000;
-      cursor: pointer;
       box-sizing: border-box;
       .zoom-animation(left, scale(0.45, 0.45), scale(1, 1), top left);
     }
 
-    &-sub-title__inner {
+    &-item-title__inner {
       margin-left: 15px;
+      font-size: 16px;
       letter-spacing: 1px;
     }
 
-    &__sub--active {
+    &-item__container--active {
       color: @color-primary;
       background: #e6f7ff;
       &::before {
@@ -174,31 +156,6 @@
       border: 1px solid #ebeef5;
       border-radius: 4px;
       box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
-    }
-
-    &-popup__wrap {
-      display: flex;
-      flex-wrap: wrap;
-    }
-
-    &__titlebox {
-      width: 33.33%;
-      padding: 10px 15px;
-      overflow: hidden;
-      white-space: nowrap;
-      box-sizing: border-box;
-
-      &__subTitle {
-        width: 100%;
-        margin-bottom: 10px;
-        color: @color-primary;
-      }
-
-      &__childTitle {
-        width: 100%;
-        margin-bottom: 5px;
-        color: #8d8d8d;
-      }
     }
   }
 </style>
