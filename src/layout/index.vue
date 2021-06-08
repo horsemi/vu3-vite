@@ -5,8 +5,8 @@
     </div>
     <DxDrawer
       v-model:opened="openState"
-      opened-state-mode="push"
-      reveal-mode="slide"
+      opened-state-mode="shrink"
+      reveal-mode="expand"
       class="layout-body"
       position="before"
       template="menulist"
