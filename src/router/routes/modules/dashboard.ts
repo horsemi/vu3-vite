@@ -10,6 +10,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '根页面',
+      icon: 'sun',
     },
     children: [
       {
@@ -29,11 +30,13 @@ const dashboard: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '首页',
+      icon: 'sun',
     },
     children: [
       {
         path: 'demo',
         name: 'HomeDemo',
+        redirect: '/home/demo/index',
         meta: {
           title: 'Demo',
         },
@@ -44,14 +47,6 @@ const dashboard: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/home/index.vue'),
             meta: {
               title: '主页',
-            },
-          },
-          {
-            path: ':id',
-            name: 'Home',
-            component: () => import('/@/views/home/index.vue'),
-            meta: {
-              title: '带ID主页',
             },
           },
         ],

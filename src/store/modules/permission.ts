@@ -18,7 +18,7 @@ interface PermissionState {
   // Whether the route has been dynamically added
   isDynamicAddedRoute: boolean;
   // Three level routing used by menu
-  menuList: any[];
+  menuList: AppRouteRecordRaw[];
 }
 
 export const usePermissionStore = defineStore({
@@ -42,6 +42,9 @@ export const usePermissionStore = defineStore({
   actions: {
     setDynamicAddedRoute(added: boolean): void {
       this.isDynamicAddedRoute = added;
+    },
+    setMenuList(menuList: AppRouteRecordRaw[]): void {
+      this.menuList = menuList.filter((item) => !item.meta.hideMenu);
     },
     resetState(): void {
       this.isDynamicAddedRoute = false;
@@ -82,7 +85,9 @@ export const usePermissionStore = defineStore({
         routes = routes.filter(routeFilter);
       }
       routes.push(PAGE_NOT_FOUND_ROUTE);
-      this.menuList = _.cloneDeep(routes);
+
+      this.setMenuList(_.cloneDeep(routes));
+
       routes.forEach((item) => {
         item.children =
           item.children &&

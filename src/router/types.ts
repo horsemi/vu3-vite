@@ -49,6 +49,8 @@ export interface RouteMeta {
   hideMenu?: boolean;
 
   isLink?: boolean;
+
+  showSub?: boolean;
 }
 
 // @ts-ignore

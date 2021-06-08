@@ -2,34 +2,40 @@
   <div :class="[prefixCls]" @scroll="handleScroll">
     <div
       v-for="(item, index) in menuList"
-      :key="index"
+      :key="item.name"
       :class="[`${prefixCls}__sub`, activeIndex === index && `${prefixCls}__sub--active`]"
       @click.stop="handleMenuClick(item, index)"
     >
-      <SvgIcon size="16" name="sun"></SvgIcon>
-      <span v-show="openState" :class="`${prefixCls}__sub__title`">{{ item.meta.title }}</span>
+      <SvgIcon size="20" :name="item.meta.icon"></SvgIcon>
+      <span :class="`${prefixCls}-sub-title__inner`">{{ item.meta.title }}</span>
       <transition name="zoom-in-left">
         <div
           v-show="item.meta.showSub"
-          :class="`${prefixCls}__item`"
+          :class="`${prefixCls}-popup__container`"
           :style="{ top: getSubTop(index), left: getSubLeft() }"
         >
-          <div :class="`${prefixCls}__titlewrap`">
+          <div :class="`${prefixCls}-popup__wrap`">
             <div
               v-for="(itemSub, indxeSub) in item.children"
               :key="indxeSub"
               :class="`${prefixCls}__titlebox`"
             >
-              <div :class="`${prefixCls}__titlebox__subTitle`" @click="handleItemClick(itemSub)">{{
-                itemSub.meta.title
-              }}</div>
-              <div
-                v-for="(subChild, indexChild) in itemSub.children"
-                :key="indexChild"
-                :class="`${prefixCls}__titlebox__childTitle`"
-                @click="handleItemClick(subChild)"
-              >
-                {{ subChild.meta.title }}
+              <div v-if="!itemSub.meta.hideMenu">
+                <div
+                  :class="`${prefixCls}__titlebox__subTitle`"
+                  @click="handleItemClick(itemSub)"
+                  >{{ itemSub.meta.title }}</div
+                >
+                <div
+                  v-for="(subChild, indexChild) in itemSub.children"
+                  :key="indexChild"
+                  :class="`${prefixCls}__titlebox__childTitle`"
+                  @click="handleItemClick(subChild)"
+                >
+                  <span v-if="!subChild.meta.hideMenu">
+                    {{ subChild.meta.title }}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
@@ -40,6 +46,8 @@
 </template>
 
 <script lang="ts">
+  import type { AppRouteRecordRaw } from '/@/router/types';
+
   import { defineComponent, ref } from 'vue';
   import { RouteLocationRawEx, useGo } from '/@/hooks/web/usePage';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -67,8 +75,8 @@
       const handleItemClick = (item: RouteLocationRawEx) => {
         go(item);
       };
-      const handleMenuClick = (item, index) => {
-        menuList.value[activeIndex.value].meta['showSub'] = false;
+      const handleMenuClick = (item: AppRouteRecordRaw, index) => {
+        menuList.value[activeIndex.value].meta.showSub = false;
         activeIndex.value = index;
         if (item.children) {
           item.meta.showSub = true;
@@ -94,7 +102,7 @@
       document.body.addEventListener(
         'click',
         () => {
-          menuList.value[activeIndex.value].meta['showSub'] = false;
+          menuList.value[activeIndex.value].meta.showSub = false;
         },
         false
       );
@@ -136,8 +144,8 @@
       .zoom-animation(left, scale(0.45, 0.45), scale(1, 1), top left);
     }
 
-    &__sub__title {
-      margin-left: 10px;
+    &-sub-title__inner {
+      margin-left: 15px;
       letter-spacing: 1px;
     }
 
@@ -155,7 +163,7 @@
       }
     }
 
-    &__item {
+    &-popup__container {
       position: fixed;
       top: 50px;
       z-index: @page-layout-menu-z-index;
@@ -168,7 +176,7 @@
       box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
     }
 
-    &__titlewrap {
+    &-popup__wrap {
       display: flex;
       flex-wrap: wrap;
     }
