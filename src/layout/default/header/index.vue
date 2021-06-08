@@ -38,7 +38,7 @@
 
   .@{header-prefix-cls} {
     display: flex;
-    height: 50px;
+    height: 56px;
     padding: 0 20px;
     background-color: @color-primary;
     box-sizing: border-box;

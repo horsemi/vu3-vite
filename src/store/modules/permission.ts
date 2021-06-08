@@ -10,12 +10,15 @@ import { useAppStoreWidthOut } from './app';
 import { PermissionModeEnum } from '/@/enums/appEnum';
 import { filter, treeToList } from '/@/utils/helper/treeHelper';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
+import _ from 'lodash';
 
 interface PermissionState {
   // Permission code list
   permCodeList: string[];
   // Whether the route has been dynamically added
   isDynamicAddedRoute: boolean;
+  // Three level routing used by menu
+  menuList: any[];
 }
 
 export const usePermissionStore = defineStore({
@@ -23,6 +26,7 @@ export const usePermissionStore = defineStore({
   state: (): PermissionState => ({
     permCodeList: [],
     isDynamicAddedRoute: false,
+    menuList: [],
   }),
   getters: {
     getPermCodeList() {
@@ -30,6 +34,9 @@ export const usePermissionStore = defineStore({
     },
     getIsDynamicAddedRoute() {
       return this.isDynamicAddedRoute;
+    },
+    getMenuList() {
+      return this.menuList;
     },
   },
   actions: {
@@ -39,6 +46,7 @@ export const usePermissionStore = defineStore({
     resetState(): void {
       this.isDynamicAddedRoute = false;
       this.permCodeList = [];
+      this.menuList = [];
     },
     async changePermissionCode() {
       const userStore = useUserStore();
@@ -74,6 +82,7 @@ export const usePermissionStore = defineStore({
         routes = routes.filter(routeFilter);
       }
       routes.push(PAGE_NOT_FOUND_ROUTE);
+      this.menuList = _.cloneDeep(routes);
       routes.forEach((item) => {
         item.children =
           item.children &&
