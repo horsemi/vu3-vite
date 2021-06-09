@@ -62,7 +62,7 @@
         min: 54,
       };
       const viewStore = useViewStore();
-      const prefixCls = useDesign('layout');
+      const { prefixCls } = useDesign('layout');
       const viewState = computed(() => viewStore.getViewList);
       const openState = ref(true);
       const toggleMenu = () => {
