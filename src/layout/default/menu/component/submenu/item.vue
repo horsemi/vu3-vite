@@ -1,6 +1,6 @@
 <template>
   <div :class="prefixCls">
-    <div :class="`${prefixCls}-title__wrapper`" @click="handleItemClick(itemSub)">{{
+    <div :class="`${prefixCls}-title__wrapper`" @click="handleItemClick(subMenuData)">{{
       subMenuData.meta.title
     }}</div>
     <div
