@@ -33,7 +33,12 @@ export default defineConfig(
       server: {
         port: 8080,
         open: true,
-        proxy: {},
+        proxy: {
+          '/api': {
+            target: 'http://10.10.14.207:30037',
+            changeOrigin: true,
+          },
+        },
         cors: true,
       },
       plugins: createVitePlugins(isBuild),

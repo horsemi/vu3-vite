@@ -6,6 +6,7 @@ import { setupStore } from './store';
 import { setupRouter } from './router';
 import { setupGlobDirectives } from '/@/directives';
 import SvgIcon from '/@/components/Icon/SvgIcon.vue';
+import OdsTable from '/@/components/Table/OdsTable.vue';
 // router-guard
 import '/@/router/guard';
 
@@ -16,6 +17,7 @@ import 'devextreme/dist/css/dx.light.css';
 const app = createApp(App);
 
 app.component('SvgIcon',SvgIcon);
+app.component('OdsTable', OdsTable);
 
 setupStore(app);
 

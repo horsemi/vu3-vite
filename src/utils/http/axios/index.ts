@@ -118,6 +118,14 @@ const transform: AxiosTransform = {
     return config;
   },
 
+  responseInterceptors: (res: AxiosResponse<any>) => {
+    if (res.data && res.data.data) {
+      return res.data.data;
+    } else {
+      return res.data;
+    }
+  },
+
   /**
    * @description: 响应错误处理
    */

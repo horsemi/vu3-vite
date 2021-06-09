@@ -1,29 +1,54 @@
 <template>
-  <div style="text-align: center">
-    <img alt="Vue logo" :src="LogoUrl" />
-    <HelloWorld :msg="'userId: ' + userId + ' userName: ' + userName" />
+  <div>
+    <ods-table :table-data="tableData" :columns="columns"></ods-table>
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
-  import HelloWorld from '/@/components/HelloWorld.vue';
-  import LogoUrl from '/@/assets/logo.png';
-
+  import { defineComponent, ref } from 'vue';
   import { useUserStore } from '/@/store/modules/user';
+  import { getShippingOrders } from '../../../api/index';
 
   export default defineComponent({
     name: 'Analysis',
-    components: {
-      HelloWorld,
-    },
     setup() {
       const userStore = useUserStore();
+      const tableData = ref();
+      const columns = [
+        {
+          dataField: 'group',
+          caption: 'group',
+        },
+        {
+          dataField: 'telephone',
+          caption: 'telephone',
+        },
+        {
+          dataField: 'outSourceBillType',
+          caption: 'outSourceBillType',
+        },
+        {
+          dataField: 'receiver',
+          caption: 'receiver',
+        },
+        {
+          dataField: 'bigGroup',
+          caption: 'bigGroup',
+        },
+        {
+          dataField: 'detailAddress',
+          caption: 'detailAddress',
+        }
+      ];
       const { userId, userName } = userStore.getUserInfo;
+      getShippingOrders().then(res => {
+        tableData.value = res;
+      });
       return {
         userId,
         userName,
-        LogoUrl,
+        tableData,
+        columns
       };
     },
   });
