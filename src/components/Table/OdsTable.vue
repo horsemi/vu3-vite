@@ -1,39 +1,60 @@
 <template>
   <div :class="[prefixCls]">
-    <dx-data-grid
-      :data-source="tableData"
-      :columns="columns"
+    <DxDataGrid
+      :data-source="dataSource"
       :height="tableOptions.height"
       :show-column-lines="tableOptions.showColumnLines"
       :show-row-lines="tableOptions.showRowLines"
       :show-borders="tableOptions.showBorders"
       :row-alternation-enabled="tableOptions.rowAlternationEnabled"
+      :customize-columns="customizeColumns"
       @selection-changed="onSelectionChanged"
     >
-      <dx-selection :select-all-mode="tableOptions.selection.allMode" :show-check-boxes-mode="tableOptions.selection.checkBoxesMode" mode="multiple" />
-      <dx-paging :page-size="tableOptions.page.size" :page-index="pageIndex" />
-      <dx-pager
+      <template v-for="(item, index) in columns" :key="index">
+        <DxColumn
+          v-if="!item.hide"
+          :data-field="item.key" 
+          :caption="item.caption"
+          :data-type="item.type"
+          :cell-template="item.cellTemplate"
+        />
+      </template>
+      <DxSelection
+        :select-all-mode="tableOptions.selection.allMode"
+        :show-check-boxes-mode="tableOptions.selection.checkBoxesMode"
+        mode="multiple"
+      />
+      <DxPaging :page-size="tableOptions.page.size" :page-index="pageIndex" />
+      <DxPager
         :visible="true"
         :show-info="true"
         :show-navigation-buttons="true"
         info-text="共{1}页，{2}条数据"
         display-mode="full"
-      >
-      </dx-pager>
-    </dx-data-grid>
+      />
+    </DxDataGrid>
     <div :class="`${prefixCls}__jump`">跳至<input type="number" @change="handleJump" />页</div>
   </div>
 </template>
 
 <script lang="ts">
-import 'devextreme/data/odata/store';
-import { defineComponent, ref } from 'vue';
+import ODataStore from 'devextreme/data/odata/store';
+import DataSource from 'devextreme/data/data_source';
+import { defineComponent, onBeforeUnmount, ref } from 'vue';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { deepMerge } from '/@/utils/index';
-import { IDefaultTableOptions } from './type';
-import DxDataGrid, { DxSelection, DxPaging, DxPager } from 'devextreme-vue/data-grid';
+import { ITableOptions, ITableColumnsItem } from './type';
+import DxDataGrid, { DxSelection, DxPaging, DxColumn, DxPager } from 'devextreme-vue/data-grid';
 
-const defaultTableOptions: IDefaultTableOptions = {
+const defaultTableOptions: ITableOptions = {
+  dataSourceOptions: {
+    sort: '',
+    paginate: true,
+    oDataOptions: {
+      url: '',
+      version: 4,
+    },
+  },
   height: '100%',
   showColumnLines: false,
   showRowLines: true,
@@ -54,18 +75,13 @@ export default defineComponent({
     DxSelection,
     DxPaging,
     DxPager,
+    DxColumn
   },
   props: {
     options: {
       type: Object,
       default: () => {
         return {};
-      },
-    },
-    tableData: {
-      type: Array,
-      default: () => {
-        return [];
       },
     },
     columns: {
@@ -77,8 +93,32 @@ export default defineComponent({
   },
   setup(props) {
     const { prefixCls } = useDesign('ods-table');
-    const tableOptions = ref(deepMerge(defaultTableOptions, props.options));
     const pageIndex = ref(0);
+    const tableOptions = ref(deepMerge(defaultTableOptions, props.options));
+    const dataSource = new DataSource({
+      // requireTotalCount: true,
+      sort: tableOptions.value.dataSourceOptions.sort,
+      paginate: tableOptions.value.dataSourceOptions.paginate,
+      pageSize: tableOptions.value.page.size,
+      store: new ODataStore({
+        ...tableOptions.value.dataSourceOptions.oDataOptions,
+        beforeSend: (e) => {  
+            console.log(e);
+        }
+      }),
+      select: props.columns.map((item) => {
+        return (item as ITableColumnsItem).key;
+      })
+    });
+    dataSource.load().then(
+      (data) => {
+        console.log(data);
+      },
+      (error) => {
+        console.log(error);
+      }
+    );
+
     const onSelectionChanged = ({ selectedRowKeys, selectedRowsData }) => {
       console.log(selectedRowKeys, selectedRowsData);
     };
@@ -86,12 +126,23 @@ export default defineComponent({
       const index = parseInt(e.target.value) - 1;
       pageIndex.value = index >= 0 ? index : 0;
     };
+
+    onBeforeUnmount(() => {
+      dataSource.dispose();
+    });
+
+    const customizeColumns = (columns) => {
+      console.log(columns);
+    };
+
     return {
+      dataSource,
       prefixCls,
       pageIndex,
       tableOptions,
       onSelectionChanged,
       handleJump,
+      customizeColumns,
     };
   },
 });
@@ -121,7 +172,7 @@ export default defineComponent({
   .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > tr > td,
   .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > td,
   .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > tr > td {
-    background-color: #E6F7FF;
+    background-color: #e6f7ff;
   }
 
   // 分页器样式
@@ -161,7 +212,7 @@ export default defineComponent({
   .dx-pager .dx-pages .dx-prev-button::before {
     font-size: 17px;
   }
-  
+
   // 分页器省略号样式
   .dx-pager .dx-pages .dx-separator {
     padding-right: 10px;

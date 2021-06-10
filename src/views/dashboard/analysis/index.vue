@@ -1,54 +1,79 @@
 <template>
   <div>
-    <ods-table :table-data="tableData" :columns="columns"></ods-table>
+    <ods-table :options="options" :columns="columns"></ods-table>
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent } from 'vue';
+import { ITableOptions } from '/@/components/Table/type';
   import { useUserStore } from '/@/store/modules/user';
-  import { getShippingOrders } from '../../../api/index';
 
   export default defineComponent({
     name: 'Analysis',
     setup() {
       const userStore = useUserStore();
-      const tableData = ref();
       const columns = [
         {
-          dataField: 'group',
-          caption: 'group',
+          key: 'Id',
+          caption: 'id',
+          type: 'number',
+          hide: true,
         },
         {
-          dataField: 'telephone',
-          caption: 'telephone',
-        },
-        {
-          dataField: 'outSourceBillType',
-          caption: 'outSourceBillType',
-        },
-        {
-          dataField: 'receiver',
-          caption: 'receiver',
-        },
-        {
-          dataField: 'bigGroup',
+          key: 'BigGroup',
           caption: 'bigGroup',
+          type: 'string',
+          cellTemplate: 'test',
         },
         {
-          dataField: 'detailAddress',
+          key: 'BillCode',
+          caption: 'billCode',
+          type: 'string',
+        },
+        {
+          key: 'DetailAddress',
           caption: 'detailAddress',
+          type: 'string',
+        },
+        {
+          key: 'Group',
+          caption: 'group',
+          type: 'string',
+        },
+        {
+          key: 'CustomerSalesman',
+          caption: 'customerSalesman',
+          type: 'string',
+        },
+        {
+          key: 'CityCode',
+          caption: 'cityCode',
+          type: 'string',
         }
       ];
+      const options: ITableOptions = {
+        page: {
+          size: 20
+        },
+        dataSourceOptions: {
+          sort: 'Id',
+          oDataOptions: {
+            url: '/api/odata/shipping-orders',
+            key: 'Id',
+            keyType: 'int64'
+          }
+        }
+      };
       const { userId, userName } = userStore.getUserInfo;
-      getShippingOrders().then(res => {
-        tableData.value = res;
-      });
+      // getShippingOrders().then(res => {
+      //   tableData.value = res;
+      // });
       return {
         userId,
         userName,
-        tableData,
-        columns
+        columns,
+        options
       };
     },
   });
