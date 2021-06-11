@@ -75,7 +75,7 @@ export default defineComponent({
     DxSelection,
     DxPaging,
     DxPager,
-    DxColumn
+    DxColumn,
   },
   props: {
     options: {
@@ -101,23 +101,13 @@ export default defineComponent({
       paginate: tableOptions.value.dataSourceOptions.paginate,
       pageSize: tableOptions.value.page.size,
       store: new ODataStore({
-        ...tableOptions.value.dataSourceOptions.oDataOptions,
-        beforeSend: (e) => {  
-            console.log(e);
-        }
+        ...tableOptions.value.dataSourceOptions.oDataOptions
       }),
       select: props.columns.map((item) => {
         return (item as ITableColumnsItem).key;
       })
     });
-    dataSource.load().then(
-      (data) => {
-        console.log(data);
-      },
-      (error) => {
-        console.log(error);
-      }
-    );
+    dataSource.load();
 
     const onSelectionChanged = ({ selectedRowKeys, selectedRowsData }) => {
       console.log(selectedRowKeys, selectedRowsData);
@@ -131,8 +121,8 @@ export default defineComponent({
       dataSource.dispose();
     });
 
-    const customizeColumns = (columns) => {
-      console.log(columns);
+    const customizeColumns = () => {
+      // console.log(columns);
     };
 
     return {
@@ -177,7 +167,9 @@ export default defineComponent({
 
   // 分页器样式
   .dx-datagrid-pager {
+    padding-top: 20px;
     padding-right: 150px;
+    padding-bottom: 20px;
     border: none;
   }
 
@@ -240,8 +232,7 @@ export default defineComponent({
     display: flex;
     align-items: center;
     width: 150px;
-    height: 54px;
-    padding-left: 10px;
+    height: 73px;
     color: #959595;
     input {
       width: 60px;
