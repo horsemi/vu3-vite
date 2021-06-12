@@ -1,42 +1,44 @@
 <template>
   <div :class="[prefixCls]" @scroll="handleScroll">
-    <div
-      v-for="(item, index) in menuList"
-      :key="item.name"
-      :class="[
-        `${prefixCls}-item__container`,
-        activeIndex === index && `${prefixCls}-item__container--active`,
-      ]"
-      @click.stop="handleMenuClick(item, index)"
-    >
-      <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
-      <span :class="`${prefixCls}-item-title__inner`">{{ item.meta.title }}</span>
-      <transition name="zoom-in-left">
-        <div
-          v-show="item.meta.showSub"
-          :class="`${prefixCls}-popup__container`"
-          :style="{ top: getSubTop(index), left: getSubLeft() }"
-        >
-          <MenuPopup :menu-item-data="item.children" />
-        </div>
-      </transition>
-    </div>
+    <DxScrollView show-scrollbar="onHover" direction="vertical" :width="200">
+      <div
+        v-for="(item, index) in menuList"
+        :key="item.name"
+        :class="[`${prefixCls}-item__container`, isActive(item)]"
+        @click.stop="handleMenuClick(item, index)"
+      >
+        <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
+        <span :class="`${prefixCls}-item-title__inner`">{{ item.meta.title }}</span>
+        <transition name="zoom-in-left">
+          <div
+            v-show="item.meta.showSub"
+            :class="`${prefixCls}-popup__container`"
+            :style="{ top: getSubTop(index), left: getSubLeft() }"
+          >
+            <MenuPopup :menu-item-data="item.children" />
+          </div>
+        </transition>
+      </div>
+    </DxScrollView>
   </div>
 </template>
 
 <script lang="ts">
   import type { AppRouteRecordRaw } from '/@/router/types';
 
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, unref, computed } from 'vue';
   import { RouteLocationRawEx, useGo } from '/@/hooks/web/usePage';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { usePermissionStore } from '/@/store/modules/permission';
+  import { useRouter } from 'vue-router';
+
+  import DxScrollView from 'devextreme-vue/scroll-view';
 
   import MenuPopup from './component/submenu/index.vue';
 
   export default defineComponent({
     name: 'LayoutMenu',
-    components: { MenuPopup },
+    components: { MenuPopup, DxScrollView },
     props: {
       openState: Boolean,
       menuSize: {
@@ -49,19 +51,35 @@
     setup(props) {
       const go = useGo();
       const { prefixCls } = useDesign('layout-menu');
+      const router = useRouter();
       const activeIndex = ref<number>(0);
+      const activeName = computed(() => {
+        return router.currentRoute.value.name;
+      });
+
       const scrollTop = ref<number>(0);
       const permissionStore = usePermissionStore();
       const menuList = ref(permissionStore.getMenuList);
 
-      const handleItemClick = (item: RouteLocationRawEx) => {
-        go(item);
-      };
+      function isActive(route: AppRouteRecordRaw) {
+        if (route.name === unref(activeName)) {
+          return `${prefixCls}-item__container--active`;
+        } else if (route.children) {
+          for (let item of route.children) {
+            return isActive(item);
+          }
+        } else {
+          return '';
+        }
+      }
+
       const handleMenuClick = (item: AppRouteRecordRaw, index) => {
         menuList.value[activeIndex.value].meta.showSub = false;
         activeIndex.value = index;
         if (item.children) {
-          item.meta.showSub = true;
+          item.children.length === 1 && !item.children[0].children
+            ? go(item.children[0] as RouteLocationRawEx)
+            : (item.meta.showSub = true);
         }
       };
       const handleScroll = (e): void => {
@@ -81,24 +99,28 @@
           : props.menuSize.min + 3 + 'px';
         return left;
       };
-      document.body.addEventListener(
-        'click',
-        () => {
-          menuList.value[activeIndex.value].meta.showSub = false;
-        },
-        false
-      );
+
+      function handleMenuClose(e) {
+        menuList.value[activeIndex.value].meta.showSub = false;
+      }
+
+      document.body.addEventListener('click', handleMenuClose, false);
 
       return {
         handleScroll,
-        handleItemClick,
         getSubTop,
         getSubLeft,
         handleMenuClick,
+        handleMenuClose,
         prefixCls,
         activeIndex,
+        activeName,
+        isActive,
         menuList,
       };
+    },
+    beforeUnmount() {
+      document.removeEventListener('click', this.handleMenuClose);
     },
   });
 </script>
@@ -121,8 +143,13 @@
       padding: 0 20px;
       font-size: 16px;
       color: #000;
+      cursor: pointer;
       box-sizing: border-box;
       .zoom-animation(left, scale(0.45, 0.45), scale(1, 1), top left);
+
+      &:hover {
+        color: #69c0ff !important;
+      }
     }
 
     &-item-title__inner {
@@ -132,7 +159,7 @@
     }
 
     &-item__container--active {
-      color: @color-primary;
+      color: @color-primary !important;
       background: #e6f7ff;
       &::before {
         position: absolute;
