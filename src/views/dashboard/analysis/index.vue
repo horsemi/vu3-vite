@@ -20,7 +20,8 @@
           <DxButton :width="100" icon="refresh" text="刷新" @click="onClick($event)" />
         </div>
       </div>
-      <OdsTable :options="options" :columns="columns"> </OdsTable>
+      <OdsTable :options="options" :columns="columns" @handle-bill-code-click="handleBillCodeClick">
+      </OdsTable>
     </div>
     <DxPopover v-model:visible="defaultVisible" target="#link" position="bottom">
       <div v-for="(item, index) in summary" :key="index" class="summary">
@@ -98,7 +99,6 @@ export default defineComponent({
         oDataOptions: {
           url: '/api/odata/shipping-orders',
           key: 'Id',
-          keyType: 'int64',
         },
       },
     };

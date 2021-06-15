@@ -100,7 +100,7 @@
         return left;
       };
 
-      function handleMenuClose(e) {
+      function handleMenuClose() {
         menuList.value[activeIndex.value].meta.showSub = false;
       }
 
