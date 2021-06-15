@@ -2,35 +2,51 @@
   <div>
     <QueryPlan />
     <div class="example">
-      <div class="btn-wrap">
-        <div class="btn-box">
+      <div class="btn__wrap">
+        <div class="btn__box">
           <DxButton :width="76" text="提交" type="default" @click="onClick($event)" />
           <DxButton :width="76" text="审核" @click="onClick($event)" />
           <DxButton :width="76" text="删除" @click="onClick($event)" />
-          <DxButton :width="76" text="标记" @click="onClick($event)" />
+          <DxDropDownButton :items="tabList" :width="98" text="标记" />
         </div>
-        <div class="btn-box">
-          <DxButton :width="112" text="汇总信息" @click="onClick($event)" />
-          <DxButton :width="76" text="刷新" @click="onClick($event)" />
+        <div class="btn__box">
+          <DxButton
+            id="link"
+            :width="112"
+            text="汇总信息"
+            @click="defaultVisible = !defaultVisible"
+          >
+          </DxButton>
+          <DxButton :width="100" icon="refresh" text="刷新" @click="onClick($event)" />
         </div>
       </div>
       <OdsTable :options="options" :columns="columns"> </OdsTable>
     </div>
+    <DxPopover v-model:visible="defaultVisible" target="#link" position="bottom">
+      <div v-for="(item, index) in summary" :key="index" class="summary">
+        <span class="summary__text">{{ item.text }}</span>
+        <span class="summary__num">{{ item.num }}</span>
+      </div>
+    </DxPopover>
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { ITableOptions } from '/@/components/Table/type';
 import { useUserStore } from '/@/store/modules/user';
 import QueryPlan from '../../../components/QueryPlan/index.vue';
 import DxButton from 'devextreme-vue/button';
+import DxDropDownButton from 'devextreme-vue/drop-down-button';
+import { DxPopover } from 'devextreme-vue/popover';
 
 export default defineComponent({
   name: 'Analysis',
   components: {
     QueryPlan,
     DxButton,
+    DxDropDownButton,
+    DxPopover,
   },
   setup() {
     const userStore = useUserStore();
@@ -86,6 +102,31 @@ export default defineComponent({
         },
       },
     };
+    const tabList = ['加急单', '区分物流', '产品异常', '订单异常', '取消标识'];
+    const summary = [
+      {
+        text: '数量汇总',
+        num: 136,
+      },
+      {
+        text: '包件数汇总',
+        num: '358',
+      },
+      {
+        text: '总包件数汇总',
+        num: '358',
+      },
+      {
+        text: '体积汇总',
+        num: '153.52',
+      },
+      {
+        text: '总体积汇总',
+        num: '153.52',
+      },
+    ];
+    const defaultVisible = ref(false);
+
     const { userId, userName } = userStore.getUserInfo;
     // getShippingOrders().then(res => {
     //   tableData.value = res;
@@ -95,6 +136,9 @@ export default defineComponent({
       userName,
       columns,
       options,
+      tabList,
+      defaultVisible,
+      summary,
     };
   },
 });
@@ -106,12 +150,12 @@ export default defineComponent({
   padding: 20px;
   padding-bottom: 0;
   background-color: #fff;
-  .btn-wrap {
+  .btn__wrap {
     display: flex;
     justify-content: space-between;
     width: 100%;
     margin-bottom: 20px;
-    .btn-box {
+    .btn__box {
       & > * {
         margin-right: 10px;
       }
@@ -119,6 +163,24 @@ export default defineComponent({
         margin-right: 0;
       }
     }
+  }
+}
+
+.summary {
+  display: flex;
+  width: 200px;
+  margin-bottom: 10px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+  .summary__text,
+  .summary__num {
+    flex: 1;
+    text-align: right;
+  }
+  .summary__num {
+    margin-left: 14px;
+    text-align: left;
   }
 }
 </style>

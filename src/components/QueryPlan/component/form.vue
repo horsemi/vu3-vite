@@ -1,22 +1,31 @@
 <template>
-  <div :class="prefixCls">
-    <div :class="`${prefixCls}__box`" style="padding-bottom: 0">
+  <div :class="prefixCls" @click.stop="">
+    <div
+      :class="`${prefixCls}__box`"
+      :style="{
+        height: '64px',
+        paddingBottom: 0,
+        boxShadow: opened ? '10px 0 12px 0 rgb(0 0 0 / 10%)' : '',
+      }"
+      @click.stop=""
+    >
       <DxSelectBox
-        v-model:value="labelLocation"
+        v-model:value="queryList[0].requirement"
         disabled
         width="200"
-        placeholder="查询字段"
-        :items="['left', 'top']"
+        :items="requirementList"
+        @itemClick="onItemClick"
       />
       <DxSelectBox
-        v-model:value="showColon"
+        v-model:value="queryList[0].operator"
         disabled
         width="95"
-        :items="['等于', '大于', '小于']"
+        :items="queryList[0].operatorList"
+        @itemClick="onItemClick"
       />
-      <input />
+      <input v-model="queryList[0].value" />
       <SvgIcon
-        :class="`${prefixCls}__icon`"
+        :class="[`${prefixCls}__icon`, opened && `${prefixCls}__icon--translate`]"
         size="16"
         name="multi-arrow"
         @click="opened = !opened"
@@ -24,56 +33,41 @@
     </div>
     <transition name="zoom-in-top">
       <div v-show="opened" :class="`${prefixCls}__overflow`">
-        <div :class="`${prefixCls}__box`">
+        <div v-for="(item, index) in queryList.slice(1)" :key="index" :class="`${prefixCls}__box`">
           <DxSelectBox
-            v-model:value="labelLocation"
+            v-model:value="item.requirement"
             disabled
             width="200"
-            placeholder="单据日期"
-            :items="['left', 'top']"
+            :items="requirementList"
+            @itemClick="onItemClick"
           />
           <DxSelectBox
-            v-model:value="showColon"
+            v-model:value="item.operator"
             disabled
             width="95"
-            :items="['等于', '大于', '小于']"
+            :items="item.operatorList"
+            @itemClick="onItemClick"
           />
-          <input />
-          <SvgIcon :class="`${prefixCls}__icon`" size="16" name="subtract"></SvgIcon>
+          <input v-model="item.value" />
+          <SvgIcon
+            :class="`${prefixCls}__icon`"
+            size="16"
+            name="subtract"
+            @click="onDelRequirement(index + 1)"
+          ></SvgIcon>
         </div>
         <div :class="`${prefixCls}__box`">
-          <DxSelectBox
-            v-model:value="labelLocation"
-            disabled
-            width="200"
-            placeholder="单据类型"
-            :items="['left', 'top']"
+          <div style="cursor: pointer" @click="onAddRequirement">
+            <SvgIcon :class="`${prefixCls}__plus`" size="14" name="plus"></SvgIcon>
+            <span>添加条件</span>
+          </div>
+          <DxButton
+            :class="`${prefixCls}__btn`"
+            :width="100"
+            type="default"
+            text="保存设置"
+            @click="onSaveRequirement"
           />
-          <DxSelectBox
-            v-model:value="showColon"
-            disabled
-            width="95"
-            :items="['等于', '大于', '小于']"
-          />
-          <input />
-          <SvgIcon :class="`${prefixCls}__icon`" size="16" name="subtract"></SvgIcon>
-        </div>
-        <div :class="`${prefixCls}__box`">
-          <DxSelectBox
-            v-model:value="labelLocation"
-            disabled
-            width="200"
-            placeholder="单据状态"
-            :items="['left', 'top']"
-          />
-          <DxSelectBox
-            v-model:value="showColon"
-            disabled
-            width="95"
-            :items="['等于', '大于', '小于']"
-          />
-          <input />
-          <SvgIcon :class="`${prefixCls}__icon`" size="16" name="subtract"></SvgIcon>
         </div>
       </div>
     </transition>
@@ -81,25 +75,92 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onBeforeUnmount, reactive, ref } from 'vue';
 import { useDesign } from '/@/hooks/web/useDesign';
 import DxSelectBox from 'devextreme-vue/select-box';
+import DxButton from 'devextreme-vue/button';
+
+interface IQueryItem {
+  requirement: string;
+  operator: string;
+  operatorList: string[];
+  value: string;
+}
 
 export default defineComponent({
   components: {
     DxSelectBox,
+    DxButton,
   },
+  emits: ['on-add-requirement', 'on-del-requirement', 'on-save-requirement'],
   setup() {
     const { prefixCls } = useDesign('query-form');
-    const labelLocation = ref('');
-    const showColon = ref('等于');
-    const opened = ref(false);
+    const opened = ref<boolean>(false);
+    const requirementList: string[] = ['查询字段', '单据日期', '单据类型', '单据状态'];
+    const queryList = reactive<IQueryItem[]>([
+      {
+        requirement: requirementList[0],
+        operator: '等于',
+        operatorList: ['等于', '大于', '小于'],
+        value: '',
+      },
+      {
+        requirement: requirementList[1],
+        operator: '等于',
+        operatorList: ['等于', '大于', '小于'],
+        value: '',
+      },
+      {
+        requirement: requirementList[2],
+        operator: '等于',
+        operatorList: ['等于', '大于', '小于'],
+        value: '',
+      },
+      {
+        requirement: requirementList[3],
+        operator: '等于',
+        operatorList: ['等于', '大于', '小于'],
+        value: '',
+      },
+    ]);
+
+    const onAddRequirement = () => {
+      queryList.push({
+        requirement: requirementList[0],
+        operator: '等于',
+        operatorList: ['等于', '大于', '小于'],
+        value: '',
+      });
+    };
+    const onDelRequirement = (index: number) => {
+      queryList.splice(index, 1);
+    };
+    const onSaveRequirement = () => {
+      console.log(queryList);
+    };
+    const onItemClick = (e) => {
+      e.event.stopPropagation();
+    };
+
+    function closePopup() {
+      opened.value = false;
+    }
+
+    document.addEventListener('click', closePopup, false);
+
+    onBeforeUnmount(() => {
+      document.removeEventListener('click', closePopup);
+    });
 
     return {
       prefixCls,
-      labelLocation,
-      showColon,
       opened,
+      queryList,
+      requirementList,
+      onAddRequirement,
+      onDelRequirement,
+      onSaveRequirement,
+      onItemClick,
     };
   },
 });
@@ -115,6 +176,7 @@ export default defineComponent({
   &__box {
     display: flex;
     align-items: center;
+    justify-content: space-between;
     padding-bottom: 16px;
     padding-left: 20px;
 
@@ -139,14 +201,30 @@ export default defineComponent({
     margin-right: 20px;
     margin-left: 10px;
     cursor: pointer;
+    transform: rotate(0);
+    transition: transform 300ms;
+  }
+
+  &__icon--translate {
+    transform: rotate(-180deg);
+    transition: transform 300ms;
   }
 
   &__overflow {
     position: absolute;
-    top: 50px;
-    z-index: 100;
+    top: 64px;
+    z-index: @page-popup-z-index;
+    width: 100%;
     background-color: #fff;
-    // box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
+    box-shadow: 10px 10px 12px 0 rgb(0 0 0 / 10%);
+  }
+
+  &__plus {
+    margin: 0 6px;
+  }
+
+  &__btn {
+    margin-right: 57px;
   }
 }
 </style>

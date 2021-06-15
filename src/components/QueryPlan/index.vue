@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
-    <QueryFrom />
-    <QueryButton />
+    <QueryFrom/>
+    <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
     <QueryQuick />
   </div>
 </template>
@@ -17,12 +17,26 @@ export default defineComponent({
   components: {
     QueryFrom,
     QueryButton,
-    QueryQuick
+    QueryQuick,
   },
   setup() {
     const { prefixCls } = useDesign('query-plan');
+
+    const onSearch = () => {
+      //
+    };
+    const onReset = () => {
+      //
+    };
+    const onQueryPlan = () => {
+      //
+    };
+
     return {
       prefixCls,
+      onSearch,
+      onReset,
+      onQueryPlan,
     };
   },
 });

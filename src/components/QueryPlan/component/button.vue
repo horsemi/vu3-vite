@@ -1,8 +1,8 @@
 <template>
   <div :class="prefixCls">
-    <DxButton :width="76" text="查询" type="default" @click="onClick($event)" />
-    <DxButton :width="76" text="重置" @click="onClick($event)" />
-    <DxButton :width="100" text="查询方案" @click="onClick($event)" />
+    <DxButton :width="76" text="查询" type="default" @click="onSearch" />
+    <DxButton :width="76" text="重置" @click="onReset" />
+    <DxButton :width="100" text="查询方案" @click="onQueryPlan" />
   </div>
 </template>
 
@@ -15,11 +15,25 @@ export default defineComponent({
   components: {
     DxButton,
   },
-  setup() {
+  emits: ['on-search', 'on-queryPlan', 'on-reset'],
+  setup(props, ctx) {
     const { prefixCls } = useDesign('query-btn');
+
+    const onSearch = () => {
+      ctx.emit('on-search');
+    };
+    const onReset = () => {
+      ctx.emit('on-reset');
+    };
+    const onQueryPlan = () => {
+      ctx.emit('on-queryPlan');
+    };
 
     return {
       prefixCls,
+      onSearch,
+      onReset,
+      onQueryPlan,
     };
   },
 });

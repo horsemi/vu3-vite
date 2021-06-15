@@ -175,7 +175,7 @@
     &-popup__container {
       position: fixed;
       top: 50px;
-      z-index: @page-layout-menu-z-index;
+      z-index: @page-popup-z-index;
       width: 500px;
       padding: 10px 15px;
       color: #fff;
