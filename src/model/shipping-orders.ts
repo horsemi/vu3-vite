@@ -14,28 +14,28 @@ export interface IHeader {
 const customColumns: columnItem[] = [
   {
     key: 'BillCode',
-    caption: 'BillCode',
+    caption: '单据编码',
     cellTemplate: 'billCode',
   },
   {
     key: 'BillDate',
-    caption: 'BillDate',
+    caption: '单据日期',
   },
   {
     key: 'DocumentStatus',
-    caption: 'DocumentStatus',
+    caption: '业务状态',
   },
   {
     key: 'IsCancelled',
-    caption: 'IsCancelled',
+    caption: '取消状态',
   },
   {
     key: 'TotalPackage',
-    caption: 'TotalPackage',
+    caption: '包件总数',
   },
   {
     key: 'TotalVolume',
-    caption: 'TotalVolume',
+    caption: '总体积',
   },
   {
     key: 'Id',
