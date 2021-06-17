@@ -15,10 +15,10 @@ export interface RequestOptions {
 }
 
 export interface Result<T = any> {
-  code: number;
+  result: string;
   type: 'success' | 'error' | 'warning';
   message: string;
-  result: T;
+  data: T;
 }
 
 // multipart/form-data: upload file

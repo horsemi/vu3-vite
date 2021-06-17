@@ -8,6 +8,7 @@
       :show-borders="tableOptions.showBorders"
       :row-alternation-enabled="tableOptions.rowAlternationEnabled"
       :customize-columns="customizeColumns"
+      :filter-value="filterValue"
       @selection-changed="onSelectionChanged"
     >
       <template v-for="(item, index) in columns" :key="index">
@@ -97,8 +98,14 @@
           return [];
         },
       },
+      filterValue: {
+        type: Array,
+        default: () => {
+          return [];
+        },
+      }
     },
-    emits: ['handleBillCodeClick'],
+    emits: ['handleBillCodeClick', 'on-change-data'],
     setup(props) {
       const { prefixCls } = useDesign('ods-table');
       const pageIndex = ref(0);

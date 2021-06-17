@@ -1,6 +1,6 @@
 <template>
   <div>
-    <QueryPlan />
+    <QueryPlan @on-change-filter-value="onChangeFilterValue" />
     <div class="example">
       <div class="btn__wrap">
         <div class="btn__box">
@@ -20,7 +20,7 @@
           <DxButton :width="100" icon="refresh" text="刷新" @click="onClick($event)" />
         </div>
       </div>
-      <OdsTable :options="options" :columns="columns" @handle-bill-code-click="handleBillCodeClick">
+      <OdsTable :options="options" :filter-value="filterValue" :columns="columns" @handle-bill-code-click="handleBillCodeClick">
       </OdsTable>
     </div>
     <DxPopover v-model:visible="defaultVisible" target="#link" position="bottom">
@@ -33,13 +33,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref } from 'vue';
+import { defineComponent, onMounted, ref } from 'vue';
 import { ITableOptions } from '/@/components/Table/type';
 import { useUserStore } from '/@/store/modules/user';
+import { useGo } from '/@/hooks/web/usePage';
 import QueryPlan from '../../../components/QueryPlan/index.vue';
 import DxButton from 'devextreme-vue/button';
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import { DxPopover } from 'devextreme-vue/popover';
+import { getColumns } from '/@/model/shipping-orders';
+import { columnItem } from '/@/model/types';
 
 export default defineComponent({
   name: 'Analysis',
@@ -51,44 +54,7 @@ export default defineComponent({
   },
   setup() {
     const userStore = useUserStore();
-    const columns = [
-      {
-        key: 'Id',
-        caption: 'id',
-        type: 'number',
-        hide: true,
-      },
-      {
-        key: 'BigGroup',
-        caption: 'bigGroup',
-        type: 'string',
-      },
-      {
-        key: 'BillCode',
-        caption: 'billCode',
-        type: 'string',
-      },
-      {
-        key: 'DetailAddress',
-        caption: 'detailAddress',
-        type: 'string',
-      },
-      {
-        key: 'Group',
-        caption: 'group',
-        type: 'string',
-      },
-      {
-        key: 'CustomerSalesman',
-        caption: 'customerSalesman',
-        type: 'string',
-      },
-      {
-        key: 'CityCode',
-        caption: 'cityCode',
-        type: 'string',
-      },
-    ];
+    const go = useGo();
     const options: ITableOptions = {
       height: 'calc(100vh - 286px)',
       page: {
@@ -126,11 +92,23 @@ export default defineComponent({
       },
     ];
     const defaultVisible = ref(false);
+    const filterValue = ref([]);
 
     const { userId, userName } = userStore.getUserInfo;
-    // getShippingOrders().then(res => {
-    //   tableData.value = res;
-    // });
+    const columns = ref<columnItem[] | undefined>([]);
+
+    onMounted(async () => {
+      columns.value = await getColumns();
+    });
+
+    const onChangeFilterValue = (val) => {
+      filterValue.value = val;
+    };
+
+    const handleBillCodeClick = () => {
+      go('exampleDetails');
+    };
+
     return {
       userId,
       userName,
@@ -139,6 +117,9 @@ export default defineComponent({
       tabList,
       defaultVisible,
       summary,
+      filterValue,
+      handleBillCodeClick,
+      onChangeFilterValue,
     };
   },
 });

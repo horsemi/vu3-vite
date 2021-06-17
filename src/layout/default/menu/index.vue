@@ -7,8 +7,10 @@
         :class="[`${prefixCls}-item__container`, isActive(item)]"
         @click.stop="handleMenuClick(item, index)"
       >
-        <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
-        <span :class="`${prefixCls}-item-title__inner`">{{ item.meta.title }}</span>
+        <div :class="`${prefixCls}-item-box`">
+          <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
+          <span :class="`${prefixCls}-item-title__inner`">{{ item.meta.title }}</span>
+        </div>
         <transition name="zoom-in-left">
           <div
             v-show="item.meta.showSub"
@@ -143,13 +145,17 @@
       padding: 0 20px;
       font-size: 16px;
       color: #000;
-      cursor: pointer;
       box-sizing: border-box;
       .zoom-animation(left, scale(0.45, 0.45), scale(1, 1), top left);
 
       &:hover {
         color: #69c0ff !important;
       }
+    }
+
+    &-item-box {
+      width: 100%;
+      cursor: pointer;
     }
 
     &-item-title__inner {

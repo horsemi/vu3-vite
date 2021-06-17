@@ -21,6 +21,15 @@ const dashboard: Array<AppRouteRecordRaw> = [
           title: '仪表盘',
         },
       },
+      {
+        path: 'exampleDetails',
+        name: 'exampleDetails',
+        component: () => import('/@/views/example/details.vue'),
+        meta: {
+          title: '发货通知单详情',
+          hideMenu: true,
+        },
+      },
     ],
   },
   {

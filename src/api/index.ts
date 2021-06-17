@@ -1,5 +1,9 @@
 import { defHttp } from '/@/utils/http/axios';
 
-export const getShippingOrders = () => {
-  return defHttp.get({ url: '/api/odata/shipping-orders' });
+export const getList = (code: string): Promise<any> => {
+  return defHttp.get({ url: `/api/odata/${code}/scheme/list` });
+};
+
+export const getFilter = (code: string): Promise<any> => {
+  return defHttp.get({ url: `/api/odata/${code}/scheme/filter` });
 };

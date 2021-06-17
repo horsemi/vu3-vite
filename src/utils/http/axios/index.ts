@@ -29,16 +29,16 @@ const transform: AxiosTransform = {
     }
     // 错误的时候返回
 
-    const { data } = res;
-    if (!data) {
+    const { data: resData, status} = res;
+    if (!resData) {
       // return '[HTTP] Request has no return value';
       return errorResult;
     }
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
-    const { code, result, message } = data;
+    const { result, data, message } = resData;
 
     // 这里逻辑可以根据项目进行修改
-    const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS;
+    const hasSuccess = data && result === ResultEnum.SUCCESS; // data && Reflect.has(data, 'code') && result === ResultEnum.SUCCESS
     if (!hasSuccess) {
       if (message) {
         errorMessage(message);
@@ -48,11 +48,11 @@ const transform: AxiosTransform = {
     }
 
     // 接口请求成功，直接返回结果
-    if (code === ResultEnum.SUCCESS) {
-      return result;
+    if (result === ResultEnum.SUCCESS) {
+      return data;
     }
     // 接口请求错误，统一提示错误信息
-    if (code === ResultEnum.ERROR) {
+    if (result === ResultEnum.ERROR) {
       if (message) {
         errorMessage(message);
         Promise.reject(new Error(message));
@@ -64,7 +64,7 @@ const transform: AxiosTransform = {
       return errorResult;
     }
     // 登录超时
-    if (code === ResultEnum.NOT_PERMISSION) {
+    if (status === ResultEnum.NOT_PERMISSION) {
       const timeoutMsg = '登录超时, 请重新登录';
       errorMessage('401');
       Promise.reject(new Error(timeoutMsg));
@@ -116,14 +116,6 @@ const transform: AxiosTransform = {
       config.headers.Authorization = token;
     }
     return config;
-  },
-
-  responseInterceptors: (res: AxiosResponse<any>) => {
-    if (res.data && res.data.data) {
-      return res.data.data;
-    } else {
-      return res.data;
-    }
   },
 
   /**
