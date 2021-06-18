@@ -4,3 +4,5 @@ export interface UserInfo {
   roles: string[];
   permissions: string[];
 }
+
+export type GlobalEnumType = Record<string, Record<string, string>[]>;

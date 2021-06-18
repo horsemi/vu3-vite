@@ -24,10 +24,12 @@ const customColumns: columnItem[] = [
   {
     key: 'DocumentStatus',
     caption: '业务状态',
+    datatypekeies: 'enum',
   },
   {
     key: 'IsCancelled',
     caption: '取消状态',
+    datatypekeies: 'enum',
   },
   {
     key: 'TotalPackage',

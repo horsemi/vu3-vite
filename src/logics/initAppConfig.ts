@@ -7,6 +7,8 @@ import { Persistent } from '/@/utils/cache/persistent';
 import { getCommonStoragePrefix, getStorageShortName } from '/@/utils/env';
 import { deepMerge } from '/@/utils';
 
+import * as appConfigApi from '/@/api/app';
+
 // Initial project configuration
 export function initAppConfigStore() {
   let systemCfg = Persistent.getLocal(SYSTEM_CFG_KEY) as SystemConfig;
@@ -33,5 +35,12 @@ export function clearObsoleteStorage() {
         item.removeItem(key);
       }
     });
+  });
+}
+
+export function initGlobalEnumData() {
+  const appStore = useAppStore();
+  appConfigApi.appConfigApi.getGlobalEnum().then((resolve) => {
+    appStore.setGlobalEnumData(resolve);
   });
 }
