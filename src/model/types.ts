@@ -1,4 +1,4 @@
-export interface columnItem {
+export interface IColumnItem {
   /**
    * @description: 列的字段
    */
