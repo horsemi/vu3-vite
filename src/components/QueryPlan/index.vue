@@ -13,7 +13,7 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import QueryFrom from './component/form.vue';
 import QueryButton from './component/button.vue';
 import QueryQuick from './component/quick.vue';
-import QueryPopup from './component/popup.vue';
+import QueryPopup from './component/popup/index.vue';
 
 export default defineComponent({
   components: {

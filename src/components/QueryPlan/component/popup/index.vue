@@ -1,36 +1,41 @@
 <template>
-  <div :class="prefixCls">
-    <DxPopup
-      v-model:visible="popupVisible"
-      :drag-enabled="false"
-      :close-on-outside-click="true"
-      :show-close-button="false"
-      :show-title="true"
-      :width="300"
-      :height="280"
-      title="Information"
-    >
-    </DxPopup>
-  </div>
+  <DxPopup
+    v-model:visible="popupVisible"
+    :drag-enabled="false"
+    :close-on-outside-click="true"
+    :show-close-button="false"
+    :show-title="false"
+  >
+    <div :class="prefixCls">
+      <Header @on-close-popup="closePopup" />
+      <Content />
+      <Footer @on-close-popup="closePopup" />
+    </div>
+  </DxPopup>
 </template>
 
 <script lang="ts">
 import { defineComponent, ref } from 'vue';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { DxPopup } from 'devextreme-vue/popup';
+import Header from './header.vue';
+import Content from './content/index.vue';
+import Footer from './footer.vue';
 
 export default defineComponent({
   components: {
     DxPopup,
+    Header,
+    Content,
+    Footer,
   },
-  setup(props, ctx) {
+  setup() {
     const { prefixCls } = useDesign('query-popup');
     const popupVisible = ref(false);
 
     const openPopup = () => {
       popupVisible.value = true;
     };
-
     const closePopup = () => {
       popupVisible.value = false;
     };
@@ -39,7 +44,7 @@ export default defineComponent({
       prefixCls,
       popupVisible,
       openPopup,
-      closePopup
+      closePopup,
     };
   },
 });
@@ -50,8 +55,8 @@ export default defineComponent({
 
 .@{prefix-cls} {
   display: flex;
-  & > * {
-    margin-left: 10px;
-  }
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
 }
 </style>

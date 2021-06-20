@@ -130,13 +130,6 @@ export default defineComponent({
 .@{prefix-cls} {
   position: relative;
 
-  // 表头样式
-  .dx-datagrid-headers {
-    color: #000;
-    background-color: #fafafa;
-    border: none;
-  }
-
   // 隔行换色
   .dx-datagrid .dx-row-alt > td,
   .dx-datagrid .dx-row-alt > tr > td {
