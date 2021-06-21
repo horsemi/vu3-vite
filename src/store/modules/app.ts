@@ -61,14 +61,11 @@ export const useAppStore = defineStore({
       this.globalEnumData = globalEnumData;
     },
     getGlobalEnumDataByCode(code: string) {
-      const enumData = this.globalEnumData.filter((item) => item[code])[0][code];
-      return enumData.map((item) => {
-        const key = Object.keys(item)[0];
-        return {
-          key: key,
-          value: item[key],
-        };
-      });
+      const enumResult = this.globalEnumData.filter((item) => item.name === code);
+      if (enumResult.length < 1) {
+        return [];
+      }
+      return enumResult[0].options;
     },
   },
 });

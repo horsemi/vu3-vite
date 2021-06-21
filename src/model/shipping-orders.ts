@@ -29,7 +29,6 @@ const customColumns: columnItem[] = [
   {
     key: 'IsCancelled',
     caption: '取消状态',
-    datatypekeies: 'enum',
   },
   {
     key: 'TotalPackage',
