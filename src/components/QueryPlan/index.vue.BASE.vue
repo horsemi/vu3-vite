@@ -1,22 +1,19 @@
 <template>
   <div :class="prefixCls">
-    <suspense>
-      <QueryFrom />
-    </suspense>
+    <QueryFrom />
     <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
     <QueryQuick />
-    <QueryPopup ref="popup" :code="code" :custom-columns="customColumns" />
+    <QueryPopup ref="popup" />
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType, ref } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import QueryFrom from './component/form.vue';
   import QueryButton from './component/button.vue';
   import QueryQuick from './component/quick.vue';
-  import QueryPopup from '/@/components/QueryPopup/index.vue';
-  import { IColumnItem } from '/@/model/types';
+  import QueryPopup from './component/popup.vue';
 
   export default defineComponent({
     components: {
@@ -24,18 +21,6 @@
       QueryButton,
       QueryQuick,
       QueryPopup,
-    },
-    props: {
-      code: {
-        type: String,
-        default: '',
-      },
-      customColumns: {
-        type: Array as PropType<IColumnItem[]>,
-        default: () => {
-          return [];
-        },
-      },
     },
     emits: ['on-change-filter-value'],
     setup(props, ctx) {

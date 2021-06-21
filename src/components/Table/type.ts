@@ -6,135 +6,103 @@ interface ISelection {
   /**
    * @description: 全选方式
    */
-  allMode?: allModeType,
+  allMode?: allModeType;
 
   /**
    * @description: 多选模式
    */
-  checkBoxesMode?: checkBoxesModeType,
-};
+  checkBoxesMode?: checkBoxesModeType;
+}
 
 interface IPage {
   /**
    * @description: 每页显示条数
    */
-  size?: number,
+  size?: number;
 
   /**
    * @description: 当前显示页码
    */
-  index?: number,
-};
+  index?: number;
+}
 
 interface IODataOptions {
   /**
    * @description: 请求地址
    */
-  url: string,
+  url: string;
 
   /**
    * @description: 列表主键
    */
-  key?: string,
+  key?: string;
 
   /**
    * @description: 主键类型
    */
-  keyType?: string,
+  keyType?: string;
 
   /**
    * @description: oData版本号
    */
-  version?: number
-}
-
-interface ISort {
-  /**
-   * @description: 排序字段名称
-   */
-  selector: string,
-
-  /**
-   * @description: 是否降序
-   */
-  desc: boolean,
+  version?: number;
 }
 
 interface IDataSourceOptions {
   /**
    * @description: 排序字段
    */
-  sort: string | ISort | Array<any> | (() => void),
-
-  /**
-   * @description: 是否分页
-   */
-  paginate?: boolean,
+  sort: string | Array<any> | (() => void);
 
   /**
    * @description: oData配置
    */
-  oDataOptions: IODataOptions
+  oDataOptions: IODataOptions;
+
+  /**
+   * @description: 是否分页
+   */
+  paginate?: boolean;
 }
 
 export interface ITableOptions {
-
   /**
    * @description: dataSource配置
    */
-   dataSourceOptions: IDataSourceOptions,
+  dataSourceOptions: IDataSourceOptions;
 
   /**
    * @description: 表格高度
    */
-  height?: number | string | (() => void),
+  height?: number | string | (() => void);
 
   /**
    * @description: 是否显示列边框
    */
-  showColumnLines?: boolean,
+  showColumnLines?: boolean;
 
   /**
    * @description: 是否显示行边框
    */
-  showRowLines?: boolean,
+  showRowLines?: boolean;
 
   /**
    * @description: 是否显示整个表格的边框
    */
-  showBorders?: boolean,
+  showBorders?: boolean;
 
   /**
    * @description: 是否隔行换色
    */
-  rowAlternationEnabled?: boolean,
+  rowAlternationEnabled?: boolean;
 
   /**
    * @description: 多选列配置
    */
-  selection?: ISelection,
+  selection?: ISelection;
 
   /**
    * @description: 分页配置
    */
-  page?: IPage,
-};
-
-type sortOrderType = 'asc' | 'desc';
-
-export interface ITableColumnsItem {
-  /**
-   * @description: 列的字段
-   */
-  key: string,
-
-  /**
-   * @description: 列的标题 指定列值的排序顺序
-   */
-  caption: string,
-
-  /**
-   * @description: 列的排序顺序 asc(升) | desc(降)
-   */
-  sortOrder?: sortOrderType
+  page?: IPage;
 }

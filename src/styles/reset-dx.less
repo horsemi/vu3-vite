@@ -1,0 +1,54 @@
+// 重置表头样式
+.dx-datagrid-headers {
+  font-weight: 500 !important;
+  color: #333 !important;
+  background-color: #fafafa !important;
+  border: none !important;
+}
+.dx-datagrid-headers .dx-datagrid-table .dx-row > td {
+  border: none !important;
+}
+
+// 重置选择框样式
+.dx-checkbox-checked .dx-checkbox-icon {
+  color: #fff !important;
+  background-color: #0486fe;
+}
+
+// 重置tab样式
+.dx-tab {
+  padding: 0;
+  background-color: #fff !important;
+}
+.dx-tabpanel .dx-multiview-wrapper {
+  border: none !important;
+}
+.dx-tabpanel > .dx-tabpanel-tabs .dx-tabs {
+  color: #fff !important;
+  background-color: #fff !important;
+  border-bottom: 1px solid @border-color-primary !important;
+  box-shadow: none !important;
+}
+.dx-tabpanel > .dx-tabpanel-tabs .dx-tab.dx-tab-selected {
+  box-shadow: none !important;
+  .dx-tab-content {
+    color: @color-primary !important;
+  }
+  &::before {
+    position: absolute;
+    bottom: 0;
+    left: 30%;
+    display: inline-block;
+    width: 40%;
+    height: 2px;
+    background: @color-primary;
+    border-radius: 1px;
+    content: '' !important;
+  }
+}
+.dx-tabpanel > .dx-tabpanel-tabs .dx-tab {
+  box-shadow: none !important;
+}
+.dx-tabpanel > .dx-tabpanel-tabs .dx-tabs-expanded .dx-tab:not(.dx-tab-selected):first-of-type {
+  box-shadow: none !important;
+}

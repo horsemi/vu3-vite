@@ -1,8 +1,6 @@
 <template>
   <div :class="prefixCls">
-    <suspense>
-      <QueryFrom />
-    </suspense>
+    <QueryFrom />
     <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
     <QueryQuick />
     <QueryPopup ref="popup" :code="code" :custom-columns="customColumns" />

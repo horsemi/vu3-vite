@@ -74,7 +74,7 @@
 </template>
 
 <script lang="ts">
-  import type { columnItem } from '/@/model/types';
+  import type { IColumnItem } from '/@/model/types';
 
   import { defineComponent, watch, PropType, ref } from 'vue';
 
@@ -104,8 +104,8 @@
         default: '=',
       },
       paramList: {
-        type: Array as PropType<columnItem[]>,
-        default: () => [] as PropType<columnItem[]>,
+        type: Array as PropType<IColumnItem[]>,
+        default: () => [] as PropType<IColumnItem[]>,
       },
       paramDataType: {
         type: String,
@@ -147,7 +147,7 @@
       watch(
         () => props.paramKey,
         (paramKey, prevParamKey) => {
-          let { type, operations, datatypekeies } = (props.paramList as columnItem[]).filter(
+          let { type, operations, datatypekeies } = (props.paramList as IColumnItem[]).filter(
             (item) => paramKey === item.key
           )[0];
           context.emit('update:paramDataType', type);

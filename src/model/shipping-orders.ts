@@ -1,5 +1,5 @@
 import { getColumnList } from './common';
-import { columnItem } from './types';
+import { IColumnItem } from './types';
 
 export interface IHeader {
   BillCode: string;
@@ -11,7 +11,7 @@ export interface IHeader {
   Id: number;
 }
 
-const customColumns: columnItem[] = [
+export const customColumns: IColumnItem[] = [
   {
     key: 'BillCode',
     caption: '单据编码',
@@ -38,12 +38,8 @@ const customColumns: columnItem[] = [
     key: 'TotalVolume',
     caption: '总体积',
   },
-  {
-    key: 'Id',
-    caption: 'Id',
-  },
 ];
 
-export const getColumns = async (): Promise<columnItem[] | undefined> => {
+export const getColumns = async (): Promise<IColumnItem[] | undefined> => {
   return await getColumnList('shipping-orders', customColumns);
 };

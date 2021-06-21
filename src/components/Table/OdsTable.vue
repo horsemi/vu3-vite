@@ -25,9 +25,13 @@
         :show-check-boxes-mode="tableOptions.selection.checkBoxesMode"
         mode="multiple"
       />
-      <DxPaging :page-size="tableOptions.page.size" :page-index="pageIndex" />
+      <DxPaging
+        :enabled="tableOptions.dataSourceOptions.paginate"
+        :page-size="tableOptions.page.size"
+        :page-index="pageIndex"
+      />
       <DxPager
-        :visible="true"
+        :visible="tableOptions.dataSourceOptions.paginate"
         :show-info="true"
         :show-navigation-buttons="true"
         info-text="共{1}页，{2}条数据"
@@ -39,42 +43,20 @@
         }}</DxButton>
       </template>
     </DxDataGrid>
-    <div :class="`${prefixCls}__jump`">跳至<input type="number" @change="handleJump" />页</div>
+    <div v-if="tableOptions.dataSourceOptions.paginate" :class="`${prefixCls}__jump`"
+      >跳至<input type="number" @change="handleJump" />页</div
+    >
   </div>
 </template>
 
 <script lang="ts">
-  import ODataStore from 'devextreme/data/odata/store';
-  import DataSource from 'devextreme/data/data_source';
-  import { defineComponent, onBeforeUnmount, ref } from 'vue';
+  import { defineComponent, onBeforeUnmount, ref, PropType } from 'vue';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { deepMerge } from '/@/utils/index';
-  import { ITableOptions, ITableColumnsItem } from './type';
   import DxDataGrid, { DxSelection, DxPaging, DxColumn, DxPager } from 'devextreme-vue/data-grid';
   import DxButton from 'devextreme-vue/button';
-
-  const defaultTableOptions: ITableOptions = {
-    dataSourceOptions: {
-      sort: '',
-      paginate: true,
-      oDataOptions: {
-        url: '',
-        version: 4,
-      },
-    },
-    height: '100%',
-    showColumnLines: false,
-    showRowLines: true,
-    showBorders: false,
-    rowAlternationEnabled: true,
-    selection: {
-      allMode: 'allPages',
-      checkBoxesMode: 'always',
-    },
-    page: {
-      size: 10,
-    },
-  };
+  import { defaultTableOptions } from './common';
+  import { ITableOptions } from './type';
+  import { IColumnItem } from '/@/model/types';
 
   export default defineComponent({
     components: {
@@ -86,14 +68,20 @@
       DxButton,
     },
     props: {
-      options: {
+      tableOptions: {
+        type: Object as PropType<ITableOptions>,
+        default: () => {
+          return defaultTableOptions;
+        },
+      },
+      dataSource: {
         type: Object,
         default: () => {
           return {};
         },
       },
       columns: {
-        type: Array,
+        type: Array as PropType<IColumnItem[]>,
         default: () => {
           return [];
         },
@@ -103,26 +91,12 @@
         default: () => {
           return [];
         },
-      }
+      },
     },
-    emits: ['handleBillCodeClick', 'on-change-data'],
+    emits: ['handleBillCodeClick'],
     setup(props) {
       const { prefixCls } = useDesign('ods-table');
       const pageIndex = ref(0);
-      const tableOptions = ref(deepMerge(defaultTableOptions, props.options));
-      const dataSource = new DataSource({
-        // requireTotalCount: true,
-        sort: tableOptions.value.dataSourceOptions.sort,
-        paginate: tableOptions.value.dataSourceOptions.paginate,
-        pageSize: tableOptions.value.page.size,
-        store: new ODataStore({
-          ...tableOptions.value.dataSourceOptions.oDataOptions,
-        }),
-        select: props.columns.map((item) => {
-          return (item as ITableColumnsItem).key;
-        }),
-      });
-      dataSource.load();
 
       const onSelectionChanged = ({ selectedRowKeys, selectedRowsData }) => {
         console.log(selectedRowKeys, selectedRowsData);
@@ -131,20 +105,17 @@
         const index = parseInt(e.target.value) - 1;
         pageIndex.value = index >= 0 ? index : 0;
       };
-
-      onBeforeUnmount(() => {
-        dataSource.dispose();
-      });
-
       const customizeColumns = () => {
         // console.log(columns);
       };
 
+      onBeforeUnmount(() => {
+        props.dataSource && props.dataSource.dispose();
+      });
+
       return {
-        dataSource,
         prefixCls,
         pageIndex,
-        tableOptions,
         onSelectionChanged,
         handleJump,
         customizeColumns,
@@ -158,13 +129,6 @@
 
   .@{prefix-cls} {
     position: relative;
-
-    // 表头样式
-    .dx-datagrid-headers {
-      color: #000;
-      background-color: #fafafa;
-      border: none;
-    }
 
     // 隔行换色
     .dx-datagrid .dx-row-alt > td,
