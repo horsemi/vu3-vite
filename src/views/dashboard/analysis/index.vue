@@ -1,6 +1,6 @@
 <template>
   <div>
-    <QueryPlan @on-change-filter-value="onChangeFilterValue" />
+    <QueryPlan code="shipping-orders" :custom-columns="cutColumns" @on-change-filter-value="onChangeFilterValue" />
     <div class="example">
       <div class="btn__wrap">
         <div class="btn__box">
@@ -46,7 +46,7 @@ import QueryPlan from '../../../components/QueryPlan/index.vue';
 import DxButton from 'devextreme-vue/button';
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import { DxPopover } from 'devextreme-vue/popover';
-import { getColumns } from '/@/model/shipping-orders';
+import { getColumns, customColumns } from '/@/model/shipping-orders';
 import { getDataSource } from '/@/components/Table/common';
 import { IColumnItem } from '/@/model/types';
 
@@ -60,6 +60,7 @@ export default defineComponent({
   },
   setup() {
     const go = useGo();
+    const cutColumns = customColumns;
     const tabList = ['加急单', '区分物流', '产品异常', '订单异常', '取消标识'];
     const summary = [
       {
@@ -117,6 +118,7 @@ export default defineComponent({
     });
 
     return {
+      cutColumns,
       tableOptions,
       dataSource,
       columns,

@@ -1,6 +1,6 @@
 <template>
-  <div :class="[prefixCls]" @scroll="handleScroll">
-    <DxScrollView show-scrollbar="onHover" direction="vertical" :width="200">
+  <div :class="[prefixCls]">
+    <DxScrollView show-scrollbar="onHover" direction="vertical" :width="200" :on-scroll="onScroll">
       <div
         v-for="(item, index) in menuList"
         :key="item.name"
@@ -84,8 +84,8 @@
             : (item.meta.showSub = true);
         }
       };
-      const handleScroll = (e): void => {
-        scrollTop.value = e.target.scrollTop;
+      const onScroll = (e): void => {
+        scrollTop.value = e.scrollOffset.top;
       };
       const getSubTop = (index: number): string => {
         const top = (index + 1) * 50 + 16 - scrollTop.value;
@@ -109,7 +109,7 @@
       document.body.addEventListener('click', handleMenuClose, false);
 
       return {
-        handleScroll,
+        onScroll,
         getSubTop,
         getSubLeft,
         handleMenuClick,

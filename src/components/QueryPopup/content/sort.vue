@@ -2,41 +2,46 @@
   <div :class="prefixCls">
     <div :class="`${prefixCls}__field`">
       <div :class="`${prefixCls}__field__title`">字段</div>
-      <div
-        v-for="(item, index) in fieldList"
-        :key="index"
-        :class="[`${prefixCls}__field__item`, item.checked && `${prefixCls}__field__item--active`]"
-        @click="item.checked = !item.checked"
-      >
-        <div @click.stop="">
-          <DxCheckBox v-model:value="item.checked" @valueChanged="onFieldList" />
+      <DxScrollView height="calc(100% - 33px)">
+        <div
+          v-for="(item, index) in fieldList"
+          :key="index"
+          :class="[
+            `${prefixCls}__field__item`,
+            item.checked && `${prefixCls}__field__item--active`,
+          ]"
+          @click="item.checked = !item.checked"
+        >
+          <div @click.stop="">
+            <DxCheckBox v-model:value="item.checked" @valueChanged="onFieldList" />
+          </div>
+          <span>{{ item.text }}</span>
         </div>
-        <span>{{ item.text }}</span>
-      </div>
+      </DxScrollView>
     </div>
-    <div :class="`${prefixCls}__next`">
+    <div :class="`${prefixCls}__next`" @click="onAddCol">
       <i class="dx-icon-chevronnext" />
     </div>
     <div :class="`${prefixCls}__table`">
       <DxDataGrid
         height="100%"
         :data-source="dataSource"
-        :show-borders="true"
+        :show-borders="false"
         :show-column-lines="false"
         :show-row-lines="true"
       >
         <DxEditing :allow-updating="true" mode="cell" />
         <DxPaging :enabled="false" />
         <DxColumn caption="序号" cell-template="index" />
-        <DxColumn data-field="FirstName" caption="字段" />
-        <DxColumn data-field="LastName" caption="排序方式" />
+        <DxColumn data-field="field" caption="字段" />
+        <DxColumn data-field="sort" caption="排序方式" />
         <DxColumn caption="操作" cell-template="handle" />
         <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
-        <template #handle>
+        <template #handle="{ data }">
           <div>
-            <span>上移</span>
-            <span>下移</span>
-            <span>删除</span>
+            <span @click="onUpMove(data)">上移</span>
+            <span @click="onDownMove(data)">下移</span>
+            <span @click="onDel(data)">删除</span>
           </div>
         </template>
       </DxDataGrid>
@@ -45,12 +50,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, reactive } from 'vue';
+import { defineComponent, ref } from 'vue';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import { DxDataGrid, DxColumn, DxPaging, DxEditing } from 'devextreme-vue/data-grid';
-import DataSource from 'devextreme/data/data_source';
-import ArrayStore from 'devextreme/data/array_store';
+import { DxScrollView } from 'devextreme-vue/scroll-view';
+
+interface ISortTableItem {
+  field: string;
+  sort: string;
+}
 
 export default defineComponent({
   components: {
@@ -59,11 +68,12 @@ export default defineComponent({
     DxColumn,
     DxPaging,
     DxEditing,
+    DxScrollView,
   },
   setup() {
     const { prefixCls } = useDesign('content-sort');
 
-    const fieldList = reactive([
+    const fieldList = ref([
       {
         text: '单据头-单据日期',
         checked: false,
@@ -106,68 +116,46 @@ export default defineComponent({
       },
     ]);
 
-    const employees = [
-      {
-        ID: 1,
-        FirstName: 'John',
-        LastName: 'Heart',
-        Prefix: 'Mr.',
-        Position: 'CEO',
-        BirthDate: '1964/03/16',
-        HireDate: '1995/01/15',
-        Notes:
-          'John has been in the Audio/Video industry since 1990. He has led DevAv as its CEO since 2003.\r\n\r\nWhen not working hard as the CEO, John loves to golf and bowl. He once bowled a perfect game of 300.',
-        Address: '351 S Hill St.',
-        StateID: 5,
-      },
-      {
-        ID: 2,
-        FirstName: 'Olivia',
-        LastName: 'Peyton',
-        Prefix: 'Mrs.',
-        Position: 'Sales Assistant',
-        BirthDate: '1981/06/03',
-        HireDate: '2012/05/14',
-        Notes:
-          'Olivia loves to sell. She has been selling DevAV products since 2012. \r\n\r\nOlivia was homecoming queen in high school. She is expecting her first child in 6 months. Good Luck Olivia.',
-        Address: '807 W Paseo Del Mar',
-        StateID: 5,
-      },
-      {
-        ID: 3,
-        FirstName: 'Robert',
-        LastName: 'Reagan',
-        Prefix: 'Mr.',
-        Position: 'CMO',
-        BirthDate: '1974/09/07',
-        HireDate: '2002/11/08',
-        Notes:
-          'Robert was recently voted the CMO of the year by CMO Magazine. He is a proud member of the DevAV Management Team.\r\n\r\nRobert is a championship BBQ chef, so when you get the chance ask him for his secret recipe.',
-        Address: '4 Westmoreland Pl.',
-        StateID: 4,
-      },
-      {
-        ID: 4,
-        FirstName: 'Greta',
-        LastName: 'Sims',
-        Prefix: 'Ms.',
-        Position: 'HR Manager',
-        BirthDate: '1977/11/22',
-        HireDate: '1998/04/23',
-        Address: '1700 S Grandview Dr.',
-        StateID: 11,
-      },
-    ];
-
-    const dataSource = new DataSource({
-      store: new ArrayStore({
-        data: employees,
-        key: 'ID',
-      }),
-    });
+    const dataSource = ref<ISortTableItem[]>([]);
 
     const onFieldList = () => {
-      console.log(fieldList);
+      // console.log(fieldList);
+    };
+    const onAddCol = () => {
+      const addColArr = fieldList.value.filter((item) => item.checked);
+      const data: ISortTableItem[] = [];
+      addColArr.forEach((item) => {
+        data.push({
+          field: item.text,
+          sort: '升序',
+        });
+      });
+      dataSource.value = data;
+    };
+    const onUpMove = (data) => {
+      if (data.rowIndex > 0) {
+        const oldDataSource = [...dataSource.value];
+        const currentIndex = data.rowIndex;
+        const preIndex = data.rowIndex - 1;
+        oldDataSource[currentIndex] = oldDataSource.splice(preIndex, 1, oldDataSource[currentIndex])[0];
+        dataSource.value = oldDataSource;
+      }
+    };
+    const onDownMove = (data) => {
+      if (data.rowIndex < dataSource.value.length - 1) {
+        const oldDataSource = [...dataSource.value];
+        const currentIndex = data.rowIndex;
+        const nextIndex = data.rowIndex + 1;
+        oldDataSource[currentIndex] = oldDataSource.splice(nextIndex, 1, oldDataSource[currentIndex])[0];
+        dataSource.value = oldDataSource;
+      }
+    };
+    const onDel = (data) => {
+      if (data.rowIndex >= 0) {
+        const oldDataSource = [...dataSource.value];
+        oldDataSource.splice(data.rowIndex, 1);
+        dataSource.value = oldDataSource;
+      }
     };
 
     return {
@@ -175,6 +163,10 @@ export default defineComponent({
       fieldList,
       dataSource,
       onFieldList,
+      onAddCol,
+      onUpMove,
+      onDownMove,
+      onDel,
     };
   },
 });
@@ -191,7 +183,7 @@ export default defineComponent({
   &__field {
     width: 30%;
     height: 100%;
-    border: 1px solid #e4e7ed;
+    border: 1px solid @border-color-primary;
   }
 
   &__field__title {
@@ -200,7 +192,7 @@ export default defineComponent({
     font-weight: bold;
     line-height: 33px;
     background-color: #fafafa;
-    border-bottom: 1px solid #e4e7ed;
+    border-bottom: 1px solid @border-color-primary;
   }
 
   &__field__item {
@@ -212,7 +204,8 @@ export default defineComponent({
     span {
       padding-left: 10px;
     }
-    &--active {
+    &--active,
+    &:hover {
       background-color: #e6f7ff;
     }
   }
@@ -236,6 +229,7 @@ export default defineComponent({
   &__table {
     flex: 1;
     height: 100%;
+    border: 1px solid @border-color-primary;
     span {
       margin-right: 20px;
       color: @color-primary;

@@ -5,7 +5,7 @@
       <span @click="checkDefault = !checkDefault">下次以此方案自动进入</span>
     </div>
     <div :class="`${prefixCls}__btn`">
-      <DxButton :width="76" text="确认" type="default" />
+      <DxButton :width="76" text="确认" type="default" @click="onSubmit" />
       <DxButton :width="76" text="取消" @click="onClosePopup" />
     </div>
   </div>
@@ -22,7 +22,7 @@ export default defineComponent({
     DxCheckBox,
     DxButton,
   },
-emits: ['on-close-popup'],
+emits: ['on-close-popup', 'on-submit'],
   setup(props, ctx) {
     const { prefixCls } = useDesign('popup-footer');
     const checkDefault = ref(false);
@@ -30,7 +30,9 @@ emits: ['on-close-popup'],
     const onChangeCheckDefault = () => {
       console.log(checkDefault.value);
     };
-
+    const onSubmit = () => {
+      ctx.emit('on-submit');
+    };
     const onClosePopup = () => {
       ctx.emit('on-close-popup');
     };
@@ -39,6 +41,7 @@ emits: ['on-close-popup'],
       prefixCls,
       checkDefault,
       onChangeCheckDefault,
+      onSubmit,
       onClosePopup,
     };
   },

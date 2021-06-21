@@ -11,7 +11,7 @@ export interface IHeader {
   Id: number;
 }
 
-const customColumns: IColumnItem[] = [
+export const customColumns: IColumnItem[] = [
   {
     key: 'BillCode',
     caption: '单据编码',
