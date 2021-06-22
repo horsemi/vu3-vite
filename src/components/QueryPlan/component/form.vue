@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onBeforeUnmount, reactive, ref } from 'vue';
+  import { defineComponent, reactive, ref } from 'vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import DxButton from 'devextreme-vue/button';
 
@@ -84,11 +84,10 @@
       DxButton,
       DynamicSelect,
     },
-    emits: ['on-add-requirement', 'on-del-requirement', 'on-save-requirement'],
+    // emits: ['on-add-requirement', 'on-del-requirement', 'on-save-requirement'],
     async setup() {
       const { prefixCls } = useDesign('query-form');
       const opened = ref<boolean>(false);
-      const requirementList: string[] = ['查询字段', '单据日期', '单据类型', '单据状态'];
       const queryList = reactive<IQueryItem[]>([
         {
           requirement: '',
@@ -127,12 +126,23 @@
         columns,
         opened,
         queryList,
-        requirementList,
         onAddRequirement,
         onDelRequirement,
         onSaveRequirement,
         onItemClick,
       };
+    },
+    methods: {
+      getQueryList() {
+        const result: any[] = [];
+        if (this.queryList.length > 0 && this.queryList[0].requirement) {
+          this.queryList.forEach((item) => {
+            result.push([item.requirement, item.operator, item.value]);
+            result.push('and');
+          });
+        }
+        return result;
+      },
     },
   });
 </script>
@@ -153,18 +163,6 @@
 
       & > * {
         margin-right: 10px;
-      }
-
-      input {
-        width: 200px;
-        height: 34px;
-        padding: 0 10px;
-        cursor: pointer;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        outline: none;
-        box-sizing: border-box;
       }
     }
 

@@ -18,19 +18,19 @@ export const operatorMap = {
     value: '不包含',
   },
   greater: {
-    key: 'greater',
+    key: '>',
     value: '大于',
   },
   greaterEqual: {
-    key: 'greaterEqual',
+    key: '>=',
     value: '大于等于',
   },
   less: {
-    key: 'less',
+    key: '<',
     value: '小于',
   },
   lessEqual: {
-    key: 'lessEqual',
+    key: '<=',
     value: '小于等于',
   },
   startswith: {
