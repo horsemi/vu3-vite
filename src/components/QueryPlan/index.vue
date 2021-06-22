@@ -40,9 +40,6 @@
       const { prefixCls } = useDesign('query-plan');
       const popup = ref();
 
-      const onSearch = () => {
-        ctx.emit('on-change-filter-value', ['BigGroup', '=', '平台营销部']);
-      };
       const onReset = () => {
         //
       };
@@ -53,10 +50,16 @@
       return {
         prefixCls,
         popup,
-        onSearch,
         onReset,
         onQueryPlan,
       };
+    },
+    methods: {
+      onSearch() {
+        const queryList = (this.$refs.queryForm as any).getQueryList();
+        console.log(queryList);
+        this.$emit('on-change-filter-value', queryList);
+      },
     },
   });
 </script>

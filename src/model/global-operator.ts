@@ -18,19 +18,19 @@ export const operatorMap = {
     value: '不包含',
   },
   greater: {
-    key: 'greater',
+    key: '>',
     value: '大于',
   },
   greaterEqual: {
-    key: 'greaterEqual',
+    key: '>=',
     value: '大于等于',
   },
   less: {
-    key: 'less',
+    key: '<',
     value: '小于',
   },
   lessEqual: {
-    key: 'lessEqual',
+    key: '<=',
     value: '小于等于',
   },
   startswith: {
@@ -47,6 +47,7 @@ export const globalOperator = {
   stringOperators: ['equal', 'notEqual', 'contains', 'notcontains', 'startswith', 'endswith'],
   numberOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
   datetimeOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
+  booleanOperators: ['equal', 'notEqual'],
   enumOperators: ['equal', 'notEqual'],
   allOperators: [
     'equal',
@@ -64,10 +65,14 @@ export const globalOperator = {
 
 export function getOperatorByType(operatorCode: OperatorType | string) {
   const operator = operatorCode && globalOperator[`${operatorCode}Operators`];
+  return initOperatorMap(operator);
+}
+
+export function initOperatorMap(operators: string[]) {
   const result: { key: string; value: string }[] = [];
 
-  if (operator && Array.isArray(operator)) {
-    operator.forEach((item) => {
+  if (operators && Array.isArray(operators)) {
+    operators.forEach((item) => {
       result.push(operatorMap[item]);
     });
   } else {

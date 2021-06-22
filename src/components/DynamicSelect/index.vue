@@ -4,6 +4,7 @@
       <DxSelectBox
         :value="paramKey"
         :data-source="paramList"
+        :show-clear-button="true"
         value-expr="key"
         width="130"
         display-expr="caption"
@@ -26,7 +27,7 @@
         v-if="paramDataType === 'number'"
         :value="value"
         :show-spin-buttons="true"
-        :show-clear-button="true"
+        format="###,##0.###"
         width="180"
         @update:value="$emit('update:value', $event)"
       >
@@ -35,6 +36,7 @@
         v-else-if="paramDatatypekeies === 'enum'"
         :value="value"
         :data-source="options"
+        :show-clear-button="true"
         value-expr="key"
         display-expr="description"
         width="180"
@@ -45,6 +47,7 @@
         v-else-if="paramDataType === 'boolean'"
         :value="value"
         :data-source="booleanOptions"
+        :show-clear-button="true"
         value-expr="key"
         display-expr="value"
         width="180"
@@ -85,7 +88,7 @@
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getOperatorByType } from '/@/model/global-operator';
+  import { getOperatorByType, initOperatorMap } from '/@/model/global-operator';
 
   export default defineComponent({
     name: 'DynamicSelect',
@@ -147,13 +150,28 @@
       watch(
         () => props.paramKey,
         (paramKey, prevParamKey) => {
-          let { type, operations, datatypekeies } = (props.paramList as IColumnItem[]).filter(
-            (item) => paramKey === item.key
-          )[0];
-          context.emit('update:paramDataType', type);
-          context.emit('update:paramOperations', operations);
-          context.emit('update:paramDatatypekeies', datatypekeies);
-          initData(type!, datatypekeies!);
+          if (paramKey) {
+            let { type, operations, datatypekeies } = (props.paramList as IColumnItem[]).filter(
+              (item) => paramKey === item.key
+            )[0];
+
+            if (operations && operations.length > 0) {
+              operatorOptions.value = initOperatorMap(operations);
+              context.emit('update:paramOperations', operatorOptions.value);
+            }
+
+            context.emit('update:paramDataType', type);
+            context.emit('update:paramDatatypekeies', datatypekeies);
+            context.emit('update:operation', '=');
+            initData(type!, datatypekeies!);
+          } else {
+            operatorOptions.value = [];
+            context.emit('update:paramOperations', operatorOptions.value);
+            context.emit('update:operation', '');
+            context.emit('update:paramDataType', '');
+            context.emit('update:paramDatatypekeies', '');
+            initValue('string');
+          }
         }
       );
 
@@ -169,8 +187,8 @@
           // }
         }
         initValue(datatypekeies || type);
-        operatorOptions.value.splice(0, operatorOptions.value.length);
         operatorOptions.value = getOperatorByType(datatypekeies || type);
+        context.emit('update:paramOperations', operatorOptions.value);
       }
 
       function initValue(type: string) {
