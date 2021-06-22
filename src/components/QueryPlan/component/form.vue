@@ -63,139 +63,134 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onBeforeUnmount, reactive, ref } from 'vue';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import DxButton from 'devextreme-vue/button';
+import { defineComponent, PropType, reactive, ref } from 'vue';
+import { useDesign } from '/@/hooks/web/useDesign';
+import DxButton from 'devextreme-vue/button';
 
-  import DynamicSelect from '/@/components/DynamicSelect/index.vue';
-  import { getColumns } from '/@/model/shipping-orders';
+import DynamicSelect from '/@/components/DynamicSelect/index.vue';
+import { IQueryItem } from '../types';
+import { IColumnItem } from '/@/model/types';
 
-  interface IQueryItem {
-    requirement: string;
-    operator: string;
-    operatorList: string[];
-    value: string;
-    type: string;
-    datatypekeies: string;
-  }
-
-  export default defineComponent({
-    components: {
-      DxButton,
-      DynamicSelect,
+export default defineComponent({
+  components: {
+    DxButton,
+    DynamicSelect,
+  },
+  props: {
+    columns: {
+      type: Array as PropType<IColumnItem[]>,
+      default: () => {
+        return [];
+      },
     },
-    emits: ['on-add-requirement', 'on-del-requirement', 'on-save-requirement'],
-    async setup() {
-      const { prefixCls } = useDesign('query-form');
-      const opened = ref<boolean>(false);
-      const requirementList: string[] = ['查询字段', '单据日期', '单据类型', '单据状态'];
-      const queryList = reactive<IQueryItem[]>([
-        {
-          requirement: '',
-          operator: '=',
-          operatorList: [],
-          value: '',
-          type: '',
-          datatypekeies: '',
-        },
-      ]);
+  },
+  emits: ['on-add-requirement', 'on-del-requirement', 'on-save-requirement'],
+  setup() {
+    const { prefixCls } = useDesign('query-form');
+    const opened = ref<boolean>(false);
+    const queryList = reactive<IQueryItem[]>([
+      {
+        requirement: '',
+        operator: '=',
+        operatorList: [],
+        value: '',
+        type: '',
+        datatypekeies: '',
+      },
+    ]);
 
-      const onAddRequirement = () => {
-        queryList.push({
-          requirement: '',
-          operator: '=',
-          operatorList: [],
-          value: '',
-          type: '',
-          datatypekeies: '',
-        });
-      };
-      const onDelRequirement = (index: number) => {
-        queryList.splice(index, 1);
-      };
-      const onSaveRequirement = () => {
-        console.log(queryList);
-      };
-      const onItemClick = (e) => {
-        e.event.stopPropagation();
-      };
+    const onAddRequirement = () => {
+      queryList.push({
+        requirement: '',
+        operator: '=',
+        operatorList: [],
+        value: '',
+        type: '',
+        datatypekeies: '',
+      });
+    };
+    const onDelRequirement = (index: number) => {
+      queryList.splice(index, 1);
+    };
+    const onSaveRequirement = () => {
+      console.log(queryList);
+    };
+    const onItemClick = (e) => {
+      e.event.stopPropagation();
+    };
 
-      const columns = await getColumns();
-
-      return {
-        prefixCls,
-        columns,
-        opened,
-        queryList,
-        requirementList,
-        onAddRequirement,
-        onDelRequirement,
-        onSaveRequirement,
-        onItemClick,
-      };
-    },
-  });
+    return {
+      prefixCls,
+      opened,
+      queryList,
+      onAddRequirement,
+      onDelRequirement,
+      onSaveRequirement,
+      onItemClick,
+    };
+  },
+});
 </script>
 
 <style lang="less" scoped>
-  @prefix-cls: ~'@{namespace}-query-form';
+@prefix-cls: ~'@{namespace}-query-form';
 
-  .@{prefix-cls} {
-    position: relative;
-    .zoom-animation(top, scaleY(0), scaleY(1), center top);
+.@{prefix-cls} {
+  position: relative;
+  .zoom-animation(top, scaleY(0), scaleY(1), center top);
 
-    &__box {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-bottom: 16px;
-      padding-left: 20px;
+  &__box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-bottom: 16px;
+    padding-left: 20px;
 
-      & > * {
-        margin-right: 10px;
-      }
-
-      input {
-        width: 200px;
-        height: 34px;
-        padding: 0 10px;
-        cursor: pointer;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 4px;
-        outline: none;
-        box-sizing: border-box;
-      }
+    & > * {
+      margin-right: 10px;
     }
 
-    &__icon {
-      margin-right: 20px;
-      margin-left: 10px;
+    input {
+      width: 200px;
+      height: 34px;
+      padding: 0 10px;
       cursor: pointer;
-      transform: rotate(0);
-      transition: transform 300ms;
-    }
-
-    &__icon--translate {
-      transform: rotate(-180deg);
-      transition: transform 300ms;
-    }
-
-    &__overflow {
-      position: absolute;
-      top: 64px;
-      z-index: @page-popup-z-index;
-      width: 100%;
-      background-color: #fff;
-      box-shadow: 10px 10px 12px 0 rgb(0 0 0 / 10%);
-    }
-
-    &__plus {
-      margin: 0 6px;
-    }
-
-    &__btn {
-      margin-right: 57px;
+      background: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      outline: none;
+      box-sizing: border-box;
     }
   }
+
+  &__icon {
+    margin-right: 20px;
+    margin-left: 10px;
+    cursor: pointer;
+    transform: rotate(0);
+    transition: transform 300ms;
+  }
+
+  &__icon--translate {
+    transform: rotate(-180deg);
+    transition: transform 300ms;
+  }
+
+  &__overflow {
+    position: absolute;
+    top: 64px;
+    z-index: @page-popup-z-index;
+    width: 100%;
+    background-color: #fff;
+    box-shadow: 10px 10px 12px 0 rgb(0 0 0 / 10%);
+  }
+
+  &__plus {
+    margin: 0 6px;
+  }
+
+  &__btn {
+    margin-right: 57px;
+  }
+}
 </style>

@@ -2,7 +2,7 @@
   <DxPopup v-model:visible="popupVisible" :close-on-outside-click="true" :show-title="false">
     <div :class="prefixCls">
       <Header @on-close-popup="closePopup" />
-      <Content :code="code" :custom-columns="customColumns" />
+      <Content ref="content" :code="code" :all-columns="allColumns" />
       <Footer @on-submit="onSubmit" @on-close-popup="closePopup" />
     </div>
   </DxPopup>
@@ -29,7 +29,7 @@
         type: String,
         default: '',
       },
-      customColumns: {
+      allColumns: {
         type: Array as PropType<IColumnItem[]>,
         default: () => {
           return [];
@@ -39,6 +39,7 @@
     setup() {
       const { prefixCls } = useDesign('query-popup');
       const popupVisible = ref(false);
+      const content = ref();
 
       const openPopup = () => {
         popupVisible.value = true;
@@ -47,12 +48,14 @@
         popupVisible.value = false;
       };
       const onSubmit = () => {
+        console.log(content.value.schemeList);
         closePopup();
       };
 
       return {
         prefixCls,
         popupVisible,
+        content,
         openPopup,
         closePopup,
         onSubmit,

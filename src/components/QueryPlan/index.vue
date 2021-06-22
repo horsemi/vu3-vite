@@ -1,11 +1,9 @@
 <template>
   <div :class="prefixCls">
-    <suspense>
-      <QueryFrom />
-    </suspense>
+    <QueryFrom :columns="allColumns" />
     <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
     <QueryQuick />
-    <QueryPopup ref="popup" :code="code" :custom-columns="customColumns" />
+    <QueryPopup ref="popup" :code="code" :all-columns="allColumns" />
   </div>
 </template>
 
@@ -30,7 +28,7 @@
         type: String,
         default: '',
       },
-      customColumns: {
+      allColumns: {
         type: Array as PropType<IColumnItem[]>,
         default: () => {
           return [];
