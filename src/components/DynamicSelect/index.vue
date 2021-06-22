@@ -88,7 +88,7 @@
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getOperatorByType } from '/@/model/global-operator';
+  import { getOperatorByType, initOperatorMap } from '/@/model/global-operator';
 
   export default defineComponent({
     name: 'DynamicSelect',
@@ -154,11 +154,19 @@
             let { type, operations, datatypekeies } = (props.paramList as IColumnItem[]).filter(
               (item) => paramKey === item.key
             )[0];
+
+            if (operations && operations.length > 0) {
+              operatorOptions.value = initOperatorMap(operations);
+              context.emit('update:paramOperations', operatorOptions.value);
+            }
+
             context.emit('update:paramDataType', type);
             context.emit('update:paramDatatypekeies', datatypekeies);
             context.emit('update:operation', '=');
             initData(type!, datatypekeies!);
           } else {
+            operatorOptions.value = [];
+            context.emit('update:paramOperations', operatorOptions.value);
             context.emit('update:operation', '');
             context.emit('update:paramDataType', '');
             context.emit('update:paramDatatypekeies', '');
@@ -179,8 +187,8 @@
           // }
         }
         initValue(datatypekeies || type);
-        operatorOptions.value.splice(0, operatorOptions.value.length);
         operatorOptions.value = getOperatorByType(datatypekeies || type);
+        context.emit('update:paramOperations', operatorOptions.value);
       }
 
       function initValue(type: string) {

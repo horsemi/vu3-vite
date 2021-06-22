@@ -47,6 +47,7 @@ export const globalOperator = {
   stringOperators: ['equal', 'notEqual', 'contains', 'notcontains', 'startswith', 'endswith'],
   numberOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
   datetimeOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
+  booleanOperators: ['equal', 'notEqual'],
   enumOperators: ['equal', 'notEqual'],
   allOperators: [
     'equal',
@@ -64,10 +65,14 @@ export const globalOperator = {
 
 export function getOperatorByType(operatorCode: OperatorType | string) {
   const operator = operatorCode && globalOperator[`${operatorCode}Operators`];
+  return initOperatorMap(operator);
+}
+
+export function initOperatorMap(operators: string[]) {
   const result: { key: string; value: string }[] = [];
 
-  if (operator && Array.isArray(operator)) {
-    operator.forEach((item) => {
+  if (operators && Array.isArray(operators)) {
+    operators.forEach((item) => {
       result.push(operatorMap[item]);
     });
   } else {
