@@ -36,8 +36,8 @@
         <DxPaging :enabled="false" />
         <DxColumn caption="序号" cell-template="index" />
         <DxColumn data-field="caption" caption="字段" />
-        <DxColumn data-field="sort" caption="排序方式">
-          <DxLookup :data-source="sortOptions" display-expr="name" value-expr="sort" />
+        <DxColumn data-field="desc" caption="排序方式">
+          <DxLookup :data-source="sortOptions" display-expr="name" value-expr="desc" />
         </DxColumn>
         <DxColumn caption="操作" cell-template="handle" />
         <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
@@ -86,16 +86,17 @@ export default defineComponent({
       },
     },
   },
-  setup(props) {
+  emits: ['on-change-sort'],
+  setup(props, ctx) {
     const { prefixCls } = useDesign('content-sort');
     const sortOptions = [
       {
         name: '升序',
-        sort: false,
+        desc: false,
       },
       {
         name: '降序',
-        sort: true,
+        desc: true,
       },
     ];
 
@@ -113,10 +114,11 @@ export default defineComponent({
         data.push({
           key: item.key,
           caption: item.caption,
-          sort: false,
+          desc: false,
         });
       });
       dataSource.value = data;
+      ctx.emit('on-change-sort', dataSource);
     };
     const onUpMove = (data) => {
       if (data.rowIndex > 0) {
@@ -129,7 +131,7 @@ export default defineComponent({
           oldDataSource[currentIndex]
         )[0];
         dataSource.value = oldDataSource;
-        console.log(dataSource);
+        ctx.emit('on-change-sort', dataSource.value);
       }
     };
     const onDownMove = (data) => {
@@ -143,6 +145,7 @@ export default defineComponent({
           oldDataSource[currentIndex]
         )[0];
         dataSource.value = oldDataSource;
+        ctx.emit('on-change-sort', dataSource.value);
       }
     };
     const onDel = (data) => {
@@ -150,6 +153,7 @@ export default defineComponent({
         const oldDataSource = [...dataSource.value];
         oldDataSource.splice(data.rowIndex, 1);
         dataSource.value = oldDataSource;
+        ctx.emit('on-change-sort', dataSource.value);
       }
     };
     const handleData = (allColumns, orderBy) => {

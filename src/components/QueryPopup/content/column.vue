@@ -30,7 +30,7 @@ import { defineComponent, PropType, ref, watch } from 'vue';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { DxDataGrid, DxColumn } from 'devextreme-vue/data-grid';
 import { DxCheckBox } from 'devextreme-vue/check-box';
-import { ISchemeColumnsItem } from './types';
+import { IOrderByItem, ISchemeColumnsItem } from './types';
 
 export default defineComponent({
   components: {
@@ -39,18 +39,21 @@ export default defineComponent({
     DxCheckBox,
   },
   props: {
-    code: {
-      type: String,
-      default: '',
-    },
     columns: {
       type: Array as PropType<ISchemeColumnsItem[]>,
       default: () => {
         return [];
       },
     },
+    orderBy: {
+      type: Array as PropType<IOrderByItem[]>,
+      default: () => {
+        return [];
+      },
+    },
   },
-  setup(props) {
+  emits: ['on-change-column'],
+  setup(props, ctx) {
     const { prefixCls } = useDesign('content-column');
     const dataSource = ref<ISchemeColumnsItem[]>([]);
 
@@ -65,10 +68,10 @@ export default defineComponent({
           oldDataSource[currentIndex]
         )[0];
         dataSource.value = oldDataSource;
+        ctx.emit('on-change-column', dataSource.value);
       }
     };
     const onDownMove = (data) => {
-      console.log(data);
       if (data.rowIndex < dataSource.value.length - 1) {
         const oldDataSource = [...dataSource.value];
         const currentIndex = data.rowIndex;
@@ -79,10 +82,9 @@ export default defineComponent({
           oldDataSource[currentIndex]
         )[0];
         dataSource.value = oldDataSource;
+        ctx.emit('on-change-column', dataSource.value);
       }
     };
-
-    console.log();
 
     watch(
       () => props.columns,
@@ -90,7 +92,23 @@ export default defineComponent({
         dataSource.value = val;
       },
       {
-        immediate: true
+        immediate: true,
+      }
+    );
+
+    watch(
+      () => props.orderBy,
+      (val) => {
+        val.forEach((sort) => {
+          dataSource.value.forEach((item) => {
+            if (sort.key === item.key) {
+              item.show = true;
+            }
+          });
+        });
+      },
+      {
+        immediate: true,
       }
     );
 

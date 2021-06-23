@@ -3,7 +3,7 @@
     <QueryFrom :columns="allColumns" />
     <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
     <QueryQuick />
-    <QueryPopup ref="popup" :code="code" :all-columns="allColumns" />
+    <QueryPopup ref="popup" :all-columns="allColumns" @on-filter-scheme="onFilterScheme" />
   </div>
 </template>
 
@@ -24,10 +24,6 @@
       QueryPopup,
     },
     props: {
-      code: {
-        type: String,
-        default: '',
-      },
       allColumns: {
         type: Array as PropType<IColumnItem[]>,
         default: () => {
@@ -35,7 +31,7 @@
         },
       },
     },
-    emits: ['on-change-filter-value'],
+    emits: ['on-change-filter-value', 'on-filter-scheme'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('query-plan');
       const popup = ref();
@@ -46,12 +42,16 @@
       const onQueryPlan = () => {
         popup.value.openPopup();
       };
+      const onFilterScheme = (data) => {
+        ctx.emit('on-filter-scheme', data);
+      };
 
       return {
         prefixCls,
         popup,
         onReset,
         onQueryPlan,
+        onFilterScheme,
       };
     },
     methods: {

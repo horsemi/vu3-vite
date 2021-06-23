@@ -2,9 +2,15 @@
   <div :class="prefixCls">
     <div :class="`${prefixCls}__left`">
       <Menu
+        ref="menu"
         :checked-scheme-index="checkedSchemeIndex"
         :menu-list="menuList"
         @on-change-scheme="onChangeScheme"
+        @on-submit-scheme="onSubmitScheme"
+        @on-save-scheme="onSaveScheme"
+        @on-reset-scheme="onResetScheme"
+        @on-del-scheme="onDelScheme"
+        @on-title-change="onTitleChange"
       />
     </div>
     <div :class="`${prefixCls}__right`">
@@ -22,17 +28,25 @@
             <component
               :is="data.component"
               :ref="data.component"
-              :requirement="schemeList[checkedSchemeIndex].requirement"
-              :order-by="schemeList[checkedSchemeIndex].orderBy"
-              :columns="schemeList[checkedSchemeIndex].columns"
-              :code="code"
+              :requirement="schemeList[checkedSchemeIndex].requirement || []"
+              :order-by="schemeList[checkedSchemeIndex].orderBy || []"
+              :columns="schemeList[checkedSchemeIndex].columns || []"
               :all-columns="allColumns"
               @on-change-requirement="onChangeRequirement"
+              @on-change-sort="onChangeSort"
+              @on-change-column="onChangeColumn"
             />
           </div>
         </template>
       </DxTabPanel>
     </div>
+    <DxToast
+      v-model:visible="showToast"
+      v-model:message="message"
+      width="200"
+      :position="{ at: 'top center', my: 'top center', offset: '0 100' }"
+      type="success"
+    />
   </div>
 </template>
 
@@ -46,20 +60,21 @@ import Sort from './sort.vue';
 import Column from './column.vue';
 import { IColumnItem } from '/@/model/types';
 import { ISchemeItem } from './types';
+import { cloneDeep } from 'lodash-es';
+import { Persistent } from '/@/utils/cache/persistent';
+import { SCHEME_LIST_KEY } from '/@/enums/cacheEnum';
+import { DxToast } from 'devextreme-vue/toast';
 
 export default defineComponent({
   components: {
     DxTabPanel,
+    DxToast,
     Menu,
     Requirement,
     Sort,
     Column,
   },
   props: {
-    code: {
-      type: String,
-      default: '',
-    },
     allColumns: {
       type: Array as PropType<IColumnItem[]>,
       default: () => {
@@ -71,139 +86,99 @@ export default defineComponent({
     const multiViewItems = [
       {
         title: '条件',
-        component: 'Requirement',
+        component: 'requirement',
       },
       {
         title: '排序',
-        component: 'Sort',
+        component: 'sort',
       },
       {
         title: '显示隐藏列',
-        component: 'Column',
+        component: 'column',
       },
     ];
     const { prefixCls } = useDesign('popup-content');
+    const message = ref('');
+    const showToast = ref(false);
     const selectedIndex = ref(0);
     const checkedSchemeIndex = ref(0);
-    const schemeList = ref<ISchemeItem[]>([
-      {
-        uuid: 1,
-        // 标题
-        title: '7月16日前未完成',
-        // 条件
-        requirement: [
-          {
-            requirement: 'BillCode',
-            operator: '=',
-            operatorList: [],
-            value: '',
-            type: '',
-            datatypekeies: '',
-            logic: '',
-          },
-        ],
-        // 排序
-        orderBy: [
-          {
-            key: 'BillCode', // 字段
-            caption: '单据编号',
-            sort: false, // 排序
-          },
-        ],
-        // 显示隐藏列
-        columns: [
-          {
-            key: 'BillCode',
-            caption: '单据编码',
-            show: true,
-          },
-          {
-            key: 'BillDate',
-            caption: '单据日期',
-            show: true,
-          },
-          {
-            key: 'DocumentStatus',
-            caption: '业务状态',
-            show: false,
-          },
-          {
-            key: 'IsCancelled',
-            caption: '取消状态',
-            show: false,
-          },
-          {
-            key: 'TotalPackage',
-            caption: '包件总数',
-            show: true,
-          },
-          {
-            key: 'TotalVolume',
-            caption: '总体积',
-            show: true,
-          },
-        ],
-      },
-    ]);
-    schemeList.value.unshift({
-      uuid: -1,
-      title: '缺省方案',
-      requirement: [
-        {
-          requirement: '',
-          operator: '=',
-          operatorList: [],
-          value: '',
-          type: '',
-          datatypekeies: '',
-          logic: '',
-        },
-      ],
-      orderBy: [],
-      columns: [
-        {
-          key: 'BillCode',
-          caption: '单据编码',
-          show: false,
-        },
-        {
-          key: 'BillDate',
-          caption: '单据日期',
-          show: false,
-        },
-        {
-          key: 'DocumentStatus',
-          caption: '业务状态',
-          show: false,
-        },
-        {
-          key: 'IsCancelled',
-          caption: '取消状态',
-          show: false,
-        },
-        {
-          key: 'TotalPackage',
-          caption: '包件总数',
-          show: false,
-        },
-        {
-          key: 'TotalVolume',
-          caption: '总体积',
-          show: false,
-        },
-      ],
-    });
-    const menuList: string[] = [];
-    schemeList.value.forEach((item) => {
-      menuList.push(item.title);
-    });
+    const schemeList = ref<ISchemeItem[]>([]);
+    const schemeData = ref<ISchemeItem[]>([]);
+    const menuList = ref<string[]>([]);
+    const menu = ref();
 
+    const handleData = () => {
+      schemeList.value = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[] || [];
+      schemeData.value = cloneDeep(schemeList.value);
+    };
+    const handleMenuList = () => {
+      const list: string[] = [];
+      schemeList.value.forEach((item) => {
+        list.push(item.title);
+      });
+      menuList.value = list;
+    };
+    handleData();
+    handleMenuList();
     const onChangeScheme = (index) => {
       checkedSchemeIndex.value = index;
     };
     const onChangeRequirement = (requirement) => {
       schemeList.value[checkedSchemeIndex.value].requirement = requirement;
-      console.log(schemeList.value);
+    };
+    const onChangeSort = (orderBy) => {
+      schemeList.value[checkedSchemeIndex.value].orderBy = orderBy;
+    };
+    const onChangeColumn = (columns) => {
+      schemeList.value[checkedSchemeIndex.value].columns = columns;
+    };
+    const onTitleChange = (title) => {
+      const index = checkedSchemeIndex.value;
+      schemeList.value[index].title = title;
+      schemeData.value[index] = cloneDeep(schemeList.value[index]);
+      handleMenuList();
+      Persistent.setLocal(SCHEME_LIST_KEY, schemeData.value);
+      message.value = '保存成功';
+      showToast.value = true;
+    };
+    const onSubmitScheme = () => {
+      // 缺省方案保存相当于另存
+      const index = checkedSchemeIndex.value;
+      if (index === 0) {
+        onSaveScheme();
+      } else {
+        schemeData.value[index] = cloneDeep(schemeList.value[index]);
+        Persistent.setLocal(SCHEME_LIST_KEY, schemeData.value);
+        message.value = '保存成功';
+        showToast.value = true;
+      }
+    };
+    const onSaveScheme = () => {
+      const index = checkedSchemeIndex.value;
+      if (!schemeList.value[index].title) return;
+      schemeList.value.push({ ...cloneDeep(schemeList.value[index]), title: '' });
+      checkedSchemeIndex.value = schemeList.value.length - 1;
+      handleMenuList();
+      menu.value.onTextFocusInput();
+    };
+    const onDelScheme = () => {
+      if (checkedSchemeIndex.value === 0) return;
+      schemeList.value.splice(checkedSchemeIndex.value, 1);
+      if (checkedSchemeIndex.value < schemeData.value.length - 1) {
+        schemeData.value.splice(checkedSchemeIndex.value, 1);
+        Persistent.setLocal(SCHEME_LIST_KEY, schemeData.value);
+        message.value = '删除成功';
+        showToast.value = true;
+      }
+      checkedSchemeIndex.value = checkedSchemeIndex.value - 1;
+      handleMenuList();
+    };
+    const onResetScheme = () => {
+      const index = checkedSchemeIndex.value;
+      if (index > schemeData.value.length - 1) return;
+      schemeList.value[index] = cloneDeep(schemeData.value[index]);
+      message.value = '重置成功';
+      showToast.value = true;
     };
 
     return {
@@ -213,8 +188,18 @@ export default defineComponent({
       multiViewItems,
       selectedIndex,
       checkedSchemeIndex,
+      menu,
+      message,
+      showToast,
       onChangeScheme,
       onChangeRequirement,
+      onChangeSort,
+      onChangeColumn,
+      onSubmitScheme,
+      onSaveScheme,
+      onResetScheme,
+      onDelScheme,
+      onTitleChange,
     };
   },
 });
