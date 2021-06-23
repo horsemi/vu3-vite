@@ -49,6 +49,7 @@ export const globalOperator = {
   datetimeOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
   booleanOperators: ['equal', 'notEqual'],
   enumOperators: ['equal', 'notEqual'],
+  foundationOperators: ['equal', 'notEqual'],
   allOperators: [
     'equal',
     'notEqual',

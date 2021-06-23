@@ -33,17 +33,6 @@
       >
       </DxNumberBox>
       <DxSelectBox
-        v-else-if="paramDatatypekeies === 'enum'"
-        :value="value"
-        :data-source="options"
-        :show-clear-button="true"
-        value-expr="value"
-        display-expr="description"
-        width="180"
-        @update:value="$emit('update:value', $event)"
-      >
-      </DxSelectBox>
-      <DxSelectBox
         v-else-if="paramDataType === 'boolean'"
         :value="value"
         :data-source="booleanOptions"
@@ -64,6 +53,25 @@
         @update:value="$emit('update:value', $event)"
       >
       </DxDateBox>
+      <DxSelectBox
+        v-else-if="paramDatatypekeies === 'enum'"
+        :value="value"
+        :data-source="options"
+        :show-clear-button="true"
+        value-expr="value"
+        display-expr="description"
+        width="180"
+        @update:value="$emit('update:value', $event)"
+      >
+      </DxSelectBox>
+      <FoundationSelect
+        v-else-if="paramDatatypekeies && paramDatatypekeies.startsWith('foundation_')"
+        width="180"
+        :value="value"
+        :foundation-code="paramDatatypekeies"
+        @update:value="$emit('update:value', $event)"
+      >
+      </FoundationSelect>
       <DxTextBox
         v-else
         :value="value"
@@ -89,10 +97,11 @@
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { getOperatorByType, initOperatorMap } from '/@/model/global-operator';
+  import FoundationSelect from '/@/components/FoundationSelect/index.vue';
 
   export default defineComponent({
     name: 'DynamicSelect',
-    components: { DxSelectBox, DxTextBox, DxNumberBox, DxDateBox },
+    components: { DxSelectBox, DxTextBox, DxNumberBox, DxDateBox, FoundationSelect },
     props: {
       value: {
         type: [String, Number, Boolean, Date],
@@ -178,13 +187,10 @@
       function initData(type: string, datatypekeies: string) {
         options.value.splice(0, options.value.length);
         dataType.value = type;
-        switch (datatypekeies) {
-          case 'enum': {
-            options.value.push(...appStore.getGlobalEnumDataByCode(type));
-          }
-          // case 'foundation': {
-
-          // }
+        if (datatypekeies === 'enum') {
+          options.value.push(...appStore.getGlobalEnumDataByCode(type));
+        } else if (datatypekeies && datatypekeies.startsWith('foundation_')) {
+          //
         }
         initValue(datatypekeies || type);
         operatorOptions.value = getOperatorByType(datatypekeies || type);

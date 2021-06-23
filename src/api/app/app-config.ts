@@ -6,14 +6,8 @@ enum apiUrl {
   getGlobalEnumUrl = '/api/odata/enums',
 }
 
-interface IAppConfigApi {
-  getGlobalEnum(): Promise<GlobalEnumType[]>;
-}
-
-class AppConfigApi implements IAppConfigApi {
-  getGlobalEnum() {
+export class AppConfigApi {
+  static getGlobalEnum() {
     return defHttp.get<GlobalEnumType[]>({ url: apiUrl.getGlobalEnumUrl });
   }
 }
-
-export const appConfigApi = new AppConfigApi();

@@ -7,7 +7,7 @@ import { Persistent } from '/@/utils/cache/persistent';
 import { getCommonStoragePrefix, getStorageShortName } from '/@/utils/env';
 import { deepMerge } from '/@/utils';
 
-import * as appConfigApi from '/@/api/app';
+import { AppConfigApi } from '/@/api/app';
 
 // Initial project configuration
 export function initAppConfigStore() {
@@ -40,7 +40,7 @@ export function clearObsoleteStorage() {
 
 export function initGlobalEnumData() {
   const appStore = useAppStore();
-  appConfigApi.appConfigApi.getGlobalEnum().then((resolve) => {
+  AppConfigApi.getGlobalEnum().then((resolve) => {
     appStore.setGlobalEnumData(resolve);
   });
 }

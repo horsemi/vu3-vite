@@ -38,6 +38,11 @@ export const customColumns: IColumnItem[] = [
     key: 'TotalVolume',
     caption: '总体积',
   },
+  {
+    key: 'GatheringPointCode',
+    caption: '集货点',
+    datatypekeies: 'foundation_gathering-points',
+  },
 ];
 
 export const getColumns = async (): Promise<IColumnItem[] | undefined> => {

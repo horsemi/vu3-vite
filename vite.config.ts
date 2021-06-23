@@ -34,6 +34,10 @@ export default defineConfig(
         port: 8080,
         open: true,
         proxy: {
+          '/api/foundation': {
+            target: 'http://10.10.14.207:30034',
+            changeOrigin: true,
+          },
           '/api': {
             target: 'http://10.10.14.207:30037',
             changeOrigin: true,
