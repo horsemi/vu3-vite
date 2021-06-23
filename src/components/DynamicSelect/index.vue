@@ -37,7 +37,7 @@
         :value="value"
         :data-source="options"
         :show-clear-button="true"
-        value-expr="key"
+        value-expr="value"
         display-expr="description"
         width="180"
         @update:value="$emit('update:value', $event)"
