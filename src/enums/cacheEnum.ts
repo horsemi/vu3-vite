@@ -7,6 +7,8 @@ export const LOCALE_KEY = 'LOCALE__';
 
 export const SYSTEM_CFG_KEY = 'SYSTEM_CFG__';
 
+export const SCHEME_LIST_KEY = 'SCHEME_LIST__';
+
 // base global local key
 export const APP_LOCAL_CACHE_KEY = 'COMMON__LOCAL__KEY__';
 

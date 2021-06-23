@@ -10,19 +10,20 @@
     <DxScrollView>
       <div>
         <div
-          v-for="(item, index) in list"
+          v-for="(item, index) in menuList"
           :key="index"
           :class="[
             `${prefixCls}__list__item`,
-            activeIndex === index && `${prefixCls}__list__item--active`,
+            checkedSchemeIndex === index && `${prefixCls}__list__item--active`,
           ]"
           @click="onSelectedScheme(index)"
         >
           <input
-            v-if="activeIndex === index && edit"
+            v-if="checkedSchemeIndex === index && (edit || item === '')"
             ref="textBox"
             :value="item"
             placeholder="请输入方案名称"
+            @blur="onTextBlur"
             @change="onTextChange"
           />
           <span v-else>{{ item }}</span>
@@ -33,7 +34,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, nextTick } from 'vue';
+import { defineComponent, ref, nextTick, PropType } from 'vue';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { DxScrollView } from 'devextreme-vue/scroll-view';
 
@@ -47,19 +48,24 @@ export default defineComponent({
       required: true,
     },
     menuList: {
-      type: Array,
+      type: Array as PropType<string[]>,
       default: () => {
         return [];
       },
     },
   },
-  emits: ['on-change-scheme'],
+  emits: [
+    'on-change-scheme',
+    'on-submit-scheme',
+    'on-save-scheme',
+    'on-reset-scheme',
+    'on-title-change',
+    'on-del-scheme',
+  ],
   setup(props, ctx) {
     const { prefixCls } = useDesign('content-menu');
-    const activeIndex = ref(props.checkedSchemeIndex);
     const edit = ref(false);
     const textBox = ref();
-    const list = ref(props.menuList);
 
     const onTextFocusInput = () => {
       nextTick(() => {
@@ -69,48 +75,51 @@ export default defineComponent({
       });
     };
     const onSelectedScheme = (index) => {
-      activeIndex.value = index;
-      onTextFocusInput();
+      if (!props.menuList[props.checkedSchemeIndex]) return;
       ctx.emit('on-change-scheme', index);
     };
     const onSubmitScheme = () => {
-      console.log('执行保存');
+      ctx.emit('on-submit-scheme');
     };
     const onSaveScheme = () => {
-      console.log('执行另存');
+      ctx.emit('on-save-scheme');
     };
     const onResetScheme = () => {
-      console.log('执行重置');
+      ctx.emit('on-reset-scheme');
     };
     const onDelScheme = () => {
-      const oldList = [...list.value];
-      oldList.splice(activeIndex.value, 1);
-      list.value = oldList;
+      ctx.emit('on-del-scheme');
     };
     const onEditScheme = () => {
       edit.value = true;
       onTextFocusInput();
     };
-    const onTextChange = (e) => {
-      if (e.target.value) {
-        list.value[activeIndex.value] = e.target.value;
+    const handleText = (text) => {
+      if (text) {
+        ctx.emit('on-title-change', text);
       }
       edit.value = false;
+    };
+    const onTextBlur = (e) => {
+      handleText(e.target.value);
+    };
+    const onTextChange = (e) => {
+      handleText(e.target.value);
     };
 
     return {
       prefixCls,
-      list,
-      activeIndex,
       edit,
       textBox,
       onSubmitScheme,
       onSaveScheme,
       onResetScheme,
       onEditScheme,
+      onTextBlur,
       onDelScheme,
       onSelectedScheme,
       onTextChange,
+      onTextFocusInput,
     };
   },
 });

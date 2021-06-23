@@ -20,7 +20,7 @@
             :param-list="allColumns"
           />
           <DxSelectBox
-            :value="item.logic"
+            v-model:value="item.logic"
             :data-source="logicOptions"
             display-expr="name"
             value-expr="value"
@@ -30,7 +30,7 @@
           <div :class="`${prefixCls}__handle`">
             <span @click="onUpAdd(index)">上加</span>
             <span @click="onDownAdd(index)">下加</span>
-            <span @click="onDel(index)">删除</span>
+            <span v-if="dataSource.length > 1" @click="onDel(index)">删除</span>
           </div>
         </div>
       </div>
@@ -95,27 +95,27 @@ export default defineComponent({
       const oldDataSource = [...dataSource.value];
       oldDataSource.splice(index, 0, requirementItem);
       dataSource.value = oldDataSource;
-      ctx.emit('on-change-requirement', dataSource);
+      ctx.emit('on-change-requirement', dataSource.value);
     };
     const onDownAdd = (index) => {
       const oldDataSource = [...dataSource.value];
       oldDataSource.splice(index + 1, 0, requirementItem);
       dataSource.value = oldDataSource;
-      ctx.emit('on-change-requirement', dataSource);
+      ctx.emit('on-change-requirement', dataSource.value);
     };
     const onDel = (index) => {
-      if (index >= 0) {
+      if (index >= 0 && dataSource.value.length > 1) {
         const oldDataSource = [...dataSource.value];
         oldDataSource.splice(index, 1);
         dataSource.value = oldDataSource;
-        ctx.emit('on-change-requirement', dataSource);
+        ctx.emit('on-change-requirement', dataSource.value);
       }
     };
 
     watch(
       () => props.requirement,
       (val) => {
-        dataSource.value = val;
+        dataSource.value = [...val];
       },
       {
         immediate: true,
@@ -143,7 +143,7 @@ export default defineComponent({
   &__header {
     display: flex;
     align-items: center;
-    height: 33px;
+    padding: 7px;
     color: #333;
     background-color: #fafafa;
   }
