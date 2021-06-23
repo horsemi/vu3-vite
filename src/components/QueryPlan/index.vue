@@ -1,6 +1,6 @@
 <template>
   <div :class="prefixCls">
-    <QueryFrom :columns="allColumns" />
+    <QueryFrom ref="queryForm" :columns="allColumns" />
     <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
     <QueryQuick />
     <QueryPopup ref="popup" :code="code" :all-columns="allColumns" />
