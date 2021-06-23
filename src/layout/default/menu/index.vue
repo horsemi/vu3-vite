@@ -79,7 +79,8 @@
         menuList.value[activeIndex.value].meta.showSub = false;
         activeIndex.value = index;
         if (item.children) {
-          item.children.length === 1 && !item.children[0].children
+          const menu = item.children.filter((item) => !item.meta.hideMenu);
+          menu.length === 1 && !menu[0].children
             ? go(item.children[0] as RouteLocationRawEx)
             : (item.meta.showSub = true);
         }
