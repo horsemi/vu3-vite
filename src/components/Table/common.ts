@@ -59,7 +59,11 @@ export const getFilter = (requirements) => {
   requirements.forEach((item) => {
     if (item.requirement && item.value) {
       filter.push([item.requirement, item.operator, item.value]);
-      filter.push(item.logic);
+      if (item.logic) {
+        filter.push(item.logic);
+      } else {
+        filter.push('and');
+      }
     }
   });
   return filter;

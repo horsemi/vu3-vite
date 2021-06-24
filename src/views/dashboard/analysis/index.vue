@@ -1,6 +1,6 @@
 <template>
   <div>
-    <QueryPlan :all-columns="allColumns" @on-filter-scheme="onFilterScheme" />
+    <QueryPlan :all-columns="allColumns" :filter-list="filterList" @on-filter-scheme="onFilterScheme" @on-search="onSearch" />
     <div class="example">
       <div class="btn__wrap">
         <div class="btn__box">
@@ -53,6 +53,7 @@ import { IColumnItem } from '/@/model/types';
 import { ISchemeColumnsItem, ISchemeItem } from '/@/components/QueryPopup/content/types';
 import { Persistent } from '/@/utils/cache/persistent';
 import { SCHEME_LIST_KEY } from '/@/enums/cacheEnum';
+import { cloneDeep } from 'lodash-es';
 
 export default defineComponent({
   name: 'Analysis',
@@ -106,19 +107,26 @@ export default defineComponent({
     const tableOptions = ref<ITableOptions | undefined>();
     const dataSource = ref();
     const columns = ref<IColumnItem[] | undefined>();
+    const filterList = ref<ISchemeItem[]>([]);
 
     const handleBillCodeClick = () => {
       go('exampleDetails');
     };
     const onFilterScheme = (data: ISchemeItem) => {
-      filterScheme.value = { ...data };
+      filterScheme.value = cloneDeep(data);
+    };
+    const onSearch = (data) => {
+      const scheme = cloneDeep(filterScheme.value);
+      scheme?.requirement.push(...data);
+      filterScheme.value = cloneDeep(scheme);
     };
 
     onMounted(async () => {
       allColumns.value = await getColumns();
       getQueryPlan(allColumns.value);
-      const schemeList = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[];
-      const { customOptions, data } = await getDataSource(options, schemeList[0]);
+      filterList.value = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[];
+      filterScheme.value = filterList.value[0];
+      const { customOptions, data } = await getDataSource(options, filterScheme.value);
       tableOptions.value = customOptions;
       dataSource.value = data;
       const newColums: IColumnItem[] = [];
@@ -175,9 +183,11 @@ export default defineComponent({
       tabList,
       defaultVisible,
       summary,
+      filterList,
       filterScheme,
       handleBillCodeClick,
       onFilterScheme,
+      onSearch,
     };
   },
 });

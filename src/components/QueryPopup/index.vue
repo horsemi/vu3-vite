@@ -2,7 +2,12 @@
   <DxPopup v-model:visible="popupVisible" :close-on-outside-click="true" :show-title="false">
     <div :class="prefixCls">
       <Header @on-close-popup="closePopup" />
-      <Content ref="content" :all-columns="allColumns" />
+      <Content
+        ref="content"
+        :all-columns="allColumns"
+        :filter-list="filterList"
+        @on-change-schemedata="onChangeSchemedata"
+      />
       <Footer @on-submit="onSubmit" @on-close-popup="closePopup" />
     </div>
   </DxPopup>
@@ -16,6 +21,7 @@ import Header from './header.vue';
 import Content from './content/index.vue';
 import Footer from './footer.vue';
 import { IColumnItem } from '/@/model/types';
+import { ISchemeItem } from './content/types';
 
 export default defineComponent({
   components: {
@@ -31,8 +37,14 @@ export default defineComponent({
         return [];
       },
     },
+    filterList: {
+      type: Array as PropType<ISchemeItem[]>,
+      default: () => {
+        return [];
+      },
+    },
   },
-  emits: ['on-filter-scheme'],
+  emits: ['on-filter-scheme', 'on-change-schemedata'],
   setup(props, ctx) {
     const { prefixCls } = useDesign('query-popup');
     const popupVisible = ref(false);
@@ -44,19 +56,22 @@ export default defineComponent({
     const closePopup = () => {
       popupVisible.value = false;
     };
+    const onChangeSchemedata = (data) => {
+      ctx.emit('on-change-schemedata', data);
+    };
     const handleScheme = () => {
       const scheme = content.value.schemeList[content.value.checkedSchemeIndex];
-      let orderBy = scheme.orderBy;
-      const columns = scheme.columns;
-      if (orderBy && orderBy.length > 0) {
-        orderBy.forEach((sort) => {
-          columns.forEach((col) => {
-            if (sort.key === col.key) {
-              col.show = true;
-            }
-          });
-        });
-      }
+      // let orderBy = scheme.orderBy;
+      // const columns = scheme.columns;
+      // if (orderBy && orderBy.length > 0) {
+      //   orderBy.forEach((sort) => {
+      //     columns.forEach((col) => {
+      //       if (sort.key === col.key) {
+      //         col.show = true;
+      //       }
+      //     });
+      //   });
+      // }
       ctx.emit('on-filter-scheme', scheme);
     };
     const onSubmit = () => {
@@ -71,6 +86,7 @@ export default defineComponent({
       openPopup,
       closePopup,
       onSubmit,
+      onChangeSchemedata,
     };
   },
 });

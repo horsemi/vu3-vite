@@ -117,12 +117,10 @@ export default defineComponent({
       // console.log(columns);
     };
     const handleFilterScheme = (scheme) => {
+      if (Object.keys(tableData.value).length === 0) return;
       const select = getSelect(scheme.columns);
       const filter = getFilter(scheme.requirement);
       const sort = getSort(scheme.orderBy);
-      console.log(select);
-      console.log(filter);
-      console.log(sort);
       if (select.length > 0) {
         tableData.value.select(select);
       }

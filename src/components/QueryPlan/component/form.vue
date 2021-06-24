@@ -63,93 +63,81 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType, reactive, ref } from 'vue';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import DxButton from 'devextreme-vue/button';
+import { defineComponent, PropType, reactive, ref } from 'vue';
+import { useDesign } from '/@/hooks/web/useDesign';
+import DxButton from 'devextreme-vue/button';
 
-  import DynamicSelect from '/@/components/DynamicSelect/index.vue';
+import DynamicSelect from '/@/components/DynamicSelect/index.vue';
 import { IColumnItem } from '/@/model/types';
 
-  interface IQueryItem {
-    requirement: string;
-    operator: string;
-    operatorList: string[];
-    value: string;
-    type: string;
-    datatypekeies: string;
+interface IQueryItem {
+  requirement: string;
+  operator: string;
+  operatorList: string[];
+  value: string;
+  type: string;
+  datatypekeies: string;
+}
+
+export default defineComponent({
+  components: {
+    DxButton,
+    DynamicSelect,
+  },
+  props: {
+    columns: {
+      type: Array as PropType<IColumnItem[]>,
+      default: () => {
+        return [];
+      },
+    },
+  },
+  // emits: ['on-add-requirement', 'on-del-requirement', 'on-save-requirement'],
+  setup() {
+    const { prefixCls } = useDesign('query-form');
+    const opened = ref<boolean>(false);
+    const queryList = reactive<IQueryItem[]>([
+      {
+        requirement: '',
+        operator: '=',
+        operatorList: [],
+        value: '',
+        type: '',
+        datatypekeies: '',
+      },
+    ]);
+
+    const onAddRequirement = () => {
+      queryList.push({
+        requirement: '',
+        operator: '=',
+        operatorList: [],
+        value: '',
+        type: '',
+        datatypekeies: '',
+      });
+    };
+    const onDelRequirement = (index: number) => {
+      queryList.splice(index, 1);
+    };
+    const onSaveRequirement = () => {
+      console.log(queryList);
+    };
+    const onItemClick = (e) => {
+      e.event.stopPropagation();
+    };
+
+    return {
+      prefixCls,
+      opened,
+      queryList,
+      onAddRequirement,
+      onDelRequirement,
+      onSaveRequirement,
+      onItemClick,
+    };
   }
-
-  export default defineComponent({
-    components: {
-      DxButton,
-      DynamicSelect,
-    },
-    props: {
-      columns: {
-        type: Array as PropType<IColumnItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-    },
-    // emits: ['on-add-requirement', 'on-del-requirement', 'on-save-requirement'],
-    setup() {
-      const { prefixCls } = useDesign('query-form');
-      const opened = ref<boolean>(false);
-      const queryList = reactive<IQueryItem[]>([
-        {
-          requirement: '',
-          operator: '=',
-          operatorList: [],
-          value: '',
-          type: '',
-          datatypekeies: '',
-        },
-      ]);
-
-      const onAddRequirement = () => {
-        queryList.push({
-          requirement: '',
-          operator: '=',
-          operatorList: [],
-          value: '',
-          type: '',
-          datatypekeies: '',
-        });
-      };
-      const onDelRequirement = (index: number) => {
-        queryList.splice(index, 1);
-      };
-      const onSaveRequirement = () => {
-        console.log(queryList);
-      };
-      const onItemClick = (e) => {
-        e.event.stopPropagation();
-      };
-
-      return {
-        prefixCls,
-        opened,
-        queryList,
-        onAddRequirement,
-        onDelRequirement,
-        onSaveRequirement,
-        onItemClick,
-      };
-    },
-    methods: {
-      getQueryList() {
-        const result: any[] = [];
-        if (this.queryList.length > 0 && this.queryList[0].requirement) {
-          this.queryList.forEach((item) => {
-            result.push([item.requirement, item.operator, item.value]);
-            result.push('and');
-          });
-        }
-        return result;
-      },
-    },
-  });
+});
 </script>
 
 <style lang="less" scoped>

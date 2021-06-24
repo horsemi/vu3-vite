@@ -46,6 +46,7 @@ import DxSelectBox from 'devextreme-vue/select-box';
 import { IRequirementItem } from './types';
 import { IColumnItem } from '/@/model/types';
 import { DxScrollView } from 'devextreme-vue/scroll-view';
+import { cloneDeep } from 'lodash-es';
 
 export default defineComponent({
   components: {
@@ -91,31 +92,34 @@ export default defineComponent({
       },
     ];
 
+    const onChangeRequirement = () => {
+      ctx.emit('on-change-requirement', dataSource.value);
+    };
     const onUpAdd = (index) => {
       const oldDataSource = [...dataSource.value];
       oldDataSource.splice(index, 0, requirementItem);
       dataSource.value = oldDataSource;
-      ctx.emit('on-change-requirement', dataSource.value);
+      onChangeRequirement();
     };
     const onDownAdd = (index) => {
       const oldDataSource = [...dataSource.value];
       oldDataSource.splice(index + 1, 0, requirementItem);
       dataSource.value = oldDataSource;
-      ctx.emit('on-change-requirement', dataSource.value);
+      onChangeRequirement();
     };
     const onDel = (index) => {
       if (index >= 0 && dataSource.value.length > 1) {
         const oldDataSource = [...dataSource.value];
         oldDataSource.splice(index, 1);
         dataSource.value = oldDataSource;
-        ctx.emit('on-change-requirement', dataSource.value);
+        onChangeRequirement();
       }
     };
 
     watch(
       () => props.requirement,
       (val) => {
-        dataSource.value = [...val];
+        dataSource.value = cloneDeep(val);
       },
       {
         immediate: true,
@@ -129,6 +133,7 @@ export default defineComponent({
       onUpAdd,
       onDownAdd,
       onDel,
+      onChangeRequirement,
     };
   },
 });

@@ -6,11 +6,11 @@
   >
     <span>快捷过滤：</span>
     <span
-      v-for="(item, index) in quickList.slice(0, 3)"
+      v-for="(item, index) in quickList.slice(0, 4)"
       :key="index"
       :class="[`${prefixCls}__span`, activeIndex === index ? `${prefixCls}__span--active` : '']"
       @click="onActive(index)"
-      >{{ item.text }}</span
+      >{{ item.title }}</span
     >
     <div :class="`${prefixCls}__iconbox`" @click="opened = !opened">
       <span :class="`${prefixCls}__icon`"></span>
@@ -20,12 +20,15 @@
     <transition name="zoom-in-top">
       <div v-show="opened" :class="`${prefixCls}__overflow`">
         <span
-          v-for="(item, index) in quickList.slice(3)"
+          v-for="(item, index) in quickList.slice(4)"
           :key="index"
-          :class="[`${prefixCls}__span`, activeIndex === index + 3 ? `${prefixCls}__span--active` : '']"
-          style="margin-bottom: 16px;"
+          :class="[
+            `${prefixCls}__span`,
+            activeIndex === index + 3 ? `${prefixCls}__span--active` : '',
+          ]"
+          style="margin-bottom: 16px"
           @click="onActive(index + 3)"
-          >{{ item.text }}</span
+          >{{ item.title }}</span
         >
       </div>
     </transition>
@@ -33,45 +36,42 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onBeforeUnmount, ref } from 'vue';
+import { defineComponent, onBeforeUnmount, PropType, ref, watch } from 'vue';
+import { ISchemeItem } from '../../QueryPopup/content/types';
 import { useDesign } from '/@/hooks/web/useDesign';
 
-interface IQuickItem {
-  text: string,
-}
-
 export default defineComponent({
-  setup() {
+  props: {
+    quickData: {
+      type: Array as PropType<ISchemeItem[]>,
+      default: () => {
+        return [];
+      },
+    },
+  },
+  emits: ['on-filter-scheme'],
+  setup(props, ctx) {
     const { prefixCls } = useDesign('query-quick');
+    const quick = ref();
     const opened = ref<boolean>(false);
     const activeIndex = ref<number>(0);
-
-    const quickList: IQuickItem[] = [
-      {
-        text: '2020的订单',
-      },
-      {
-        text: '3月订单',
-      },
-      {
-        text: '4月订单',
-      },
-      {
-        text: '5月订单',
-      },
-      {
-        text: '2021的订单',
-      },
-      {
-        text: '2019的订单',
-      },
-      {
-        text: '2018的订单',
-      },
-    ];
+    const quickList = ref<ISchemeItem[]>([]);
 
     const onActive = (index: number): void => {
       activeIndex.value = index;
+      onFilterScheme(quickList.value[activeIndex.value]);
+    };
+    const onFilterScheme = (data) => {
+      ctx.emit('on-filter-scheme', data);
+    };
+    const handleQuickList = (val) => {
+      const data: ISchemeItem[] = [];
+      if (val.length > 1) {
+        val.forEach((item) => {
+          data.push(item);
+        });
+      }
+      quickList.value = data;
     };
 
     function closePopup(): void {
@@ -84,8 +84,19 @@ export default defineComponent({
       document.removeEventListener('click', closePopup);
     });
 
+    watch(
+      () => props.quickData,
+      (val) => {
+        handleQuickList(val);
+      },
+      {
+        immediate: true,
+      }
+    );
+
     return {
       prefixCls,
+      quick,
       opened,
       activeIndex,
       quickList,
@@ -102,6 +113,7 @@ export default defineComponent({
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
   height: 64px;
   padding: 0 10px;
   margin-left: 15px;
@@ -129,6 +141,7 @@ export default defineComponent({
   &__iconbox {
     display: flex;
     align-items: center;
+    width: 24px;
     height: 34px;
     cursor: pointer;
   }
