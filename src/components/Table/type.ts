@@ -99,10 +99,10 @@ export interface ITableOptions {
   /**
    * @description: 多选列配置
    */
-  selection?: ISelection;
+  selection: ISelection;
 
   /**
    * @description: 分页配置
    */
-  page?: IPage;
+  page: IPage;
 }

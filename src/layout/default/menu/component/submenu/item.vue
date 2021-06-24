@@ -17,7 +17,9 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
+  import type { AppRouteRecordRaw } from '/@/router/types';
+
+  import { defineComponent, PropType } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { RouteLocationRawEx, useGo } from '/@/hooks/web/usePage';
@@ -26,7 +28,7 @@
     name: 'SubMenuItem',
     props: {
       subMenuData: {
-        type: Object,
+        type: Object as PropType<AppRouteRecordRaw>,
         default: () => {
           return {};
         },

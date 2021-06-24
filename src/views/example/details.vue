@@ -2,10 +2,10 @@
   <div class="details">
     <div class="content">
       <div class="btn-wrap">
-        <DxButton :width="76" text="保存" type="default" @click="onClick($event)" />
+        <DxButton :width="76" text="保存" type="default" />
         <DxDropDownButton :items="tabList" :width="80" text="提交" />
         <DxDropDownButton :items="tabList" :width="80" text="审核" />
-        <DxButton :width="76" text="刷新" @click="onClick($event)" />
+        <DxButton :width="76" text="刷新" />
       </div>
       <DxTabPanel
         v-model:selected-index="selectedIndex"
@@ -89,8 +89,8 @@
     </div>
     <div class="table-wrap">
       <div class="btn-wrap">
-        <DxButton :width="76" text="新增" type="default" @click="onClick($event)" />
-        <DxButton :width="76" text="保存" @click="onClick($event)" />
+        <DxButton :width="76" text="新增" type="default" />
+        <DxButton :width="76" text="保存" />
       </div>
       <DxTabPanel
         v-model:selected-index="selectedIndex"

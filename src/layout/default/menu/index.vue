@@ -26,8 +26,6 @@
 </template>
 
 <script lang="ts">
-  import type { AppRouteRecordRaw } from '/@/router/types';
-
   import { defineComponent, ref, unref, computed } from 'vue';
   import { RouteLocationRawEx, useGo } from '/@/hooks/web/usePage';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -63,7 +61,7 @@
       const permissionStore = usePermissionStore();
       const menuList = ref(permissionStore.getMenuList);
 
-      function isActive(route: AppRouteRecordRaw) {
+      function isActive(route): string | undefined {
         if (route.name === unref(activeName)) {
           return `${prefixCls}-item__container--active`;
         } else if (route.children) {
@@ -75,16 +73,16 @@
         }
       }
 
-      const handleMenuClick = (item: AppRouteRecordRaw, index) => {
+      function handleMenuClick(item, index) {
         menuList.value[activeIndex.value].meta.showSub = false;
         activeIndex.value = index;
         if (item.children) {
-          const menu = item.children.filter((item) => !item.meta.hideMenu);
+          const menu = item.children.filter((item) => !item.meta!.hideMenu);
           menu.length === 1 && !menu[0].children
             ? go(item.children[0] as RouteLocationRawEx)
-            : (item.meta.showSub = true);
+            : (item.meta!.showSub = true);
         }
-      };
+      }
       const onScroll = (e): void => {
         scrollTop.value = e.scrollOffset.top;
       };
