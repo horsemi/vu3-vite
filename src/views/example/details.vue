@@ -212,28 +212,28 @@
 
       const tabList = ['加急单', '区分物流', '产品异常', '订单异常', '取消标识'];
 
-      const options: ITableOptions = {
-        height: '360px',
-        dataSourceOptions: {
-          paginate: false,
-          sort: 'BillCode',
-          oDataOptions: {
-            url: '/api/odata/shipping-orders',
-            key: 'BillCode',
-          },
-        },
-      };
+      // const options: ITableOptions = {
+      //   height: '360px',
+      //   dataSourceOptions: {
+      //     paginate: false,
+      //     sort: 'BillCode',
+      //     oDataOptions: {
+      //       url: '/api/odata/shipping-orders',
+      //       key: 'BillCode',
+      //     },
+      //   },
+      // };
 
       const tableOptions = ref<ITableOptions | undefined>();
       const dataSource = ref();
       const columns = ref<IColumnItem[] | undefined>();
 
-      onMounted(async () => {
-        const { customOptions, data, customColumns } = await getDataSource(options, getColumns);
-        tableOptions.value = customOptions;
-        dataSource.value = data;
-        columns.value = customColumns;
-      });
+      // onMounted(async () => {
+      //   const { customOptions, data, customColumns } = await getDataSource(options, getColumns);
+      //   tableOptions.value = customOptions;
+      //   dataSource.value = data;
+      //   columns.value = customColumns;
+      // });
 
       return {
         tableOptions,

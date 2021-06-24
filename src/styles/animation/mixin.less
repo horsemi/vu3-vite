@@ -1,28 +1,28 @@
 // transition 不同方向 伸缩 渐变 动画
-.zoom-animation(@direction: "top", @scaleStart: scaleY(0), @scaleEnd: scaleY(1), @origin: center top) {
+.zoom-animation(@direction: 'top', @scaleStart: scaleY(0), @scaleEnd: scaleY(1), @origin: center top) {
   .zoom-in-@{direction}-enter-from {
-      opacity: 0;
-      transform: @scaleStart;
+    opacity: 0;
+    transform: @scaleStart;
   }
   .zoom-in-@{direction}-enter-to {
-      opacity: 1;
-      transform: @scaleEnd;
+    opacity: 1;
+    transform: @scaleEnd;
   }
   .zoom-in-@{direction}-enter-active {
-      transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms,
+    transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms,
       opacity 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms;
-      transform-origin: @origin;
+    transform-origin: @origin;
   }
   .zoom-in-@{direction}-leave-from {
-      opacity: 1;
+    opacity: 1;
   }
   .zoom-in-@{direction}-leave-to {
-      opacity: 0;
-      transform: @scaleStart;
+    opacity: 0;
+    transform: @scaleStart;
   }
   .zoom-in-@{direction}-leave-active {
-      transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms,
+    transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms,
       opacity 300ms cubic-bezier(0.23, 1, 0.32, 1) 100ms;
-      transform-origin: @origin;
+    transform-origin: @origin;
   }
 }

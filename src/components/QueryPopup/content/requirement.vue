@@ -39,133 +39,133 @@
 </template>
 
 <script lang="ts">
-import DynamicSelect from '/@/components/DynamicSelect/index.vue';
-import { defineComponent, PropType, ref, watch } from 'vue';
-import { useDesign } from '/@/hooks/web/useDesign';
-import DxSelectBox from 'devextreme-vue/select-box';
-import { IRequirementItem } from './types';
-import { IColumnItem } from '/@/model/types';
-import { DxScrollView } from 'devextreme-vue/scroll-view';
-import { cloneDeep } from 'lodash-es';
+  import DynamicSelect from '/@/components/DynamicSelect/index.vue';
+  import { defineComponent, PropType, ref, watch } from 'vue';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  import DxSelectBox from 'devextreme-vue/select-box';
+  import { IRequirementItem } from './types';
+  import { IColumnItem } from '/@/model/types';
+  import { DxScrollView } from 'devextreme-vue/scroll-view';
+  import { cloneDeep } from 'lodash-es';
 
-export default defineComponent({
-  components: {
-    DynamicSelect,
-    DxSelectBox,
-    DxScrollView,
-  },
-  props: {
-    requirement: {
-      type: Array as PropType<IRequirementItem[]>,
-      default: () => {
-        return [];
+  export default defineComponent({
+    components: {
+      DynamicSelect,
+      DxSelectBox,
+      DxScrollView,
+    },
+    props: {
+      requirement: {
+        type: Array as PropType<IRequirementItem[]>,
+        default: () => {
+          return [];
+        },
+      },
+      allColumns: {
+        type: Array as PropType<IColumnItem[]>,
+        default: () => {
+          return [];
+        },
       },
     },
-    allColumns: {
-      type: Array as PropType<IColumnItem[]>,
-      default: () => {
-        return [];
-      },
-    },
-  },
-  emits: ['on-change-requirement'],
-  setup(props, ctx) {
-    const { prefixCls } = useDesign('content-requirement');
-    const requirementItem = {
-      requirement: '',
-      operator: '=',
-      operatorList: [],
-      value: '',
-      type: '',
-      datatypekeies: '',
-      logic: '',
-    };
-    const dataSource = ref<IRequirementItem[]>([]);
-    const logicOptions = [
-      {
-        name: '并且',
-        value: 'and',
-      },
-      {
-        name: '或',
-        value: 'or',
-      },
-    ];
+    emits: ['on-change-requirement'],
+    setup(props, ctx) {
+      const { prefixCls } = useDesign('content-requirement');
+      const requirementItem = {
+        requirement: '',
+        operator: '=',
+        operatorList: [],
+        value: '',
+        type: '',
+        datatypekeies: '',
+        logic: '',
+      };
+      const dataSource = ref<IRequirementItem[]>([]);
+      const logicOptions = [
+        {
+          name: '并且',
+          value: 'and',
+        },
+        {
+          name: '或',
+          value: 'or',
+        },
+      ];
 
-    const onChangeRequirement = () => {
-      ctx.emit('on-change-requirement', dataSource.value);
-    };
-    const onUpAdd = (index) => {
-      const oldDataSource = [...dataSource.value];
-      oldDataSource.splice(index, 0, requirementItem);
-      dataSource.value = oldDataSource;
-      onChangeRequirement();
-    };
-    const onDownAdd = (index) => {
-      const oldDataSource = [...dataSource.value];
-      oldDataSource.splice(index + 1, 0, requirementItem);
-      dataSource.value = oldDataSource;
-      onChangeRequirement();
-    };
-    const onDel = (index) => {
-      if (index >= 0 && dataSource.value.length > 1) {
+      const onChangeRequirement = () => {
+        ctx.emit('on-change-requirement', dataSource.value);
+      };
+      const onUpAdd = (index) => {
         const oldDataSource = [...dataSource.value];
-        oldDataSource.splice(index, 1);
+        oldDataSource.splice(index, 0, requirementItem);
         dataSource.value = oldDataSource;
         onChangeRequirement();
-      }
-    };
+      };
+      const onDownAdd = (index) => {
+        const oldDataSource = [...dataSource.value];
+        oldDataSource.splice(index + 1, 0, requirementItem);
+        dataSource.value = oldDataSource;
+        onChangeRequirement();
+      };
+      const onDel = (index) => {
+        if (index >= 0 && dataSource.value.length > 1) {
+          const oldDataSource = [...dataSource.value];
+          oldDataSource.splice(index, 1);
+          dataSource.value = oldDataSource;
+          onChangeRequirement();
+        }
+      };
 
-    watch(
-      () => props.requirement,
-      (val) => {
-        dataSource.value = cloneDeep(val);
-      },
-      {
-        immediate: true,
-      }
-    );
+      watch(
+        () => props.requirement,
+        (val) => {
+          dataSource.value = cloneDeep(val);
+        },
+        {
+          immediate: true,
+        }
+      );
 
-    return {
-      dataSource,
-      prefixCls,
-      logicOptions,
-      onUpAdd,
-      onDownAdd,
-      onDel,
-      onChangeRequirement,
-    };
-  },
-});
+      return {
+        dataSource,
+        prefixCls,
+        logicOptions,
+        onUpAdd,
+        onDownAdd,
+        onDel,
+        onChangeRequirement,
+      };
+    },
+  });
 </script>
 
 <style lang="less" scoped>
-@prefix-cls: ~'@{namespace}-content-requirement';
+  @prefix-cls: ~'@{namespace}-content-requirement';
 
-.@{prefix-cls} {
-  height: 100%;
+  .@{prefix-cls} {
+    height: 100%;
 
-  &__header {
-    display: flex;
-    align-items: center;
-    padding: 7px;
-    color: #333;
-    background-color: #fafafa;
-  }
+    &__header {
+      display: flex;
+      align-items: center;
+      padding: 7px;
+      color: #333;
+      background-color: #fafafa;
+    }
 
-  &__item {
-    display: flex;
-    align-items: center;
-    padding: 7px 0;
-  }
+    &__item {
+      display: flex;
+      align-items: center;
+      padding: 7px 0;
+    }
 
-  &__handle {
-    margin-left: 10px;
-    span {
-      margin-right: 20px;
-      color: @color-primary;
-      cursor: pointer;
+    &__handle {
+      margin-left: 10px;
+      span {
+        margin-right: 20px;
+        color: @color-primary;
+        cursor: pointer;
+      }
     }
   }
-}
 </style>

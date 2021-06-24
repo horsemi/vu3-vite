@@ -7,45 +7,45 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useDesign } from '/@/hooks/web/useDesign';
-import DxButton from 'devextreme-vue/button';
+  import { defineComponent } from 'vue';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  import DxButton from 'devextreme-vue/button';
 
-export default defineComponent({
-  components: {
-    DxButton,
-  },
-  emits: ['on-search', 'on-queryPlan', 'on-reset'],
-  setup(props, ctx) {
-    const { prefixCls } = useDesign('query-btn');
+  export default defineComponent({
+    components: {
+      DxButton,
+    },
+    emits: ['on-search', 'on-queryPlan', 'on-reset'],
+    setup(props, ctx) {
+      const { prefixCls } = useDesign('query-btn');
 
-    const onSearch = () => {
-      ctx.emit('on-search');
-    };
-    const onReset = () => {
-      ctx.emit('on-reset');
-    };
-    const onQueryPlan = () => {
-      ctx.emit('on-queryPlan');
-    };
+      const onSearch = () => {
+        ctx.emit('on-search');
+      };
+      const onReset = () => {
+        ctx.emit('on-reset');
+      };
+      const onQueryPlan = () => {
+        ctx.emit('on-queryPlan');
+      };
 
-    return {
-      prefixCls,
-      onSearch,
-      onReset,
-      onQueryPlan,
-    };
-  },
-});
+      return {
+        prefixCls,
+        onSearch,
+        onReset,
+        onQueryPlan,
+      };
+    },
+  });
 </script>
 
 <style lang="less" scoped>
-@prefix-cls: ~'@{namespace}-query-btn';
+  @prefix-cls: ~'@{namespace}-query-btn';
 
-.@{prefix-cls} {
-  display: flex;
-  & > * {
-    margin-left: 10px;
+  .@{prefix-cls} {
+    display: flex;
+    & > * {
+      margin-left: 10px;
+    }
   }
-}
 </style>

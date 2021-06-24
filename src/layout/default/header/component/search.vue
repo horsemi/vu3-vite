@@ -6,42 +6,42 @@
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import { useDesign } from '/@/hooks/web/useDesign';
+  import { defineComponent } from 'vue';
+  import { useDesign } from '/@/hooks/web/useDesign';
 
-export default defineComponent({
-  setup() {
-    const { prefixCls } = useDesign('header-search');
-    return {
-      prefixCls,
-    };
-  },
-});
+  export default defineComponent({
+    setup() {
+      const { prefixCls } = useDesign('header-search');
+      return {
+        prefixCls,
+      };
+    },
+  });
 </script>
 
 <style lang="less" scoped>
-@prefix-cls: ~'@{namespace}-header-search';
+  @prefix-cls: ~'@{namespace}-header-search';
 
-.@{prefix-cls} {
-  display: flex;
-  width: 210px;
-  height: 30px;
-  padding: 0 20px;
-  margin: 0 20px;
-  font-size: 12px;
-  background-color: #e2f1ff;
-  border-radius: 20px;
-  justify-content: space-between;
-  align-items: center;
-  &__input {
-    width: 100%;
-    background: none;
-    border: none;
-    outline: none;
-  }
+  .@{prefix-cls} {
+    display: flex;
+    width: 210px;
+    height: 30px;
+    padding: 0 20px;
+    margin: 0 20px;
+    font-size: 12px;
+    background-color: #e2f1ff;
+    border-radius: 20px;
+    justify-content: space-between;
+    align-items: center;
+    &__input {
+      width: 100%;
+      background: none;
+      border: none;
+      outline: none;
+    }
 
-  & > .vue3-vite-svg-icon {
-    cursor: pointer;
+    & > .vue3-vite-svg-icon {
+      cursor: pointer;
+    }
   }
-}
 </style>
