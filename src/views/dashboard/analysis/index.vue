@@ -1,8 +1,10 @@
 <template>
   <div>
     <QueryPlan
+      :filter-scheme="filterScheme"
       :all-columns="allColumns"
       :filter-list="filterList"
+      :scheme-checked-index="schemeCheckedIndex"
       @on-filter-scheme="onFilterScheme"
       @on-search="onSearch"
     />
@@ -57,7 +59,7 @@
   import { IColumnItem } from '/@/model/types';
   import { ISchemeColumnsItem, ISchemeItem } from '/@/components/QueryPopup/content/types';
   import { Persistent } from '/@/utils/cache/persistent';
-  import { SCHEME_LIST_KEY } from '/@/enums/cacheEnum';
+  import { SCHEME_LIST_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';
   import { cloneDeep } from 'lodash-es';
 
   export default defineComponent({
@@ -117,6 +119,7 @@
       const dataSource = ref();
       const columns = ref<IColumnItem[] | undefined>();
       const filterList = ref<ISchemeItem[]>([]);
+      const schemeCheckedIndex = ref<number>(0);
 
       // const handleBillCodeClick = () => {
       //   go({ name: 'exampleDetails' });
@@ -125,7 +128,9 @@
         filterScheme.value = cloneDeep(data);
       };
       const onSearch = (data) => {
-        const scheme = cloneDeep(filterScheme.value);
+        console.log(data);
+        const scheme = cloneDeep(filterList.value[schemeCheckedIndex.value]);
+        console.log(scheme);
         scheme?.requirement.push(...data);
         filterScheme.value = cloneDeep(scheme);
       };
@@ -134,7 +139,7 @@
         allColumns.value = await getColumns();
         getQueryPlan(allColumns.value);
         filterList.value = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[];
-        filterScheme.value = filterList.value[0];
+        filterScheme.value = filterList.value[schemeCheckedIndex.value];
         const { customOptions, data } = await getDataSource(options, filterScheme.value);
         tableOptions.value = customOptions;
         dataSource.value = data;
@@ -151,7 +156,13 @@
       });
 
       const getQueryPlan = (allColumns) => {
-        const oldSchemeList = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[];
+        const oldSchemeList = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[] | undefined;
+        const oldSchemeCheckedIndex = Persistent.getLocal(SCHEME_CHECKED_INDE_KEY) as
+          | number
+          | undefined;
+        if (oldSchemeCheckedIndex) {
+          schemeCheckedIndex.value = oldSchemeCheckedIndex;
+        }
         if (!oldSchemeList) {
           const columns: ISchemeColumnsItem[] = [];
           allColumns.forEach((item) => {
@@ -159,6 +170,7 @@
               key: item.key,
               caption: item.caption,
               show: true,
+              mustKey: item.mustKey,
             });
           });
           const schemeList = [
@@ -194,6 +206,7 @@
         summary,
         filterList,
         filterScheme,
+        schemeCheckedIndex,
         // handleBillCodeClick,
         onFilterScheme,
         onSearch,

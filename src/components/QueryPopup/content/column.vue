@@ -13,7 +13,11 @@
       <DxColumn caption="操作" cell-template="handle" />
       <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
       <template #show="{ data }">
-        <DxCheckBox v-model:value="data.data.show" />
+        <DxCheckBox
+          v-model:value="data.data.show"
+          :disabled="data.data.mustKey"
+          @valueChanged="onChangeShow(data)"
+        />
       </template>
       <template #handle="{ data }">
         <div>
@@ -31,6 +35,7 @@
   import { DxDataGrid, DxColumn } from 'devextreme-vue/data-grid';
   import { DxCheckBox } from 'devextreme-vue/check-box';
   import { IOrderByItem, ISchemeColumnsItem } from './types';
+  import { cloneDeep } from 'lodash-es';
 
   export default defineComponent({
     components: {
@@ -52,7 +57,7 @@
         },
       },
     },
-    emits: ['on-change-column'],
+    emits: ['on-change-column', 'on-change-sort'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('content-column');
       const dataSource = ref<ISchemeColumnsItem[]>([]);
@@ -83,6 +88,17 @@
           )[0];
           dataSource.value = oldDataSource;
           ctx.emit('on-change-column', dataSource.value);
+        }
+      };
+      const onChangeShow = (data) => {
+        if (!data.data.show) {
+          const orderBy = cloneDeep(props.orderBy);
+          props.orderBy.forEach((item, index) => {
+            if (item.key === data.data.key) {
+              orderBy.splice(index, 1);
+            }
+          });
+          ctx.emit('on-change-sort', orderBy);
         }
       };
 
@@ -117,6 +133,7 @@
         prefixCls,
         onUpMove,
         onDownMove,
+        onChangeShow,
       };
     },
   });

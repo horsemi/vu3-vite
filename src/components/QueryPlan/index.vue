@@ -2,13 +2,20 @@
   <div :class="prefixCls">
     <QueryFrom ref="queryForm" :columns="allColumns" />
     <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
-    <QueryQuick :quick-data="quickData" @on-filter-scheme="onFilterScheme" />
+    <QueryQuick
+      :checked-index="checkedIndex"
+      :quick-data="quickData"
+      @on-filter-scheme="onFilterScheme"
+      @on-change-checked-index="onChangeCheckedIndex"
+    />
     <QueryPopup
       ref="popup"
+      :checked-index="checkedIndex"
       :all-columns="allColumns"
       :filter-list="filterList"
       @on-filter-scheme="onFilterScheme"
       @on-change-schemedata="onChangeSchemedata"
+      @on-change-checked-index="onChangeCheckedIndex"
     />
   </div>
 </template>
@@ -44,6 +51,10 @@
           return [];
         },
       },
+      schemeCheckedIndex: {
+        type: Number,
+        default: 0,
+      },
     },
     emits: ['on-change-filter-value', 'on-filter-scheme', 'on-search'],
     setup(props, ctx) {
@@ -51,6 +62,7 @@
       const popup = ref();
       const queryForm = ref();
       const quickData = ref<ISchemeItem[]>([]);
+      const checkedIndex = ref(0);
 
       const onReset = () => {
         //
@@ -68,6 +80,9 @@
         const queryList = queryForm.value.queryList;
         ctx.emit('on-search', queryList);
       };
+      const onChangeCheckedIndex = (index) => {
+        checkedIndex.value = index;
+      };
 
       watch(
         () => props.filterList,
@@ -79,16 +94,28 @@
         }
       );
 
+      watch(
+        () => props.schemeCheckedIndex,
+        (val) => {
+          checkedIndex.value = val;
+        },
+        {
+          immediate: true,
+        }
+      );
+
       return {
         prefixCls,
         popup,
         queryForm,
         quickData,
+        checkedIndex,
         onReset,
         onQueryPlan,
         onFilterScheme,
         onChangeSchemedata,
         onSearch,
+        onChangeCheckedIndex,
       };
     },
   });
@@ -98,6 +125,7 @@
   @prefix-cls: ~'@{namespace}-query-plan';
 
   .@{prefix-cls} {
+    position: relative;
     display: flex;
     align-items: center;
     width: 100%;

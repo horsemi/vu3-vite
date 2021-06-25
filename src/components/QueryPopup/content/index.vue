@@ -3,7 +3,7 @@
     <div :class="`${prefixCls}__left`">
       <Menu
         ref="menu"
-        :checked-scheme-index="checkedSchemeIndex"
+        :checked-index="checkedIndex"
         :menu-list="menuList"
         @on-change-scheme="onChangeScheme"
         @on-submit-scheme="onSubmitScheme"
@@ -87,8 +87,12 @@
           return [];
         },
       },
+      checkedIndex: {
+        type: Number,
+        default: 0,
+      },
     },
-    emits: ['on-change-schemedata'],
+    emits: ['on-change-schemedata', 'on-change-checked-index'],
     setup(props, ctx) {
       const multiViewItems = [
         {
@@ -108,7 +112,6 @@
       const message = ref('');
       const showToast = ref(false);
       const selectedIndex = ref(0);
-      const checkedSchemeIndex = ref(0);
       const checkedScheme = ref<ISchemeItem>({
         uuid: 0,
         title: '缺省方案',
@@ -135,7 +138,7 @@
         schemeList.value = cloneDeep(val);
         schemeData.value = cloneDeep(schemeList.value);
         if (schemeList.value.length > 0) {
-          checkedScheme.value = schemeList.value[checkedSchemeIndex.value];
+          checkedScheme.value = schemeList.value[props.checkedIndex];
           handleMenuList();
         }
       };
@@ -151,21 +154,20 @@
         ctx.emit('on-change-schemedata', schemeData.value);
       };
       const onChangeScheme = (index) => {
-        checkedSchemeIndex.value = index;
-        checkedScheme.value = schemeList.value[checkedSchemeIndex.value];
+        ctx.emit('on-change-checked-index', index);
+        checkedScheme.value = schemeList.value[index];
       };
       const onChangeRequirement = (requirement) => {
-        schemeList.value[checkedSchemeIndex.value].requirement = requirement;
+        schemeList.value[props.checkedIndex].requirement = requirement;
       };
       const onChangeSort = (orderBy) => {
-        console.log(orderBy);
-        schemeList.value[checkedSchemeIndex.value].orderBy = orderBy;
+        schemeList.value[props.checkedIndex].orderBy = orderBy;
       };
       const onChangeColumn = (columns) => {
-        schemeList.value[checkedSchemeIndex.value].columns = columns;
+        schemeList.value[props.checkedIndex].columns = columns;
       };
       const onTitleChange = (title) => {
-        const index = checkedSchemeIndex.value;
+        const index = props.checkedIndex;
         schemeList.value[index].title = title;
         schemeData.value[index] = cloneDeep(schemeList.value[index]);
         handleMenuList();
@@ -175,34 +177,34 @@
       };
       const onSubmitScheme = () => {
         // 缺省方案保存相当于另存
-        const index = checkedSchemeIndex.value;
+        const index = props.checkedIndex;
         schemeData.value[index] = cloneDeep(schemeList.value[index]);
         saveData();
         message.value = '保存成功';
         showToast.value = true;
       };
       const onSaveScheme = () => {
-        const index = checkedSchemeIndex.value;
+        const index = props.checkedIndex;
         if (!schemeList.value[index].title) return;
         schemeList.value.push({ ...cloneDeep(schemeList.value[index]), title: '' });
-        checkedSchemeIndex.value = schemeList.value.length - 1;
+        ctx.emit('on-change-checked-index', schemeList.value.length - 1);
         handleMenuList();
         menu.value.onTextFocusInput();
       };
       const onDelScheme = () => {
-        if (checkedSchemeIndex.value === 0) return;
-        schemeList.value.splice(checkedSchemeIndex.value, 1);
-        if (checkedSchemeIndex.value < schemeData.value.length) {
-          schemeData.value.splice(checkedSchemeIndex.value, 1);
+        if (props.checkedIndex === 0) return;
+        schemeList.value.splice(props.checkedIndex, 1);
+        if (props.checkedIndex < schemeData.value.length) {
+          schemeData.value.splice(props.checkedIndex, 1);
           saveData();
           message.value = '删除成功';
           showToast.value = true;
         }
-        checkedSchemeIndex.value = checkedSchemeIndex.value - 1;
+        ctx.emit('on-change-checked-index', props.checkedIndex - 1);
         handleMenuList();
       };
       const onResetScheme = () => {
-        const index = checkedSchemeIndex.value;
+        const index = props.checkedIndex;
         if (index > schemeData.value.length - 1) return;
         schemeList.value[index] = cloneDeep(schemeData.value[index]);
         message.value = '重置成功';
@@ -225,7 +227,6 @@
         menuList,
         multiViewItems,
         selectedIndex,
-        checkedSchemeIndex,
         checkedScheme,
         menu,
         message,
@@ -239,6 +240,7 @@
         onResetScheme,
         onDelScheme,
         onTitleChange,
+        handleMenuList,
       };
     },
   });

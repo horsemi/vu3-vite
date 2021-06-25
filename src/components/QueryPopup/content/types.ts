@@ -38,7 +38,7 @@ export interface IOrderByItem {
   /**
    * @description: 排序 true为降序, false为升序
    */
-   desc: boolean;
+  desc: boolean;
 }
 
 export interface ISchemeColumnsItem {
@@ -56,6 +56,11 @@ export interface ISchemeColumnsItem {
    * @description: 是否显示
    */
   show: boolean;
+
+  /**
+   * @description: 是否必要
+   */
+  mustKey?: boolean;
 }
 
 export interface ISchemeItem {

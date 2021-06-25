@@ -57,6 +57,7 @@
   import { ITableOptions } from './type';
   import { IColumnItem } from '/@/model/types';
   import { ISchemeItem } from '../QueryPopup/content/types';
+  import { cloneDeep } from 'lodash-es';
 
   export default defineComponent({
     components: {
@@ -120,12 +121,14 @@
         if (Object.keys(tableData.value).length === 0) return;
         const select = getSelect(scheme.columns);
         const filter = getFilter(scheme.requirement);
-        const sort = getSort(scheme.orderBy);
-        if (select.length > 0) {
-          tableData.value.select(select);
-        }
+        const sort = getSort(scheme.orderBy, props.tableOptions.dataSourceOptions.sort);
         if (filter.length > 0) {
           tableData.value.filter(filter);
+        } else {
+          tableData.value.filter('');
+        }
+        if (select.length > 0) {
+          tableData.value.select(select);
         }
         if (sort.length > 0) {
           tableData.value.sort(sort);
@@ -151,7 +154,7 @@
         () => props.filterScheme,
         (val) => {
           if (val) {
-            handleFilterScheme(val);
+            handleFilterScheme(cloneDeep(val));
           }
         },
         {
@@ -162,7 +165,7 @@
       watch(
         () => props.dataSource,
         (val) => {
-          tableData.value = val;
+          tableData.value = cloneDeep(val);
         },
         {
           immediate: true,
@@ -172,7 +175,7 @@
       watch(
         () => props.columns,
         (val) => {
-          tableColumns.value = [...val];
+          tableColumns.value = cloneDeep(val);
         },
         {
           immediate: true,

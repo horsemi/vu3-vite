@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType, reactive, ref } from 'vue';
+  import { defineComponent, onBeforeUnmount, PropType, reactive, ref } from 'vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import DxButton from 'devextreme-vue/button';
 
@@ -123,9 +123,16 @@
       const onSaveRequirement = () => {
         console.log(queryList);
       };
-      const onItemClick = (e) => {
-        e.event.stopPropagation();
-      };
+
+      // function closePopup(): void {
+      //   opened.value = false;
+      // }
+
+      // document.addEventListener('click', closePopup, false);
+
+      // onBeforeUnmount(() => {
+      //   document.removeEventListener('click', closePopup);
+      // });
 
       return {
         prefixCls,
@@ -134,7 +141,6 @@
         onAddRequirement,
         onDelRequirement,
         onSaveRequirement,
-        onItemClick,
       };
     },
   });

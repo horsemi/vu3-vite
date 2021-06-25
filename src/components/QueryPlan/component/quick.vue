@@ -1,37 +1,29 @@
 <template>
-  <div
-    :class="prefixCls"
-    :style="{ boxShadow: opened ? '0 10px 12px 0 rgb(0 0 0 / 10%)' : '' }"
-    @click.stop=""
-  >
-    <span>快捷过滤：</span>
-    <span
-      v-for="(item, index) in quickList.slice(0, 4)"
-      :key="index"
-      :class="[`${prefixCls}__span`, activeIndex === index ? `${prefixCls}__span--active` : '']"
-      @click="onActive(index)"
-      >{{ item.title }}</span
+  <div :class="prefixCls" @click.stop="">
+    <div
+      :class="`${prefixCls}__wrap`"
+      :style="{
+        boxShadow: opened ? '0 10px 12px 0 rgb(0 0 0 / 10%)' : '',
+        height: opened ? 'auto' : '64px',
+      }"
     >
-    <div :class="`${prefixCls}__iconbox`" @click="opened = !opened">
-      <span :class="`${prefixCls}__icon`"></span>
-      <span :class="`${prefixCls}__icon`"></span>
-      <span :class="`${prefixCls}__icon`"></span>
-    </div>
-    <transition name="zoom-in-top">
-      <div v-show="opened" :class="`${prefixCls}__overflow`">
+      <span :class="`${prefixCls}__title`">快捷过滤：</span>
+      <div v-for="(item, index) in quickList" :key="index" :class="`${prefixCls}__item`">
         <span
-          v-for="(item, index) in quickList.slice(4)"
-          :key="index"
           :class="[
             `${prefixCls}__span`,
-            activeIndex === index + 3 ? `${prefixCls}__span--active` : '',
+            checkedIndex === index ? `${prefixCls}__span--active` : '',
           ]"
-          style="margin-bottom: 16px"
-          @click="onActive(index + 3)"
+          @click="onActive(index)"
           >{{ item.title }}</span
         >
       </div>
-    </transition>
+      <div :class="`${prefixCls}__iconbox`" @click="opened = !opened">
+        <span :class="`${prefixCls}__icon`"></span>
+        <span :class="`${prefixCls}__icon`"></span>
+        <span :class="`${prefixCls}__icon`"></span>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -48,18 +40,21 @@
           return [];
         },
       },
+      checkedIndex: {
+        type: Number,
+        default: 0,
+      },
     },
-    emits: ['on-filter-scheme'],
+    emits: ['on-filter-scheme', 'on-change-checked-index'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('query-quick');
       const quick = ref();
       const opened = ref<boolean>(false);
-      const activeIndex = ref<number>(0);
       const quickList = ref<ISchemeItem[]>([]);
 
       const onActive = (index: number): void => {
-        activeIndex.value = index;
-        onFilterScheme(quickList.value[activeIndex.value]);
+        onFilterScheme(quickList.value[index]);
+        ctx.emit('on-change-checked-index', index);
       };
       const onFilterScheme = (data) => {
         ctx.emit('on-filter-scheme', data);
@@ -98,7 +93,6 @@
         prefixCls,
         quick,
         opened,
-        activeIndex,
         quickList,
         onActive,
       };
@@ -111,17 +105,42 @@
 
   .@{prefix-cls} {
     position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 64px;
-    padding: 0 10px;
+    flex: 1;
+    min-width: 134px;
     margin-left: 15px;
-    box-sizing: border-box;
-    .zoom-animation(top, scaleY(0), scaleY(1), center top);
+
+    &__wrap {
+      position: absolute;
+      top: -32px;
+      right: 0;
+      z-index: @page-popup-z-index;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      width: 100%;
+      padding-right: 64px;
+      padding-left: 10px;
+      overflow: hidden;
+      background-color: #fff;
+      box-sizing: border-box;
+      transition: all 300ms ease-in-out;
+    }
 
     span {
       flex-shrink: 0;
+    }
+
+    &__title {
+      display: flex;
+      align-items: center;
+      width: 70px;
+      height: 64px;
+    }
+
+    &__item {
+      display: flex;
+      align-items: center;
+      height: 64px;
     }
 
     &__span {
@@ -139,6 +158,9 @@
     }
 
     &__iconbox {
+      position: absolute;
+      top: 16px;
+      right: 20px;
       display: flex;
       align-items: center;
       width: 24px;
@@ -152,19 +174,6 @@
       margin: 0 2px;
       background: #d8d8d8;
       border-radius: 100%;
-    }
-
-    &__overflow {
-      position: absolute;
-      top: 64px;
-      left: 0;
-      z-index: @page-popup-z-index;
-      display: flex;
-      flex-wrap: wrap;
-      width: 100%;
-      padding: 0 10px;
-      background-color: #fff;
-      box-shadow: 0 10px 12px 0 rgb(0 0 0 / 10%);
     }
   }
 </style>

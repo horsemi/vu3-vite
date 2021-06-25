@@ -14,12 +14,12 @@
           :key="index"
           :class="[
             `${prefixCls}__list__item`,
-            checkedSchemeIndex === index && `${prefixCls}__list__item--active`,
+            checkedIndex === index && `${prefixCls}__list__item--active`,
           ]"
           @click="onSelectedScheme(index)"
         >
           <input
-            v-if="checkedSchemeIndex === index && (edit || item === '')"
+            v-if="checkedIndex === index && (edit || item === '')"
             ref="textBox"
             :value="item"
             placeholder="请输入方案名称"
@@ -43,7 +43,7 @@
       DxScrollView,
     },
     props: {
-      checkedSchemeIndex: {
+      checkedIndex: {
         type: Number,
         required: true,
       },
@@ -75,7 +75,7 @@
         });
       };
       const onSelectedScheme = (index) => {
-        if (!props.menuList[props.checkedSchemeIndex]) return;
+        if (!props.menuList[index]) return;
         ctx.emit('on-change-scheme', index);
       };
       const onSubmitScheme = () => {
