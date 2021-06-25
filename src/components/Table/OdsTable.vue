@@ -17,7 +17,14 @@
           :caption="item.caption"
           :data-type="item.type"
           :cell-template="item.cellTemplate"
-        />
+        >
+          <DxLookup
+            v-if="item.datatypekeies === 'enum'"
+            :data-source="getGlobalEnumDataByCode(item.type)"
+            value-expr="key"
+            display-expr="description"
+          />
+        </DxColumn>
       </template>
       <DxSelection
         :select-all-mode="tableOptions.selection.allMode"
@@ -51,12 +58,19 @@
 <script lang="ts">
   import { defineComponent, onBeforeUnmount, ref, PropType, watch } from 'vue';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import DxDataGrid, { DxSelection, DxPaging, DxColumn, DxPager } from 'devextreme-vue/data-grid';
+  import DxDataGrid, {
+    DxSelection,
+    DxPaging,
+    DxColumn,
+    DxPager,
+    DxLookup,
+  } from 'devextreme-vue/data-grid';
   import DxButton from 'devextreme-vue/button';
   import { defaultTableOptions, getFilter, getSort, getSelect } from './common';
   import { ITableOptions } from './type';
   import { IColumnItem } from '/@/model/types';
   import { ISchemeItem } from '../QueryPopup/content/types';
+  import { useAppStore } from '/@/store/modules/app';
   import { cloneDeep } from 'lodash-es';
 
   export default defineComponent({
@@ -65,6 +79,7 @@
       DxSelection,
       DxPaging,
       DxPager,
+      DxLookup,
       DxColumn,
       DxButton,
     },
@@ -103,6 +118,7 @@
     emits: ['handleBillCodeClick'],
     setup(props) {
       const { prefixCls } = useDesign('ods-table');
+      const appStore = useAppStore();
       const pageIndex = ref(0);
       const tableData = ref();
       const tableColumns = ref<IColumnItem[]>([]);
@@ -182,6 +198,10 @@
         }
       );
 
+      function getGlobalEnumDataByCode(code: string) {
+        return appStore.getGlobalEnumDataByCode(code);
+      }
+
       return {
         tableData,
         tableColumns,
@@ -190,6 +210,7 @@
         onSelectionChanged,
         handleJump,
         customizeColumns,
+        getGlobalEnumDataByCode,
       };
     },
   });
