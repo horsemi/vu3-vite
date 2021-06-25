@@ -7,6 +7,7 @@
       :min-search-length="2"
       :search-enabled="true"
       search-mode="contains"
+      :search-expr="['name', 'code']"
       display-expr="name"
       value-expr="code"
       @update:value="$emit('update:value', $event)"
