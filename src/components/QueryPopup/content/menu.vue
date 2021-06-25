@@ -16,7 +16,7 @@
             `${prefixCls}__list__item`,
             checkedIndex === index && `${prefixCls}__list__item--active`,
           ]"
-          @click="onSelectedScheme(index)"
+          @click="onChangeCheckedIndex(index)"
         >
           <input
             v-if="checkedIndex === index && (edit || item === '')"
@@ -34,151 +34,164 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, nextTick, PropType } from 'vue';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { DxScrollView } from 'devextreme-vue/scroll-view';
+import { defineComponent, ref, nextTick, PropType } from 'vue';
+import { useDesign } from '/@/hooks/web/useDesign';
+import { DxScrollView } from 'devextreme-vue/scroll-view';
 
-  export default defineComponent({
-    components: {
-      DxScrollView,
+export default defineComponent({
+  components: {
+    DxScrollView,
+  },
+  props: {
+    checkedIndex: {
+      type: Number,
+      required: true,
     },
-    props: {
-      checkedIndex: {
-        type: Number,
-        required: true,
-      },
-      menuList: {
-        type: Array as PropType<string[]>,
-        default: () => {
-          return [];
-        },
+    menuList: {
+      type: Array as PropType<string[]>,
+      default: () => {
+        return [];
       },
     },
-    emits: [
-      'on-change-scheme',
-      'on-submit-scheme',
-      'on-save-scheme',
-      'on-reset-scheme',
-      'on-title-change',
-      'on-del-scheme',
-    ],
-    setup(props, ctx) {
-      const { prefixCls } = useDesign('content-menu');
-      const edit = ref(false);
-      const textBox = ref();
+  },
+  emits: [
+    'on-submit-scheme',
+    'on-save-scheme',
+    'on-reset-scheme',
+    'on-title-change',
+    'on-del-scheme',
+    'on-change-checked-index',
+  ],
+  setup(props, ctx) {
+    const { prefixCls } = useDesign('content-menu');
+    // 是否是修改状态
+    const edit = ref(false);
+    // 输入框dom
+    const textBox = ref();
 
-      const onTextFocusInput = () => {
-        nextTick(() => {
-          if (textBox.value) {
-            textBox.value.focus();
-          }
-        });
-      };
-      const onSelectedScheme = (index) => {
-        if (!props.menuList[index]) return;
-        ctx.emit('on-change-scheme', index);
-      };
-      const onSubmitScheme = () => {
-        ctx.emit('on-submit-scheme');
-      };
-      const onSaveScheme = () => {
-        ctx.emit('on-save-scheme');
-      };
-      const onResetScheme = () => {
-        ctx.emit('on-reset-scheme');
-      };
-      const onDelScheme = () => {
-        ctx.emit('on-del-scheme');
-      };
-      const onEditScheme = () => {
-        edit.value = true;
-        onTextFocusInput();
-      };
-      const handleText = (text) => {
-        if (text) {
-          ctx.emit('on-title-change', text);
+    // 点击标题触发
+    const onChangeCheckedIndex = (index: number) => {
+      // 标题不为空才切换下标
+      if (props.menuList[props.checkedIndex]) {
+        ctx.emit('on-change-checked-index', index);
+      }
+    };
+    // 点击保存触发
+    const onSubmitScheme = () => {
+      ctx.emit('on-submit-scheme');
+    };
+    // 点击另存触发
+    const onSaveScheme = () => {
+      ctx.emit('on-save-scheme');
+    };
+    const onResetScheme = () => {
+      ctx.emit('on-reset-scheme');
+    };
+    // 点击删除触发
+    const onDelScheme = () => {
+      ctx.emit('on-del-scheme');
+    };
+    // 输入框获取焦点
+    const onTextFocusInput = () => {
+      nextTick(() => {
+        if (textBox.value) {
+          textBox.value.focus();
         }
-        edit.value = false;
-      };
-      const onTextBlur = (e) => {
-        handleText(e.target.value);
-      };
-      const onTextChange = (e) => {
-        handleText(e.target.value);
-      };
+      });
+    };
+    // 点击修改触发
+    const onEditScheme = () => {
+      edit.value = true;
+      onTextFocusInput();
+    };
+    // 处理标题修改
+    const handleText = (title: string) => {
+      if (title) {
+        ctx.emit('on-title-change', title);
+      }
+      edit.value = false;
+    };
+    // 失去焦点触发
+    const onTextBlur = (e) => {
+      handleText(e.target.value as string);
+    };
+    // 输入框回车触发
+    const onTextChange = (e) => {
+      handleText(e.target.value as string);
+    };
 
-      return {
-        prefixCls,
-        edit,
-        textBox,
-        onSubmitScheme,
-        onSaveScheme,
-        onResetScheme,
-        onEditScheme,
-        onTextBlur,
-        onDelScheme,
-        onSelectedScheme,
-        onTextChange,
-        onTextFocusInput,
-      };
-    },
-  });
+    return {
+      prefixCls,
+      edit,
+      textBox,
+      onSubmitScheme,
+      onSaveScheme,
+      onResetScheme,
+      onEditScheme,
+      onTextBlur,
+      onDelScheme,
+      onChangeCheckedIndex,
+      onTextChange,
+      onTextFocusInput,
+    };
+  },
+});
 </script>
 
 <style lang="less" scoped>
-  @prefix-cls: ~'@{namespace}-content-menu';
+@prefix-cls: ~'@{namespace}-content-menu';
 
-  .@{prefix-cls} {
+.@{prefix-cls} {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  border-right: 1px solid #e4e7ed;
+
+  &__btn {
     display: flex;
-    flex-direction: column;
-    height: 100%;
-    border-right: 1px solid #e4e7ed;
-
-    &__btn {
-      display: flex;
-      width: 100%;
-      background-color: #fafafa;
-      border-bottom: 1px solid @border-color-primary;
-      span {
-        flex: 1;
-        height: 44px;
-        line-height: 44px;
-        text-align: center;
-        cursor: pointer;
-        &:hover {
-          background-color: rgba(0, 0, 0, 0.1);
-        }
-      }
-    }
-
-    &__list__item {
-      display: flex;
-      align-items: center;
-      height: 40px;
+    width: 100%;
+    background-color: #fafafa;
+    border-bottom: 1px solid @border-color-primary;
+    span {
+      flex: 1;
+      height: 44px;
+      line-height: 44px;
+      text-align: center;
       cursor: pointer;
-      &--active,
       &:hover {
-        background-color: #e6f7ff;
-      }
-      &::before {
-        display: inline-block;
-        width: 4px;
-        height: 4px;
-        margin: 0 10px;
-        background-color: #d8d8d8;
-        border-radius: 100%;
-        content: '';
-      }
-      input {
-        width: 80%;
-        padding: 3px 8px;
-        border: 1px solid @border-color-primary;
-        border-radius: 4px;
-        outline: none;
-        &:focus {
-          border-color: #337ab7;
-        }
+        background-color: rgba(0, 0, 0, 0.1);
       }
     }
   }
+
+  &__list__item {
+    display: flex;
+    align-items: center;
+    height: 40px;
+    cursor: pointer;
+    &--active,
+    &:hover {
+      background-color: #e6f7ff;
+    }
+    &::before {
+      display: inline-block;
+      width: 4px;
+      height: 4px;
+      margin: 0 10px;
+      background-color: #d8d8d8;
+      border-radius: 100%;
+      content: '';
+    }
+    input {
+      width: 80%;
+      padding: 3px 8px;
+      border: 1px solid @border-color-primary;
+      border-radius: 4px;
+      outline: none;
+      &:focus {
+        border-color: #337ab7;
+      }
+    }
+  }
+}
 </style>

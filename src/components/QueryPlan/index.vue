@@ -4,134 +4,227 @@
     <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
     <QueryQuick
       :checked-index="checkedIndex"
-      :quick-data="quickData"
-      @on-filter-scheme="onFilterScheme"
+      :scheme-list-temp="schemeListTemp"
       @on-change-checked-index="onChangeCheckedIndex"
     />
     <QueryPopup
       ref="popup"
       :checked-index="checkedIndex"
       :all-columns="allColumns"
-      :filter-list="filterList"
-      @on-filter-scheme="onFilterScheme"
-      @on-change-schemedata="onChangeSchemedata"
+      :scheme-list="schemeList"
       @on-change-checked-index="onChangeCheckedIndex"
+      @on-change-requirement="onChangeRequirement"
+      @on-change-sort="onChangeSort"
+      @on-change-column="onChangeColumn"
+      @on-title-change="onTitleChange"
+      @on-submit-scheme="onSubmitScheme"
+      @on-save-scheme="onSaveScheme"
+      @on-del-scheme="onDelScheme"
+      @on-reset-scheme="onResetScheme"
+      @on-submit="onSubmit"
     />
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType, ref, watch } from 'vue';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import QueryFrom from './component/form.vue';
-  import QueryButton from './component/button.vue';
-  import QueryQuick from './component/quick.vue';
-  import QueryPopup from '/@/components/QueryPopup/index.vue';
-  import { IColumnItem } from '/@/model/types';
-  import { ISchemeItem } from '../QueryPopup/content/types';
-  import { cloneDeep } from 'lodash-es';
+import { defineComponent, PropType, ref, watch } from 'vue';
+import { useDesign } from '/@/hooks/web/useDesign';
+import QueryFrom from './component/form.vue';
+import QueryButton from './component/button.vue';
+import QueryQuick from './component/quick.vue';
+import QueryPopup from '/@/components/QueryPopup/index.vue';
+import { IColumnItem } from '/@/model/types';
+import {
+  IOrderByItem,
+  IRequirementItem,
+  ISchemeColumnsItem,
+  ISchemeItem,
+} from '../QueryPopup/content/types';
+import { Persistent } from '/@/utils/cache/persistent';
+import { SCHEME_LIST_KEY } from '/@/enums/cacheEnum';
+import { cloneDeep } from 'lodash-es';
 
-  export default defineComponent({
-    components: {
-      QueryFrom,
-      QueryButton,
-      QueryQuick,
-      QueryPopup,
-    },
-    props: {
-      allColumns: {
-        type: Array as PropType<IColumnItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-      filterList: {
-        type: Array as PropType<ISchemeItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-      schemeCheckedIndex: {
-        type: Number,
-        default: 0,
+export default defineComponent({
+  components: {
+    QueryFrom,
+    QueryButton,
+    QueryQuick,
+    QueryPopup,
+  },
+  props: {
+    allColumns: {
+      type: Array as PropType<IColumnItem[]>,
+      default: () => {
+        return [];
       },
     },
-    emits: ['on-change-filter-value', 'on-filter-scheme', 'on-search'],
-    setup(props, ctx) {
-      const { prefixCls } = useDesign('query-plan');
-      const popup = ref();
-      const queryForm = ref();
-      const quickData = ref<ISchemeItem[]>([]);
-      const checkedIndex = ref(0);
-
-      const onReset = () => {
-        //
-      };
-      const onQueryPlan = () => {
-        popup.value.openPopup();
-      };
-      const onFilterScheme = (data) => {
-        ctx.emit('on-filter-scheme', data);
-      };
-      const onChangeSchemedata = (data) => {
-        quickData.value = cloneDeep(data);
-      };
-      const onSearch = () => {
-        const queryList = queryForm.value.queryList;
-        ctx.emit('on-search', queryList);
-      };
-      const onChangeCheckedIndex = (index) => {
-        checkedIndex.value = index;
-      };
-
-      watch(
-        () => props.filterList,
-        (val) => {
-          quickData.value = val;
-        },
-        {
-          immediate: true,
-        }
-      );
-
-      watch(
-        () => props.schemeCheckedIndex,
-        (val) => {
-          checkedIndex.value = val;
-        },
-        {
-          immediate: true,
-        }
-      );
-
-      return {
-        prefixCls,
-        popup,
-        queryForm,
-        quickData,
-        checkedIndex,
-        onReset,
-        onQueryPlan,
-        onFilterScheme,
-        onChangeSchemedata,
-        onSearch,
-        onChangeCheckedIndex,
-      };
+    filterList: {
+      type: Array as PropType<ISchemeItem[]>,
+      default: () => {
+        return [];
+      },
     },
-  });
+    schemeCheckedIndex: {
+      type: Number,
+      default: 0,
+    },
+  },
+  emits: [
+    'on-change-checked-index',
+    'on-change-requirement',
+    'on-change-sort',
+    'on-change-column',
+    'on-title-change',
+    'on-submit-scheme',
+    'on-save-scheme',
+    'on-del-scheme',
+    'on-reset-scheme',
+    'on-search', 'on-filter-scheme',
+  ],
+  setup(props, ctx) {
+    const { prefixCls } = useDesign('query-plan');
+    const popup = ref();
+    const queryForm = ref();
+    const checkedIndex = ref(0);
+    const schemeList = ref<ISchemeItem[]>([]);
+    const schemeListTemp = ref<ISchemeItem[]>([]);
+
+    // 外派列表过滤方案更新事件
+    const onChangeScheme = (data: ISchemeItem) => {
+      ctx.emit('on-filter-scheme', data);
+    };
+
+    const onReset = () => {
+      //
+    };
+    const onQueryPlan = () => {
+      popup.value.openPopup();
+    };
+    const onSearch = () => {
+      const queryList = queryForm.value.queryList;
+      ctx.emit('on-search', queryList);
+    };
+    // 处理保存数据
+    const handleSaveData = (data: ISchemeItem[]) => {
+      Persistent.setLocal(SCHEME_LIST_KEY, data);
+    };
+    // 接收选中下标更新
+    const onChangeCheckedIndex = (index: number) => {
+      checkedIndex.value = index;
+    };
+    // 接收条件数据更新
+    const onChangeRequirement = (data: IRequirementItem[]) => {
+      schemeList.value[checkedIndex.value].requirement = data;
+    };
+    // 接收排序数据更新
+    const onChangeSort = (data: IOrderByItem[]) => {
+      schemeList.value[checkedIndex.value].orderBy = data;
+    };
+    // 接收显示隐藏列更新
+    const onChangeColumn = (data: ISchemeColumnsItem[]) => {
+      schemeList.value[checkedIndex.value].columns = data;
+    };
+    // 接收标题更新
+    const onTitleChange = (title: string) => {
+      schemeList.value[checkedIndex.value].title = title;
+      // 改完标题自动保存
+      onSubmitScheme();
+    };
+    // 接收保存事件
+    const onSubmitScheme = () => {
+      schemeListTemp.value[checkedIndex.value] = cloneDeep(schemeList.value[checkedIndex.value]);
+      handleSaveData(schemeListTemp.value);
+    };
+    // 接收另存事件
+    const onSaveScheme = () => {
+      const temp = cloneDeep(schemeList.value);
+      temp.push({...cloneDeep(schemeList.value[checkedIndex.value]), title: ''});
+      schemeList.value = temp;
+      checkedIndex.value = schemeList.value.length - 1;
+    };
+    // 接收删除事件
+    const onDelScheme = () => {
+      // 两个数据都需要删除
+      const index = checkedIndex.value;
+      const temp = cloneDeep(schemeList.value); 
+      const data = cloneDeep(schemeListTemp.value);
+      temp.splice(index, 1);
+      data.splice(index, 1);
+      schemeList.value = temp;
+      schemeListTemp.value = data;
+      checkedIndex.value = index - 1;
+      handleSaveData(schemeListTemp.value);
+    };
+    // 接收重置事件
+    const onResetScheme = () => {
+      schemeList.value[checkedIndex.value] = cloneDeep(schemeListTemp.value[checkedIndex.value]);
+    };
+    // 接收确认事件
+    const onSubmit = () => {
+      onChangeScheme(schemeList.value[checkedIndex.value]);
+    };
+    // 处理组件数据
+    const handleData = (val: ISchemeItem[]) => {
+      schemeList.value = cloneDeep(val);
+      schemeListTemp.value = cloneDeep(val);
+    };
+
+    watch(
+      () => props.filterList,
+      (val) => {
+        handleData(val);
+      },
+      {
+        immediate: true,
+      }
+    );
+
+    watch(
+      () => props.schemeCheckedIndex,
+      (val) => {
+        checkedIndex.value = val;
+      },
+      {
+        immediate: true,
+      }
+    );
+
+    return {
+      prefixCls,
+      popup,
+      queryForm,
+      checkedIndex,
+      schemeList,
+      schemeListTemp,
+      onSearch,
+      onReset,
+      onQueryPlan,
+      onChangeCheckedIndex,
+      onChangeRequirement,
+      onChangeSort,
+      onChangeColumn,
+      onTitleChange,
+      onSubmitScheme,
+      onSaveScheme,
+      onDelScheme,
+      onResetScheme,
+      onSubmit,
+    };
+  },
+});
 </script>
 
 <style lang="less" scoped>
-  @prefix-cls: ~'@{namespace}-query-plan';
+@prefix-cls: ~'@{namespace}-query-plan';
 
-  .@{prefix-cls} {
-    position: relative;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 64px;
-    margin-bottom: 20px;
-    background-color: #fff;
-    box-sizing: border-box;
-  }
+.@{prefix-cls} {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 64px;
+  margin-bottom: 20px;
+  background-color: #fff;
+  box-sizing: border-box;
+}
 </style>
