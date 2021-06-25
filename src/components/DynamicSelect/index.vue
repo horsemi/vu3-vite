@@ -9,7 +9,6 @@
         width="130"
         display-expr="caption"
         @update:value="$emit('update:paramKey', $event)"
-        @itemClick="onItemClick"
       ></DxSelectBox>
     </div>
     <div :class="`${prefixCls}-operation-box__container`">
@@ -20,7 +19,6 @@
         value-expr="key"
         display-expr="value"
         @update:value="$emit('update:operation', $event)"
-        @itemClick="onItemClick"
       >
       </DxSelectBox>
     </div>
@@ -43,7 +41,6 @@
         display-expr="value"
         width="180"
         @update:value="$emit('update:value', $event)"
-        @itemClick="onItemClick"
       >
       </DxSelectBox>
       <DxDateBox
@@ -54,7 +51,6 @@
         :show-clear-button="true"
         width="180"
         @update:value="$emit('update:value', $event)"
-        @itemClick="onItemClick"
       >
       </DxDateBox>
       <DxSelectBox
@@ -66,7 +62,6 @@
         display-expr="description"
         width="180"
         @update:value="$emit('update:value', $event)"
-        @itemClick="onItemClick"
       >
       </DxSelectBox>
       <FoundationSelect
@@ -216,9 +211,6 @@
         }
         context.emit('update:value', initData);
       }
-      function onItemClick(e) {
-        e.event.stopPropagation();
-      }
 
       return {
         prefixCls,
@@ -226,7 +218,6 @@
         dataType,
         operatorOptions,
         booleanOptions,
-        onItemClick,
       };
     },
   });

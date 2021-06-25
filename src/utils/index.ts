@@ -1,5 +1,6 @@
 import { isObject } from '/@/utils/is';
 import type { RouteLocationNormalized, RouteRecordNormalized } from 'vue-router';
+import { cloneDeep } from 'lodash-es';
 /**
  * Add the object as a parameter to the URL
  * @param baseUrl url
@@ -52,4 +53,17 @@ export function getRawRoute(route: RouteLocationNormalized): RouteLocationNormal
         }))
       : undefined) as RouteRecordNormalized[],
   };
+}
+
+/**
+ * @description 数组元素换位
+ * @param arr 原数组
+ * @param current 换位元素下标
+ * @param next 移动到具体位置的下标
+ * @returns 新数组
+ */
+export function handleArrayTransposition<T>(arr: T[], cureent: number, next: number): T[] {
+  const temp = cloneDeep(arr);
+  temp[cureent] = temp.splice(next, 1, temp[cureent])[0];
+  return temp;
 }

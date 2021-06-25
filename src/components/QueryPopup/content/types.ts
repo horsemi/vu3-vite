@@ -1,5 +1,7 @@
 import { IQueryItem } from '../../QueryPlan/types';
 
+type logicType = 'and' | 'or';
+
 export interface IRequirementItem extends IQueryItem {
   /**
    * @description: 逻辑
@@ -88,4 +90,40 @@ export interface ISchemeItem {
    * @description: 显示隐藏列
    */
   columns: ISchemeColumnsItem[];
+}
+
+export interface ISortOptions {
+  /**
+   * @description: 字段名
+   */
+  name: string;
+
+  /**
+   * @description: 是否降序
+   */
+  desc: boolean;
+}
+
+export interface ILogicOptions {
+  /**
+   * @description: 字段名
+   */
+  name: string;
+
+  /**
+   * @description: 值
+   */
+  value: logicType;
+}
+
+export interface IMultiViewItem {
+  /**
+   * @description: 标题
+   */
+  title: string;
+
+  /**
+   * @description: 组件名称
+   */
+  component: string;
 }

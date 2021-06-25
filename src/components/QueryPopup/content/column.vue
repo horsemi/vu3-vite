@@ -16,13 +16,13 @@
         <DxCheckBox
           v-model:value="data.data.show"
           :disabled="data.data.mustKey"
-          @valueChanged="onChangeShow(data)"
+          @valueChanged="onChangeShow(data.data.show, data.data.key)"
         />
       </template>
       <template #handle="{ data }">
         <div>
-          <span @click="onUpMove(data)">上移</span>
-          <span @click="onDownMove(data)">下移</span>
+          <span @click="onUpMove(data.rowIndex)">上移</span>
+          <span @click="onDownMove(data.rowIndex)">下移</span>
         </div>
       </template>
     </DxDataGrid>
@@ -30,125 +30,137 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, PropType, ref, watch } from 'vue';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { DxDataGrid, DxColumn } from 'devextreme-vue/data-grid';
-  import { DxCheckBox } from 'devextreme-vue/check-box';
-  import { IOrderByItem, ISchemeColumnsItem } from './types';
-  import { cloneDeep } from 'lodash-es';
+import { defineComponent, PropType, ref, watch } from 'vue';
+import { useDesign } from '/@/hooks/web/useDesign';
+import { DxDataGrid, DxColumn } from 'devextreme-vue/data-grid';
+import { DxCheckBox } from 'devextreme-vue/check-box';
+import { IOrderByItem, ISchemeColumnsItem } from './types';
+import { cloneDeep } from 'lodash-es';
+import { handleArrayTransposition } from '/@/utils';
 
-  export default defineComponent({
-    components: {
-      DxDataGrid,
-      DxColumn,
-      DxCheckBox,
-    },
-    props: {
-      columns: {
-        type: Array as PropType<ISchemeColumnsItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-      orderBy: {
-        type: Array as PropType<IOrderByItem[]>,
-        default: () => {
-          return [];
-        },
+export default defineComponent({
+  components: {
+    DxDataGrid,
+    DxColumn,
+    DxCheckBox,
+  },
+  props: {
+    columns: {
+      type: Array as PropType<ISchemeColumnsItem[]>,
+      default: () => {
+        return [];
       },
     },
-    emits: ['on-change-column', 'on-change-sort'],
-    setup(props, ctx) {
-      const { prefixCls } = useDesign('content-column');
-      const dataSource = ref<ISchemeColumnsItem[]>([]);
-
-      const onUpMove = (data) => {
-        if (data.rowIndex > 0) {
-          const oldDataSource = [...dataSource.value];
-          const currentIndex = data.rowIndex;
-          const preIndex = data.rowIndex - 1;
-          oldDataSource[currentIndex] = oldDataSource.splice(
-            preIndex,
-            1,
-            oldDataSource[currentIndex]
-          )[0];
-          dataSource.value = oldDataSource;
-          ctx.emit('on-change-column', dataSource.value);
-        }
-      };
-      const onDownMove = (data) => {
-        if (data.rowIndex < dataSource.value.length - 1) {
-          const oldDataSource = [...dataSource.value];
-          const currentIndex = data.rowIndex;
-          const nextIndex = data.rowIndex + 1;
-          oldDataSource[currentIndex] = oldDataSource.splice(
-            nextIndex,
-            1,
-            oldDataSource[currentIndex]
-          )[0];
-          dataSource.value = oldDataSource;
-          ctx.emit('on-change-column', dataSource.value);
-        }
-      };
-      const onChangeShow = (data) => {
-        if (!data.data.show) {
-          const orderBy = cloneDeep(props.orderBy);
-          props.orderBy.forEach((item, index) => {
-            if (item.key === data.data.key) {
-              orderBy.splice(index, 1);
-            }
-          });
-          ctx.emit('on-change-sort', orderBy);
-        }
-      };
-
-      watch(
-        () => props.columns,
-        (val) => {
-          dataSource.value = val;
-        },
-        {
-          immediate: true,
-        }
-      );
-
-      watch(
-        () => props.orderBy,
-        (val) => {
-          val.forEach((sort) => {
-            dataSource.value.forEach((item) => {
-              if (sort.key === item.key) {
-                item.show = true;
-              }
-            });
-          });
-        },
-        {
-          immediate: true,
-        }
-      );
-
-      return {
-        dataSource,
-        prefixCls,
-        onUpMove,
-        onDownMove,
-        onChangeShow,
-      };
+    orderBy: {
+      type: Array as PropType<IOrderByItem[]>,
+      default: () => {
+        return [];
+      },
     },
-  });
+  },
+  emits: ['on-change-column', 'on-change-sort'],
+  setup(props, ctx) {
+    const { prefixCls } = useDesign('content-column');
+    // 显示隐藏列数据
+    const dataSource = ref<ISchemeColumnsItem[]>([]);
+
+    // 外派显示隐藏列更新事件
+    const onChangeColumn = (data: ISchemeColumnsItem[]) => {
+      ctx.emit('on-change-column', data);
+    };
+    // 外派排序更新事件
+    const onChangeSort = (data: IOrderByItem[]) => {
+      ctx.emit('on-change-sort', data);
+    };
+
+    // 点击上移触发
+    const onUpMove = (index: number) => {
+      if (index > 0) {
+        // 调用数组换位函数
+        dataSource.value = handleArrayTransposition(dataSource.value, index, index - 1);
+        onChangeColumn(dataSource.value);
+      }
+    };
+    // 点击下移触发
+    const onDownMove = (index: number) => {
+      if (index < dataSource.value.length - 1) {
+        // 调用数组换位函数
+        dataSource.value = handleArrayTransposition(dataSource.value, index, index + 1);
+        onChangeColumn(dataSource.value);
+      }
+    };
+    // 是否显示选择框更新触发
+    const onChangeShow = (show: boolean, key: string) => {
+      // 如果不显示且排序中有此字段，则把排序中的此字段去除
+      if (!show) {
+        const orderBy = cloneDeep(props.orderBy);
+        props.orderBy.forEach((item, index) => {
+          if (item.key === key) {
+            orderBy.splice(index, 1);
+            return;
+          }
+        });
+        onChangeSort(orderBy);
+      }
+      onChangeColumn(dataSource.value);
+    };
+    // 处理排序中有此字段，但是列中是否显示选择框没有选中的情况
+    // 让排序有此字段，是否显示选择框选中
+    const handleOrderByColShow = (val: IOrderByItem[]) => {
+      const temp = cloneDeep(dataSource.value);
+      val.forEach((sort) => {
+        temp.forEach((item) => {
+          if (sort.key === item.key) {
+            item.show = true;
+          }
+        });
+      });
+      dataSource.value = temp;
+    };
+
+    // 实时更新组件中的显示隐藏列数据
+    watch(
+      () => props.columns,
+      (val) => {
+        dataSource.value = cloneDeep(val);
+      },
+      {
+        immediate: true,
+      }
+    );
+
+    // 监听排序数据更新
+    watch(
+      () => props.orderBy,
+      (val) => {
+        handleOrderByColShow(val);
+      },
+      {
+        immediate: true,
+      }
+    );
+
+    return {
+      dataSource,
+      prefixCls,
+      onUpMove,
+      onDownMove,
+      onChangeShow,
+    };
+  },
+});
 </script>
 
 <style lang="less" scoped>
-  @prefix-cls: ~'@{namespace}-content-column';
+@prefix-cls: ~'@{namespace}-content-column';
 
-  .@{prefix-cls} {
-    height: 100%;
+.@{prefix-cls} {
+  height: 100%;
 
-    span {
-      margin-right: 20px;
-      color: @color-primary;
-      cursor: pointer;
-    }
+  span {
+    margin-right: 20px;
+    color: @color-primary;
+    cursor: pointer;
   }
+}
 </style>

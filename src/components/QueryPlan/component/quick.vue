@@ -34,7 +34,7 @@
 
   export default defineComponent({
     props: {
-      quickData: {
+      schemeListTemp: {
         type: Array as PropType<ISchemeItem[]>,
         default: () => {
           return [];
@@ -45,7 +45,7 @@
         default: 0,
       },
     },
-    emits: ['on-filter-scheme', 'on-change-checked-index'],
+    emits: ['on-change-checked-index'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('query-quick');
       const quick = ref();
@@ -53,11 +53,7 @@
       const quickList = ref<ISchemeItem[]>([]);
 
       const onActive = (index: number): void => {
-        onFilterScheme(quickList.value[index]);
         ctx.emit('on-change-checked-index', index);
-      };
-      const onFilterScheme = (data) => {
-        ctx.emit('on-filter-scheme', data);
       };
       const handleQuickList = (val) => {
         const data: ISchemeItem[] = [];
@@ -80,7 +76,7 @@
       });
 
       watch(
-        () => props.quickData,
+        () => props.schemeListTemp,
         (val) => {
           handleQuickList(val);
         },
