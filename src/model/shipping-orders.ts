@@ -16,6 +16,7 @@ export const customColumns: IColumnItem[] = [
     key: 'BillCode',
     caption: '单据编码',
     cellTemplate: 'billCode',
+    mustKey: true,
   },
   {
     key: 'BillDate',

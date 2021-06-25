@@ -35,7 +35,7 @@ export const getDataSource = async (
   const customOptions: ITableOptions = deepMerge(defaultOptions, options);
   const select = getSelect(scheme.columns);
   const filter = getFilter(scheme.requirement);
-  const sort = getSort(scheme.orderBy);
+  const sort = getSort(scheme.orderBy, customOptions.dataSourceOptions.sort);
   // const customColumns = filter.columns;
   const data = new DataSource({
     sort: [...customOptions.dataSourceOptions.sort, ...sort],
@@ -68,12 +68,12 @@ export const getFilter = (requirements) => {
   });
   return filter;
 };
-export const getSort = (orderBy) => {
+export const getSort = (orderBy, tableSort) => {
   const sort: any[] = [];
   orderBy.forEach((item) => {
     sort.push({ selector: item.key, desc: item.desc });
   });
-  return sort;
+  return [...tableSort, ...sort];
 };
 export const getSelect = (columns) => {
   const select: string[] = [];

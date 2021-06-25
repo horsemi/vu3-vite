@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <div :class="`${prefixCls}__default`">
-      <DxCheckBox v-model:value="checkDefault" @valueChanged="onChangeCheckDefault" />
+      <DxCheckBox v-model:value="checkDefault" />
       <span @click="checkDefault = !checkDefault">下次以此方案自动进入</span>
     </div>
     <div :class="`${prefixCls}__btn`">
@@ -27,9 +27,6 @@
       const { prefixCls } = useDesign('popup-footer');
       const checkDefault = ref(false);
 
-      const onChangeCheckDefault = () => {
-        console.log(checkDefault.value);
-      };
       const onSubmit = () => {
         ctx.emit('on-submit');
       };
@@ -40,7 +37,6 @@
       return {
         prefixCls,
         checkDefault,
-        onChangeCheckDefault,
         onSubmit,
         onClosePopup,
       };

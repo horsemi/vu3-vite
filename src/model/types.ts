@@ -10,6 +10,11 @@ export interface IColumnItem {
   caption: string;
 
   /**
+   * @description: 是否必要
+   */
+  mustKey?: boolean;
+
+  /**
    * @description: 字段类型
    */
   type?: string;
