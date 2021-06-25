@@ -31,7 +31,7 @@
     components: { DxSelectBox },
     props: {
       value: {
-        type: String,
+        type: [String, Number, Boolean],
         default: '',
       },
       width: {

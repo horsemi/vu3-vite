@@ -25,7 +25,7 @@
       },
       name: {
         type: String,
-        required: true,
+        default: '',
       },
       size: {
         type: [Number, String],

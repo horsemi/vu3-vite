@@ -7,7 +7,7 @@ import { unref } from 'vue';
 import router from '/@/router';
 import { errorMessage } from '/@/hooks/web/useMessage';
 
-export type RouteLocationRawEx = Omit<RouteLocationRaw, 'path'> & { path: PageEnum };
+export type RouteLocationRawEx = Omit<RouteLocationRaw, 'path'> & { path: string };
 
 function handleError(e: Error) {
   errorMessage(e);

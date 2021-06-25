@@ -11,9 +11,9 @@
     <div class="example">
       <div class="btn__wrap">
         <div class="btn__box">
-          <DxButton :width="76" text="提交" type="default" @click="onClick($event)" />
-          <DxButton :width="76" text="审核" @click="onClick($event)" />
-          <DxButton :width="76" text="删除" @click="onClick($event)" />
+          <DxButton :width="76" text="提交" type="default" />
+          <DxButton :width="76" text="审核" />
+          <DxButton :width="76" text="删除" />
           <DxDropDownButton :items="tabList" :width="98" text="标记" />
         </div>
         <div class="btn__box">
@@ -24,7 +24,7 @@
             @click="defaultVisible = !defaultVisible"
           >
           </DxButton>
-          <DxButton :width="100" icon="refresh" text="刷新" @click="onClick($event)" />
+          <DxButton :width="100" icon="refresh" text="刷新" />
         </div>
       </div>
       <OdsTable
@@ -101,8 +101,12 @@
         page: {
           size: 20,
         },
+        selection: {
+          allMode: 'allPages',
+          checkBoxesMode: 'always',
+        },
         dataSourceOptions: {
-          sort: [{ selector: 'BillDate', desc: true }],
+          sort: [{ selector: 'BillCode', desc: true }],
           oDataOptions: {
             url: '/api/odata/shipping-orders',
             key: 'BillCode',
