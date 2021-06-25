@@ -118,9 +118,9 @@
       const columns = ref<IColumnItem[] | undefined>();
       const filterList = ref<ISchemeItem[]>([]);
 
-      const handleBillCodeClick = () => {
-        go('exampleDetails');
-      };
+      // const handleBillCodeClick = () => {
+      //   go({ name: 'exampleDetails' });
+      // };
       const onFilterScheme = (data: ISchemeItem) => {
         filterScheme.value = cloneDeep(data);
       };
@@ -194,10 +194,15 @@
         summary,
         filterList,
         filterScheme,
-        handleBillCodeClick,
+        // handleBillCodeClick,
         onFilterScheme,
         onSearch,
       };
+    },
+    methods: {
+      handleBillCodeClick(code: any) {
+        this.$router.push({ name: 'exampleDetails', query: { billcode: code.value } });
+      },
     },
   });
 </script>

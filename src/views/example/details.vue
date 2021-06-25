@@ -20,47 +20,59 @@
         </template>
         <template #item>
           <div>
-            <DxForm id="form" :form-data="companies" :col-count="4">
-              <DxItem :label="{ text: '单号编码' }" data-field="ID" />
-              <DxItem :label="{ text: '单据日期' }" data-field="Name" editor-type="dxDateBox" />
-              <DxItem :label="{ text: '发货批次' }" data-field="Address" />
-              <DxItem :label="{ text: '总包件数' }" data-field="City" editor-type="dxNumberBox" />
+            <DxForm id="form" :form-data="formData" :read-only="true" :col-count="4">
+              <DxItem :label="{ text: '单号编码' }" data-field="BillCode" />
+              <DxItem :label="{ text: '单据日期' }" data-field="BillDate" editor-type="dxDateBox" />
+              <DxItem :label="{ text: '发货批次' }" data-field="BatchCode" />
+              <DxItem
+                :label="{ text: '总包件数' }"
+                data-field="TotalPackage"
+                editor-type="dxNumberBox"
+              />
               <DxItem
                 :label="{ text: '单据类型' }"
-                data-field="State"
+                data-field="BillTypeCode"
                 editor-type="dxSelectBox"
                 :editor-options="{ value: '', items: positions }"
               />
               <DxItem :label="{ text: '服务项目' }" data-field="ZipCode" />
               <DxItem
                 :label="{ text: '发货模式' }"
-                data-field="Phone"
+                data-field="SendGoodsMode"
                 editor-type="dxSelectBox"
                 :editor-options="{ value: '', items: positions }"
               />
-              <DxItem :label="{ text: '总包裹数' }" data-field="Fax" editor-type="dxNumberBox" />
+              <DxItem
+                :label="{ text: '总包裹数' }"
+                data-field="TotalPack"
+                editor-type="dxNumberBox"
+              />
               <DxItem
                 :label="{ text: '单据状态' }"
-                data-field="Website"
+                data-field="DocumentStatus"
                 editor-type="dxSelectBox"
                 :editor-options="{ value: '', items: positions }"
               />
-              <DxItem :label="{ text: '支装类型' }" data-field="companyName" />
-              <DxItem :label="{ text: '备货区' }" data-field="type" />
+              <DxItem :label="{ text: '支装类型' }" data-field="ThreeServiceFeeTypeCode" />
+              <DxItem :label="{ text: '备货区' }" data-field="LineAreaCode" />
               <DxItem
                 :label="{ text: '总体积' }"
-                data-field="PhoneType"
+                data-field="TotalVolume"
                 editor-type="dxNumberBox"
               />
               <DxItem
                 :label="{ text: '业务状态' }"
-                data-field="CityType"
+                data-field="OperationStatus"
                 editor-type="dxSelectBox"
                 :editor-options="{ value: '', items: positions }"
               />
-              <DxItem :label="{ text: '发货仓库' }" data-field="NametType" />
-              <DxItem :label="{ text: '标记状态' }" data-field="StateType" />
-              <DxItem :label="{ text: '重量' }" data-field="faype" editor-type="dxNumberBox" />
+              <DxItem :label="{ text: '发货仓库' }" data-field="DeliveryWarehouseCode" />
+              <DxItem :label="{ text: '标记状态' }" data-field="MarkStatus" />
+              <DxItem
+                :label="{ text: '重量' }"
+                data-field="TotalWeight"
+                editor-type="dxNumberBox"
+              />
             </DxForm>
             <div class="information-footer">
               <div class="step-wrap"></div>
@@ -95,7 +107,7 @@
       <DxTabPanel
         v-model:selected-index="selectedIndex"
         :height="400"
-        :data-source="multiViewItems"
+        :data-source="multiEntityItems"
         loop
         :animation-enabled="animationEnabled"
         :swipe-enabled="swipeEnabled"
@@ -104,8 +116,8 @@
           <span>{{ company.CompanyName }}</span>
         </template>
         <template #item>
-          <OdsTable :table-options="tableOptions" :data-source="dataSource" :columns="columns">
-          </OdsTable>
+          <!-- <OdsTable :table-options="tableOptions" :data-source="dataSource" :columns="columns">
+          </OdsTable> -->
         </template>
       </DxTabPanel>
     </div>
@@ -113,16 +125,19 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onMounted, ref } from 'vue';
+  import { defineComponent, onMounted, ref, reactive } from 'vue';
+  import ODataStore from 'devextreme/data/odata/store';
+  import DataSource from 'devextreme/data/data_source';
+
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import { DxForm, DxItem } from 'devextreme-vue/form';
   import { DxSwitch } from 'devextreme-vue/switch';
   import DxButton from 'devextreme-vue/button';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
-  import { getColumns } from '/@/model/shipping-orders';
   import { IColumnItem } from '/@/model/types';
   import { ITableOptions } from '/@/components/Table/type';
-  import { getDataSource } from '/@/components/Table/common';
+
+  import { useRouter } from 'vue-router';
 
   export default defineComponent({
     components: {
@@ -134,71 +149,55 @@
       DxDropDownButton,
     },
     setup() {
+      const router = useRouter();
+      const billcode = router.currentRoute.value.query.billcode;
+      const data = new DataSource({
+        sort: 'BillCode desc',
+        filter: ['BillCode', '=', billcode],
+        paginate: true,
+        pageSize: 1,
+        store: new ODataStore({
+          url: '/api/odata/shipping-orders',
+          key: 'BillCode',
+          version: 4,
+        }),
+        select:
+          'BillCode,BillDate,TotalPackage,BillTypeCode,DocumentStatus,ThreeServiceFeeTypeCode,LineAreaCode,TotalVolume,OperationStatus,DeliveryWarehouseCode,MarkStatus',
+      });
+      let formData = ref({});
+      data.load().then((data) => {
+        formData.value = data[0];
+      });
+
       const multiViewItems = [
         {
           ID: 1,
-          CompanyName: 'SuprMart',
-          Address: '702 SW 8th Street',
-          City: 'Bentonville',
-          State: 'Arkansas',
-          Zipcode: 72716,
-          Phone: '(800) 555-2797',
-          Fax: '(800) 555-2171',
-          Website: 'http://www.nowebsitesupermart.com',
+          CompanyName: '基本信息',
         },
         {
           ID: 2,
-          CompanyName: 'ElDepot',
-          Address: '2455 Paces Ferry Road NW',
-          City: 'Atlanta',
-          State: 'Georgia',
-          Zipcode: 30339,
-          Phone: '(800) 595-3232',
-          Fax: '(800) 595-3231',
-          Website: 'http://www.nowebsitedepot.com',
+          CompanyName: '收货人信息',
         },
         {
           ID: 3,
-          CompanyName: 'K&S Music',
-          Address: '1000 Nicllet Mall',
-          City: 'Minneapolis',
-          State: 'Minnesota',
-          Zipcode: 55403,
-          Phone: '(612) 304-6073',
-          Fax: '(612) 304-6074',
-          Website: 'http://www.nowebsitemusic.com',
+          CompanyName: '物流信息',
         },
         {
           ID: 4,
-          CompanyName: 'Tom Club',
-          Address: '999 Lake Drive',
-          City: 'Issaquah',
-          State: 'Washington',
-          Zipcode: 98027,
-          Phone: '(800) 955-2292',
-          Fax: '(800) 955-2293',
-          Website: 'http://www.nowebsitetomsclub.com',
+          CompanyName: '其他信息',
         },
       ];
 
-      const companies = {
-        ID: 1,
-        Name: new Date(),
-        Address: '702 SW 8th Street',
-        City: '12',
-        State: 'Arkansas',
-        ZipCode: 72716,
-        Phone: '(800) 555-2797',
-        Fax: '0.5',
-        Website: 'http://www.nowebsitesupermart.com',
-        companyName: 'Tom Club',
-        type: '131',
-        PhoneType: '15',
-        CityType: '555',
-        NametType: 'addakansas',
-        StateType: 'a14',
-        faype: '1.2',
-      };
+      const multiEntityItems = [
+        {
+          ID: 1,
+          CompanyName: '明细信息',
+        },
+        {
+          ID: 2,
+          CompanyName: '操作记录',
+        },
+      ];
 
       const positions = [
         'HR Manager',
@@ -212,36 +211,22 @@
 
       const tabList = ['加急单', '区分物流', '产品异常', '订单异常', '取消标识'];
 
-      // const options: ITableOptions = {
-      //   height: '360px',
-      //   dataSourceOptions: {
-      //     paginate: false,
-      //     sort: 'BillCode',
-      //     oDataOptions: {
-      //       url: '/api/odata/shipping-orders',
-      //       key: 'BillCode',
-      //     },
-      //   },
-      // };
-
       const tableOptions = ref<ITableOptions | undefined>();
       const dataSource = ref();
       const columns = ref<IColumnItem[] | undefined>();
 
-      // onMounted(async () => {
-      //   const { customOptions, data, customColumns } = await getDataSource(options, getColumns);
-      //   tableOptions.value = customOptions;
-      //   dataSource.value = data;
-      //   columns.value = customColumns;
-      // });
+      onMounted(async () => {
+        //
+      });
 
       return {
+        formData,
         tableOptions,
         dataSource,
         columns,
         tabList,
         positions,
-        companies,
+        multiEntityItems,
         selectedIndex: 0,
         loop: false,
         animationEnabled: true,
