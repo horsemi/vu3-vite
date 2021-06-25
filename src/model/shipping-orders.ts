@@ -19,6 +19,11 @@ export const customColumns: IColumnItem[] = [
     mustKey: true,
   },
   {
+    key: 'GatheringParentCode',
+    caption: '父单号',
+    mustKey: true,
+  },
+  {
     key: 'BillDate',
     caption: '单据日期',
   },

@@ -1,6 +1,7 @@
 <template>
   <div :class="[prefixCls]">
     <DxDataGrid
+      ref="dataGrid"
       :data-source="tableData"
       :height="tableOptions.height"
       :show-column-lines="tableOptions.showColumnLines"
@@ -115,8 +116,8 @@
         },
       },
     },
-    emits: ['handleBillCodeClick'],
-    setup(props) {
+    emits: ['handleBillCodeClick', 'handleSelectionClick'],
+    setup(props, ctx) {
       const { prefixCls } = useDesign('ods-table');
       const appStore = useAppStore();
       const pageIndex = ref(0);
@@ -124,7 +125,7 @@
       const tableColumns = ref<IColumnItem[]>([]);
 
       const onSelectionChanged = ({ selectedRowKeys, selectedRowsData }) => {
-        console.log(selectedRowKeys, selectedRowsData);
+        ctx.emit('handleSelectionClick', selectedRowsData);
       };
       const handleJump = (e) => {
         const index = parseInt(e.target.value) - 1;
@@ -212,6 +213,12 @@
         customizeColumns,
         getGlobalEnumDataByCode,
       };
+    },
+    methods: {
+      getSelectedRowsData() {
+        const dataGrid = (this.$refs.dataGrid as any).instance;
+        return dataGrid.getSelectedRowsData();
+      },
     },
   });
 </script>

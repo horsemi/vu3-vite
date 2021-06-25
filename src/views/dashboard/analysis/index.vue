@@ -11,8 +11,8 @@
     <div class="example">
       <div class="btn__wrap">
         <div class="btn__box">
-          <DxButton :width="76" text="提交" type="default" />
-          <DxButton :width="76" text="审核" />
+          <DxButton :width="76" text="提交" type="default" @click="onSubmitClick" />
+          <DxButton :width="76" text="审核" @click="onApplyClick" />
           <DxButton :width="76" text="删除" />
           <DxDropDownButton :items="tabList" :width="98" text="标记" />
         </div>
@@ -28,6 +28,7 @@
         </div>
       </div>
       <OdsTable
+        ref="dataGrid"
         :table-options="tableOptions"
         :data-source="dataSource"
         :columns="columns"
@@ -49,17 +50,20 @@
 <script lang="ts">
   import { defineComponent, onMounted, ref } from 'vue';
   import { ITableOptions } from '/@/components/Table/type';
-  import { useGo } from '/@/hooks/web/usePage';
   import QueryPlan from '../../../components/QueryPlan/index.vue';
+
   import DxButton from 'devextreme-vue/button';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
   import { DxPopover } from 'devextreme-vue/popover';
+
   import { getColumns } from '/@/model/shipping-orders';
   import { getDataSource } from '/@/components/Table/common';
   import { IColumnItem } from '/@/model/types';
   import { ISchemeColumnsItem, ISchemeItem } from '/@/components/QueryPopup/content/types';
   import { Persistent } from '/@/utils/cache/persistent';
   import { SCHEME_LIST_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';
+  import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
+
   import { cloneDeep } from 'lodash-es';
 
   export default defineComponent({
@@ -71,7 +75,6 @@
       DxPopover,
     },
     setup() {
-      const go = useGo();
       const allColumns = ref<IColumnItem[] | undefined>();
       const tabList = ['加急单', '区分物流', '产品异常', '订单异常', '取消标识'];
       const summary = [
@@ -215,6 +218,18 @@
     methods: {
       handleBillCodeClick(code: any) {
         this.$router.push({ name: 'exampleDetails', query: { billcode: code.value } });
+      },
+      onSubmitClick() {
+        const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData();
+        ShippingOrderApi.onShippingOrderSubmit(
+          selectionData.map((item) => item.GatheringParentCode)
+        );
+      },
+      onApplyClick() {
+        const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData();
+        ShippingOrderApi.onShippingOrderApply(
+          selectionData.map((item) => item.GatheringParentCode)
+        );
       },
     },
   });

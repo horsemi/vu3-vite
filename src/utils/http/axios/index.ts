@@ -29,7 +29,7 @@ const transform: AxiosTransform = {
     }
     // 错误的时候返回
 
-    const { data: resData, status} = res;
+    const { data: resData, status } = res;
     if (!resData) {
       // return '[HTTP] Request has no return value';
       return errorResult;
@@ -38,7 +38,7 @@ const transform: AxiosTransform = {
     const { result, data, message } = resData;
 
     // 这里逻辑可以根据项目进行修改
-    const hasSuccess = data && result === ResultEnum.SUCCESS; // data && Reflect.has(data, 'code') && result === ResultEnum.SUCCESS
+    const hasSuccess = result === ResultEnum.SUCCESS; // data && Reflect.has(data, 'code') && result === ResultEnum.SUCCESS
     if (!hasSuccess) {
       if (message) {
         errorMessage(message);
