@@ -131,9 +131,7 @@
         filterScheme.value = cloneDeep(data);
       };
       const onSearch = (data) => {
-        console.log(data);
-        const scheme = cloneDeep(filterList.value[schemeCheckedIndex.value]);
-        console.log(scheme);
+        const scheme = cloneDeep(filterScheme.value);
         scheme?.requirement.push(...data);
         filterScheme.value = cloneDeep(scheme);
       };

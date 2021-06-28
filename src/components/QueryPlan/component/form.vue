@@ -1,5 +1,5 @@
 <template>
-  <div :class="prefixCls" @click.stop="">
+  <div v-click-outside="closePopup" :class="prefixCls">
     <div
       :class="`${prefixCls}__box`"
       :style="{
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onBeforeUnmount, PropType, reactive, ref } from 'vue';
+  import { defineComponent, PropType, reactive, ref } from 'vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import DxButton from 'devextreme-vue/button';
 
@@ -123,16 +123,9 @@
       const onSaveRequirement = () => {
         console.log(queryList);
       };
-
-      // function closePopup(): void {
-      //   opened.value = false;
-      // }
-
-      // document.addEventListener('click', closePopup, false);
-
-      // onBeforeUnmount(() => {
-      //   document.removeEventListener('click', closePopup);
-      // });
+      const closePopup = () => {
+        opened.value = false;
+      };
 
       return {
         prefixCls,
@@ -141,6 +134,7 @@
         onAddRequirement,
         onDelRequirement,
         onSaveRequirement,
+        closePopup,
       };
     },
   });

@@ -16,7 +16,7 @@
         @on-del-scheme="onDelScheme"
         @on-reset-scheme="onResetScheme"
       />
-      <Footer @on-submit="onSubmit" @on-close-popup="closePopup" />
+      <Footer ref="footer" @on-submit="onSubmit" @on-close-popup="closePopup" />
     </div>
   </DxPopup>
 </template>
@@ -57,7 +57,6 @@ export default defineComponent({
     },
   },
   emits: [
-    'on-change-checked-index',
     'on-change-requirement',
     'on-change-sort',
     'on-change-column',
@@ -65,12 +64,17 @@ export default defineComponent({
     'on-submit-scheme',
     'on-save-scheme',
     'on-del-scheme',
-    'on-reset-scheme', 'on-submit',
+    'on-reset-scheme',
+    'on-submit',
+    'on-change-checked-default',
+    'on-change-popup-index',
   ],
   setup(props, ctx) {
     const { prefixCls } = useDesign('query-popup');
     // 弹窗是否打开
     const popupVisible = ref(false);
+    // 底部dom
+    const footer = ref();
 
     // 打开弹窗
     const openPopup = () => {
@@ -80,9 +84,9 @@ export default defineComponent({
     const closePopup = () => {
       popupVisible.value = false;
     };
-    // 外派选中下标更新
+    // 接受选中下标更新
     const onChangeCheckedIndex = (index: number) => {
-      ctx.emit('on-change-checked-index', index);
+      ctx.emit('on-change-popup-index', index);
     };
     // 外派条件数据更新
     const onChangeRequirement = (data: IRequirementItem[]) => {
@@ -118,13 +122,19 @@ export default defineComponent({
     };
     // 外派确认事件
     const onSubmit = () => {
+      // 把选中下标外派出去
       ctx.emit('on-submit');
+      // 如果选中下次以此方案进入，外派更新默认方案事件
+      if (footer.value.checkDefault) {
+        ctx.emit('on-change-checked-default');
+      }
       closePopup();
     };
 
     return {
       prefixCls,
       popupVisible,
+      footer,
       onSubmit,
       openPopup,
       closePopup,
