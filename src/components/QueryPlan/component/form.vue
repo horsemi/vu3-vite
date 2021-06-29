@@ -68,7 +68,7 @@
   import DxButton from 'devextreme-vue/button';
 
   import DynamicSelect from '/@/components/DynamicSelect/index.vue';
-  import { IColumnItem } from '/@/model/types';
+  import { IColumnItem } from '/@/model/table/types';
 
   interface IQueryItem {
     requirement: string;

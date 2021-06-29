@@ -50,7 +50,7 @@ import Menu from './menu.vue';
 import Requirement from './requirement.vue';
 import Sort from './sort.vue';
 import Column from './column.vue';
-import { IColumnItem } from '/@/model/types';
+import { IColumnItem } from '/@/model/table/types';
 import {
   IMultiViewItem,
   IOrderByItem,

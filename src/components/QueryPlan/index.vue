@@ -43,7 +43,7 @@ import QueryButton from './component/button.vue';
 import QueryQuick from './component/quick.vue';
 import QueryPopup from '/@/components/QueryPopup/index.vue';
 import { DxToast } from 'devextreme-vue/toast';
-import { IColumnItem } from '/@/model/types';
+import { IColumnItem } from '/@/model/table/types';
 import {
   IOrderByItem,
   IRequirementItem,

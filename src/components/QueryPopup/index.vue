@@ -28,7 +28,7 @@ import { DxPopup } from 'devextreme-vue/popup';
 import Header from './header.vue';
 import Content from './content/index.vue';
 import Footer from './footer.vue';
-import { IColumnItem } from '/@/model/types';
+import { IColumnItem } from '/@/model/table/types';
 import { IOrderByItem, IRequirementItem, ISchemeColumnsItem, ISchemeItem } from './content/types';
 
 export default defineComponent({

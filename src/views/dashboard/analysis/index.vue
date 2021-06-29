@@ -56,9 +56,9 @@
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
   import { DxPopover } from 'devextreme-vue/popover';
 
-  import { getColumns } from '/@/model/shipping-orders';
+  import { getColumns } from '/@/model/table/shipping-orders';
   import { getDataSource } from '/@/components/Table/common';
-  import { IColumnItem } from '/@/model/types';
+  import { IColumnItem } from '/@/model/table/types';
   import { ISchemeColumnsItem, ISchemeItem } from '/@/components/QueryPopup/content/types';
   import { Persistent } from '/@/utils/cache/persistent';
   import { SCHEME_LIST_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';

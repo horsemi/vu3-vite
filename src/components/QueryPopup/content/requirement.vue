@@ -44,7 +44,7 @@ import { defineComponent, PropType, ref, watch } from 'vue';
 import { useDesign } from '/@/hooks/web/useDesign';
 import DxSelectBox from 'devextreme-vue/select-box';
 import { ILogicOptions, IRequirementItem } from './types';
-import { IColumnItem } from '/@/model/types';
+import { IColumnItem } from '/@/model/table/types';
 import { DxScrollView } from 'devextreme-vue/scroll-view';
 import { cloneDeep } from 'lodash-es';
 

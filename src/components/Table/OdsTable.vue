@@ -69,7 +69,7 @@
   import DxButton from 'devextreme-vue/button';
   import { defaultTableOptions, getFilter, getSort, getSelect } from './common';
   import { ITableOptions } from './type';
-  import { IColumnItem } from '/@/model/types';
+  import { IColumnItem } from '/@/model/table/types';
   import { ISchemeItem } from '../QueryPopup/content/types';
   import { useAppStore } from '/@/store/modules/app';
   import { cloneDeep } from 'lodash-es';

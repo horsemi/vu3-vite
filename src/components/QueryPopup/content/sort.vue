@@ -59,7 +59,7 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxLookup } from 'devextreme-vue/data-grid';
 import { DxScrollView } from 'devextreme-vue/scroll-view';
-import { IColumnItem } from '/@/model/types';
+import { IColumnItem } from '/@/model/table/types';
 import { IFieldItem, IOrderByItem, ISortOptions } from './types';
 import { cloneDeep } from 'lodash-es';
 import { handleArrayTransposition } from '/@/utils';

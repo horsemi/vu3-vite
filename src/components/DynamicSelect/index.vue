@@ -85,7 +85,7 @@
 </template>
 
 <script lang="ts">
-  import type { IColumnItem } from '/@/model/types';
+  import type { IColumnItem } from '/@/model/table/types';
 
   import { defineComponent, watch, PropType, ref } from 'vue';
 
@@ -96,7 +96,7 @@
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getOperatorByType, initOperatorMap } from '/@/model/global-operator';
+  import { getOperatorByType, initOperatorMap } from '/@/model/table/global-operator';
   import FoundationSelect from '/@/components/FoundationSelect/index.vue';
 
   export default defineComponent({
