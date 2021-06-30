@@ -3,11 +3,11 @@ import DataSource from 'devextreme/data/data_source';
 import { deepMerge } from '/@/utils/index';
 import { ITableOptions } from './type';
 import { cloneDeep } from 'lodash-es';
-import { ISchemeItem } from '../QueryPopup/content/types';
+import { IOrderByItem, ISchemeColumnsItem, ISchemeItem } from '../QueryPopup/content/types';
+import { IKeyType } from '/@/model/table/types';
 
 export const defaultTableOptions: ITableOptions = {
   dataSourceOptions: {
-    sort: [],
     paginate: true,
     oDataOptions: {
       url: '',
@@ -27,28 +27,39 @@ export const defaultTableOptions: ITableOptions = {
     size: 10,
   },
 };
-export const getDataSource = async (options: ITableOptions, scheme: ISchemeItem) => {
+export const getDataSource = async (options: ITableOptions, scheme: ISchemeItem, key: string[], keyType: IKeyType[]) => {
   const defaultOptions: ITableOptions = cloneDeep(defaultTableOptions);
   const customOptions: ITableOptions = deepMerge(defaultOptions, options);
   const select = getSelect(scheme.columns);
   const filter = getFilter(scheme.requirement);
   const sort = getSort(scheme.orderBy, customOptions.dataSourceOptions.sort);
-  // const customColumns = filter.columns;
   const data = new DataSource({
-    sort: [...customOptions.dataSourceOptions.sort, ...sort],
+    sort: customOptions.dataSourceOptions.sort ? [...customOptions.dataSourceOptions.sort, ...sort] : sort,
     filter: filter.length > 0 ? filter : '',
     paginate: true,
     pageSize: customOptions.page?.size,
     // filter: filter,
     store: new ODataStore({
+      key,
+      keyType: handleKeyType(keyType),
       ...customOptions.dataSourceOptions.oDataOptions,
     }),
-    select: select,
+    select: select.concat(key),
   });
   return {
     data,
     customOptions,
   };
+};
+
+const handleKeyType = (keyType: IKeyType[]) => {
+  const type = {};
+  if (keyType.length > 0) {
+    keyType.forEach(item => {
+      type[item.key] = item.type;
+    });
+  }
+  return type;
 };
 
 export const getFilter = (requirements) => {
@@ -65,14 +76,14 @@ export const getFilter = (requirements) => {
   });
   return filter;
 };
-export const getSort = (orderBy, tableSort) => {
+export const getSort = (orderBy: IOrderByItem[], tableSort: any[] | undefined) => {
   const sort: any[] = [];
   orderBy.forEach((item) => {
     sort.push({ selector: item.key, desc: item.desc });
   });
-  return [...tableSort, ...sort];
+  return tableSort ? [...tableSort, ...sort] : sort;
 };
-export const getSelect = (columns) => {
+export const getSelect = (columns: ISchemeColumnsItem[]) => {
   const select: string[] = [];
   columns.forEach((item) => {
     if (item.show) {

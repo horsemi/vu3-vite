@@ -52,7 +52,7 @@ interface IDataSourceOptions {
   /**
    * @description: 排序字段
    */
-  sort: Array<any>;
+  sort?: Array<any>;
 
   /**
    * @description: oData配置

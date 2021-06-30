@@ -54,3 +54,9 @@ export interface IFieldType {
   key: string;
   type: string;
 }
+
+export interface IKeyType {
+  caption: string;
+  key: string;
+  type: string;
+}

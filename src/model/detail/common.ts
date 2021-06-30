@@ -4,9 +4,9 @@ import DataSource from 'devextreme/data/data_source';
 export const getDetailDataSource = (
   code: string,
   key: string,
-  select: string,
-  filter: any[]
-): Promise<any[]> => {
+  select: string[],
+  filter: unknown[]
+): Promise<unknown[]> => {
   return new Promise((reslove, reject) => {
     const data = new DataSource({
       sort: `${key} desc`,
@@ -30,4 +30,22 @@ export const getDetailDataSource = (
       }
     );
   });
+};
+
+export const getDefiniteDataSource = (
+  code: string,
+  select: string[],
+  filter: unknown[]
+) => {
+  const data = new DataSource({
+    filter,
+    paginate: true,
+    pageSize: 20,
+    store: new ODataStore({
+      url: `/api/odata/${code}`,
+      version: 4,
+    }),
+    select,
+  });
+  return data;
 };

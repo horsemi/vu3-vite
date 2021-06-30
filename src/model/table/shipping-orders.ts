@@ -51,6 +51,6 @@ export const customColumns: IColumnItem[] = [
   },
 ];
 
-export const getColumns = async (): Promise<IColumnItem[] | undefined> => {
+export const getColumnsOpitons = async () => {
   return await getColumnList('shipping-orders', customColumns);
 };
