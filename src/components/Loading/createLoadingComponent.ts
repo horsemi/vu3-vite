@@ -43,12 +43,12 @@ export function createLoadingComponent({
 
       loadingNumber = Number.parseInt(loadingNumber as string, 10) - 1;
       if (!loadingNumber) {
-        removeClass(target, 'v-loading-parent--relative');
+        removeClass(target as HTMLElement, 'v-loading-parent--relative');
         target.removeAttribute('loading-number');
       } else {
         target.setAttribute('loading-number', loadingNumber.toString());
       }
-      removeClass(target, 'v-loading-parent--hidden');
+      removeClass(target as HTMLElement, 'v-loading-parent--hidden');
     }
     if (vm && vm.el && vm.el.parentNode) {
       vm.el.parentNode.removeChild(vm.el);

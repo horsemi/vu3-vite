@@ -199,8 +199,8 @@
         }
       );
 
-      function getGlobalEnumDataByCode(code: string) {
-        return appStore.getGlobalEnumDataByCode(code);
+      function getGlobalEnumDataByCode(code: string | undefined) {
+        return code && appStore.getGlobalEnumDataByCode(code);
       }
 
       return {
