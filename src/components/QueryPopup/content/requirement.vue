@@ -39,144 +39,144 @@
 </template>
 
 <script lang="ts">
-import DynamicSelect from '/@/components/DynamicSelect/index.vue';
-import { defineComponent, PropType, ref, watch } from 'vue';
-import { useDesign } from '/@/hooks/web/useDesign';
-import DxSelectBox from 'devextreme-vue/select-box';
-import { ILogicOptions, IRequirementItem } from './types';
-import { IColumnItem } from '/@/model/types';
-import { DxScrollView } from 'devextreme-vue/scroll-view';
-import { cloneDeep } from 'lodash-es';
+  import DynamicSelect from '/@/components/DynamicSelect/index.vue';
+  import { defineComponent, PropType, ref, watch } from 'vue';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  import DxSelectBox from 'devextreme-vue/select-box';
+  import { ILogicOptions, IRequirementItem } from './types';
+  import { IColumnItem } from '/@/model/table/types';
+  import { DxScrollView } from 'devextreme-vue/scroll-view';
+  import { cloneDeep } from 'lodash-es';
 
-export default defineComponent({
-  components: {
-    DynamicSelect,
-    DxSelectBox,
-    DxScrollView,
-  },
-  props: {
-    requirement: {
-      type: Array as PropType<IRequirementItem[]>,
-      default: () => {
-        return [];
+  export default defineComponent({
+    components: {
+      DynamicSelect,
+      DxSelectBox,
+      DxScrollView,
+    },
+    props: {
+      requirement: {
+        type: Array as PropType<IRequirementItem[]>,
+        default: () => {
+          return [];
+        },
+      },
+      allColumns: {
+        type: Array as PropType<IColumnItem[]>,
+        default: () => {
+          return [];
+        },
       },
     },
-    allColumns: {
-      type: Array as PropType<IColumnItem[]>,
-      default: () => {
-        return [];
-      },
-    },
-  },
-  emits: ['on-change-requirement'],
-  setup(props, ctx) {
-    const { prefixCls } = useDesign('content-requirement');
-    // 上加和下加需要用到的空条件元素
-    const requirementItem: IRequirementItem = {
-      requirement: '',
-      operator: '',
-      operatorList: [],
-      value: '',
-      type: '',
-      datatypekeies: '',
-      logic: '',
-    };
-    // 逻辑下拉框配置项
-    const logicOptions: ILogicOptions[] = [
-      {
-        name: '并且',
-        value: 'and',
-      },
-      {
-        name: '或',
-        value: 'or',
-      },
-    ];
+    emits: ['on-change-requirement'],
+    setup(props, ctx) {
+      const { prefixCls } = useDesign('content-requirement');
+      // 上加和下加需要用到的空条件元素
+      const requirementItem: IRequirementItem = {
+        requirement: '',
+        operator: '',
+        operatorList: [],
+        value: '',
+        type: '',
+        datatypekeies: '',
+        logic: '',
+      };
+      // 逻辑下拉框配置项
+      const logicOptions: ILogicOptions[] = [
+        {
+          name: '并且',
+          value: 'and',
+        },
+        {
+          name: '或',
+          value: 'or',
+        },
+      ];
 
-    // 条件列表数据
-    const dataSource = ref<IRequirementItem[]>([]);
+      // 条件列表数据
+      const dataSource = ref<IRequirementItem[]>([]);
 
-    // 外派条件更新事件
-    const onChangeRequirement = (data: IRequirementItem[]) => {
-      ctx.emit('on-change-requirement', data);
-    };
+      // 外派条件更新事件
+      const onChangeRequirement = (data: IRequirementItem[]) => {
+        ctx.emit('on-change-requirement', data);
+      };
 
-    // 点击上加触发
-    const onUpAdd = (index) => {
-      const temp = cloneDeep(dataSource.value);
-      temp.splice(index, 0, requirementItem);
-      dataSource.value = temp;
-      onChangeRequirement(dataSource.value);
-    };
-    // 点击下加触发
-    const onDownAdd = (index) => {
-      const temp = cloneDeep(dataSource.value);
-      temp.splice(index + 1, 0, requirementItem);
-      dataSource.value = temp;
-      onChangeRequirement(dataSource.value);
-    };
-    // 点击删除触发
-    const onDel = (index) => {
-      // 删除到只剩下一个不能删除
-      if (dataSource.value.length > 1) {
+      // 点击上加触发
+      const onUpAdd = (index) => {
         const temp = cloneDeep(dataSource.value);
-        temp.splice(index, 1);
+        temp.splice(index, 0, requirementItem);
         dataSource.value = temp;
         onChangeRequirement(dataSource.value);
-      }
-    };
+      };
+      // 点击下加触发
+      const onDownAdd = (index) => {
+        const temp = cloneDeep(dataSource.value);
+        temp.splice(index + 1, 0, requirementItem);
+        dataSource.value = temp;
+        onChangeRequirement(dataSource.value);
+      };
+      // 点击删除触发
+      const onDel = (index) => {
+        // 删除到只剩下一个不能删除
+        if (dataSource.value.length > 1) {
+          const temp = cloneDeep(dataSource.value);
+          temp.splice(index, 1);
+          dataSource.value = temp;
+          onChangeRequirement(dataSource.value);
+        }
+      };
 
-    // 实时更新条件列表数据
-    watch(
-      () => props.requirement,
-      (val) => {
-        dataSource.value = val;
-      },
-      {
-        immediate: true,
-      }
-    );
+      // 实时更新条件列表数据
+      watch(
+        () => props.requirement,
+        (val) => {
+          dataSource.value = val;
+        },
+        {
+          immediate: true,
+        }
+      );
 
-    return {
-      dataSource,
-      prefixCls,
-      logicOptions,
-      onUpAdd,
-      onDownAdd,
-      onDel,
-      onChangeRequirement,
-    };
-  },
-});
+      return {
+        dataSource,
+        prefixCls,
+        logicOptions,
+        onUpAdd,
+        onDownAdd,
+        onDel,
+        onChangeRequirement,
+      };
+    },
+  });
 </script>
 
 <style lang="less" scoped>
-@prefix-cls: ~'@{namespace}-content-requirement';
+  @prefix-cls: ~'@{namespace}-content-requirement';
 
-.@{prefix-cls} {
-  height: 100%;
+  .@{prefix-cls} {
+    height: 100%;
 
-  &__header {
-    display: flex;
-    align-items: center;
-    padding: 7px;
-    color: #333;
-    background-color: #fafafa;
-  }
+    &__header {
+      display: flex;
+      align-items: center;
+      padding: 7px;
+      color: #333;
+      background-color: #fafafa;
+    }
 
-  &__item {
-    display: flex;
-    align-items: center;
-    padding: 7px 0;
-  }
+    &__item {
+      display: flex;
+      align-items: center;
+      padding: 7px 0;
+    }
 
-  &__handle {
-    margin-left: 10px;
-    span {
-      margin-right: 20px;
-      color: @color-primary;
-      cursor: pointer;
+    &__handle {
+      margin-left: 10px;
+      span {
+        margin-right: 20px;
+        color: @color-primary;
+        cursor: pointer;
+      }
     }
   }
-}
 </style>

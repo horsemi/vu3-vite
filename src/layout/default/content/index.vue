@@ -30,11 +30,8 @@
 
   .@{prefix-cls} {
     position: relative;
-    flex: 1 1 auto;
-    min-height: 0;
-    padding-right: 20px;
-    padding-bottom: 20px;
-    background-color: @background-color-primary;
+    flex: 1;
+    display: flex;
 
     &-loading {
       position: absolute;

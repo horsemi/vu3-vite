@@ -99,7 +99,6 @@
     width: 100%;
     height: 50px;
     padding-top: 10px;
-    background-color: #f5f6fa;
 
     &-tabs__container {
       display: inline-block;

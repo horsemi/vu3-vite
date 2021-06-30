@@ -30,6 +30,7 @@
 
 <script lang="ts">
   import { defineComponent, PropType, ref, watch } from 'vue';
+
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
 
@@ -37,7 +38,8 @@
   import QueryButton from './component/button.vue';
   import QueryQuick from './component/quick.vue';
   import QueryPopup from '/@/components/QueryPopup/index.vue';
-  import { IColumnItem } from '/@/model/types';
+
+  import { IColumnItem } from '/@/model/table/types';
   import {
     IOrderByItem,
     IRequirementItem,
