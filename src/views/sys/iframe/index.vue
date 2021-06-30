@@ -43,7 +43,7 @@
         if (!iframe) {
           return;
         }
-        let { top } = getViewportOffset(iframe);
+        let { top } = getViewportOffset(iframe as Element);
         top += 20;
         topRef.value = top;
         heightRef.value = window.innerHeight - top;
