@@ -1,5 +1,7 @@
 <template>
-  <div v-click-outside="closePopup" :class="prefixCls">
+  <!-- TOFIX v-click-outside指令 -->
+  <!-- <div v-click-outside="closePopup" :class="prefixCls"> -->
+  <div :class="prefixCls">
     <div
       :class="`${prefixCls}__box`"
       :style="{
