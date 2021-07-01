@@ -12,17 +12,17 @@ const handleType = (val: string): string => {
 export const getColumnList = async (
   code: string,
   customColumns: IColumnItem[]
-): Promise<{ passColumns: IColumnItem[]; key: string[]; keyType: IKeyType[]; } | undefined> => {
+): Promise<{ columnList: IColumnItem[]; key: string[]; keyType: IKeyType[]; } | undefined> => {
   try {
     const res = await getList(code);
     const fieldTypes = res.store.odata.fieldTypes as IFieldType[];
     const key = res.store.odata.key as string[];
     const keyType = res.store.odata.keyType as IKeyType[];
-    const passColumns: IColumnItem[] = [];
+    const columnList: IColumnItem[] = [];
     fieldTypes.forEach((fieldType: IFieldType) => {
       customColumns.forEach((column) => {
         if (fieldType.key === column.key) {
-          passColumns.push({
+          columnList.push({
             type: handleType(fieldType.type),
             ...column,
           });
@@ -30,7 +30,7 @@ export const getColumnList = async (
       });
     });
     return {
-      passColumns,
+      columnList,
       key,
       keyType,
     };

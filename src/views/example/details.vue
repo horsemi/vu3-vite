@@ -58,18 +58,8 @@
       >
         <template #item>
           <div class="tab">
-            <DxDataGrid :data-source="dataSource" height="100%">
-              <DxSelection mode="multiple" />
-              <DxColumn caption="序号" cell-template="index" />
-              <template v-for="(item, index) in definite" :key="index">
-                <DxColumn v-if="!item.hide" :data-field="item.key" :caption="item.caption">
-                </DxColumn>
-              </template>
-              <template #index="{ data }">
-                <div>{{ data.rowIndex }}</div>
-              </template>
-              <DxScrolling mode="infinite" />
-            </DxDataGrid>
+            <OdsTable :table-options="tableOptions" :data-source="dataSource" :columns="columns">
+            </OdsTable>
           </div>
         </template>
       </DxTabPanel>
@@ -82,7 +72,6 @@ import { defineComponent, onMounted, ref } from 'vue';
 import DxTabPanel from 'devextreme-vue/tab-panel';
 import { DxForm, DxItem } from 'devextreme-vue/form';
 import { DxSwitch } from 'devextreme-vue/switch';
-import { DxDataGrid, DxColumn, DxScrolling, DxSelection } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import { useRoute } from 'vue-router';
@@ -93,6 +82,7 @@ import {
   customDefinite,
 } from '/@/model/detail/shipping-orders';
 import { EditorType } from '/@/model/detail/types';
+import { defaultTableOptions } from '/@/components/Table/common';
 
 export default defineComponent({
   components: {
@@ -100,12 +90,8 @@ export default defineComponent({
     DxForm,
     DxItem,
     DxSwitch,
-    DxDataGrid,
     DxButton,
     DxDropDownButton,
-    DxScrolling,
-    DxColumn,
-    DxSelection,
   },
   setup() {
     const opened = ref(true);
@@ -135,11 +121,13 @@ export default defineComponent({
     const closeHeight = 36;
 
     const route = useRoute();
-    const { billcode } = route.query;
+    const Id = parseInt(route.query.Id as string);
     const formData = ref();
-    const dataSource = ref();
     const detail = customDetail;
-    const definite = customDefinite;
+
+    const tableOptions = { ...defaultTableOptions, useScrolling: true };
+    const dataSource = ref();
+    const columns = customDefinite;
 
     const handleEditorOptions = (editorType: EditorType, dataField: string) => {
       let editorOptions;
@@ -153,8 +141,8 @@ export default defineComponent({
     };
 
     onMounted(async () => {
-      formData.value = await getDetailData(['BillCode', '=', billcode]);
-      dataSource.value = await getDefiniteData(['ShippingOrderId', '=', formData.value.Id]);
+      formData.value = await getDetailData(['Id', '=', Id]);
+      dataSource.value = await getDefiniteData(['ShippingOrderId', '=', Id]);
     });
 
     return {
@@ -166,7 +154,8 @@ export default defineComponent({
       formData,
       dataSource,
       detail,
-      definite,
+      tableOptions,
+      columns,
       handleEditorOptions,
     };
   },

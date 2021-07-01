@@ -34,6 +34,7 @@
         :columns="columns"
         :all-columns="allColumns"
         :filter-scheme="filterScheme"
+        :table-key="tableKey"
         @handle-bill-code-click="handleBillCodeClick"
       >
       </OdsTable>
@@ -56,8 +57,8 @@ import DxButton from 'devextreme-vue/button';
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import { DxPopover } from 'devextreme-vue/popover';
 
-import { getColumnsOpitons } from '/@/model/table/shipping-orders';
-import { getDataSource } from '/@/components/Table/common';
+import { getColumns } from '/@/model/table/shipping-orders';
+import { defaultTableOptions, getCompleteColumns, getDataSource } from '/@/components/Table/common';
 import { IColumnItem } from '/@/model/table/types';
 import { ISchemeColumnsItem, ISchemeItem } from '/@/components/QueryPopup/content/types';
 import { Persistent } from '/@/utils/cache/persistent';
@@ -65,6 +66,7 @@ import { SCHEME_LIST_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';
 import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
 
 import { cloneDeep } from 'lodash-es';
+import { deepMerge } from '/@/utils';
 
 export default defineComponent({
   name: 'Analysis',
@@ -75,7 +77,6 @@ export default defineComponent({
     DxPopover,
   },
   setup() {
-    const allColumns = ref<IColumnItem[] | undefined>();
     const tabList = ['加急单', '区分物流', '产品异常', '订单异常', '取消标识'];
     const summary = [
       {
@@ -99,15 +100,8 @@ export default defineComponent({
         num: '153.52',
       },
     ];
-    const options: ITableOptions = {
-      height: 'calc(100vh - 286px)',
-      page: {
-        size: 20,
-      },
-      selection: {
-        allMode: 'allPages',
-        checkBoxesMode: 'always',
-      },
+    const options: Partial<ITableOptions> = {
+      height: 'calc(100vh - 287px)',
       dataSourceOptions: {
         oDataOptions: {
           url: '/api/odata/shipping-orders',
@@ -115,10 +109,12 @@ export default defineComponent({
       },
     };
     const defaultVisible = ref(false);
-    const filterScheme = ref<ISchemeItem | undefined>(undefined);
-    const tableOptions = ref<ITableOptions | undefined>();
+    const filterScheme = ref<ISchemeItem>();
+    const tableOptions: ITableOptions = deepMerge(cloneDeep(defaultTableOptions), options);
+    const tableKey = ref<string[]>([]);
     const dataSource = ref();
     const columns = ref<IColumnItem[] | undefined>();
+    const allColumns = ref<IColumnItem[] | undefined>();
     const filterList = ref<ISchemeItem[]>([]);
     const schemeCheckedIndex = ref<number>(0);
 
@@ -133,36 +129,6 @@ export default defineComponent({
       scheme?.requirement.push(...data);
       filterScheme.value = cloneDeep(scheme);
     };
-
-    onMounted(async () => {
-      const columnsOpitons = await getColumnsOpitons();
-      if (columnsOpitons) {
-        const { passColumns, key, keyType } = columnsOpitons;
-        allColumns.value = passColumns;
-        getQueryPlan(allColumns.value);
-        filterList.value = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[];
-        filterScheme.value = filterList.value[schemeCheckedIndex.value];
-        const { customOptions, data } = await getDataSource(
-          options,
-          filterScheme.value,
-          key,
-          keyType
-        );
-        tableOptions.value = customOptions;
-        dataSource.value = data;
-        const newColums: IColumnItem[] = [];
-        const select = dataSource.value.select();
-        allColumns.value?.forEach((col) => {
-          select.forEach((item) => {
-            if (col.key === item) {
-              newColums.push(col);
-            }
-          });
-        });
-        columns.value = newColums;
-      }
-    });
-
     const getQueryPlan = (allColumns) => {
       const oldSchemeList = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[] | undefined;
       const oldSchemeCheckedIndex = Persistent.getLocal(SCHEME_CHECKED_INDE_KEY) as
@@ -178,7 +144,6 @@ export default defineComponent({
             key: item.key,
             caption: item.caption,
             show: true,
-            mustKey: item.mustKey,
           });
         });
         const schemeList = [
@@ -203,9 +168,27 @@ export default defineComponent({
         Persistent.setLocal(SCHEME_LIST_KEY, schemeList);
       }
     };
+    const handleTableData = async () => {
+      const columnsData = await getColumns();
+      if (columnsData) {
+        const { columnList, key, keyType } = columnsData;
+        allColumns.value = columnList;
+        tableKey.value = key;
+        getQueryPlan(allColumns.value);
+        filterList.value = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[];
+        filterScheme.value = filterList.value[schemeCheckedIndex.value];
+        dataSource.value = await getDataSource(tableOptions, filterScheme.value, key, keyType);
+        columns.value = getCompleteColumns(allColumns.value, dataSource.value.select());
+      }
+    };
+
+    onMounted(async () => {
+      await handleTableData();
+    });
 
     return {
       tableOptions,
+      tableKey,
       dataSource,
       columns,
       allColumns,
@@ -222,7 +205,10 @@ export default defineComponent({
   },
   methods: {
     handleBillCodeClick(data: any) {
-      this.$router.push({ name: 'exampleDetails', query: { Id: data.Id } });
+      this.$router.push({
+        name: 'exampleDetails',
+        query: { Id: data.data.Id },
+      });
     },
     onSubmitClick() {
       const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData();

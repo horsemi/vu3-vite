@@ -74,27 +74,32 @@ export interface ITableOptions {
   /**
    * @description: 表格高度
    */
-  height?: number | string | (() => void);
+  height: number | string | (() => void);
+
+  /**
+   * @description: 是否使用滚动分页
+   */
+  useScrolling: boolean;
 
   /**
    * @description: 是否显示列边框
    */
-  showColumnLines?: boolean;
+  showColumnLines: boolean;
 
   /**
    * @description: 是否显示行边框
    */
-  showRowLines?: boolean;
+  showRowLines: boolean;
 
   /**
    * @description: 是否显示整个表格的边框
    */
-  showBorders?: boolean;
+  showBorders: boolean;
 
   /**
    * @description: 是否隔行换色
    */
-  rowAlternationEnabled?: boolean;
+  rowAlternationEnabled: boolean;
 
   /**
    * @description: 多选列配置

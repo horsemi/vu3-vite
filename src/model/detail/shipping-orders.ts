@@ -3,10 +3,6 @@ import { IDefiniteItem, IDetailItem } from './types';
 
 export const customDetail: IDetailItem[] = [
   {
-    dataField: 'Id',
-    hide: true,
-  },
-  {
     dataField: 'BillCode',
     label: '单据编号',
     editorType: 'dxTextBox',
@@ -96,11 +92,6 @@ export const customDetail: IDetailItem[] = [
 
 export const customDefinite: IDefiniteItem[] = [
   {
-    key: 'Id',
-    caption: 'Id',
-    hide: true,
-  },
-  {
     key: 'ShippingOrderId',
     caption: 'ShippingOrderId',
     hide: true,
@@ -145,7 +136,8 @@ export const customDefinite: IDefiniteItem[] = [
 
 export const getDetailData = async (filter: any[]) => {
   const select = customDetail.map((item) => item.dataField);
-  const data = await getDetailDataSource('shipping-orders', select[0], select, filter);
+  select.push('Id');
+  const data = await getDetailDataSource('shipping-orders', select, filter);
   return data[0];
 };
 

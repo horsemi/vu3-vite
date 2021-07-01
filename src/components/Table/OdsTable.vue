@@ -38,20 +38,20 @@
         :page-index="pageIndex"
       />
       <DxPager
-        :visible="tableOptions.dataSourceOptions.paginate"
+        :visible="tableOptions.dataSourceOptions.paginate && !tableOptions.useScrolling"
         :show-info="true"
         :show-navigation-buttons="true"
         info-text="共{1}页，{2}条数据"
         display-mode="full"
       />
-      <DxScrolling mode="standard" />
+      <DxScrolling v-if="tableOptions.useScrolling" mode="virtual" row-rendering-mode="virtual" />
       <template #billCode="{ data }">
         <DxButton type="normal" styling-mode="text" @click="$emit('handleBillCodeClick', data)">{{
-          data.key
+          data.value
         }}</DxButton>
       </template>
     </DxDataGrid>
-    <div v-if="tableOptions.dataSourceOptions.paginate" :class="`${prefixCls}__jump`"
+    <div v-if="tableOptions.dataSourceOptions.paginate && !tableOptions.useScrolling" :class="`${prefixCls}__jump`"
       >跳至<input type="number" @change="handleJump" />页</div
     >
   </div>
@@ -69,7 +69,7 @@ import DxDataGrid, {
   DxScrolling,
 } from 'devextreme-vue/data-grid';
 import DxButton from 'devextreme-vue/button';
-import { defaultTableOptions, getFilter, getSort, getSelect } from './common';
+import { defaultTableOptions, getFilter, getSort, getSelect, getCompleteColumns } from './common';
 import { ITableOptions } from './type';
 import { IColumnItem } from '/@/model/table/types';
 import { ISchemeItem } from '../QueryPopup/content/types';
@@ -92,6 +92,12 @@ export default defineComponent({
       type: Object as PropType<ITableOptions>,
       default: () => {
         return defaultTableOptions;
+      },
+    },
+    tableKey: {
+      type: Array as PropType<string[]>,
+      default: () => {
+        return [];
       },
     },
     dataSource: {
@@ -140,7 +146,7 @@ export default defineComponent({
 
     const handleFilterScheme = (scheme) => {
       if (!isEmpty(tableData.value) && !isEmpty(scheme)) {
-        const select = getSelect(scheme.columns);
+        const select = getSelect(scheme.columns, props.tableKey);
         const filter = getFilter(scheme.requirement);
         const sort = getSort(scheme.orderBy, props.tableOptions.dataSourceOptions.sort);
         if (filter.length > 0) {
@@ -156,15 +162,7 @@ export default defineComponent({
           tableData.value.load();
         }
         tableData.value.reload();
-        const columns: IColumnItem[] = [];
-        props.allColumns.forEach((col) => {
-          select.forEach((item) => {
-            if (col.key === item) {
-              columns.push(col);
-            }
-          });
-        });
-        tableColumns.value = columns;
+        tableColumns.value = getCompleteColumns(props.allColumns, tableData.value.select());
       }
     };
 
@@ -175,9 +173,7 @@ export default defineComponent({
     watch(
       () => props.filterScheme,
       (val) => {
-        if (val) {
-          handleFilterScheme(cloneDeep(val));
-        }
+        handleFilterScheme(val);
       },
       {
         immediate: true,
@@ -187,7 +183,9 @@ export default defineComponent({
     watch(
       () => props.dataSource,
       (val) => {
-        tableData.value = cloneDeep(val);
+        if (!isEmpty(val)) {
+          tableData.value = cloneDeep(val);
+        }
       },
       {
         immediate: true,

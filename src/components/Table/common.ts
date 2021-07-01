@@ -1,10 +1,8 @@
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
-import { deepMerge } from '/@/utils/index';
 import { ITableOptions } from './type';
-import { cloneDeep } from 'lodash-es';
 import { IOrderByItem, ISchemeColumnsItem, ISchemeItem } from '../QueryPopup/content/types';
-import { IKeyType } from '/@/model/table/types';
+import { IColumnItem, IKeyType } from '/@/model/table/types';
 
 export const defaultTableOptions: ITableOptions = {
   dataSourceOptions: {
@@ -14,48 +12,50 @@ export const defaultTableOptions: ITableOptions = {
       version: 4,
     },
   },
+  useScrolling: false,
   height: '100%',
   showColumnLines: false,
   showRowLines: true,
   showBorders: false,
   rowAlternationEnabled: true,
   selection: {
-    allMode: 'allPages',
+    allMode: 'page',
     checkBoxesMode: 'always',
   },
   page: {
-    size: 10,
+    size: 20,
   },
 };
-export const getDataSource = async (options: ITableOptions, scheme: ISchemeItem, key: string[], keyType: IKeyType[]) => {
-  const defaultOptions: ITableOptions = cloneDeep(defaultTableOptions);
-  const customOptions: ITableOptions = deepMerge(defaultOptions, options);
-  const select = getSelect(scheme.columns);
+export const getDataSource = async (
+  options: ITableOptions,
+  scheme: ISchemeItem,
+  key: string[] = [],
+  keyType: IKeyType[] = []
+) => {
+  const select = getSelect(scheme.columns, key);
   const filter = getFilter(scheme.requirement);
-  const sort = getSort(scheme.orderBy, customOptions.dataSourceOptions.sort);
+  const sort = getSort(scheme.orderBy, options.dataSourceOptions.sort);
   const data = new DataSource({
-    sort: customOptions.dataSourceOptions.sort ? [...customOptions.dataSourceOptions.sort, ...sort] : sort,
+    sort: options.dataSourceOptions.sort
+      ? [...options.dataSourceOptions.sort, ...sort]
+      : sort,
     filter: filter.length > 0 ? filter : '',
-    paginate: true,
-    pageSize: customOptions.page?.size,
-    // filter: filter,
+    paginate: options.dataSourceOptions.paginate,
+    pageSize: options.page?.size,
     store: new ODataStore({
       key,
       keyType: handleKeyType(keyType),
-      ...customOptions.dataSourceOptions.oDataOptions,
+      ...options.dataSourceOptions.oDataOptions,
     }),
-    select: select.concat(key),
+    select: select,
   });
-  return {
-    data,
-    customOptions,
-  };
+  return data;
 };
 
 const handleKeyType = (keyType: IKeyType[]) => {
   const type = {};
   if (keyType.length > 0) {
-    keyType.forEach(item => {
+    keyType.forEach((item) => {
       type[item.key] = item.type;
     });
   }
@@ -83,12 +83,24 @@ export const getSort = (orderBy: IOrderByItem[], tableSort: any[] | undefined) =
   });
   return tableSort ? [...tableSort, ...sort] : sort;
 };
-export const getSelect = (columns: ISchemeColumnsItem[]) => {
+export const getSelect = (columns: ISchemeColumnsItem[], key: string[] = []) => {
   const select: string[] = [];
   columns.forEach((item) => {
     if (item.show) {
       select.push(item.key);
     }
   });
-  return select;
+  return select.concat(key);
+};
+
+export const getCompleteColumns = (allColumns: IColumnItem[], select: string[]) => {
+  const columns: IColumnItem[] = [];
+  select.forEach((item) => {
+    allColumns.forEach((col) => {
+      if (item === col.key) {
+        columns.push(col);
+      }
+    });
+  });
+  return columns;
 };

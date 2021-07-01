@@ -37,6 +37,7 @@ import { DxCheckBox } from 'devextreme-vue/check-box';
 import { IOrderByItem, ISchemeColumnsItem } from './types';
 import { cloneDeep } from 'lodash-es';
 import { handleArrayTransposition } from '/@/utils';
+import { IColumnItem } from '/@/model/table/types';
 
 export default defineComponent({
   components: {
@@ -47,6 +48,12 @@ export default defineComponent({
   props: {
     columns: {
       type: Array as PropType<ISchemeColumnsItem[]>,
+      default: () => {
+        return [];
+      },
+    },
+    allColumns: {
+      type: Array as PropType<IColumnItem[]>,
       default: () => {
         return [];
       },
@@ -116,13 +123,31 @@ export default defineComponent({
         });
       });
       dataSource.value = temp;
+      onChangeColumn(dataSource.value);
+    };
+    // 根据全部列处理显示隐藏列数据
+    const handleColumns = (allColumns, columns) => {
+      const data: ISchemeColumnsItem[] = [];
+      columns.forEach((col) => {
+        allColumns.forEach((allCol) => {
+          if (allCol.key === col.key && !allCol.hide) {
+            data.push({
+              key: allCol.key,
+              caption: allCol.caption,
+              show: col.show,
+              mustKey: allCol.mustKey,
+            });
+          }
+        });
+      });
+      return data;
     };
 
     // 实时更新组件中的显示隐藏列数据
     watch(
-      () => props.columns,
-      (val) => {
-        dataSource.value = cloneDeep(val);
+      () => [props.allColumns, props.columns],
+      ([allColumns, columns]) => {
+        dataSource.value = handleColumns(allColumns, columns);
       },
       {
         immediate: true,
