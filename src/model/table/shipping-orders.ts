@@ -1,5 +1,6 @@
+import type { IColumnItem } from './types';
+
 import { getColumnList } from './common';
-import { IColumnItem } from './types';
 
 export interface IHeader {
   BillCode: string;

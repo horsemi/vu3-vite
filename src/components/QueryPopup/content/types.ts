@@ -1,4 +1,4 @@
-import { IQueryItem } from '../../QueryPlan/types';
+import type { IQueryItem } from '../../QueryPlan/types';
 
 type logicType = 'and' | 'or';
 

@@ -13,7 +13,9 @@
 
 <script lang="ts">
   import { defineComponent, ref } from 'vue';
+
   import { useDesign } from '/@/hooks/web/useDesign';
+  
   import { DxCheckBox } from 'devextreme-vue/check-box';
   import DxButton from 'devextreme-vue/button';
 

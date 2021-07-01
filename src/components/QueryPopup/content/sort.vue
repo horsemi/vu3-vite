@@ -54,15 +54,18 @@
 </template>
 
 <script lang="ts">
+import type { IColumnItem } from '/@/model/table/types';
+import type { IFieldItem, IOrderByItem, ISortOptions } from './types';
+
 import { defineComponent, PropType, ref, watch } from 'vue';
+import { cloneDeep } from 'lodash-es';
+
 import { useDesign } from '/@/hooks/web/useDesign';
+import { handleArrayTransposition } from '/@/utils';
+
 import { DxCheckBox } from 'devextreme-vue/check-box';
 import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxLookup } from 'devextreme-vue/data-grid';
 import { DxScrollView } from 'devextreme-vue/scroll-view';
-import { IColumnItem } from '/@/model/table/types';
-import { IFieldItem, IOrderByItem, ISortOptions } from './types';
-import { cloneDeep } from 'lodash-es';
-import { handleArrayTransposition } from '/@/utils';
 
 export default defineComponent({
   components: {

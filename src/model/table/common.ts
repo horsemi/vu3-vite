@@ -1,4 +1,5 @@
-import { IColumnItem, IFieldType, IKeyType } from './types';
+import type { IColumnItem, IFieldType, IKeyType } from './types';
+
 import { getList } from '/@/api/index';
 
 // columns的dataType 接受的类型有 'string' | 'number' | 'date' | 'boolean' | 'object' | 'datetime'

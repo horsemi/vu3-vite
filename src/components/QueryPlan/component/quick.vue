@@ -28,10 +28,12 @@
 </template>
 
 <script lang="ts">
+import type { ISchemeItem } from '../../QueryPopup/content/types';
+
 import { defineComponent, PropType, ref, watch } from 'vue';
-import { ISchemeItem } from '../../QueryPopup/content/types';
-import { useDesign } from '/@/hooks/web/useDesign';
 import { cloneDeep } from 'lodash-es';
+
+import { useDesign } from '/@/hooks/web/useDesign';
 
 export default defineComponent({
   props: {

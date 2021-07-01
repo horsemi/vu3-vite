@@ -1,8 +1,9 @@
+import type { ITableOptions } from './type';
+import type { IOrderByItem, ISchemeColumnsItem, ISchemeItem } from '../QueryPopup/content/types';
+import type { IColumnItem, IKeyType } from '/@/model/table/types';
+
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
-import { ITableOptions } from './type';
-import { IOrderByItem, ISchemeColumnsItem, ISchemeItem } from '../QueryPopup/content/types';
-import { IColumnItem, IKeyType } from '/@/model/table/types';
 
 export const defaultTableOptions: ITableOptions = {
   dataSourceOptions: {

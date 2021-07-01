@@ -85,152 +85,153 @@
 </template>
 
 <script lang="ts">
-  import type { IColumnItem } from '/@/model/table/types';
+import type { IColumnItem } from '/@/model/table/types';
 
-  import { defineComponent, watch, PropType, ref } from 'vue';
+import { defineComponent, watch, PropType, ref } from 'vue';
 
-  import DxSelectBox from 'devextreme-vue/select-box';
-  import DxTextBox from 'devextreme-vue/text-box';
-  import DxNumberBox from 'devextreme-vue/number-box';
-  import DxDateBox from 'devextreme-vue/date-box';
+import { useAppStore } from '/@/store/modules/app';
+import { useDesign } from '/@/hooks/web/useDesign';
+import { getOperatorByType, initOperatorMap } from '/@/model/table/global-operator';
 
-  import { useAppStore } from '/@/store/modules/app';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { getOperatorByType, initOperatorMap } from '/@/model/table/global-operator';
-  import FoundationSelect from '/@/components/FoundationSelect/index.vue';
+import DxSelectBox from 'devextreme-vue/select-box';
+import DxTextBox from 'devextreme-vue/text-box';
+import DxNumberBox from 'devextreme-vue/number-box';
+import DxDateBox from 'devextreme-vue/date-box';
 
-  export default defineComponent({
-    name: 'DynamicSelect',
-    components: { DxSelectBox, DxTextBox, DxNumberBox, DxDateBox, FoundationSelect },
-    props: {
-      value: {
-        type: [String, Number, Boolean, Date],
-        default: '',
-      },
-      paramKey: {
-        type: String,
-        default: '',
-      },
-      operation: {
-        type: String,
-        default: '=',
-      },
-      paramList: {
-        type: Array as PropType<IColumnItem[]>,
-        default: () => [] as PropType<IColumnItem[]>,
-      },
-      paramDataType: {
-        type: String,
-        default: '',
-      },
-      paramDatatypekeies: {
-        type: String,
-        default: '',
-      },
-      paramOperations: {
-        type: Array as PropType<string[]>,
-        default: () => [] as PropType<string[]>,
-      },
+import FoundationSelect from '/@/components/FoundationSelect/index.vue';
+
+export default defineComponent({
+  name: 'DynamicSelect',
+  components: { DxSelectBox, DxTextBox, DxNumberBox, DxDateBox, FoundationSelect },
+  props: {
+    value: {
+      type: [String, Number, Boolean, Date],
+      default: '',
     },
-    emits: [
-      'update:value',
-      'update:paramKey',
-      'update:operation',
-      'update:paramDataType',
-      'update:paramOperations',
-      'update:paramDatatypekeies',
-    ],
-    setup(props, context) {
-      const appStore = useAppStore();
-      const { prefixCls } = useDesign('dynamic-select');
-      let options = ref<{ key: string; value: string }[]>([]);
-      let operatorOptions = ref<{ key: string; value: string }[]>([]);
-      let dataType = ref<string>('');
-      let booleanOptions = [
-        {
-          key: 'true',
-          value: '是',
-        },
-        {
-          key: 'false',
-          value: '否',
-        },
-      ];
-      watch(
-        () => props.paramKey,
-        (paramKey, prevParamKey) => {
-          if (paramKey) {
-            let { type, operations, datatypekeies } = (props.paramList as IColumnItem[]).filter(
-              (item) => paramKey === item.key
-            )[0];
+    paramKey: {
+      type: String,
+      default: '',
+    },
+    operation: {
+      type: String,
+      default: '=',
+    },
+    paramList: {
+      type: Array as PropType<IColumnItem[]>,
+      default: () => [] as PropType<IColumnItem[]>,
+    },
+    paramDataType: {
+      type: String,
+      default: '',
+    },
+    paramDatatypekeies: {
+      type: String,
+      default: '',
+    },
+    paramOperations: {
+      type: Array as PropType<string[]>,
+      default: () => [] as PropType<string[]>,
+    },
+  },
+  emits: [
+    'update:value',
+    'update:paramKey',
+    'update:operation',
+    'update:paramDataType',
+    'update:paramOperations',
+    'update:paramDatatypekeies',
+  ],
+  setup(props, context) {
+    const appStore = useAppStore();
+    const { prefixCls } = useDesign('dynamic-select');
+    let options = ref<{ key: string; value: string }[]>([]);
+    let operatorOptions = ref<{ key: string; value: string }[]>([]);
+    let dataType = ref<string>('');
+    let booleanOptions = [
+      {
+        key: 'true',
+        value: '是',
+      },
+      {
+        key: 'false',
+        value: '否',
+      },
+    ];
+    watch(
+      () => props.paramKey,
+      (paramKey, prevParamKey) => {
+        if (paramKey) {
+          let { type, operations, datatypekeies } = (props.paramList as IColumnItem[]).filter(
+            (item) => paramKey === item.key
+          )[0];
 
-            if (operations && operations.length > 0) {
-              operatorOptions.value = initOperatorMap(operations);
-              context.emit('update:paramOperations', operatorOptions.value);
-            }
-
-            context.emit('update:paramDataType', type);
-            context.emit('update:paramDatatypekeies', datatypekeies);
-            context.emit('update:operation', '=');
-            initData(type!, datatypekeies!);
-          } else {
-            operatorOptions.value = [];
+          if (operations && operations.length > 0) {
+            operatorOptions.value = initOperatorMap(operations);
             context.emit('update:paramOperations', operatorOptions.value);
-            context.emit('update:operation', '');
-            context.emit('update:paramDataType', '');
-            context.emit('update:paramDatatypekeies', '');
-            initValue('string');
           }
-        }
-      );
 
-      function initData(type: string, datatypekeies: string) {
-        options.value.splice(0, options.value.length);
-        dataType.value = type;
-        if (datatypekeies === 'enum') {
-          options.value.push(...appStore.getGlobalEnumDataByCode(type));
-        } else if (datatypekeies && datatypekeies.startsWith('foundation_')) {
-          //
+          context.emit('update:paramDataType', type);
+          context.emit('update:paramDatatypekeies', datatypekeies);
+          context.emit('update:operation', '=');
+          initData(type!, datatypekeies!);
+        } else {
+          operatorOptions.value = [];
+          context.emit('update:paramOperations', operatorOptions.value);
+          context.emit('update:operation', '');
+          context.emit('update:paramDataType', '');
+          context.emit('update:paramDatatypekeies', '');
+          initValue('string');
         }
-        initValue(datatypekeies || type);
-        operatorOptions.value = getOperatorByType(datatypekeies || type);
-        context.emit('update:paramOperations', operatorOptions.value);
       }
+    );
 
-      function initValue(type: string) {
-        let initData: unknown = '';
-        switch (type) {
-          case 'datetime': {
-            initData = new Date();
-            break;
-          }
-          case 'number': {
-            initData = 0;
-            break;
-          }
-        }
-        context.emit('update:value', initData);
+    function initData(type: string, datatypekeies: string) {
+      options.value.splice(0, options.value.length);
+      dataType.value = type;
+      if (datatypekeies === 'enum') {
+        options.value.push(...appStore.getGlobalEnumDataByCode(type));
+      } else if (datatypekeies && datatypekeies.startsWith('foundation_')) {
+        //
       }
+      initValue(datatypekeies || type);
+      operatorOptions.value = getOperatorByType(datatypekeies || type);
+      context.emit('update:paramOperations', operatorOptions.value);
+    }
 
-      return {
-        prefixCls,
-        options,
-        dataType,
-        operatorOptions,
-        booleanOptions,
-      };
-    },
-  });
+    function initValue(type: string) {
+      let initData: unknown = '';
+      switch (type) {
+        case 'datetime': {
+          initData = new Date();
+          break;
+        }
+        case 'number': {
+          initData = 0;
+          break;
+        }
+      }
+      context.emit('update:value', initData);
+    }
+
+    return {
+      prefixCls,
+      options,
+      dataType,
+      operatorOptions,
+      booleanOptions,
+    };
+  },
+});
 </script>
 
 <style lang="less" scoped>
-  @prefix-cls: ~'@{namespace}-dynamic-select';
+@prefix-cls: ~'@{namespace}-dynamic-select';
 
-  .@{prefix-cls} {
-    display: inline-flex;
+.@{prefix-cls} {
+  display: inline-flex;
 
-    &-operation-box__container {
-      margin: 0 10px;
-    }
+  &-operation-box__container {
+    margin: 0 10px;
   }
+}
 </style>

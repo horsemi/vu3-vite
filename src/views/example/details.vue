@@ -68,21 +68,24 @@
 </template>
 
 <script lang="ts">
+import type { EditorType } from '/@/model/detail/types';
+
 import { defineComponent, onMounted, ref } from 'vue';
-import DxTabPanel from 'devextreme-vue/tab-panel';
-import { DxForm, DxItem } from 'devextreme-vue/form';
-import { DxSwitch } from 'devextreme-vue/switch';
-import DxButton from 'devextreme-vue/button';
-import DxDropDownButton from 'devextreme-vue/drop-down-button';
 import { useRoute } from 'vue-router';
+
 import {
   getDetailData,
   getDefiniteData,
   customDetail,
   customDefinite,
 } from '/@/model/detail/shipping-orders';
-import { EditorType } from '/@/model/detail/types';
 import { defaultTableOptions } from '/@/components/Table/common';
+
+import DxTabPanel from 'devextreme-vue/tab-panel';
+import { DxForm, DxItem } from 'devextreme-vue/form';
+import { DxSwitch } from 'devextreme-vue/switch';
+import DxButton from 'devextreme-vue/button';
+import DxDropDownButton from 'devextreme-vue/drop-down-button';
 
 export default defineComponent({
   components: {

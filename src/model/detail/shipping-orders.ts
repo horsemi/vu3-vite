@@ -1,5 +1,6 @@
+import type { IDefiniteItem, IDetailItem } from './types';
+
 import { getDefiniteDataSource, getDetailDataSource } from './common';
-import { IDefiniteItem, IDetailItem } from './types';
 
 export const customDetail: IDetailItem[] = [
   {

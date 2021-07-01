@@ -43,21 +43,25 @@
 </template>
 
 <script lang="ts">
-  import { computed, defineComponent, PropType, ref } from 'vue';
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import DxTabPanel from 'devextreme-vue/tab-panel';
-  import Menu from './menu.vue';
-  import Requirement from './requirement.vue';
-  import Sort from './sort.vue';
-  import Column from './column.vue';
-  import { IColumnItem } from '/@/model/table/types';
-  import {
+  import type { IColumnItem } from '/@/model/table/types';
+  import type {
     IMultiViewItem,
     IOrderByItem,
     IRequirementItem,
     ISchemeColumnsItem,
     ISchemeItem,
   } from './types';
+
+  import { computed, defineComponent, PropType, ref } from 'vue';
+  
+  import { useDesign } from '/@/hooks/web/useDesign';
+
+  import DxTabPanel from 'devextreme-vue/tab-panel';
+
+  import Menu from './menu.vue';
+  import Requirement from './requirement.vue';
+  import Sort from './sort.vue';
+  import Column from './column.vue';
 
   export default defineComponent({
     components: {

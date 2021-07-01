@@ -30,14 +30,17 @@
 </template>
 
 <script lang="ts">
+import type { IOrderByItem, ISchemeColumnsItem } from './types';
+import type { IColumnItem } from '/@/model/table/types';
+
 import { defineComponent, PropType, ref, watch } from 'vue';
+import { cloneDeep } from 'lodash-es';
+
 import { useDesign } from '/@/hooks/web/useDesign';
+import { handleArrayTransposition } from '/@/utils';
+
 import { DxDataGrid, DxColumn } from 'devextreme-vue/data-grid';
 import { DxCheckBox } from 'devextreme-vue/check-box';
-import { IOrderByItem, ISchemeColumnsItem } from './types';
-import { cloneDeep } from 'lodash-es';
-import { handleArrayTransposition } from '/@/utils';
-import { IColumnItem } from '/@/model/table/types';
 
 export default defineComponent({
   components: {

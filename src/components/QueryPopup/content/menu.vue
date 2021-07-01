@@ -35,7 +35,9 @@
 
 <script lang="ts">
 import { defineComponent, ref, nextTick, PropType } from 'vue';
+
 import { useDesign } from '/@/hooks/web/useDesign';
+
 import { DxScrollView } from 'devextreme-vue/scroll-view';
 
 export default defineComponent({
