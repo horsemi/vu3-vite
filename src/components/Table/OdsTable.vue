@@ -65,7 +65,7 @@ import type { IColumnItem } from '/@/model/table/types';
 import type { ISchemeItem } from '../QueryPopup/content/types';
 
 import { defineComponent, onBeforeUnmount, ref, PropType, watch } from 'vue';
-import { cloneDeep, isEmpty } from 'lodash-es';
+import { isEmpty } from 'lodash-es';
 
 import { useDesign } from '/@/hooks/web/useDesign';
 import { defaultTableOptions, getFilter, getSort, getSelect, getCompleteColumns } from './common';
@@ -151,18 +151,13 @@ export default defineComponent({
 
     const handleFilterScheme = (scheme) => {
       if (!isEmpty(tableData.value) && !isEmpty(scheme)) {
-        const select = getSelect(scheme.columns, props.tableKey);
+        const select = getSelect(props.allColumns, scheme.columns, props.tableKey);
         const filter = getFilter(scheme.requirement);
         const sort = getSort(scheme.orderBy, props.tableOptions.dataSourceOptions.sort);
-        if (filter.length > 0) {
-          tableData.value.filter(filter);
-        } else {
-          tableData.value.filter('');
-        }
-        if (select.length > 0) {
-          tableData.value.select(select);
-        }
+        tableData.value.filter(filter);
+        tableData.value.select(select);
         if (sort.length > 0) {
+          // 重新刷新排序，需要load
           tableData.value.sort(sort);
           tableData.value.load();
         }
@@ -189,7 +184,7 @@ export default defineComponent({
       () => props.dataSource,
       (val) => {
         if (!isEmpty(val)) {
-          tableData.value = cloneDeep(val);
+          tableData.value = val;
         }
       },
       {
@@ -200,7 +195,7 @@ export default defineComponent({
     watch(
       () => props.columns,
       (val) => {
-        tableColumns.value = cloneDeep(val);
+        tableColumns.value = val;
       },
       {
         immediate: true,

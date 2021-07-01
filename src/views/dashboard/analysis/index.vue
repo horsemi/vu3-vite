@@ -178,7 +178,7 @@ export default defineComponent({
         getQueryPlan(allColumns.value);
         filterList.value = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[];
         filterScheme.value = filterList.value[schemeCheckedIndex.value];
-        dataSource.value = await getDataSource(tableOptions, filterScheme.value, key, keyType);
+        dataSource.value = await getDataSource(tableOptions, filterScheme.value, allColumns.value, key, keyType);
         columns.value = getCompleteColumns(allColumns.value, dataSource.value.select());
       }
     };
