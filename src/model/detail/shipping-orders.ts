@@ -1,7 +1,11 @@
-import { getDetailDataSource } from './common';
-import { IDetailItem } from './types';
+import { getDefiniteDataSource, getDetailDataSource } from './common';
+import { IDefiniteItem, IDetailItem } from './types';
 
 export const customDetail: IDetailItem[] = [
+  {
+    dataField: 'Id',
+    hide: true,
+  },
   {
     dataField: 'BillCode',
     label: '单据编号',
@@ -90,9 +94,62 @@ export const customDetail: IDetailItem[] = [
   },
 ];
 
-export const getDetaildata = async (filter: any[]) => {
-  const selectArr = customDetail.map((item) => item.dataField);
-  const select = selectArr.toString();
-  const data = await getDetailDataSource('shipping-orders', selectArr[0], select, filter);
+export const customDefinite: IDefiniteItem[] = [
+  {
+    key: 'Id',
+    caption: 'Id',
+    hide: true,
+  },
+  {
+    key: 'ShippingOrderId',
+    caption: 'ShippingOrderId',
+    hide: true,
+  },
+  {
+    key: 'MaterialCode',
+    caption: '物料编码',
+  },
+  {
+    key: 'BomCode',
+    caption: 'BOM版本',
+  },
+  {
+    key: 'CustomerMaterialName',
+    caption: '客户物料名称',
+  },
+  {
+    key: 'Qty',
+    caption: '数量',
+  },
+  {
+    key: 'PackageQuantity',
+    caption: '包件数',
+  },
+  {
+    key: 'Shop',
+    caption: '店铺',
+  },
+  {
+    key: 'Channel',
+    caption: '渠道',
+  },
+  {
+    key: 'ProvideSalePrice',
+    caption: '供货售价',
+  },
+  {
+    key: 'ActualSalePrice',
+    caption: '实际售价',
+  },
+];
+
+export const getDetailData = async (filter: any[]) => {
+  const select = customDetail.map((item) => item.dataField);
+  const data = await getDetailDataSource('shipping-orders', select[0], select, filter);
   return data[0];
+};
+
+export const getDefiniteData = async (filter: any[]) => {
+  const select = customDefinite.map((item) => item.key);
+  return await getDefiniteDataSource('shipping-order-items', select, filter);
 };

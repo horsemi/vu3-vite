@@ -1,4 +1,4 @@
-import { IColumnItem, IFieldType } from './types';
+import { IColumnItem, IFieldType, IKeyType } from './types';
 import { getList } from '/@/api/index';
 
 // columns的dataType 接受的类型有 'string' | 'number' | 'date' | 'boolean' | 'object' | 'datetime'
@@ -12,21 +12,28 @@ const handleType = (val: string): string => {
 export const getColumnList = async (
   code: string,
   customColumns: IColumnItem[]
-): Promise<IColumnItem[] | undefined> => {
+): Promise<{ passColumns: IColumnItem[]; key: string[]; keyType: IKeyType[]; } | undefined> => {
   try {
     const res = await getList(code);
-    const columns: IColumnItem[] = [];
-    res.store.odata.fieldTypes.forEach((fieldType: IFieldType) => {
+    const fieldTypes = res.store.odata.fieldTypes as IFieldType[];
+    const key = res.store.odata.key as string[];
+    const keyType = res.store.odata.keyType as IKeyType[];
+    const passColumns: IColumnItem[] = [];
+    fieldTypes.forEach((fieldType: IFieldType) => {
       customColumns.forEach((column) => {
         if (fieldType.key === column.key) {
-          columns.push({
+          passColumns.push({
             type: handleType(fieldType.type),
             ...column,
           });
         }
       });
     });
-    return columns;
+    return {
+      passColumns,
+      key,
+      keyType,
+    };
   } catch (err) {
     Promise.reject(err);
   }
