@@ -2,23 +2,35 @@ type allModeType = 'allPages' | 'page';
 
 type checkBoxesModeType = 'none' | 'onClick' | 'onLongTap' | 'always';
 
+export interface ISortItem {
+  /**
+   * @description: 排序字段
+   */
+  selector: string;
+
+  /**
+   * @description: 是否降序
+   */
+  desc?: boolean;
+}
+
 interface ISelection {
   /**
    * @description: 全选方式
    */
-  allMode?: allModeType;
+  allMode: allModeType;
 
   /**
    * @description: 多选模式
    */
-  checkBoxesMode?: checkBoxesModeType;
+  checkBoxesMode: checkBoxesModeType;
 }
 
 interface IPage {
   /**
    * @description: 每页显示条数
    */
-  size?: number;
+  size: number;
 
   /**
    * @description: 当前显示页码
@@ -52,7 +64,7 @@ interface IDataSourceOptions {
   /**
    * @description: 排序字段
    */
-  sort?: Array<any>;
+  sort?: ISortItem[];
 
   /**
    * @description: oData配置

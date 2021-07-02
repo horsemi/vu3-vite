@@ -1,10 +1,16 @@
-import type { ITableOptions } from './type';
-import type { IOrderByItem, ISchemeColumnsItem, ISchemeItem } from '../QueryPopup/content/types';
+import type { ITableOptions, ISortItem } from './type';
+import type {
+  IOrderByItem,
+  IRequirementItem,
+  ISchemeColumnsItem,
+  ISchemeItem,
+} from '../QueryPopup/content/types';
 import type { IColumnItem, IKeyType } from '/@/model/table/types';
 
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
 
+// 基础表格默认配置
 export const defaultTableOptions: ITableOptions = {
   dataSourceOptions: {
     paginate: true,
@@ -27,19 +33,20 @@ export const defaultTableOptions: ITableOptions = {
     size: 20,
   },
 };
+
+// 过滤方案表格获取DataSource的通用方法
 export const getDataSource = async (
   options: ITableOptions,
   scheme: ISchemeItem,
+  allColumns: IColumnItem[],
   key: string[] = [],
   keyType: IKeyType[] = []
 ) => {
-  const select = getSelect(scheme.columns, key);
+  const select = getSelect(allColumns, scheme.columns, key);
   const filter = getFilter(scheme.requirement);
   const sort = getSort(scheme.orderBy, options.dataSourceOptions.sort);
   const data = new DataSource({
-    sort: options.dataSourceOptions.sort
-      ? [...options.dataSourceOptions.sort, ...sort]
-      : sort,
+    sort: options.dataSourceOptions.sort ? options.dataSourceOptions.sort.concat(sort) : sort,
     filter: filter.length > 0 ? filter : '',
     paginate: options.dataSourceOptions.paginate,
     pageSize: options.page?.size,
@@ -53,6 +60,7 @@ export const getDataSource = async (
   return data;
 };
 
+// 处理KeyType的数据格式
 const handleKeyType = (keyType: IKeyType[]) => {
   const type = {};
   if (keyType.length > 0) {
@@ -63,7 +71,8 @@ const handleKeyType = (keyType: IKeyType[]) => {
   return type;
 };
 
-export const getFilter = (requirements) => {
+// 获取格式化后的过滤条件
+export const getFilter = (requirements: IRequirementItem[]) => {
   const filter: any[] = [];
   requirements.forEach((item) => {
     if (item.requirement && item.value) {
@@ -75,31 +84,46 @@ export const getFilter = (requirements) => {
       }
     }
   });
-  return filter;
+  return filter.length > 0 ? filter : '';
 };
-export const getSort = (orderBy: IOrderByItem[], tableSort: any[] | undefined) => {
-  const sort: any[] = [];
+
+// 获取格式化后的排序
+export const getSort = (orderBy: IOrderByItem[], tableSort: ISortItem[] = []) => {
+  const sort: ISortItem[] = [];
   orderBy.forEach((item) => {
     sort.push({ selector: item.key, desc: item.desc });
   });
-  return tableSort ? [...tableSort, ...sort] : sort;
+  return sort.concat(tableSort);
 };
-export const getSelect = (columns: ISchemeColumnsItem[], key: string[] = []) => {
+
+// 获取格式化后的表字段
+export const getSelect = (
+  allColumns: IColumnItem[],
+  columns: ISchemeColumnsItem[],
+  key: string[] = []
+) => {
   const select: string[] = [];
   columns.forEach((item) => {
     if (item.show) {
-      select.push(item.key);
+      allColumns.forEach((col) => {
+        if (item.key === col.key) {
+          select.push(col.key);
+          return;
+        }
+      });
     }
   });
   return select.concat(key);
 };
 
+// 获取格式化后的表头数据
 export const getCompleteColumns = (allColumns: IColumnItem[], select: string[]) => {
   const columns: IColumnItem[] = [];
   select.forEach((item) => {
     allColumns.forEach((col) => {
       if (item === col.key) {
         columns.push(col);
+        return;
       }
     });
   });
