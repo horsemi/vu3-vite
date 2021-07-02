@@ -14,7 +14,7 @@
     <div :class="`${prefixCls}-operation-box__container`">
       <DxSelectBox
         :value="operation"
-        :data-source="operatorOptions"
+        :data-source="paramOperations"
         width="95"
         value-expr="key"
         display-expr="value"
@@ -85,81 +85,89 @@
 </template>
 
 <script lang="ts">
-import type { IColumnItem } from '/@/model/table/types';
+  import type { IColumnItem } from '/@/model/table/types';
 
-import { defineComponent, watch, PropType, ref } from 'vue';
+  import { defineComponent, watch, PropType, ref } from 'vue';
 
-import { useAppStore } from '/@/store/modules/app';
-import { useDesign } from '/@/hooks/web/useDesign';
-import { getOperatorByType, initOperatorMap } from '/@/model/table/global-operator';
+  import { useAppStore } from '/@/store/modules/app';
+  import { useDesign } from '/@/hooks/web/useDesign';
+  import { getOperatorByType, initOperatorMap } from '/@/model/table/global-operator';
 
-import DxSelectBox from 'devextreme-vue/select-box';
-import DxTextBox from 'devextreme-vue/text-box';
-import DxNumberBox from 'devextreme-vue/number-box';
-import DxDateBox from 'devextreme-vue/date-box';
+  import DxSelectBox from 'devextreme-vue/select-box';
+  import DxTextBox from 'devextreme-vue/text-box';
+  import DxNumberBox from 'devextreme-vue/number-box';
+  import DxDateBox from 'devextreme-vue/date-box';
 
-import FoundationSelect from '/@/components/FoundationSelect/index.vue';
+  import FoundationSelect from '/@/components/FoundationSelect/index.vue';
 
-export default defineComponent({
-  name: 'DynamicSelect',
-  components: { DxSelectBox, DxTextBox, DxNumberBox, DxDateBox, FoundationSelect },
-  props: {
-    value: {
-      type: [String, Number, Boolean, Date],
-      default: '',
-    },
-    paramKey: {
-      type: String,
-      default: '',
-    },
-    operation: {
-      type: String,
-      default: '=',
-    },
-    paramList: {
-      type: Array as PropType<IColumnItem[]>,
-      default: () => [] as PropType<IColumnItem[]>,
-    },
-    paramDataType: {
-      type: String,
-      default: '',
-    },
-    paramDatatypekeies: {
-      type: String,
-      default: '',
-    },
-    paramOperations: {
-      type: Array as PropType<string[]>,
-      default: () => [] as PropType<string[]>,
-    },
-  },
-  emits: [
-    'update:value',
-    'update:paramKey',
-    'update:operation',
-    'update:paramDataType',
-    'update:paramOperations',
-    'update:paramDatatypekeies',
-  ],
-  setup(props, context) {
-    const appStore = useAppStore();
-    const { prefixCls } = useDesign('dynamic-select');
-    let options = ref<{ key: string; value: string }[]>([]);
-    let operatorOptions = ref<{ key: string; value: string }[]>([]);
-    let dataType = ref<string>('');
-    let booleanOptions = [
-      {
-        key: 'true',
-        value: '是',
+  export default defineComponent({
+    name: 'DynamicSelect',
+    components: { DxSelectBox, DxTextBox, DxNumberBox, DxDateBox, FoundationSelect },
+    props: {
+      value: {
+        type: [String, Number, Boolean, Date],
+        default: '',
       },
-      {
-        key: 'false',
-        value: '否',
+      paramKey: {
+        type: String,
+        default: '',
       },
-    ];
-    watch(
-      () => props.paramKey,
-      (paramKey, prevParamKey) => {
+      operation: {
+        type: String,
+        default: '=',
+      },
+      paramList: {
+        type: Array as PropType<IColumnItem[]>,
+        default: () => [] as PropType<IColumnItem[]>,
+      },
+      paramDataType: {
+        type: String,
+        default: '',
+      },
+      paramDatatypekeies: {
+        type: String,
+        default: '',
+      },
+      paramOperations: {
+        type: Array as PropType<string[]>,
+        default: () => [] as PropType<string[]>,
+      },
+    },
+    emits: [
+      'update:value',
+      'update:paramKey',
+      'update:operation',
+      'update:paramDataType',
+      'update:paramOperations',
+      'update:paramDatatypekeies',
+    ],
+    setup(props, context) {
+      const appStore = useAppStore();
+      const { prefixCls } = useDesign('dynamic-select');
+      let options = ref<{ key: string; value: string }[]>([]);
+      let operatorOptions = ref<{ key: string; value: string }[]>([]);
+      let dataType = ref<string>('');
+
+      let booleanOptions = [
+        {
+          key: true,
+          value: '是',
+        },
+        {
+          key: false,
+          value: '否',
+        },
+      ];
+      watch(
+        () => props.paramKey,
+        (paramKey, prevParamKey) => {
+          initData(paramKey);
+        }
+      );
+
+      initData(props.paramKey);
+
+      function initData(paramKey: string) {
         if (paramKey) {
           let { type, operations, datatypekeies } = (props.paramList as IColumnItem[]).filter(
             (item) => paramKey === item.key
@@ -173,7 +181,7 @@ export default defineComponent({
           context.emit('update:paramDataType', type);
           context.emit('update:paramDatatypekeies', datatypekeies);
           context.emit('update:operation', '=');
-          initData(type!, datatypekeies!);
+          initOption(type!, datatypekeies!);
         } else {
           operatorOptions.value = [];
           context.emit('update:paramOperations', operatorOptions.value);
@@ -183,55 +191,57 @@ export default defineComponent({
           initValue('string');
         }
       }
-    );
 
-    function initData(type: string, datatypekeies: string) {
-      options.value.splice(0, options.value.length);
-      dataType.value = type;
-      if (datatypekeies === 'enum') {
-        options.value.push(...appStore.getGlobalEnumDataByCode(type));
-      } else if (datatypekeies && datatypekeies.startsWith('foundation_')) {
-        //
-      }
-      initValue(datatypekeies || type);
-      operatorOptions.value = getOperatorByType(datatypekeies || type);
-      context.emit('update:paramOperations', operatorOptions.value);
-    }
-
-    function initValue(type: string) {
-      let initData: unknown = '';
-      switch (type) {
-        case 'datetime': {
-          initData = new Date();
-          break;
+      function initOption(type: string, datatypekeies: string) {
+        if (options.value.length > 0) {
+          initValue(datatypekeies || type);
         }
-        case 'number': {
-          initData = 0;
-          break;
+        options.value.splice(0, options.value.length);
+        dataType.value = type;
+        if (datatypekeies === 'enum') {
+          options.value.push(...appStore.getGlobalEnumDataByCode(type));
+        } else if (datatypekeies && datatypekeies.startsWith('foundation_')) {
+          //
         }
-      }
-      context.emit('update:value', initData);
-    }
 
-    return {
-      prefixCls,
-      options,
-      dataType,
-      operatorOptions,
-      booleanOptions,
-    };
-  },
-});
+        operatorOptions.value = getOperatorByType(datatypekeies || type);
+        context.emit('update:paramOperations', operatorOptions.value);
+      }
+
+      function initValue(type: string) {
+        let initData: unknown = '';
+        switch (type) {
+          case 'datetime': {
+            initData = new Date();
+            break;
+          }
+          case 'number': {
+            initData = 0;
+            break;
+          }
+        }
+        context.emit('update:value', initData);
+      }
+
+      return {
+        prefixCls,
+        options,
+        dataType,
+        operatorOptions,
+        booleanOptions,
+      };
+    },
+  });
 </script>
 
 <style lang="less" scoped>
-@prefix-cls: ~'@{namespace}-dynamic-select';
+  @prefix-cls: ~'@{namespace}-dynamic-select';
 
-.@{prefix-cls} {
-  display: inline-flex;
+  .@{prefix-cls} {
+    display: inline-flex;
 
-  &-operation-box__container {
-    margin: 0 10px;
+    &-operation-box__container {
+      margin: 0 10px;
+    }
   }
-}
 </style>

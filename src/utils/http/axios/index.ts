@@ -10,7 +10,7 @@ import { setObjToUrlParams, deepMerge } from '/@/utils';
 import { errorResult } from './const';
 import { useUserStoreWidthOut } from '/@/store/modules/user';
 import { useErrorLogStoreWithOut } from '/@/store/modules/error';
-import { errorMessage } from '/@/hooks/web/useMessage';
+import { errorMessage, successMessage } from '/@/hooks/web/useMessage';
 import { checkStatus } from './checkStatues';
 
 /**
@@ -49,6 +49,7 @@ const transform: AxiosTransform = {
 
     // 接口请求成功，直接返回结果
     if (result === ResultEnum.SUCCESS) {
+      message && successMessage(message);
       return data;
     }
     // 接口请求错误，统一提示错误信息
