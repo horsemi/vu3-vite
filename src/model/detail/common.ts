@@ -41,6 +41,7 @@ export const getDefiniteDataSource = (
     pageSize: 20,
     store: new ODataStore({
       url: `/api/odata/${code}`,
+      key: 'Id',
       version: 4,
     }),
     select,

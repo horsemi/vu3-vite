@@ -31,15 +31,16 @@
         :show-borders="false"
         :show-column-lines="false"
         :show-row-lines="true"
+        @row-updated="onChangeSort(dataSource)"
       >
         <DxEditing :allow-updating="true" mode="cell" />
         <DxPaging :enabled="false" />
-        <DxColumn caption="序号" cell-template="index" />
-        <DxColumn data-field="caption" caption="字段" />
+        <DxColumn caption="序号" cell-template="index" :allow-editing="false" />
+        <DxColumn data-field="caption" caption="字段" :allow-editing="false" />
         <DxColumn data-field="desc" caption="排序方式">
           <DxLookup :data-source="sortOptions" display-expr="name" value-expr="desc" />
         </DxColumn>
-        <DxColumn caption="操作" cell-template="handle" />
+        <DxColumn caption="操作" cell-template="handle" :allow-editing="false" />
         <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
         <template #handle="{ data }">
           <div>
@@ -210,6 +211,7 @@ export default defineComponent({
       onUpMove,
       onDownMove,
       onDel,
+      onChangeSort,
     };
   },
 });

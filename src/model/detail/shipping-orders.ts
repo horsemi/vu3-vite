@@ -144,5 +144,6 @@ export const getDetailData = async (filter: any[]) => {
 
 export const getDefiniteData = async (filter: any[]) => {
   const select = customDefinite.map((item) => item.key);
+  select.push('Id');
   return await getDefiniteDataSource('shipping-order-items', select, filter);
 };
