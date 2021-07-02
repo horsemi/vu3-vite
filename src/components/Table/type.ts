@@ -99,6 +99,11 @@ export interface ITableOptions {
   showColumnLines: boolean;
 
   /**
+   * @description: 是否显示列边框
+   */
+  allowColumnResizing: boolean;
+
+  /**
    * @description: 是否显示行边框
    */
   showRowLines: boolean;
