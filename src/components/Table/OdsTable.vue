@@ -3,6 +3,7 @@
     <DxDataGrid
       ref="dataGrid"
       :data-source="tableData"
+      :allow-column-resizing="tableOptions.allowColumnResizing"
       :height="tableOptions.height"
       :show-column-lines="tableOptions.showColumnLines"
       :show-row-lines="tableOptions.showRowLines"
