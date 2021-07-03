@@ -31,17 +31,22 @@
         :show-borders="false"
         :show-column-lines="false"
         :show-row-lines="true"
-        @row-updated="onChangeSort(dataSource)"
       >
-        <DxEditing :allow-updating="true" mode="cell" />
-        <DxPaging :enabled="false" />
-        <DxColumn caption="序号" cell-template="index" :allow-editing="false" />
-        <DxColumn data-field="caption" caption="字段" :allow-editing="false" />
-        <DxColumn data-field="desc" caption="排序方式">
-          <DxLookup :data-source="sortOptions" display-expr="name" value-expr="desc" />
-        </DxColumn>
+        <DxColumn caption="序号" cell-template="index" />
+        <DxColumn data-field="caption" caption="字段" />
+        <DxColumn data-field="desc" caption="排序方式" cell-template="desc" />
         <DxColumn caption="操作" cell-template="handle" :allow-editing="false" />
         <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
+        <template #desc="{ data }">
+          <DxSelectBox
+            v-model:value="data.data.desc"
+            style="padding: 0"
+            :data-source="sortOptions"
+            display-expr="name"
+            value-expr="desc"
+            @valueChanged="onChangeSort(dataSource)"
+          />
+        </template>
         <template #handle="{ data }">
           <div>
             <span @click="onUpMove(data.rowIndex)">上移</span>
@@ -56,7 +61,7 @@
 
 <script lang="ts">
 import type { IColumnItem } from '/@/model/table/types';
-import type { IFieldItem, IOrderByItem, ISortOptions } from './types';
+import type { IFieldItem, IOrderByItem, ISchemeColumnsItem, ISortOptions } from './types';
 
 import { defineComponent, PropType, ref, watch } from 'vue';
 import { cloneDeep } from 'lodash-es';
@@ -65,22 +70,27 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import { handleArrayTransposition } from '/@/utils';
 
 import { DxCheckBox } from 'devextreme-vue/check-box';
-import { DxDataGrid, DxColumn, DxPaging, DxEditing, DxLookup } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn } from 'devextreme-vue/data-grid';
 import { DxScrollView } from 'devextreme-vue/scroll-view';
+import DxSelectBox from 'devextreme-vue/select-box';
 
 export default defineComponent({
   components: {
     DxCheckBox,
     DxDataGrid,
     DxColumn,
-    DxPaging,
-    DxEditing,
     DxScrollView,
-    DxLookup,
+    DxSelectBox,
   },
   props: {
     allColumns: {
       type: Array as PropType<IColumnItem[]>,
+      default: () => {
+        return [];
+      },
+    },
+    columns: {
+      type: Array as PropType<ISchemeColumnsItem[]>,
       default: () => {
         return [];
       },
@@ -92,7 +102,7 @@ export default defineComponent({
       },
     },
   },
-  emits: ['on-change-sort'],
+  emits: ['on-change-sort', 'on-change-column'],
   setup(props, ctx) {
     const { prefixCls } = useDesign('content-sort');
     // 升降序下拉框配置项
@@ -116,7 +126,24 @@ export default defineComponent({
     const onChangeSort = (data: IOrderByItem[]) => {
       ctx.emit('on-change-sort', data);
     };
+    // 外派显示隐藏列更新事件
+    const onChangeColumn = (data: ISchemeColumnsItem[]) => {
+      ctx.emit('on-change-column', data);
+    };
 
+    // 处理字段有排序但是没有显示的情况
+    const handleFieldShow = (data: IOrderByItem[]) => {
+      const columns = cloneDeep(props.columns);
+      data.forEach((sort) => {
+        columns.forEach((col) => {
+          if (sort.key === col.key && !col.show) {
+            col.show = true;
+            return;
+          }
+        });
+      });
+      onChangeColumn(columns);
+    };
     // 点击中间箭头触发
     const onAddCol = () => {
       // 更新排序列表数据
@@ -130,6 +157,7 @@ export default defineComponent({
         });
       });
       dataSource.value = data;
+      handleFieldShow(dataSource.value);
       onChangeSort(dataSource.value);
     };
     // 点击上移触发
@@ -217,7 +245,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 @prefix-cls: ~'@{namespace}-content-sort';
 
 .@{prefix-cls} {
@@ -280,6 +308,14 @@ export default defineComponent({
       color: @color-primary;
       cursor: pointer;
     }
+  }
+
+  // 重置表格行高，解决行不垂直居中
+  .dx-datagrid-content .dx-datagrid-table .dx-row > td {
+    line-height: 35px;
+  }
+  .dx-datagrid-headers .dx-datagrid-table .dx-row > td {
+    line-height: inherit !important;
   }
 }
 </style>

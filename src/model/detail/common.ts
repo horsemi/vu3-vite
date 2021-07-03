@@ -1,3 +1,5 @@
+import type { ITableOptions } from '/@/components/Table/types';
+
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
 
@@ -16,7 +18,7 @@ export const getDetailDataSource = (
         key: 'Id',
         version: 4,
       }),
-      select,
+      select: [...select, 'Id'],
     });
 
     data.load().then(
@@ -33,18 +35,20 @@ export const getDetailDataSource = (
 export const getDefiniteDataSource = (
   code: string,
   select: string[],
-  filter: unknown[]
+  filter: unknown[],
+  options: ITableOptions
 ) => {
   const data = new DataSource({
     filter,
-    paginate: true,
-    pageSize: 20,
+    paginate: options.dataSourceOptions.paginate,
+    pageSize: options.page?.size,
     store: new ODataStore({
       url: `/api/odata/${code}`,
       key: 'Id',
+      keyType: 'int64',
       version: 4,
     }),
-    select,
+    select: [...select, 'Id'],
   });
   return data;
 };

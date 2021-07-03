@@ -16,7 +16,11 @@
       >
         <template #item>
           <div class="tab">
-            <div class="form-box" :style="{ maxHeight: opened ? '50vh' : closeHeight + 'px' }">
+            <div
+              ref="formBox"
+              class="form-box"
+              :style="{ maxHeight: opened ? '50vh' : closeHeight + 'px' }"
+            >
               <DxForm id="form" :form-data="formData" :col-count="4">
                 <template v-for="(item, index) in detail" :key="index">
                   <DxItem
@@ -58,7 +62,13 @@
       >
         <template #item>
           <div class="tab">
-            <OdsTable :table-options="tableOptions" :data-source="dataSource" :columns="columns">
+            <OdsTable
+              class="ods-table"
+              :table-options="tableOptions"
+              :data-source="dataSource"
+              :columns="columns"
+              :style="{ height: opened ? tableOpenedHeight : tableCloseHeight }"
+            >
             </OdsTable>
           </div>
         </template>
@@ -69,9 +79,11 @@
 
 <script lang="ts">
 import type { EditorType } from '/@/model/detail/types';
+import type { ITableOptions } from '/@/components/Table/types';
 
 import { defineComponent, onMounted, ref } from 'vue';
 import { useRoute } from 'vue-router';
+import { cloneDeep } from 'lodash-es';
 
 import {
   getDetailData,
@@ -80,12 +92,14 @@ import {
   customDefinite,
 } from '/@/model/detail/shipping-orders';
 import { defaultTableOptions } from '/@/components/Table/common';
+import { deepMerge } from '/@/utils';
 
 import DxTabPanel from 'devextreme-vue/tab-panel';
 import { DxForm, DxItem } from 'devextreme-vue/form';
 import { DxSwitch } from 'devextreme-vue/switch';
 import DxButton from 'devextreme-vue/button';
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
+
 
 export default defineComponent({
   components: {
@@ -122,13 +136,22 @@ export default defineComponent({
     ];
     const tableData = [];
     const closeHeight = 36;
+    const formBox = ref();
+    const tableOpenedHeight = ref<string>('1px');
+    const tableCloseHeight = 'calc(100vh - 36px - 384px)';
 
     const route = useRoute();
     const Id = parseInt(route.query.Id as string);
     const formData = ref();
     const detail = customDetail;
 
-    const tableOptions = { ...defaultTableOptions, useScrolling: true };
+    const options: Partial<ITableOptions> = {
+      useScrolling: true,
+      page: {
+        size: 10
+      }
+    };
+    const tableOptions: ITableOptions = deepMerge(cloneDeep(defaultTableOptions), options);
     const dataSource = ref();
     const columns = customDefinite;
 
@@ -142,13 +165,18 @@ export default defineComponent({
       }
       return editorOptions;
     };
+    const getTableOpenedHeight = () => {
+      tableOpenedHeight.value = `calc(100vh - ${formBox.value.offsetHeight}px - 384px)`;
+    };
 
     onMounted(async () => {
       formData.value = await getDetailData(['Id', '=', Id]);
-      dataSource.value = await getDefiniteData(['ShippingOrderId', '=', Id]);
+      getTableOpenedHeight();
+      dataSource.value = await getDefiniteData(tableOptions, ['ShippingOrderId', '=', Id]);
     });
 
     return {
+      formBox,
       opened,
       multiViewItems,
       multiEntityItems,
@@ -159,6 +187,8 @@ export default defineComponent({
       detail,
       tableOptions,
       columns,
+      tableOpenedHeight,
+      tableCloseHeight,
       handleEditorOptions,
     };
   },
@@ -222,6 +252,9 @@ export default defineComponent({
   }
   .table-wrap {
     flex: 1;
+  }
+  .ods-table {
+    transition: all 500ms;
   }
 }
 </style>

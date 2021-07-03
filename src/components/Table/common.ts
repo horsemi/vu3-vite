@@ -1,4 +1,4 @@
-import type { ITableOptions, ISortItem } from './type';
+import type { ITableOptions, ISortItem } from './types';
 import type {
   IOrderByItem,
   IRequirementItem,
@@ -23,8 +23,9 @@ export const defaultTableOptions: ITableOptions = {
   height: '100%',
   showColumnLines: true,
   allowColumnResizing: true,
+  hoverStateEnabled: true,
   showRowLines: true,
-  showBorders: false,
+  showBorders: true,
   rowAlternationEnabled: true,
   selection: {
     allMode: 'page',

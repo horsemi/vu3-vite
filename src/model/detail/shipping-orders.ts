@@ -1,4 +1,5 @@
 import type { IDefiniteItem, IDetailItem } from './types';
+import type { ITableOptions } from '/@/components/Table/types';
 
 import { getDefiniteDataSource, getDetailDataSource } from './common';
 
@@ -137,13 +138,11 @@ export const customDefinite: IDefiniteItem[] = [
 
 export const getDetailData = async (filter: any[]) => {
   const select = customDetail.map((item) => item.dataField);
-  select.push('Id');
   const data = await getDetailDataSource('shipping-orders', select, filter);
   return data[0];
 };
 
-export const getDefiniteData = async (filter: any[]) => {
+export const getDefiniteData = async (options: ITableOptions, filter: any[]) => {
   const select = customDefinite.map((item) => item.key);
-  select.push('Id');
-  return await getDefiniteDataSource('shipping-order-items', select, filter);
+  return await getDefiniteDataSource('shipping-order-items', select, filter, options);
 };

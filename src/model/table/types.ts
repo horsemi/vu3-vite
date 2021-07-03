@@ -1,3 +1,5 @@
+type alignmentType = 'center' | 'left' | 'right';
+
 export interface IColumnItem {
   /**
    * @description: 列的字段
@@ -8,6 +10,11 @@ export interface IColumnItem {
    * @description: 列的标题
    */
   caption: string;
+
+  /**
+   * @description: 对齐方式
+   */
+  alignment?: alignmentType;
 
   /**
    * @description: 是否必要

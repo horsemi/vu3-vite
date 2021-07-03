@@ -114,20 +114,7 @@ export default defineComponent({
       }
       onChangeColumn(dataSource.value);
     };
-    // 处理排序中有此字段，但是列中是否显示选择框没有选中的情况
-    // 让排序有此字段，是否显示选择框选中
-    const handleOrderByColShow = (val: IOrderByItem[]) => {
-      const temp = cloneDeep(dataSource.value);
-      val.forEach((sort) => {
-        temp.forEach((item) => {
-          if (sort.key === item.key) {
-            item.show = true;
-          }
-        });
-      });
-      dataSource.value = temp;
-      onChangeColumn(dataSource.value);
-    };
+
     // 根据全部列处理显示隐藏列数据
     const handleColumns = (allColumns, columns) => {
       const data: ISchemeColumnsItem[] = [];
@@ -151,17 +138,6 @@ export default defineComponent({
       () => [props.allColumns, props.columns],
       ([allColumns, columns]) => {
         dataSource.value = handleColumns(allColumns, columns);
-      },
-      {
-        immediate: true,
-      }
-    );
-
-    // 监听排序数据更新
-    watch(
-      () => props.orderBy,
-      (val) => {
-        handleOrderByColShow(val);
       },
       {
         immediate: true,

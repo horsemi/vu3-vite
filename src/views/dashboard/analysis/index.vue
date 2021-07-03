@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="list">
     <QueryPlan
       ref="QueryPlan"
       :filter-scheme="filterScheme"
@@ -37,7 +37,7 @@
 <script lang="ts">
   import type { IColumnItem } from '/@/model/table/types';
   import type { ISchemeColumnsItem, ISchemeItem } from '/@/components/QueryPopup/content/types';
-  import type { ITableOptions } from '/@/components/Table/type';
+  import type { ITableOptions } from '../../../components/Table/types';
 
   import { defineComponent, onMounted, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
@@ -205,6 +205,10 @@
 </script>
 
 <style lang="less" scoped>
+  .list {
+    overflow: hidden;
+  }
+
   .example {
     width: 100%;
     padding: 20px;
