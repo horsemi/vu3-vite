@@ -43,6 +43,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Persistent } from '/@/utils/cache/persistent';
+  import { getUuid } from '/@/utils/uuid';
   import { SCHEME_LIST_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';
 
   import QueryFrom from './component/form.vue';
@@ -109,7 +110,12 @@
       };
       // 点击重置触发
       const onReset = () => {
-        //
+        const popupUuid = schemeList.value[popupIndex.value].uuid;
+        const popupListTemp = schemeListTemp.value.filter((item) => item.uuid === popupUuid);
+
+        schemeList.value[popupIndex.value] = cloneDeep(popupListTemp[0]);
+        onChangeScheme(schemeList.value[popupIndex.value]);
+        onSearch();
       };
       // 点击查询方案触发
       const onQueryPlan = () => {
@@ -173,7 +179,7 @@
       // 接收另存事件
       const onSaveScheme = () => {
         const temp = cloneDeep(schemeList.value);
-        temp.push({ ...cloneDeep(schemeList.value[popupIndex.value]), title: '' });
+        temp.push({ ...cloneDeep(schemeList.value[popupIndex.value]), title: '', uuid: getUuid() });
         schemeList.value = temp;
         popupIndex.value = schemeList.value.length - 1;
       };
@@ -192,7 +198,11 @@
       };
       // 接收重置事件
       const onResetScheme = () => {
-        schemeList.value[popupIndex.value] = cloneDeep(schemeListTemp.value[popupIndex.value]);
+        const popupUuid = schemeList.value[popupIndex.value].uuid;
+        const popupListTemp = schemeListTemp.value.filter((item) => item.uuid === popupUuid);
+
+        schemeList.value[popupIndex.value] = cloneDeep(popupListTemp[0]);
+        onChangeScheme(schemeList.value[popupIndex.value]);
       };
       // 接收确认事件
       const onSubmit = () => {
