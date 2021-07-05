@@ -23,6 +23,7 @@ export const customColumns: IColumnItem[] = [
     key: 'GatheringParentCode',
     caption: '父单号',
     mustKey: true,
+    hide: true,
   },
   {
     key: 'BillDate',
@@ -30,25 +31,32 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'DocumentStatus',
-    caption: '业务状态',
+    caption: '单据状态',
     datatypekeies: 'enum',
   },
   {
-    key: 'IsCancelled',
-    caption: '取消状态',
+    key: 'DeliveryWarehouseCode',
+    caption: '仓库',
   },
   {
-    key: 'TotalPackage',
-    caption: '包件总数',
+    key: 'Nickname',
+    caption: '买家昵称',
+  },
+  {
+    key: 'DeliveryPointCode',
+    caption: '提货点',
+  },
+  {
+    key: 'ThreeServicePointCode',
+    caption: '三包点',
   },
   {
     key: 'TotalVolume',
     caption: '总体积',
   },
   {
-    key: 'GatheringPointCode',
-    caption: '集货点',
-    datatypekeies: 'foundation_gathering-points',
+    key: 'TotalPackage',
+    caption: '总包件数',
   },
 ];
 
