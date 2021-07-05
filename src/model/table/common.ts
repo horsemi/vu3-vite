@@ -10,6 +10,8 @@ const handleType = (val: string): string => {
   return val;
 };
 
+export const baseDataPre = 'foundation_';
+
 export const getColumnList = async (
   code: string,
   customColumns: IColumnItem[]

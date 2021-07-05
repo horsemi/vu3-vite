@@ -2,8 +2,9 @@ import type { IDefiniteItem, IDetailItem } from './types';
 import type { ITableOptions } from '/@/components/Table/types';
 
 import { getDefiniteDataSource, getDetailDataSource } from './common';
+import { baseDataPre } from '../table/common';
 
-export const customDetail: IDetailItem[] = [
+export const base: IDetailItem[] = [
   {
     dataField: 'BillCode',
     label: '单据编号',
@@ -92,6 +93,231 @@ export const customDetail: IDetailItem[] = [
   },
 ];
 
+export const consignee: IDetailItem[] = [
+  {
+    dataField: 'Nickname',
+    label: '买家昵称',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'Receiver',
+    label: '收货人',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'Telephone',
+    label: '电话',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'RecyclingMemo',
+    label: '回收备注',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'ProvinceCode',
+    label: '省',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'CityCode',
+    label: '市',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'DistrictCode',
+    label: '区',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'StreetCode',
+    label: '街道',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'AgencyCode',
+    label: '经销商',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'PromisedDeliveryDate',
+    label: '承诺发货时间',
+    editorType: 'dxDateBox',
+  },
+  {
+    dataField: 'DetailAddress',
+    label: '详细地址',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'ShowroomContacts',
+    label: '展厅联系人',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'ShowroomTelephone',
+    label: '展厅电话',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'ShowroomAddress',
+    label: '展厅提货地址',
+    editorType: 'dxTextBox',
+  },
+];
+
+export const logistics: IDetailItem[] = [
+  {
+    dataField: 'GatheringPointCode',
+    label: '集货点',
+    editorType: 'dxTextBox',
+    datatypekeies: `${baseDataPre}gathering-points`
+  },
+  {
+    dataField: 'ThreeServicePointCode',
+    label: '三包点',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'ContractorCode',
+    label: '中转承运商',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'ThreeServiceFeeTypeCode',
+    label: '三包费用类型',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'DeliveryPointCode',
+    label: '提货点',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'LineAreaCode',
+    label: '线路区域',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'ThreeServiceSupplierCode',
+    label: '三包服务商',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'FreightTypeCode',
+    label: '运费类型',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'LogisticsCostPrice',
+    label: '物流成本',
+    editorType: 'dxNumberBox',
+  },
+  {
+    dataField: 'ThreeServiceCostPrice',
+    label: '三包成本',
+    editorType: 'dxNumberBox',
+  },
+  {
+    dataField: 'LogisticCode',
+    label: '物流单号',
+    editorType: 'dxTextBox',
+  },
+];
+
+export const other: IDetailItem[] = [
+  {
+    dataField: 'CreatedTime',
+    label: '创建时间',
+    editorType: 'dxDateBox',
+  },
+  {
+    dataField: 'CreatorId',
+    label: '创建人',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'CustomerTypeCode',
+    label: '客户类型',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'GatheringParentCode',
+    label: '父单号',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'AppliedTime',
+    label: '审核时间',
+    editorType: 'dxDateBox',
+  },
+  {
+    dataField: 'ApplierId',
+    label: '审核人',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'CustomerCode',
+    label: '客户',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'OutSourceBillCode',
+    label: '外部原单编号',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'UpdatedTime',
+    label: '修改时间',
+    editorType: 'dxDateBox',
+  },
+  {
+    dataField: 'UpdaterId',
+    label: '修改人',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'OutBillFormCode',
+    label: '外部原单标识',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'OutSaleBillCode',
+    label: '外部销售单号',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'CancelledTime',
+    label: '作废时间',
+    editorType: 'dxDateBox',
+  },
+  {
+    dataField: 'CancellerId',
+    label: '作废人',
+    editorType: 'dxTextBox',
+  },
+  {
+    dataField: 'IsCancelled',
+    label: '作废状态',
+    editorType: 'dxSelectBox',
+  },
+  {
+    dataField: 'OutSourceBillType',
+    label: '外部原单类型',
+    editorType: 'dxSelectBox',
+  },
+  {
+    dataField: 'PushDownStatus',
+    label: '下推状态',
+    editorType: 'dxSelectBox',
+  },
+  {
+    dataField: 'PushDownTime',
+    label: '下推时间',
+    editorType: 'dxDateBox',
+  },
+];
+
 export const customDefinite: IDefiniteItem[] = [
   {
     key: 'ShippingOrderId',
@@ -137,7 +363,7 @@ export const customDefinite: IDefiniteItem[] = [
 ];
 
 export const getDetailData = async (filter: any[]) => {
-  const select = customDetail.map((item) => item.dataField);
+  const select = base.concat(consignee).concat(logistics).concat(other).map((item) => item.dataField);
   const data = await getDetailDataSource('shipping-orders', select, filter);
   return data[0];
 };

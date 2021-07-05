@@ -48,7 +48,7 @@
           />
         </template>
         <template #handle="{ data }">
-          <div>
+          <div :class="`${prefixCls}__table__handle`">
             <span @click="onUpMove(data.rowIndex)">上移</span>
             <span @click="onDownMove(data.rowIndex)">下移</span>
             <span @click="onDel(data.rowIndex)">删除</span>
@@ -303,6 +303,9 @@ export default defineComponent({
     flex: 1;
     height: 100%;
     border: 1px solid @border-color-primary;
+  }
+
+  &__table__handle {
     span {
       margin-right: 20px;
       color: @color-primary;
