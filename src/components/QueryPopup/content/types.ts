@@ -69,7 +69,7 @@ export interface ISchemeItem {
   /**
    * @description: 唯一id
    */
-  uuid: number;
+  uuid: string;
 
   /**
    * @description: 标题

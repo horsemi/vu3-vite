@@ -103,7 +103,12 @@ export interface ITableOptions {
    */
   allowColumnResizing: boolean;
 
-    /**
+  /**
+   * @description 是否列宽自适应
+   */
+  columnAutoWidth: boolean;
+
+  /**
    * @description: 是否显示列边框
    */
   hoverStateEnabled: boolean;

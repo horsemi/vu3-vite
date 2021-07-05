@@ -162,10 +162,11 @@
         () => props.paramKey,
         (paramKey, prevParamKey) => {
           initData(paramKey);
+        },
+        {
+          immediate: true,
         }
       );
-
-      initData(props.paramKey);
 
       function initData(paramKey: string) {
         if (paramKey) {
