@@ -23,6 +23,7 @@ export const defaultTableOptions: ITableOptions = {
   height: '100%',
   showColumnLines: true,
   allowColumnResizing: true,
+  columnAutoWidth: true,
   hoverStateEnabled: true,
   showRowLines: true,
   showBorders: true,
