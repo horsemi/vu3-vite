@@ -114,7 +114,7 @@
           });
           const schemeList = [
             {
-              uuid: 0,
+              uuid: '0',
               title: '缺省方案',
               requirement: [
                 {
