@@ -1,5 +1,5 @@
 <template>
-  <DxForm id="form" :form-data="formData" :col-count="4">
+  <DxForm :form-data="formData" :col-count="4">
     <template v-for="(item, index) in formList" :key="index">
       <DxItem
         v-if="!item.hide"

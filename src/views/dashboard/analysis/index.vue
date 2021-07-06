@@ -25,7 +25,7 @@
         :data-source="dataSource"
         :columns="columns"
         :all-columns="allColumns"
-        :filter-scheme="tableFilterScheme"
+        :filter-scheme="filterScheme"
         :table-key="tableKey"
         @handle-bill-code-click="handleBillCodeClick"
       >
@@ -73,7 +73,6 @@
         },
       };
       const filterScheme = ref<ISchemeItem>();
-      const tableFilterScheme = ref<ISchemeItem>();
       const tableOptions: ITableOptions = deepMerge(cloneDeep(defaultTableOptions), options);
       const tableKey = ref<string[]>([]);
       const dataSource = ref();
@@ -81,6 +80,7 @@
       const allColumns = ref<IColumnItem[] | undefined>();
       const filterList = ref<ISchemeItem[]>([]);
       const schemeCheckedIndex = ref<number>(0);
+      const QueryPlan = ref();
 
       // const handleBillCodeClick = () => {
       //   go({ name: 'exampleDetails' });
@@ -89,11 +89,13 @@
         filterScheme.value = cloneDeep(data);
       };
       const onSearch = (data) => {
-        const scheme = cloneDeep(filterScheme.value);
-
-        scheme?.requirement.push(...data);
-
-        tableFilterScheme.value = scheme;
+        const scheme = cloneDeep(QueryPlan.value.schemeList[QueryPlan.value.popupIndex]);
+        data.forEach(item => {
+          if (item.requirement && item.value) {
+            scheme.requirement.push(item);
+          }
+        });
+        filterScheme.value = scheme;
       };
       const getQueryPlan = (allColumns) => {
         const oldSchemeList = Persistent.getLocal(SCHEME_LIST_KEY) as ISchemeItem[] | undefined;
@@ -159,6 +161,7 @@
       });
 
       return {
+        QueryPlan,
         tableOptions,
         tableKey,
         dataSource,
@@ -166,7 +169,6 @@
         allColumns,
         filterList,
         filterScheme,
-        tableFilterScheme,
         schemeCheckedIndex,
         // handleBillCodeClick,
         onFilterScheme,

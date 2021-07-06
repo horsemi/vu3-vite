@@ -26,9 +26,6 @@ export const base: IDetailItem[] = [
     dataField: 'ServiceItemCode',
   },
   {
-    dataField: 'TotalPackage',
-  },
-  {
     dataField: 'Group',
   },
   {

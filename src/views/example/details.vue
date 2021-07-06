@@ -2,13 +2,11 @@
   <div class="detail">
     <div class="tab-panel">
       <div class="btn-box">
-        <DxButton :width="76" text="保存" type="default" />
-        <DxDropDownButton :width="80" text="提交" />
-        <DxDropDownButton :width="80" text="审核" />
+        <DxButton :width="76" type="default" text="提交" />
+        <DxButton :width="76" text="审核" />
         <DxButton :width="76" text="刷新" />
       </div>
       <DxTabPanel
-        ref="tabPanel"
         v-model:selected-index="selectedIndex"
         :data-source="multiViewItems"
         :loop="true"
@@ -18,25 +16,21 @@
       >
         <template #item="{ data }">
           <div class="tab">
-            <div
-              ref="formBox"
-              class="form-box"
-              :style="{ maxHeight: opened ? '50vh' : closeHeight + 'px' }"
-            >
-              <DetailForm
-                :form-data="formData"
-                :form-list="
-                  data.title === '基本信息'
-                    ? baseInformation
-                    : data.title === '收货人信息'
-                    ? consigneeInformation
-                    : data.title === '物流信息'
-                    ? logisticsInformation
-                    : data.title === '其他信息'
-                    ? otherInformation
-                    : ''
-                "
-              />
+            <div class="form-wrap" :style="{ height: opened ? formHeight + 'px' : '36px' }">
+              <div ref="formBox" class="form-box">
+                <DetailForm
+                  :form-data="formData"
+                  :form-list="
+                    data.title === '基本信息'
+                      ? baseInformation
+                      : data.title === '收货人信息'
+                      ? consigneeInformation
+                      : data.title === '物流信息'
+                      ? logisticsInformation
+                      : otherInformation
+                  "
+                />
+              </div>
             </div>
             <div class="icon-box">
               <SvgIcon
@@ -64,13 +58,8 @@
         :focus-state-enabled="false"
       >
         <template #item>
-          <div class="tab">
-            <OdsTable
-              class="ods-table"
-              :table-options="tableOptions"
-              :data-source="dataSource"
-              :columns="columns"
-            >
+          <div class="tab" :style="{ height: opened ? tableOpenedHeight : tableCloseHeight }">
+            <OdsTable :table-options="tableOptions" :data-source="dataSource" :columns="columns">
             </OdsTable>
           </div>
         </template>
@@ -93,7 +82,6 @@ import { getDetailData, getDefiniteData, customDefinite } from './index';
 
 import DxTabPanel from 'devextreme-vue/tab-panel';
 import DxButton from 'devextreme-vue/button';
-import DxDropDownButton from 'devextreme-vue/drop-down-button';
 
 import DetailForm from '/@/components/DetailForm/index.vue';
 
@@ -101,7 +89,6 @@ export default defineComponent({
   components: {
     DxTabPanel,
     DxButton,
-    DxDropDownButton,
     DetailForm,
   },
   setup() {
@@ -128,21 +115,22 @@ export default defineComponent({
     const tableData = [];
     const closeHeight = 36;
     const formBox = ref();
-    const tabPanel = ref();
+    const formHeight = ref();
     const selectedIndex = ref(0);
-    let tableOpenedHeight = '';
-    const tableCloseHeight = 'calc(100vh - 36px - 370px)';
+    let tableOpenedHeight = ref();
+    const tableCloseHeight = 'calc(100vh - 36px - 330px)';
 
     const route = useRoute();
     const Id = parseInt(route.query.Id as string);
     const formData = ref();
-    const baseInformation = ref<IDetailItem[]>();
-    const consigneeInformation = ref<IDetailItem[]>();
-    const logisticsInformation = ref<IDetailItem[]>();
-    const otherInformation = ref<IDetailItem[]>();
+    const baseInformation = ref<IDetailItem[]>([]);
+    const consigneeInformation = ref<IDetailItem[]>([]);
+    const logisticsInformation = ref<IDetailItem[]>([]);
+    const otherInformation = ref<IDetailItem[]>([]);
 
     const options: Partial<ITableOptions> = {
       useScrolling: true,
+      showBorders: false,
       page: {
         size: 10,
       },
@@ -152,12 +140,16 @@ export default defineComponent({
     const columns = customDefinite;
 
     const getTableHeight = () => {
-      tableOpenedHeight = `calc(100vh - ${tabPanel.value.$el.offsetHeight}px - 250px)`;
-      if (opened.value) {
-        tableOptions.value.height = tableOpenedHeight;
-      } else {
-        tableOptions.value.height = tableCloseHeight;
-      }
+      const length =
+        selectedIndex.value === 0
+          ? baseInformation.value.length
+          : selectedIndex.value === 1
+          ? consigneeInformation.value.length
+          : selectedIndex.value === 2
+          ? logisticsInformation.value.length
+          : otherInformation.value.length;
+      formHeight.value = Math.ceil(length / 4) * 43.5;
+      tableOpenedHeight.value = `calc(100vh - ${formHeight.value}px - 330px)`;
     };
     const onChangeOpened = () => {
       opened.value = !opened.value;
@@ -177,11 +169,12 @@ export default defineComponent({
       consigneeInformation.value = consigneeList;
       logisticsInformation.value = logisticsList;
       otherInformation.value = otherList;
-      getTableHeight();
       dataSource.value = await getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]);
+      getTableHeight();
     });
 
     return {
+      formHeight,
       baseInformation,
       consigneeInformation,
       logisticsInformation,
@@ -189,7 +182,6 @@ export default defineComponent({
       columns,
       selectedIndex,
       formBox,
-      tabPanel,
       opened,
       multiViewItems,
       multiEntityItems,
@@ -228,6 +220,9 @@ export default defineComponent({
   .tab {
     padding: 20px;
     background-color: #fff;
+    &:last-child {
+      transition: height 500ms;
+    }
   }
   .btn-box {
     position: absolute;
@@ -241,10 +236,14 @@ export default defineComponent({
       margin-left: 10px;
     }
   }
+  .form-wrap {
+    flex: 1;
+    overflow: hidden;
+    transition: height 500ms;
+  }
   .form-box {
     padding: 0 20px;
     overflow: hidden;
-    transition: all 500ms ease-in-out;
   }
   .icon-box {
     display: flex;
@@ -264,9 +263,6 @@ export default defineComponent({
   }
   .table-wrap {
     flex: 1;
-  }
-  .ods-table {
-    height: 100%;
   }
 }
 </style>
