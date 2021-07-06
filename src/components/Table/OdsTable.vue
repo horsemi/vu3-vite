@@ -65,7 +65,7 @@
 
 <script lang="ts">
   import type { ITableOptions } from './types';
-  import type { IColumnItem } from '/@/model/table/types';
+  import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '../QueryPopup/content/types';
 
   import { defineComponent, onBeforeUnmount, ref, PropType, watch, nextTick } from 'vue';

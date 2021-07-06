@@ -60,7 +60,7 @@
 </template>
 
 <script lang="ts">
-import type { IColumnItem } from '/@/model/table/types';
+import type { IColumnItem } from '/@/model/types';
 import type { IFieldItem, IOrderByItem, ISchemeColumnsItem, ISortOptions } from './types';
 
 import { defineComponent, PropType, ref, watch } from 'vue';

@@ -23,19 +23,20 @@
               class="form-box"
               :style="{ maxHeight: opened ? '50vh' : closeHeight + 'px' }"
             >
-              <DxForm id="form" :form-data="formData" :col-count="4">
-                <template v-for="(item, index) in getDetailItem(data.name)" :key="index">
-                  <DxItem
-                    v-if="!item.hide"
-                    :label="{ text: item.label }"
-                    :data-field="item.dataField"
-                    :editor-type="item.editorType"
-                    :disabled="item.disabled"
-                    :editor-options="handleEditorOptions(item.editorType, item.dataField)"
-                  />
-                </template>
-                <DxSwitch />
-              </DxForm>
+              <DetailForm
+                :form-data="formData"
+                :form-list="
+                  data.title === '基本信息'
+                    ? baseInformation
+                    : data.title === '收货人信息'
+                    ? consigneeInformation
+                    : data.title === '物流信息'
+                    ? logisticsInformation
+                    : data.title === '其他信息'
+                    ? otherInformation
+                    : ''
+                "
+              />
             </div>
             <div class="icon-box">
               <SvgIcon
@@ -79,58 +80,44 @@
 </template>
 
 <script lang="ts">
-import type { EditorType } from '/@/model/detail/types';
 import type { ITableOptions } from '/@/components/Table/types';
+import type { IDetailItem } from '/@/utils/detail/types';
 
 import { defineComponent, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { cloneDeep } from 'lodash-es';
 
-import {
-  getDetailData,
-  getDefiniteData,
-  base,
-  consignee,
-  logistics,
-  other,
-  customDefinite,
-} from '/@/model/detail/shipping-orders';
 import { defaultTableOptions } from '/@/components/Table/common';
 import { deepMerge } from '/@/utils';
+import { getDetailData, getDefiniteData, customDefinite } from './index';
 
 import DxTabPanel from 'devextreme-vue/tab-panel';
-import { DxForm, DxItem } from 'devextreme-vue/form';
-import { DxSwitch } from 'devextreme-vue/switch';
 import DxButton from 'devextreme-vue/button';
 import DxDropDownButton from 'devextreme-vue/drop-down-button';
+
+import DetailForm from '/@/components/DetailForm/index.vue';
 
 export default defineComponent({
   components: {
     DxTabPanel,
-    DxForm,
-    DxItem,
-    DxSwitch,
     DxButton,
     DxDropDownButton,
+    DetailForm,
   },
   setup() {
     const opened = ref(true);
     const multiViewItems = [
       {
         title: '基本信息',
-        name: 'baseInformation',
       },
       {
         title: '收货人信息',
-        name: 'consigneeInformation',
       },
       {
         title: '物流信息',
-        name: 'logisticsInformation',
       },
       {
         title: '其他信息',
-        name: 'otherInformation',
       },
     ];
     const multiEntityItems = [
@@ -149,10 +136,10 @@ export default defineComponent({
     const route = useRoute();
     const Id = parseInt(route.query.Id as string);
     const formData = ref();
-    const baseInformation = base;
-    const consigneeInformation = consignee;
-    const logisticsInformation = logistics;
-    const otherInformation = other;
+    const baseInformation = ref<IDetailItem[]>();
+    const consigneeInformation = ref<IDetailItem[]>();
+    const logisticsInformation = ref<IDetailItem[]>();
+    const otherInformation = ref<IDetailItem[]>();
 
     const options: Partial<ITableOptions> = {
       useScrolling: true,
@@ -164,53 +151,42 @@ export default defineComponent({
     const dataSource = ref();
     const columns = customDefinite;
 
-    const handleEditorOptions = (editorType: EditorType, dataField: string) => {
-      let editorOptions;
-      if (editorType === 'dxSwitch') {
-        editorOptions = {
-          switchedOnText: '是',
-          switchedOffText: '否',
-        };
-      }
-      return editorOptions;
-    };
-    const getTableOpenedHeight = () => {
+    const getTableHeight = () => {
       tableOpenedHeight = `calc(100vh - ${tabPanel.value.$el.offsetHeight}px - 250px)`;
-      tableOptions.value.height = tableOpenedHeight;
-    };
-    const onChangeOpened = () => {
-      opened.value = !opened.value;
       if (opened.value) {
         tableOptions.value.height = tableOpenedHeight;
       } else {
         tableOptions.value.height = tableCloseHeight;
       }
     };
-    const getDetailItem = (name: string) => {
-      if (name === 'baseInformation') {
-        return baseInformation;
-      } else if (name === 'consigneeInformation') {
-        return consigneeInformation;
-      } else if (name === 'logisticsInformation') {
-        return logisticsInformation;
-      } else if (name === 'otherInformation') {
-        return otherInformation;
-      } else {
-        return [];
-      }
+    const onChangeOpened = () => {
+      opened.value = !opened.value;
+      getTableHeight();
     };
 
     watch(selectedIndex, () => {
-      getTableOpenedHeight();
+      getTableHeight();
     });
 
     onMounted(async () => {
-      formData.value = await getDetailData(['Id', '=', Id]);
-      getTableOpenedHeight();
+      const detailData = await getDetailData(['Id', '=', Id]);
+      if (!detailData) return;
+      const { baseList, consigneeList, logisticsList, otherList, data } = detailData;
+      formData.value = data;
+      baseInformation.value = baseList;
+      consigneeInformation.value = consigneeList;
+      logisticsInformation.value = logisticsList;
+      otherInformation.value = otherList;
+      getTableHeight();
       dataSource.value = await getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]);
     });
 
     return {
+      baseInformation,
+      consigneeInformation,
+      logisticsInformation,
+      otherInformation,
+      columns,
       selectedIndex,
       formBox,
       tabPanel,
@@ -221,17 +197,10 @@ export default defineComponent({
       closeHeight,
       formData,
       dataSource,
-      baseInformation,
-      consigneeInformation,
-      logisticsInformation,
-      otherInformation,
       tableOptions,
-      columns,
       tableOpenedHeight,
       tableCloseHeight,
-      handleEditorOptions,
       onChangeOpened,
-      getDetailItem,
     };
   },
 });

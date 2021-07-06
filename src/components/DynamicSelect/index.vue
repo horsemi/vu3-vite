@@ -85,13 +85,13 @@
 </template>
 
 <script lang="ts">
-  import type { IColumnItem } from '/@/model/table/types';
+  import type { IColumnItem } from '/@/model/types';
 
   import { defineComponent, watch, PropType, ref } from 'vue';
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getOperatorByType, initOperatorMap } from '/@/model/table/global-operator';
+  import { getOperatorByType, initOperatorMap } from '/@/model/global-operator';
 
   import DxSelectBox from 'devextreme-vue/select-box';
   import DxTextBox from 'devextreme-vue/text-box';

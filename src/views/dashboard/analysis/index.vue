@@ -35,14 +35,14 @@
 </template>
 
 <script lang="ts">
-  import type { IColumnItem } from '/@/model/table/types';
+  import type { IColumnItem } from '/@/model/types';
   import type { ISchemeColumnsItem, ISchemeItem } from '/@/components/QueryPopup/content/types';
-  import type { ITableOptions } from '../../../components/Table/types';
+  import type { ITableOptions } from '/@/components/Table/types';
 
   import { defineComponent, onMounted, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
 
-  import { getColumns } from '/@/model/table/shipping-orders';
+  import { getColumns } from '/@/model/shipping-orders';
   import {
     defaultTableOptions,
     getCompleteColumns,

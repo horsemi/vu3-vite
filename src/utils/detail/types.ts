@@ -39,6 +39,11 @@ export interface IDetailItem {
   hide?: boolean;
 
   /**
+   * @description: 字段类型
+   */
+  type?: string;
+
+  /**
    * @description: 指定用于显示和编辑表单项值的编辑器UI组件
    */
   editorType?: EditorType;

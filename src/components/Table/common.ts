@@ -5,7 +5,7 @@ import type {
   ISchemeColumnsItem,
   ISchemeItem,
 } from '../QueryPopup/content/types';
-import type { IColumnItem, IKeyType } from '/@/model/table/types';
+import type { IColumnItem, IKeyType } from '/@/model/types';
 
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';

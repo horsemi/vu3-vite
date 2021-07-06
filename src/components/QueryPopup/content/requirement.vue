@@ -40,7 +40,7 @@
 
 <script lang="ts">
   import type { ILogicOptions, IRequirementItem } from './types';
-  import type { IColumnItem } from '/@/model/table/types';
+  import type { IColumnItem } from '/@/model/types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';
   import { cloneDeep } from 'lodash-es';

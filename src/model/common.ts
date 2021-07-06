@@ -4,7 +4,7 @@ import { getList } from '/@/api/index';
 
 // columns的dataType 接受的类型有 'string' | 'number' | 'date' | 'boolean' | 'object' | 'datetime'
 const handleType = (val: string): string => {
-  if (val === 'decimal' || val === 'int32') {
+  if (val === 'decimal' || val === 'int32' || val === 'int64') {
     val = 'number';
   }
   return val;

@@ -65,7 +65,7 @@
 </template>
 
 <script lang="ts">
-import type { IColumnItem } from '/@/model/table/types';
+import type { IColumnItem } from '/@/model/types';
 
 import { defineComponent, PropType, reactive, ref } from 'vue';
 
