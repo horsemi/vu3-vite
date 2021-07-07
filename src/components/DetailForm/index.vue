@@ -1,5 +1,5 @@
 <template>
-  <DxForm :form-data="formData" :col-count="4">
+  <DxForm :form-data="formData" :col-count="8">
     <template v-for="(item, index) in formList" :key="index">
       <DxItem
         v-if="!item.hide"
@@ -8,6 +8,7 @@
         :editor-type="item.editorType"
         :disabled="item.disabled"
         :editor-options="handleEditorOptions(item)"
+        :col-span="item.editorType === 'dxSwitch' ? 1 : 2"
         :template="item.datatypekeies ? 'datatypekeies' : ''"
       />
       <DxSwitch />

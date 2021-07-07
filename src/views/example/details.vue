@@ -2,9 +2,9 @@
   <div class="detail">
     <div class="tab-panel">
       <div class="btn-box">
-        <DxButton :width="76" type="default" text="提交" @click="onSubmitClick" />
-        <DxButton :width="76" text="审核" @click="onApplyClick" />
-        <DxButton :width="76" text="刷新" @click="onRefresh" />
+        <DxButton :width="56" :height="26" type="default" text="提交" @click="onSubmitClick" />
+        <DxButton :width="56" :height="26" text="审核" @click="onApplyClick" />
+        <DxButton :width="56" :height="26" text="刷新" @click="onRefresh" />
       </div>
       <DxTabPanel
         v-model:selected-index="selectedIndex"
@@ -16,7 +16,7 @@
       >
         <template #item="{ data }">
           <div class="tab">
-            <div class="form-wrap" :style="{ height: opened ? formHeight + 'px' : '36px' }">
+            <div class="form-wrap" :style="{ height: opened ? formHeight + 'px' : '28px' }">
               <div ref="formBox" class="form-box">
                 <DetailForm
                   :form-data="formData"
@@ -35,7 +35,7 @@
             <div class="icon-box">
               <SvgIcon
                 :class="['icon', opened && 'icon--translate']"
-                size="16"
+                size="12"
                 name="multi-arrow"
                 @click="onChangeOpened"
               ></SvgIcon>
@@ -46,8 +46,8 @@
     </div>
     <div class="tab-panel">
       <div class="btn-box">
-        <DxButton :width="76" text="新增" type="default" />
-        <DxButton :width="76" text="删除" />
+        <DxButton :width="56" :height="26" text="新增" type="default" />
+        <DxButton :width="56" :height="26" text="删除" />
       </div>
       <DxTabPanel
         class="table-wrap"
@@ -119,7 +119,7 @@ export default defineComponent({
     const formHeight = ref();
     const selectedIndex = ref(0);
     let tableOpenedHeight = ref();
-    const tableCloseHeight = 'calc(100vh - 36px - 330px)';
+    const tableCloseHeight = 'calc(100vh - 28px - 240px)';
 
     const route = useRoute();
     const Id = parseInt(route.query.Id as string);
@@ -149,8 +149,8 @@ export default defineComponent({
           : selectedIndex.value === 2
           ? logisticsInformation.value.length
           : otherInformation.value.length;
-      formHeight.value = Math.ceil(length / 4) * 36 + (Math.ceil(length / 4) - 1) * 10;
-      tableOpenedHeight.value = `calc(100vh - ${formHeight.value}px - 330px)`;
+      formHeight.value = Math.ceil(length / 4) * 28 + (Math.ceil(length / 4) - 1) * 5;
+      tableOpenedHeight.value = `calc(100vh - ${formHeight.value}px - 240px)`;
     };
     const onChangeOpened = () => {
       opened.value = !opened.value;
@@ -170,6 +170,7 @@ export default defineComponent({
       });
     };
     const getData = async () => {
+      dataSource.value = await getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]);
       const detailData = await getDetailData(['Id', '=', Id]);
       if (!detailData) return;
       const { baseList, consigneeList, logisticsList, otherList, data } = detailData;
@@ -178,7 +179,7 @@ export default defineComponent({
       consigneeInformation.value = consigneeList;
       logisticsInformation.value = logisticsList;
       otherInformation.value = otherList;
-      dataSource.value = await getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]);
+      
       getTableHeight();
     };
 
@@ -218,7 +219,7 @@ export default defineComponent({
 });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .detail {
   flex: 1;
   display: flex;
@@ -229,16 +230,15 @@ export default defineComponent({
     position: relative;
     display: flex;
     flex-direction: column;
-    padding-top: 10px;
     background-color: #fff;
     &:last-child {
       flex: 1;
-      margin-top: 20px;
+      margin-top: 10px;
     }
   }
 
   .tab {
-    padding: 20px;
+    padding: 5px 20px;
     background-color: #fff;
     &:last-child {
       transition: height 500ms;
@@ -251,7 +251,7 @@ export default defineComponent({
     z-index: 100;
     display: flex;
     align-items: center;
-    height: 54px;
+    height: 36px;
     & > * {
       margin-left: 10px;
     }
@@ -270,7 +270,7 @@ export default defineComponent({
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding-top: 20px;
+    padding-top: 5px;
     .icon {
       cursor: pointer;
       transform: rotate(0);
@@ -283,6 +283,37 @@ export default defineComponent({
   }
   .table-wrap {
     flex: 1;
+  }
+
+  .dx-layout-manager .dx-field-item:not(.dx-first-row) {
+    padding-top: 5px !important;
+  }
+
+  .dx-widget {
+    font-size: 12px !important;
+  }
+
+  .dx-box-item-content {
+    font-size: 12px !important;
+  }
+
+  .dx-texteditor-input {
+    min-height: 0 !important;
+    padding: 5px 9px 5px !important;
+  }
+
+  .dx-button-has-text .dx-button-content {
+    padding: 0 !important;
+  }
+
+  .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-checkbox,
+  .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-switch {
+    margin: 0 !important;
+  }
+
+  .dx-datagrid-table .dx-freespace-row > td {
+    // 去掉空余空间的边框，当指定表格高度时，会出现这个占满空余空间
+    border: none !important;
   }
 }
 </style>

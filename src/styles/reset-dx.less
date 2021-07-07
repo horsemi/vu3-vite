@@ -1,8 +1,4 @@
 // 重置表头样式
-// .dx-datagrid-table .dx-freespace-row > td {
-//   // 去掉空余空间的边框，当指定表格高度时，会出现这个占满空余空间
-//   border: none !important;
-// }
 .dx-datagrid-headers {
   font-weight: 500 !important;
   color: #333 !important;
@@ -30,6 +26,7 @@
 
 // 重置tab样式
 .dx-tab {
+  padding: 5px !important;
   background-color: #fff !important;
 }
 .dx-tabpanel .dx-multiview-wrapper {
@@ -63,4 +60,30 @@
 }
 .dx-tabpanel > .dx-tabpanel-tabs .dx-tabs-expanded .dx-tab:not(.dx-tab-selected):first-of-type {
   box-shadow: none !important;
+}
+
+// 重置开关样式
+.dx-switch-container {
+  width: 48px !important;
+  height: 24px !important;
+  padding: 0 3px !important;
+  background-color: #1890ff !important;
+  border: none !important;
+  border-radius: 20px !important;
+}
+.dx-switch-off, .dx-switch-on {
+  font-weight: 500 !important;
+  line-height: 24px !important;
+  color: #fff !important;
+}
+.dx-switch-handle {
+  width: 18px !important;
+  height: 18px !important;
+  margin: 3px 0 !important;
+}
+.dx-switch-handle::before {
+  width: 18px !important;
+  height: 18px !important;
+  background-color: #fff !important;
+  border-radius: 100% !important;
 }

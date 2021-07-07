@@ -50,10 +50,10 @@ export const base: IDetailItem[] = [
     dataField: 'IsGatheringOrder',
   },
   {
-    dataField: 'IsAgencyOrder',
+    dataField: 'IsRecycling',
   },
   {
-    dataField: 'IsRecycling',
+    dataField: 'IsAgencyOrder',
   },
 ];
 
@@ -141,93 +141,57 @@ export const logistics: IDetailItem[] = [
 export const other: IDetailItem[] = [
   {
     dataField: 'CreatedTime',
-    label: '创建时间',
-    editorType: 'dxDateBox',
   },
   {
     dataField: 'CreatorId',
-    label: '创建人',
-    editorType: 'dxTextBox',
   },
   {
     dataField: 'CustomerTypeCode',
-    label: '客户类型',
-    editorType: 'dxTextBox',
   },
   {
     dataField: 'GatheringParentCode',
-    label: '父单号',
-    editorType: 'dxTextBox',
   },
   {
     dataField: 'AppliedTime',
-    label: '审核时间',
-    editorType: 'dxDateBox',
   },
   {
     dataField: 'ApplierId',
-    label: '审核人',
-    editorType: 'dxTextBox',
   },
   {
     dataField: 'CustomerCode',
-    label: '客户',
-    editorType: 'dxTextBox',
   },
   {
     dataField: 'OutSourceBillCode',
-    label: '外部原单编号',
-    editorType: 'dxTextBox',
   },
   {
     dataField: 'UpdatedTime',
-    label: '修改时间',
-    editorType: 'dxDateBox',
   },
   {
     dataField: 'UpdaterId',
-    label: '修改人',
-    editorType: 'dxTextBox',
   },
   {
     dataField: 'OutBillFormCode',
-    label: '外部原单标识',
-    editorType: 'dxTextBox',
   },
   {
     dataField: 'OutSaleBillCode',
-    label: '外部销售单号',
-    editorType: 'dxTextBox',
   },
   {
     dataField: 'CancelledTime',
-    label: '作废时间',
-    editorType: 'dxDateBox',
   },
   {
     dataField: 'CancellerId',
-    label: '作废人',
-    editorType: 'dxTextBox',
-  },
-  {
-    dataField: 'IsCancelled',
-    label: '作废状态',
-    editorType: 'dxSelectBox',
-  },
-  {
-    dataField: 'OutSourceBillType',
-    label: '外部原单类型',
-    editorType: 'dxSelectBox',
-  },
-  {
-    dataField: 'PushDownStatus',
-    label: '下推状态',
-    editorType: 'dxSelectBox',
   },
   {
     dataField: 'PushDownTime',
-    label: '下推时间',
-    editorType: 'dxDateBox',
+  },
+  {
+    dataField: 'OutSourceBillType',
+  },
+  {
+    dataField: 'IsCancelled',
+  },
+  {
+    dataField: 'PushDownStatus',
   },
 ];
 
