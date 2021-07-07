@@ -159,7 +159,6 @@
           const select = getSelect(props.allColumns, scheme.columns, props.tableKey);
           const filter = getFilter(scheme.requirement);
           const sort = getSort(scheme.orderBy, props.tableOptions.dataSourceOptions.sort);
-          console.log(sort);
           tableData.value.filter(filter);
           tableData.value.select(select);
           tableColumns.value = getCompleteColumns(props.allColumns, tableData.value.select());
