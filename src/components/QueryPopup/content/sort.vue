@@ -32,12 +32,14 @@
         :show-column-lines="false"
         :show-row-lines="true"
       >
-        <DxColumn caption="序号" cell-template="index" />
-        <DxColumn data-field="caption" caption="字段" />
-        <DxColumn data-field="desc" caption="排序方式" cell-template="desc" />
-        <DxColumn caption="操作" cell-template="handle" :allow-editing="false" />
+        <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" drop-feedback-mode="push" />
+        <DxPaging :enabled="false" />
+        <DxColumn caption="序号" cell-template="index" alignment="center" />
+        <DxColumn data-field="caption" caption="字段" alignment="center" />
+        <DxColumn data-field="sort" caption="排序方式" cell-template="sort" alignment="center" />
+        <DxColumn caption="操作" cell-template="handle" alignment="center" />
         <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
-        <template #desc="{ data }">
+        <template #sort="{ data }">
           <DxSelectBox
             v-model:value="data.data.desc"
             style="padding: 0"
@@ -49,8 +51,6 @@
         </template>
         <template #handle="{ data }">
           <div :class="`${prefixCls}__table__handle`">
-            <span @click="onUpMove(data.rowIndex)">上移</span>
-            <span @click="onDownMove(data.rowIndex)">下移</span>
             <span @click="onDel(data.rowIndex)">删除</span>
           </div>
         </template>
@@ -70,7 +70,7 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import { handleArrayTransposition } from '/@/utils';
 
 import { DxCheckBox } from 'devextreme-vue/check-box';
-import { DxDataGrid, DxColumn } from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxRowDragging } from 'devextreme-vue/data-grid';
 import { DxScrollView } from 'devextreme-vue/scroll-view';
 import DxSelectBox from 'devextreme-vue/select-box';
 
@@ -81,6 +81,8 @@ export default defineComponent({
     DxColumn,
     DxScrollView,
     DxSelectBox,
+    DxPaging,
+    DxRowDragging,
   },
   props: {
     allColumns: {
@@ -160,21 +162,11 @@ export default defineComponent({
       handleFieldShow(dataSource.value);
       onChangeSort(dataSource.value);
     };
-    // 点击上移触发
-    const onUpMove = (index: number) => {
-      if (index > 0) {
-        // 调用数组换位函数
-        dataSource.value = handleArrayTransposition(dataSource.value, index, index - 1);
-        onChangeSort(dataSource.value);
-      }
-    };
-    // 点击下移触发
-    const onDownMove = (index: number) => {
-      if (index < dataSource.value.length - 1) {
-        // 调用数组换位函数
-        dataSource.value = handleArrayTransposition(dataSource.value, index, index + 1);
-        onChangeSort(dataSource.value);
-      }
+    // 拖动位置触发
+    const onReorder = (e) => {
+      // 调用数组换位函数
+      dataSource.value = handleArrayTransposition(dataSource.value, e.fromIndex, e.toIndex);
+      onChangeSort(dataSource.value);
     };
     // 点击删除触发
     const onDel = (index: number) => {
@@ -236,8 +228,7 @@ export default defineComponent({
       dataSource,
       sortOptions,
       onAddCol,
-      onUpMove,
-      onDownMove,
+      onReorder,
       onDel,
       onChangeSort,
     };

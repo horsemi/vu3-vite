@@ -2,9 +2,9 @@
   <div class="detail">
     <div class="tab-panel">
       <div class="btn-box">
-        <DxButton :width="76" type="default" text="提交" />
-        <DxButton :width="76" text="审核" />
-        <DxButton :width="76" text="刷新" />
+        <DxButton :width="76" type="default" text="提交" @click="onSubmitClick" />
+        <DxButton :width="76" text="审核" @click="onApplyClick" />
+        <DxButton :width="76" text="刷新" @click="onRefresh" />
       </div>
       <DxTabPanel
         v-model:selected-index="selectedIndex"
@@ -78,6 +78,7 @@ import { cloneDeep } from 'lodash-es';
 
 import { defaultTableOptions } from '/@/components/Table/common';
 import { deepMerge } from '/@/utils';
+import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
 import { getDetailData, getDefiniteData, customDefinite } from './index';
 
 import DxTabPanel from 'devextreme-vue/tab-panel';
@@ -148,19 +149,27 @@ export default defineComponent({
           : selectedIndex.value === 2
           ? logisticsInformation.value.length
           : otherInformation.value.length;
-      formHeight.value = Math.ceil(length / 4) * 43.5;
+      formHeight.value = Math.ceil(length / 4) * 36 + (Math.ceil(length / 4) - 1) * 10;
       tableOpenedHeight.value = `calc(100vh - ${formHeight.value}px - 330px)`;
     };
     const onChangeOpened = () => {
       opened.value = !opened.value;
       getTableHeight();
     };
-
-    watch(selectedIndex, () => {
-      getTableHeight();
-    });
-
-    onMounted(async () => {
+    const onRefresh = () => {
+      getData();
+    };
+    const onSubmitClick = () => {
+      ShippingOrderApi.onShippingOrderSubmit([formData.value.GatheringParentCode]).then(() => {
+        onRefresh();
+      });
+    };
+    const onApplyClick = () => {
+      ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode]).then(() => {
+        onRefresh();
+      });
+    };
+    const getData = async () => {
       const detailData = await getDetailData(['Id', '=', Id]);
       if (!detailData) return;
       const { baseList, consigneeList, logisticsList, otherList, data } = detailData;
@@ -171,6 +180,14 @@ export default defineComponent({
       otherInformation.value = otherList;
       dataSource.value = await getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]);
       getTableHeight();
+    };
+
+    watch(selectedIndex, () => {
+      getTableHeight();
+    });
+
+    onMounted(async () => {
+      await getData();
     });
 
     return {
@@ -193,6 +210,9 @@ export default defineComponent({
       tableOpenedHeight,
       tableCloseHeight,
       onChangeOpened,
+      onSubmitClick,
+      onApplyClick,
+      onRefresh,
     };
   },
 });

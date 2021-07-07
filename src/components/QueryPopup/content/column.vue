@@ -7,10 +7,11 @@
       :show-column-lines="false"
       :show-row-lines="true"
     >
-      <DxColumn caption="序号" cell-template="index" />
-      <DxColumn data-field="caption" caption="字段" />
-      <DxColumn caption="显示" cell-template="show" />
-      <DxColumn caption="操作" cell-template="handle" />
+      <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" drop-feedback-mode="push" />
+      <DxPaging :enabled="false" />
+      <DxColumn caption="序号" cell-template="index" alignment="center" />
+      <DxColumn data-field="caption" caption="字段" alignment="center" />
+      <DxColumn caption="显示" cell-template="show" alignment="center" />
       <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
       <template #show="{ data }">
         <DxCheckBox
@@ -18,12 +19,6 @@
           :disabled="data.data.mustKey"
           @valueChanged="onChangeShow(data.data.show, data.data.key)"
         />
-      </template>
-      <template #handle="{ data }">
-        <div>
-          <span @click="onUpMove(data.rowIndex)">上移</span>
-          <span @click="onDownMove(data.rowIndex)">下移</span>
-        </div>
       </template>
     </DxDataGrid>
   </div>
@@ -39,7 +34,12 @@ import { cloneDeep } from 'lodash-es';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { handleArrayTransposition } from '/@/utils';
 
-import { DxDataGrid, DxColumn } from 'devextreme-vue/data-grid';
+import {
+  DxDataGrid,
+  DxColumn,
+  DxPaging,
+  DxRowDragging,
+} from 'devextreme-vue/data-grid';
 import { DxCheckBox } from 'devextreme-vue/check-box';
 
 export default defineComponent({
@@ -47,6 +47,8 @@ export default defineComponent({
     DxDataGrid,
     DxColumn,
     DxCheckBox,
+    DxPaging,
+    DxRowDragging,
   },
   props: {
     columns: {
@@ -83,22 +85,6 @@ export default defineComponent({
       ctx.emit('on-change-sort', data);
     };
 
-    // 点击上移触发
-    const onUpMove = (index: number) => {
-      if (index > 0) {
-        // 调用数组换位函数
-        dataSource.value = handleArrayTransposition(dataSource.value, index, index - 1);
-        onChangeColumn(dataSource.value);
-      }
-    };
-    // 点击下移触发
-    const onDownMove = (index: number) => {
-      if (index < dataSource.value.length - 1) {
-        // 调用数组换位函数
-        dataSource.value = handleArrayTransposition(dataSource.value, index, index + 1);
-        onChangeColumn(dataSource.value);
-      }
-    };
     // 是否显示选择框更新触发
     const onChangeShow = (show: boolean, key: string) => {
       // 如果不显示且排序中有此字段，则把排序中的此字段去除
@@ -112,6 +98,12 @@ export default defineComponent({
         });
         onChangeSort(orderBy);
       }
+      onChangeColumn(dataSource.value);
+    };
+    // 拖动位置触发
+    const onReorder = (e) => {
+      // 调用数组换位函数
+      dataSource.value = handleArrayTransposition(dataSource.value, e.fromIndex, e.toIndex);
       onChangeColumn(dataSource.value);
     };
 
@@ -147,9 +139,8 @@ export default defineComponent({
     return {
       dataSource,
       prefixCls,
-      onUpMove,
-      onDownMove,
       onChangeShow,
+      onReorder,
     };
   },
 });

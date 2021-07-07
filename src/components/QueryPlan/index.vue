@@ -1,6 +1,6 @@
 <template>
   <div :class="prefixCls">
-    <QueryFrom ref="queryForm" :columns="allColumns" />
+    <QueryFrom ref="queryForm" :columns="allColumns" :fast="fast" @on-save-fast="onSaveFast" />
     <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
     <QueryQuick
       :checked-index="checkedIndex"
@@ -36,6 +36,7 @@ import type {
   ISchemeColumnsItem,
   ISchemeItem,
 } from '../QueryPopup/content/types';
+import type { IQueryItem, ISchemeData } from './types';
 
 import { defineComponent, PropType, ref, watch } from 'vue';
 import { cloneDeep } from 'lodash-es';
@@ -44,7 +45,7 @@ import { useDesign } from '/@/hooks/web/useDesign';
 import { useMessage } from '/@/hooks/web/useMessage';
 import { Persistent } from '/@/utils/cache/persistent';
 import { getUuid } from '/@/utils/uuid';
-import { SCHEME_LIST_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';
+import { SCHEME_DATA_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';
 
 import QueryFrom from './component/form.vue';
 import QueryButton from './component/button.vue';
@@ -65,10 +66,13 @@ export default defineComponent({
         return [];
       },
     },
-    filterList: {
-      type: Array as PropType<ISchemeItem[]>,
+    schemeData: {
+      type: Object as PropType<ISchemeData>,
       default: () => {
-        return [];
+        return {
+          scheme: [],
+          fast: [],
+        };
       },
     },
     schemeCheckedIndex: {
@@ -86,8 +90,7 @@ export default defineComponent({
     'on-save-scheme',
     'on-del-scheme',
     'on-reset-scheme',
-    'on-search',
-    'on-filter-scheme',
+    'on-change-scheme',
   ],
   setup(props, ctx) {
     const { prefixCls } = useDesign('query-plan');
@@ -103,10 +106,12 @@ export default defineComponent({
     const schemeList = ref<ISchemeItem[]>([]);
     // 过滤方案数据副本，用于保存
     const schemeListTemp = ref<ISchemeItem[]>([]);
+    // 快速过滤数据
+    const fast = ref<IQueryItem[]>([]);
 
     // 外派列表过滤方案更新事件
     const onChangeScheme = (data: ISchemeItem) => {
-      ctx.emit('on-filter-scheme', data);
+      ctx.emit('on-change-scheme', data);
     };
     // 点击重置触发
     const onReset = () => {
@@ -114,7 +119,7 @@ export default defineComponent({
       const popupListTemp = schemeListTemp.value.filter((item) => item.uuid === popupUuid);
 
       schemeList.value[popupIndex.value] = cloneDeep(popupListTemp[0]);
-      onChangeScheme(schemeList.value[popupIndex.value]);
+      queryForm.value.changeQueryList(props.schemeData.fast);
       onSearch();
     };
     // 点击查询方案触发
@@ -124,7 +129,13 @@ export default defineComponent({
     // 点击查询触发
     const onSearch = () => {
       const queryList = queryForm.value.queryList;
-      ctx.emit('on-search', queryList);
+      const scheme = cloneDeep(schemeList.value[popupIndex.value]);
+      queryList.forEach((item) => {
+        if (item.requirement && item.value) {
+          scheme.requirement.push(item);
+        }
+      });
+      onChangeScheme(scheme);
     };
     // 处理选中超出数据长度的情况
     const handleOverLength = () => {
@@ -137,8 +148,11 @@ export default defineComponent({
       }
     };
     // 处理保存数据
-    const handleSaveData = (data: ISchemeItem[], msg: string) => {
-      Persistent.setLocal(SCHEME_LIST_KEY, data);
+    const handleSaveData = (msg: string, scheme: ISchemeItem[], fast: IQueryItem[] = []) => {
+      Persistent.setLocal(SCHEME_DATA_KEY, {
+        scheme,
+        fast: fast.length > 0 ? fast : props.schemeData.fast,
+      });
       handleOverLength();
       useMessage(msg, 'success');
     };
@@ -149,7 +163,14 @@ export default defineComponent({
     // 接收选中下标更新
     const onChangeCheckedIndex = (index: number) => {
       checkedIndex.value = index;
-      onChangeScheme(schemeListTemp.value[checkedIndex.value]);
+      const scheme = cloneDeep(schemeListTemp.value[checkedIndex.value]);
+      const queryList = queryForm.value.queryList;
+      queryList.forEach((item) => {
+        if (item.requirement && item.value) {
+          scheme.requirement.push(item);
+        }
+      });
+      onChangeScheme(scheme);
     };
     // 接收条件数据更新
     const onChangeRequirement = (data: IRequirementItem[]) => {
@@ -170,17 +191,11 @@ export default defineComponent({
       onSubmitScheme();
     };
     // 接收保存事件
-    const onSubmitScheme = () => {
+    const onSubmitScheme = (fast: IQueryItem[] = []) => {
       const temp = cloneDeep(schemeListTemp.value);
-      const queryList = queryForm.value.queryList;
-      queryList.forEach((item) => {
-        if (item.requirement && item.value) {
-          schemeList.value[popupIndex.value].requirement.push(item);
-        }
-      });
       temp[popupIndex.value] = cloneDeep(schemeList.value[popupIndex.value]);
       schemeListTemp.value = temp;
-      handleSaveData(schemeListTemp.value, '保存成功');
+      handleSaveData('保存成功', schemeListTemp.value, fast);
     };
     // 接收另存事件
     const onSaveScheme = () => {
@@ -200,7 +215,7 @@ export default defineComponent({
       schemeList.value = temp;
       schemeListTemp.value = data;
       popupIndex.value = index - 1;
-      handleSaveData(schemeListTemp.value, '删除成功');
+      handleSaveData('删除成功', schemeListTemp.value);
     };
     // 接收重置事件
     const onResetScheme = () => {
@@ -213,7 +228,6 @@ export default defineComponent({
     // 接收确认事件
     const onSubmit = () => {
       checkedIndex.value = popupIndex.value;
-      onChangeScheme(schemeList.value[popupIndex.value]);
       onSearch();
     };
     // 接受默认方案更新事件
@@ -224,14 +238,19 @@ export default defineComponent({
     const onChangePopupIndex = (index: number) => {
       popupIndex.value = index;
     };
+    // 接受快速过滤保存设置
+    const onSaveFast = (fast: IQueryItem[]) => {
+      onSubmitScheme(fast);
+    };
     // 处理组件数据
-    const handleData = (val: ISchemeItem[]) => {
-      schemeList.value = cloneDeep(val);
-      schemeListTemp.value = cloneDeep(val);
+    const handleData = (val: ISchemeData) => {
+      schemeList.value = cloneDeep(val.scheme);
+      schemeListTemp.value = cloneDeep(val.scheme);
+      fast.value = cloneDeep(val.fast);
     };
 
     watch(
-      () => props.filterList,
+      () => props.schemeData,
       (val) => {
         handleData(val);
       },
@@ -258,6 +277,7 @@ export default defineComponent({
       checkedIndex,
       schemeList,
       schemeListTemp,
+      fast,
       popupIndex,
       onSearch,
       onReset,
@@ -274,6 +294,7 @@ export default defineComponent({
       onSubmit,
       onChangeCheckedDefault,
       onChangePopupIndex,
+      onSaveFast,
     };
   },
 });

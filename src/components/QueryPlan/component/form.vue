@@ -56,7 +56,7 @@
             :width="100"
             type="default"
             text="保存设置"
-            @click="onSaveRequirement"
+            @click="onSaveFast"
           />
         </div>
       </div>
@@ -66,22 +66,15 @@
 
 <script lang="ts">
 import type { IColumnItem } from '/@/model/types';
+import type { IQueryItem } from '../types';
 
-import { defineComponent, PropType, reactive, ref } from 'vue';
+import { defineComponent, PropType, ref, watch } from 'vue';
+import { cloneDeep } from 'lodash-es';
 
 import { useDesign } from '/@/hooks/web/useDesign';
 
 import DxButton from 'devextreme-vue/button';
 import DynamicSelect from '/@/components/DynamicSelect/index.vue';
-
-interface IQueryItem {
-  requirement: string;
-  operator: string;
-  operatorList: string[];
-  value: string;
-  type: string;
-  datatypekeies: string;
-}
 
 export default defineComponent({
   components: {
@@ -95,12 +88,18 @@ export default defineComponent({
         return [];
       },
     },
+    fast: {
+      type: Array as PropType<IQueryItem[]>,
+      default: () => {
+        return [];
+      },
+    },
   },
-  // emits: ['on-add-requirement', 'on-del-requirement', 'on-save-requirement'],
-  setup() {
+  emits: ['on-save-fast'],
+  setup(props, ctx) {
     const { prefixCls } = useDesign('query-form');
     const opened = ref<boolean>(false);
-    const queryList = reactive<IQueryItem[]>([
+    const queryList = ref<IQueryItem[]>([
       {
         requirement: '',
         operator: '=',
@@ -112,7 +111,7 @@ export default defineComponent({
     ]);
 
     const onAddRequirement = () => {
-      queryList.push({
+      queryList.value.push({
         requirement: '',
         operator: '=',
         operatorList: [],
@@ -122,14 +121,29 @@ export default defineComponent({
       });
     };
     const onDelRequirement = (index: number) => {
-      queryList.splice(index, 1);
+      queryList.value.splice(index, 1);
     };
-    const onSaveRequirement = () => {
-      console.log(queryList);
+    const onSaveFast = () => {
+      ctx.emit('on-save-fast', queryList.value);
     };
     const closePopup = () => {
       opened.value = false;
     };
+    const changeQueryList = (data: IQueryItem[]) => {
+      queryList.value = data;
+    };
+
+    watch(
+      () => props.fast,
+      (val) => {
+        if (val.length > 0) {
+          queryList.value = cloneDeep(val);
+        }
+      },
+      {
+        immediate: true,
+      }
+    );
 
     return {
       prefixCls,
@@ -137,7 +151,8 @@ export default defineComponent({
       queryList,
       onAddRequirement,
       onDelRequirement,
-      onSaveRequirement,
+      onSaveFast,
+      changeQueryList,
       closePopup,
     };
   },

@@ -6,7 +6,7 @@
         :data-source="paramList"
         :show-clear-button="true"
         value-expr="key"
-        width="130"
+        width="180"
         display-expr="caption"
         @update:value="$emit('update:paramKey', $event)"
       ></DxSelectBox>

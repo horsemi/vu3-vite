@@ -58,12 +58,12 @@ export function getRawRoute(route: RouteLocationNormalized): RouteLocationNormal
 /**
  * @description 数组元素换位
  * @param arr 原数组
- * @param current 换位元素下标
- * @param next 移动到具体位置的下标
+ * @param fromIndex 换位元素下标
+ * @param toIndex 移动到具体位置的下标
  * @returns 新数组
  */
-export function handleArrayTransposition<T>(arr: T[], cureent: number, next: number): T[] {
+export function handleArrayTransposition<T>(arr: T[], fromIndex: number, toIndex: number): T[] {
   const temp = cloneDeep(arr);
-  temp[cureent] = temp.splice(next, 1, temp[cureent])[0];
+  temp[fromIndex] = temp.splice(toIndex, 1, temp[fromIndex])[0];
   return temp;
 }

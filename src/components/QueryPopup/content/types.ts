@@ -6,7 +6,7 @@ export interface IRequirementItem extends IQueryItem {
   /**
    * @description: 逻辑
    */
-  logic: string;
+  logic?: string;
 }
 
 export interface IFieldItem {
