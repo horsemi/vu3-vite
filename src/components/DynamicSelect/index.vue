@@ -181,7 +181,9 @@
 
           context.emit('update:paramDataType', type);
           context.emit('update:paramDatatypekeies', datatypekeies);
-          context.emit('update:operation', '=');
+          if (!props.operation) {
+            context.emit('update:operation', '=');
+          }
           initOption(type!, datatypekeies!);
         } else {
           operatorOptions.value = [];
@@ -211,13 +213,18 @@
 
       function initValue(type: string) {
         let initData: unknown = '';
+        let valueType = Object.prototype.toString.call(props.value);
         switch (type) {
           case 'datetime': {
-            initData = new Date();
+            if (valueType !== '[object Date]') {
+              initData = new Date();
+            }
             break;
           }
           case 'number': {
-            initData = 0;
+            if (valueType !== '[object Number]') {
+              initData = 0;
+            }
             break;
           }
         }

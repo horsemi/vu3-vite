@@ -9,14 +9,14 @@ export class ShippingOrderApi {
   static onShippingOrderSubmit(codes: string[]) {
     return defHttp.post({
       url: apiUrl.onShippingOrderSubmitUrl,
-      params: { GatheringParentCode: codes },
+      params: { GatheringParentCodes: codes },
     });
   }
 
   static onShippingOrderApply(codes: string[]) {
     return defHttp.post({
       url: apiUrl.onShippingOrderApplyUrl,
-      params: { GatheringParentCode: codes },
+      params: { GatheringParentCodes: codes },
     });
   }
 }
