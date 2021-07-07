@@ -21,7 +21,7 @@
           :caption="item.caption"
           :data-type="item.type"
           :cell-template="item.cellTemplate"
-          :alignment="item.alignment ? item.alignment : 'left'"
+          :alignment="item.alignment ? item.alignment : 'center'"
         >
           <DxLookup
             v-if="item.datatypekeies === 'enum'"
@@ -65,7 +65,7 @@
 
 <script lang="ts">
   import type { ITableOptions } from './types';
-  import type { IColumnItem } from '/@/model/table/types';
+  import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '../QueryPopup/content/types';
 
   import { defineComponent, onBeforeUnmount, ref, PropType, watch, nextTick } from 'vue';
@@ -240,6 +240,8 @@
 
   .@{prefix-cls} {
     position: relative;
+    width: 100%;
+    height: 100%;
 
     // 隔行换色
     .dx-datagrid .dx-row-alt > td,

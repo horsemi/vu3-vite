@@ -6,9 +6,9 @@
       :width="width"
       :search-enabled="true"
       search-mode="contains"
-      :search-expr="['name', 'code']"
-      display-expr="name"
-      value-expr="code"
+      :search-expr="['description', 'value']"
+      display-expr="description"
+      value-expr="value"
       @update:value="$emit('update:value', $event)"
     >
     </DxSelectBox>
@@ -16,19 +16,15 @@
 </template>
 
 <script lang="ts">
-  import type { FoundationMap, FoundationDataType } from '/@/api/app/foundation';
-
   import { defineComponent, ref } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { useAppStore } from '/@/store/modules/app';
   
   import DxSelectBox from 'devextreme-vue/select-box';
-  // import DataSource from 'devextreme/data/data_source';
-
-  import { FoundationApi } from '/@/api/app';
 
   export default defineComponent({
-    name: 'FoundationSelect',
+    name: 'EnumSelect',
     components: { DxSelectBox },
     props: {
       value: {
@@ -39,21 +35,17 @@
         type: String,
         default: '200',
       },
-      foundationCode: {
+      type: {
         type: String,
         default: '',
       },
     },
     emits: ['update:value'],
-    setup(prop) {
-      const { prefixCls } = useDesign('foundation-select');
-      const options = ref<FoundationDataType[]>([]);
-      FoundationApi.getFoundationByCode(
-        prop.foundationCode.slice(prop.foundationCode.indexOf('_') + 1) as FoundationMap,
-        { isall: true }
-      ).then((resolve) => {
-        options.value = resolve;
-      });
+    setup(props) {
+      const { prefixCls } = useDesign('enum-select');
+      const options = ref<{ key: string, value: string, description: string }[]>([]);
+      const appStore = useAppStore();
+      options.value = appStore.getGlobalEnumDataByCode(props.type);
       return {
         prefixCls,
         options,
@@ -63,7 +55,7 @@
 </script>
 
 <style lang="less" scoped>
-  @prefix-cls: ~'@{namespace}-foundation-select';
+  @prefix-cls: ~'@{namespace}-enum-select';
 
   .@{prefix-cls} {
     display: inline-block;

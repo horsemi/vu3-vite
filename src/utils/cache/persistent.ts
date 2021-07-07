@@ -1,4 +1,5 @@
 import type { SystemConfig } from '/#/config';
+import type { ISchemeData } from '/@/components/QueryPlan/types';
 
 import { createLocalStorage, createSessionStorage } from '/@/utils/cache';
 import { Memory } from './memory';
@@ -8,19 +9,18 @@ import {
   USER_INFO_KEY,
   APP_LOCAL_CACHE_KEY,
   APP_SESSION_CACHE_KEY,
-  SCHEME_LIST_KEY,
+  SCHEME_DATA_KEY,
   SCHEME_CHECKED_INDE_KEY,
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
 import { UserInfo } from '/@/store/types';
 import { toRaw } from 'vue';
-import { ISchemeItem } from '/@/components/QueryPopup/content/types';
 
 interface BasicStore {
   [TOKEN_KEY]: string | number | null | undefined;
   [USER_INFO_KEY]: UserInfo;
   [SYSTEM_CFG_KEY]: SystemConfig;
-  [SCHEME_LIST_KEY]: ISchemeItem[];
+  [SCHEME_DATA_KEY]: ISchemeData;
   [SCHEME_CHECKED_INDE_KEY]: number;
 }
 

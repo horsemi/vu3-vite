@@ -2,13 +2,11 @@
   <div class="detail">
     <div class="tab-panel">
       <div class="btn-box">
-        <DxButton :width="76" text="保存" type="default" />
-        <DxDropDownButton :width="80" text="提交" />
-        <DxDropDownButton :width="80" text="审核" />
-        <DxButton :width="76" text="刷新" />
+        <DxButton :width="56" :height="26" type="default" text="提交" @click="onSubmitClick" />
+        <DxButton :width="56" :height="26" text="审核" @click="onApplyClick" />
+        <DxButton :width="56" :height="26" text="刷新" @click="onRefresh" />
       </div>
       <DxTabPanel
-        ref="tabPanel"
         v-model:selected-index="selectedIndex"
         :data-source="multiViewItems"
         :loop="true"
@@ -18,29 +16,26 @@
       >
         <template #item="{ data }">
           <div class="tab">
-            <div
-              ref="formBox"
-              class="form-box"
-              :style="{ maxHeight: opened ? '50vh' : closeHeight + 'px' }"
-            >
-              <DxForm id="form" :form-data="formData" :col-count="4">
-                <template v-for="(item, index) in getDetailItem(data.name)" :key="index">
-                  <DxItem
-                    v-if="!item.hide"
-                    :label="{ text: item.label }"
-                    :data-field="item.dataField"
-                    :editor-type="item.editorType"
-                    :disabled="item.disabled"
-                    :editor-options="handleEditorOptions(item.editorType, item.dataField)"
-                  />
-                </template>
-                <DxSwitch />
-              </DxForm>
+            <div class="form-wrap" :style="{ height: opened ? formHeight + 'px' : '28px' }">
+              <div ref="formBox" class="form-box">
+                <DetailForm
+                  :form-data="formData"
+                  :form-list="
+                    data.title === '基本信息'
+                      ? baseInformation
+                      : data.title === '收货人信息'
+                      ? consigneeInformation
+                      : data.title === '物流信息'
+                      ? logisticsInformation
+                      : otherInformation
+                  "
+                />
+              </div>
             </div>
             <div class="icon-box">
               <SvgIcon
                 :class="['icon', opened && 'icon--translate']"
-                size="16"
+                size="12"
                 name="multi-arrow"
                 @click="onChangeOpened"
               ></SvgIcon>
@@ -51,8 +46,8 @@
     </div>
     <div class="tab-panel">
       <div class="btn-box">
-        <DxButton :width="76" text="新增" type="default" />
-        <DxButton :width="76" text="删除" />
+        <DxButton :width="56" :height="26" text="新增" type="default" />
+        <DxButton :width="56" :height="26" text="删除" />
       </div>
       <DxTabPanel
         class="table-wrap"
@@ -63,13 +58,8 @@
         :focus-state-enabled="false"
       >
         <template #item>
-          <div class="tab">
-            <OdsTable
-              class="ods-table"
-              :table-options="tableOptions"
-              :data-source="dataSource"
-              :columns="columns"
-            >
+          <div class="tab" :style="{ height: opened ? tableOpenedHeight : tableCloseHeight }">
+            <OdsTable :table-options="tableOptions" :data-source="dataSource" :columns="columns">
             </OdsTable>
           </div>
         </template>
@@ -79,58 +69,43 @@
 </template>
 
 <script lang="ts">
-import type { EditorType } from '/@/model/detail/types';
 import type { ITableOptions } from '/@/components/Table/types';
+import type { IDetailItem } from '/@/utils/detail/types';
 
 import { defineComponent, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { cloneDeep } from 'lodash-es';
 
-import {
-  getDetailData,
-  getDefiniteData,
-  base,
-  consignee,
-  logistics,
-  other,
-  customDefinite,
-} from '/@/model/detail/shipping-orders';
 import { defaultTableOptions } from '/@/components/Table/common';
 import { deepMerge } from '/@/utils';
+import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
+import { getDetailData, getDefiniteData, customDefinite } from './index';
 
 import DxTabPanel from 'devextreme-vue/tab-panel';
-import { DxForm, DxItem } from 'devextreme-vue/form';
-import { DxSwitch } from 'devextreme-vue/switch';
 import DxButton from 'devextreme-vue/button';
-import DxDropDownButton from 'devextreme-vue/drop-down-button';
+
+import DetailForm from '/@/components/DetailForm/index.vue';
 
 export default defineComponent({
   components: {
     DxTabPanel,
-    DxForm,
-    DxItem,
-    DxSwitch,
     DxButton,
-    DxDropDownButton,
+    DetailForm,
   },
   setup() {
     const opened = ref(true);
     const multiViewItems = [
       {
         title: '基本信息',
-        name: 'baseInformation',
       },
       {
         title: '收货人信息',
-        name: 'consigneeInformation',
       },
       {
         title: '物流信息',
-        name: 'logisticsInformation',
       },
       {
         title: '其他信息',
-        name: 'otherInformation',
       },
     ];
     const multiEntityItems = [
@@ -141,21 +116,22 @@ export default defineComponent({
     const tableData = [];
     const closeHeight = 36;
     const formBox = ref();
-    const tabPanel = ref();
+    const formHeight = ref();
     const selectedIndex = ref(0);
-    let tableOpenedHeight = '';
-    const tableCloseHeight = 'calc(100vh - 36px - 370px)';
+    let tableOpenedHeight = ref();
+    const tableCloseHeight = 'calc(100vh - 28px - 240px)';
 
     const route = useRoute();
     const Id = parseInt(route.query.Id as string);
     const formData = ref();
-    const baseInformation = base;
-    const consigneeInformation = consignee;
-    const logisticsInformation = logistics;
-    const otherInformation = other;
+    const baseInformation = ref<IDetailItem[]>([]);
+    const consigneeInformation = ref<IDetailItem[]>([]);
+    const logisticsInformation = ref<IDetailItem[]>([]);
+    const otherInformation = ref<IDetailItem[]>([]);
 
     const options: Partial<ITableOptions> = {
       useScrolling: true,
+      showBorders: false,
       page: {
         size: 10,
       },
@@ -164,56 +140,66 @@ export default defineComponent({
     const dataSource = ref();
     const columns = customDefinite;
 
-    const handleEditorOptions = (editorType: EditorType, dataField: string) => {
-      let editorOptions;
-      if (editorType === 'dxSwitch') {
-        editorOptions = {
-          switchedOnText: '是',
-          switchedOffText: '否',
-        };
-      }
-      return editorOptions;
-    };
-    const getTableOpenedHeight = () => {
-      tableOpenedHeight = `calc(100vh - ${tabPanel.value.$el.offsetHeight}px - 250px)`;
-      tableOptions.value.height = tableOpenedHeight;
+    const getTableHeight = () => {
+      const length =
+        selectedIndex.value === 0
+          ? baseInformation.value.length
+          : selectedIndex.value === 1
+          ? consigneeInformation.value.length
+          : selectedIndex.value === 2
+          ? logisticsInformation.value.length
+          : otherInformation.value.length;
+      formHeight.value = Math.ceil(length / 4) * 28 + (Math.ceil(length / 4) - 1) * 5;
+      tableOpenedHeight.value = `calc(100vh - ${formHeight.value}px - 240px)`;
     };
     const onChangeOpened = () => {
       opened.value = !opened.value;
-      if (opened.value) {
-        tableOptions.value.height = tableOpenedHeight;
-      } else {
-        tableOptions.value.height = tableCloseHeight;
-      }
+      getTableHeight();
     };
-    const getDetailItem = (name: string) => {
-      if (name === 'baseInformation') {
-        return baseInformation;
-      } else if (name === 'consigneeInformation') {
-        return consigneeInformation;
-      } else if (name === 'logisticsInformation') {
-        return logisticsInformation;
-      } else if (name === 'otherInformation') {
-        return otherInformation;
-      } else {
-        return [];
-      }
+    const onRefresh = () => {
+      getData();
+    };
+    const onSubmitClick = () => {
+      ShippingOrderApi.onShippingOrderSubmit([formData.value.GatheringParentCode]).then(() => {
+        onRefresh();
+      });
+    };
+    const onApplyClick = () => {
+      ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode]).then(() => {
+        onRefresh();
+      });
+    };
+    const getData = async () => {
+      dataSource.value = await getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]);
+      const detailData = await getDetailData(['Id', '=', Id]);
+      if (!detailData) return;
+      const { baseList, consigneeList, logisticsList, otherList, data } = detailData;
+      formData.value = data;
+      baseInformation.value = baseList;
+      consigneeInformation.value = consigneeList;
+      logisticsInformation.value = logisticsList;
+      otherInformation.value = otherList;
+      
+      getTableHeight();
     };
 
     watch(selectedIndex, () => {
-      getTableOpenedHeight();
+      getTableHeight();
     });
 
     onMounted(async () => {
-      formData.value = await getDetailData(['Id', '=', Id]);
-      getTableOpenedHeight();
-      dataSource.value = await getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]);
+      await getData();
     });
 
     return {
+      formHeight,
+      baseInformation,
+      consigneeInformation,
+      logisticsInformation,
+      otherInformation,
+      columns,
       selectedIndex,
       formBox,
-      tabPanel,
       opened,
       multiViewItems,
       multiEntityItems,
@@ -221,23 +207,19 @@ export default defineComponent({
       closeHeight,
       formData,
       dataSource,
-      baseInformation,
-      consigneeInformation,
-      logisticsInformation,
-      otherInformation,
       tableOptions,
-      columns,
       tableOpenedHeight,
       tableCloseHeight,
-      handleEditorOptions,
       onChangeOpened,
-      getDetailItem,
+      onSubmitClick,
+      onApplyClick,
+      onRefresh,
     };
   },
 });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
 .detail {
   flex: 1;
   display: flex;
@@ -248,17 +230,19 @@ export default defineComponent({
     position: relative;
     display: flex;
     flex-direction: column;
-    padding-top: 10px;
     background-color: #fff;
     &:last-child {
       flex: 1;
-      margin-top: 20px;
+      margin-top: 10px;
     }
   }
 
   .tab {
-    padding: 20px;
+    padding: 5px 20px;
     background-color: #fff;
+    &:last-child {
+      transition: height 500ms;
+    }
   }
   .btn-box {
     position: absolute;
@@ -267,22 +251,26 @@ export default defineComponent({
     z-index: 100;
     display: flex;
     align-items: center;
-    height: 54px;
+    height: 36px;
     & > * {
       margin-left: 10px;
     }
   }
+  .form-wrap {
+    flex: 1;
+    overflow: hidden;
+    transition: height 500ms;
+  }
   .form-box {
     padding: 0 20px;
     overflow: hidden;
-    transition: all 500ms ease-in-out;
   }
   .icon-box {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding-top: 20px;
+    padding-top: 5px;
     .icon {
       cursor: pointer;
       transform: rotate(0);
@@ -296,8 +284,36 @@ export default defineComponent({
   .table-wrap {
     flex: 1;
   }
-  .ods-table {
-    height: 100%;
+
+  .dx-layout-manager .dx-field-item:not(.dx-first-row) {
+    padding-top: 5px !important;
+  }
+
+  .dx-widget {
+    font-size: 12px !important;
+  }
+
+  .dx-box-item-content {
+    font-size: 12px !important;
+  }
+
+  .dx-texteditor-input {
+    min-height: 0 !important;
+    padding: 5px 9px 5px !important;
+  }
+
+  .dx-button-has-text .dx-button-content {
+    padding: 0 !important;
+  }
+
+  .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-checkbox,
+  .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-switch {
+    margin: 0 !important;
+  }
+
+  .dx-datagrid-table .dx-freespace-row > td {
+    // 去掉空余空间的边框，当指定表格高度时，会出现这个占满空余空间
+    border: none !important;
   }
 }
 </style>

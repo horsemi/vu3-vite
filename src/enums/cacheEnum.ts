@@ -7,7 +7,7 @@ export const LOCALE_KEY = 'LOCALE__';
 
 export const SYSTEM_CFG_KEY = 'SYSTEM_CFG__';
 
-export const SCHEME_LIST_KEY = 'SCHEME_LIST__';
+export const SCHEME_DATA_KEY = 'SCHEME_DATA__';
 
 export const SCHEME_CHECKED_INDE_KEY = 'SCHEME_CHECKED_INDEX__';
 

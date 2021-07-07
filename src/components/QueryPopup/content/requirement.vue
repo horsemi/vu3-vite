@@ -1,11 +1,11 @@
 <template>
   <div :class="prefixCls">
     <div :class="`${prefixCls}__header`">
-      <span style="width: 140px">字段</span>
-      <span style="width: 105px">比较</span>
-      <span style="width: 188px">值</span>
-      <span style="width: 140px">逻辑</span>
-      <span>操作</span>
+      <span style="width: 180px">字段</span>
+      <span style="width: 95px">比较</span>
+      <span style="width: 180px">值</span>
+      <span style="width: 130px">逻辑</span>
+      <span style="width: 120px">操作</span>
     </div>
     <DxScrollView height="calc(100% - 33px)">
       <div>
@@ -40,7 +40,7 @@
 
 <script lang="ts">
   import type { ILogicOptions, IRequirementItem } from './types';
-  import type { IColumnItem } from '/@/model/table/types';
+  import type { IColumnItem } from '/@/model/types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';
   import { cloneDeep } from 'lodash-es';
@@ -163,9 +163,13 @@
     &__header {
       display: flex;
       align-items: center;
-      padding: 7px;
+      padding: 7px 0;
       color: #333;
       background-color: #fafafa;
+      span {
+        margin-right: 10px;
+        text-align: center;
+      }
     }
 
     &__item {
@@ -175,9 +179,12 @@
     }
 
     &__handle {
+      display: flex;
+      justify-content: space-around;
+      width: 120px;
       margin-left: 10px;
+
       span {
-        margin-right: 20px;
         color: @color-primary;
         cursor: pointer;
       }
