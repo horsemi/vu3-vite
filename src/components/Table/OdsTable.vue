@@ -26,9 +26,7 @@
           <DxLookup
             v-if="item.datatypekeies && item.datatypekeies.startsWith('enum_')"
             :data-source="getGlobalEnumDataByCode(item.datatypekeies)"
-            :value-expr="
-              item.key === 'BillTypeCode' ? 'code' : item.key === 'DocumentStatus' ? 'key' : 'value'
-            "
+            value-expr="key"
             display-expr="description"
           />
         </DxColumn>

@@ -6,9 +6,9 @@
       :width="width"
       :search-enabled="true"
       search-mode="contains"
-      :search-expr="['description', 'value']"
+      :search-expr="['description', 'key']"
       display-expr="description"
-      value-expr="value"
+      value-expr="key"
       @update:value="$emit('update:value', $event)"
     >
     </DxSelectBox>
