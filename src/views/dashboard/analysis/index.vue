@@ -83,20 +83,20 @@
       });
       const schemeCheckedIndex = ref<number>(0);
 
-      // const handleBillCodeClick = () => {
-      //   go({ name: 'exampleDetails' });
-      // };
       const onChangeScheme = (data: ISchemeItem) => {
         filterScheme.value = cloneDeep(data);
       };
+
       const getQueryPlan = () => {
         const oldSchemeData = Persistent.getLocal(SCHEME_DATA_KEY);
         const oldSchemeCheckedIndex = Persistent.getLocal(SCHEME_CHECKED_INDE_KEY) as
           | number
           | undefined;
+
         if (oldSchemeCheckedIndex) {
           schemeCheckedIndex.value = oldSchemeCheckedIndex;
         }
+
         if (!oldSchemeData) {
           const schemeData = {
             scheme: [
@@ -142,6 +142,7 @@
           Persistent.setLocal(SCHEME_DATA_KEY, schemeData);
         }
       };
+
       const handleTableData = async () => {
         getQueryPlan();
         schemeData.value = Persistent.getLocal(SCHEME_DATA_KEY) as ISchemeData;
@@ -166,10 +167,6 @@
           columns.value = getCompleteColumns(allColumns.value, dataSource.value.select());
         }
       };
-
-      onMounted(async () => {
-        await handleTableData();
-      });
 
       onMounted(async () => {
         await handleTableData();
