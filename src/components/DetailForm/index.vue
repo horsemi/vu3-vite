@@ -15,10 +15,10 @@
     </template>
     <template #datatypekeies="{ data }">
       <EnumSelect
-        v-if="data.editorOptions.datatypekeies === 'enum'"
+        v-if="data.editorOptions.datatypekeies && data.editorOptions.datatypekeies.startsWith('enum_')"
         width="100%"
         :value="formData[data.dataField]"
-        :type="data.editorOptions.type"
+        :datatypekeies="data.editorOptions.datatypekeies"
       />
       <FoundationSelect
         v-else

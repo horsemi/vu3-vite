@@ -12,6 +12,8 @@ const handleType = (val: string): string => {
 
 export const baseDataPre = 'foundation_';
 
+export const enumDataPre = 'enum_';
+
 export const getColumnList = async (
   code: string,
   customColumns: IColumnItem[]

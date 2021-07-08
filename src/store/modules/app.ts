@@ -58,7 +58,7 @@ export const useAppStore = defineStore({
       Persistent.setLocal(SYSTEM_CFG_KEY, this.systemConfig);
     },
     setGlobalEnumData(globalEnumData: GlobalEnumType[]) {
-      this.globalEnumData = globalEnumData;
+      this.globalEnumData.push(...globalEnumData);
     },
     getGlobalEnumDataByCode(code: string) {
       const enumResult = this.globalEnumData.filter((item) => item.name === code);

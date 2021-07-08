@@ -111,7 +111,17 @@ export default defineComponent({
                 },
               ],
               orderBy: [],
-              columns: ['BillCode', 'BillDate', 'DocumentStatus', 'DeliveryWarehouseCode', 'Nickname', 'DeliveryPointCode', 'ThreeServicePointCode', 'TotalVolume', 'TotalPackage'],
+              columns: [
+                'BillCode',
+                'BillDate',
+                'DocumentStatus',
+                'DeliveryWarehouseCode',
+                'Nickname',
+                'DeliveryPointCode',
+                'ThreeServicePointCode',
+                'TotalVolume',
+                'TotalPackage',
+              ],
             },
           ],
           fast: [
@@ -130,18 +140,18 @@ export default defineComponent({
     };
     const handleTableData = async () => {
       getQueryPlan();
+      schemeData.value = Persistent.getLocal(SCHEME_DATA_KEY) as ISchemeData;
+      const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
+      const fast = schemeData.value.fast;
+      if (fast.length > 0) {
+        scheme.requirement.push(...fast);
+      }
+      filterScheme.value = scheme;
       const columnsData = await getColumns();
       if (columnsData) {
         const { columnList, key, keyType } = columnsData;
         allColumns.value = columnList;
         tableKey.value = key;
-        schemeData.value = Persistent.getLocal(SCHEME_DATA_KEY) as ISchemeData;
-        const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
-        const fast = schemeData.value.fast;
-        if (fast.length > 0) {
-          scheme.requirement.push(...fast);
-        }
-        filterScheme.value = scheme;
         dataSource.value = await getDataSource(
           tableOptions,
           filterScheme.value,

@@ -35,7 +35,7 @@
         type: String,
         default: '200',
       },
-      type: {
+      datatypekeies: {
         type: String,
         default: '',
       },
@@ -45,7 +45,7 @@
       const { prefixCls } = useDesign('enum-select');
       const options = ref<{ key: string, value: string, description: string }[]>([]);
       const appStore = useAppStore();
-      options.value = appStore.getGlobalEnumDataByCode(props.type);
+      options.value = appStore.getGlobalEnumDataByCode(props.datatypekeies.split('_')[1]);
       return {
         prefixCls,
         options,
