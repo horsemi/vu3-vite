@@ -17,7 +17,7 @@ export const enumDataPre = 'enum_';
 export const getColumnList = async (
   code: string,
   customColumns: IColumnItem[]
-): Promise<{ columnList: IColumnItem[]; key: string[]; keyType: IKeyType[]; } | undefined> => {
+): Promise<{ columnList: IColumnItem[]; key: string[]; keyType: IKeyType[] } | undefined> => {
   try {
     const res = await getList(code);
     const fieldTypes = res.store.odata.fieldTypes as IFieldType[];

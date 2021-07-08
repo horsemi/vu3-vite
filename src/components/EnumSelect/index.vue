@@ -6,9 +6,9 @@
       :width="width"
       :search-enabled="true"
       search-mode="contains"
-      :search-expr="['description', 'value']"
+      :search-expr="['description', 'key']"
       display-expr="description"
-      value-expr="value"
+      value-expr="key"
       @update:value="$emit('update:value', $event)"
     >
     </DxSelectBox>
@@ -20,7 +20,7 @@
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useAppStore } from '/@/store/modules/app';
-  
+
   import DxSelectBox from 'devextreme-vue/select-box';
 
   export default defineComponent({
@@ -43,7 +43,7 @@
     emits: ['update:value'],
     setup(props) {
       const { prefixCls } = useDesign('enum-select');
-      const options = ref<{ key: string, value: string, description: string }[]>([]);
+      const options = ref<{ key: string; value: string; description: string }[]>([]);
       const appStore = useAppStore();
       options.value = appStore.getGlobalEnumDataByCode(props.datatypekeies.split('_')[1]);
       return {

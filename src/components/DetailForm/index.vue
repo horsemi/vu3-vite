@@ -15,7 +15,9 @@
     </template>
     <template #datatypekeies="{ data }">
       <EnumSelect
-        v-if="data.editorOptions.datatypekeies && data.editorOptions.datatypekeies.startsWith('enum_')"
+        v-if="
+          data.editorOptions.datatypekeies && data.editorOptions.datatypekeies.startsWith('enum_')
+        "
         width="100%"
         :value="formData[data.dataField]"
         :datatypekeies="data.editorOptions.datatypekeies"
@@ -31,55 +33,55 @@
 </template>
 
 <script lang="ts">
-import type { IDetailItem } from '/@/utils/detail/types';
+  import type { IDetailItem } from '/@/utils/detail/types';
 
-import { defineComponent, PropType } from 'vue';
+  import { defineComponent, PropType } from 'vue';
 
-import { DxForm, DxItem } from 'devextreme-vue/form';
-import { DxSwitch } from 'devextreme-vue/switch';
+  import { DxForm, DxItem } from 'devextreme-vue/form';
+  import { DxSwitch } from 'devextreme-vue/switch';
 
-import FoundationSelect from '/@/components/FoundationSelect/index.vue';
-import EnumSelect from '/@/components/EnumSelect/index.vue';
+  import FoundationSelect from '/@/components/FoundationSelect/index.vue';
+  import EnumSelect from '/@/components/EnumSelect/index.vue';
 
-export default defineComponent({
-  components: {
-    DxForm,
-    DxItem,
-    DxSwitch,
-    FoundationSelect,
-    EnumSelect,
-  },
-  props: {
-    formData: {
-      type: Object,
-      default: () => {
-        return {};
+  export default defineComponent({
+    components: {
+      DxForm,
+      DxItem,
+      DxSwitch,
+      FoundationSelect,
+      EnumSelect,
+    },
+    props: {
+      formData: {
+        type: Object,
+        default: () => {
+          return {};
+        },
+      },
+      formList: {
+        type: Array as PropType<IDetailItem[]>,
+        default: () => {
+          return [];
+        },
       },
     },
-    formList: {
-      type: Array as PropType<IDetailItem[]>,
-      default: () => {
-        return [];
-      },
-    },
-  },
-  setup() {
-    const handleEditorOptions = (item: IDetailItem) => {
-      let editorOptions;
-      if (item.editorType === 'dxSwitch') {
-        editorOptions = {
-          switchedOnText: '是',
-          switchedOffText: '否',
-        };
-      } else {
-        editorOptions = { ...item };
-      }
-      return editorOptions;
-    };
+    setup() {
+      const handleEditorOptions = (item: IDetailItem) => {
+        let editorOptions;
+        if (item.editorType === 'dxSwitch') {
+          editorOptions = {
+            switchedOnText: '是',
+            switchedOffText: '否',
+          };
+        } else {
+          editorOptions = { ...item };
+        }
+        return editorOptions;
+      };
 
-    return {
-      handleEditorOptions,
-    };
-  },
-});
+      return {
+        handleEditorOptions,
+      };
+    },
+  });
 </script>

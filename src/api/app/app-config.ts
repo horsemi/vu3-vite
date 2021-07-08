@@ -4,7 +4,7 @@ import { defHttp } from '/@/utils/http/axios';
 
 enum apiUrl {
   getGlobalEnumUrl = '/api/odata/enums',
-  getBillTypesUrl = '/api/odata/billTypes'
+  getBillTypesUrl = '/api/odata/billTypes',
 }
 
 export class AppConfigApi {
