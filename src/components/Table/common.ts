@@ -2,7 +2,6 @@ import type { ITableOptions, ISortItem } from './types';
 import type {
   IOrderByItem,
   IRequirementItem,
-  ISchemeColumnsItem,
   ISchemeItem,
 } from '../QueryPopup/content/types';
 import type { IColumnItem, IKeyType } from '/@/model/types';
@@ -102,18 +101,13 @@ export const getSort = (orderBy: IOrderByItem[], tableSort: ISortItem[] = []) =>
 // 获取格式化后的表字段
 export const getSelect = (
   allColumns: IColumnItem[],
-  columns: ISchemeColumnsItem[],
+  columns: string[],
   key: string[] = []
 ) => {
   const select: string[] = [];
-  columns.forEach((item) => {
-    if (item.show) {
-      allColumns.forEach((col) => {
-        if (item.key === col.key) {
-          select.push(col.key);
-          return;
-        }
-      });
+  columns.forEach(key => {
+    if (allColumns.some(allCol => allCol.key === key)) {
+      select.push(key);
     }
   });
   return select.concat(key);

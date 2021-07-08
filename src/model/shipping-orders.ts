@@ -74,7 +74,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'TotalPackage',
-    caption: '总包裹数',
+    caption: '总包件数',
   },
   {
     key: 'Group',

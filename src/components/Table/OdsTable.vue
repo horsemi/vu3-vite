@@ -128,7 +128,7 @@
         },
       },
       filterScheme: {
-        type: Object as PropType<ISchemeItem | undefined>,
+        type: Object as PropType<ISchemeItem>,
         default: () => {
           return {};
         },
@@ -154,7 +154,7 @@
         // console.log(columns);
       };
 
-      const handleFilterScheme = (scheme) => {
+      const handleFilterScheme = (scheme: ISchemeItem) => {
         if (!isEmpty(tableData.value) && !isEmpty(scheme)) {
           const select = getSelect(props.allColumns, scheme.columns, props.tableKey);
           const filter = getFilter(scheme.requirement);

@@ -34,7 +34,7 @@
 
 <script lang="ts">
 import type { IColumnItem } from '/@/model/types';
-import type { ISchemeColumnsItem, ISchemeItem } from '/@/components/QueryPopup/content/types';
+import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 import type { ITableOptions } from '/@/components/Table/types';
 import type { ISchemeData } from '/@/components/QueryPlan/types';
 
@@ -85,7 +85,7 @@ export default defineComponent({
     const onChangeScheme = (data: ISchemeItem) => {
       filterScheme.value = cloneDeep(data);
     };
-    const getQueryPlan = (allColumns) => {
+    const getQueryPlan = () => {
       const oldSchemeData = Persistent.getLocal(SCHEME_DATA_KEY);
       const oldSchemeCheckedIndex = Persistent.getLocal(SCHEME_CHECKED_INDE_KEY) as
         | number
@@ -94,14 +94,6 @@ export default defineComponent({
         schemeCheckedIndex.value = oldSchemeCheckedIndex;
       }
       if (!oldSchemeData) {
-        const columns: ISchemeColumnsItem[] = [];
-        allColumns.forEach((item) => {
-          columns.push({
-            key: item.key,
-            caption: item.caption,
-            show: true,
-          });
-        });
         const schemeData = {
           scheme: [
             {
@@ -119,7 +111,7 @@ export default defineComponent({
                 },
               ],
               orderBy: [],
-              columns,
+              columns: ['BillCode', 'BillDate', 'DocumentStatus', 'DeliveryWarehouseCode', 'Nickname', 'DeliveryPointCode', 'ThreeServicePointCode', 'TotalVolume', 'TotalPackage'],
             },
           ],
           fast: [
@@ -137,12 +129,12 @@ export default defineComponent({
       }
     };
     const handleTableData = async () => {
+      getQueryPlan();
       const columnsData = await getColumns();
       if (columnsData) {
         const { columnList, key, keyType } = columnsData;
         allColumns.value = columnList;
         tableKey.value = key;
-        getQueryPlan(allColumns.value);
         schemeData.value = Persistent.getLocal(SCHEME_DATA_KEY) as ISchemeData;
         const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
         const fast = schemeData.value.fast;

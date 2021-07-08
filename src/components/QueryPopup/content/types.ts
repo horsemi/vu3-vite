@@ -89,7 +89,7 @@ export interface ISchemeItem {
   /**
    * @description: 显示隐藏列
    */
-  columns: ISchemeColumnsItem[];
+  columns: string[];
 }
 
 export interface ISortOptions {

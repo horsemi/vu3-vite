@@ -182,7 +182,13 @@ export default defineComponent({
     };
     // 接收显示隐藏列更新
     const onChangeColumn = (data: ISchemeColumnsItem[]) => {
-      schemeList.value[popupIndex.value].columns = data;
+      const columns: string[] = [];
+      data.forEach(item => {
+        if (item.show) {
+          columns.push(item.key);
+        }
+      });
+      schemeList.value[popupIndex.value].columns = columns;
     };
     // 接收标题更新
     const onTitleChange = (title: string) => {

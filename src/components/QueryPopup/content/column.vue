@@ -34,12 +34,7 @@ import { cloneDeep } from 'lodash-es';
 import { useDesign } from '/@/hooks/web/useDesign';
 import { handleArrayTransposition } from '/@/utils';
 
-import {
-  DxDataGrid,
-  DxColumn,
-  DxPaging,
-  DxRowDragging,
-} from 'devextreme-vue/data-grid';
+import { DxDataGrid, DxColumn, DxPaging, DxRowDragging } from 'devextreme-vue/data-grid';
 import { DxCheckBox } from 'devextreme-vue/check-box';
 
 export default defineComponent({
@@ -52,7 +47,7 @@ export default defineComponent({
   },
   props: {
     columns: {
-      type: Array as PropType<ISchemeColumnsItem[]>,
+      type: Array as PropType<string[]>,
       default: () => {
         return [];
       },
@@ -108,28 +103,41 @@ export default defineComponent({
     };
 
     // 根据全部列处理显示隐藏列数据
-    const handleColumns = (allColumns, columns) => {
-      const data: ISchemeColumnsItem[] = [];
-      columns.forEach((col) => {
-        allColumns.forEach((allCol) => {
-          if (allCol.key === col.key && !allCol.hide) {
-            data.push({
-              key: allCol.key,
-              caption: allCol.caption,
-              show: col.show,
-              mustKey: allCol.mustKey,
-            });
+    const handleColumns = (allColumns: IColumnItem[], columns: string[]) => {
+      const preData: ISchemeColumnsItem[] = [];
+      const sortPreData: ISchemeColumnsItem[] = [];
+      const nextData: ISchemeColumnsItem[] = [];
+      allColumns.forEach(allCol => {
+        if (columns.some((key) => allCol.key === key)) {
+          preData.push({
+            key: allCol.key,
+            caption: allCol.caption,
+            show: true,
+            mustKey: allCol.mustKey,
+          });
+        } else {
+          nextData.push({
+            key: allCol.key,
+            caption: allCol.caption,
+            show: false,
+          });
+        }
+      });
+      columns.forEach(key => {
+        preData.forEach(pre => {
+          if (key === pre.key) {
+            sortPreData.push(pre);
           }
         });
       });
-      return data;
+      return sortPreData.concat(nextData);
     };
 
     // 实时更新组件中的显示隐藏列数据
     watch(
       () => [props.allColumns, props.columns],
       ([allColumns, columns]) => {
-        dataSource.value = handleColumns(allColumns, columns);
+        dataSource.value = handleColumns(allColumns as IColumnItem[], columns as  string[]);
       },
       {
         immediate: true,
