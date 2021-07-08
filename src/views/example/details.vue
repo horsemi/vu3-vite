@@ -169,7 +169,7 @@ export default defineComponent({
     };
 
     const getData = async () => {
-      getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]).then((res) => {
+      getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]).then(res => {
         dataSource.value = res;
       });
       const detailData = await getDetailData(['Id', '=', Id]);
@@ -239,9 +239,17 @@ export default defineComponent({
     &:last-child {
       transition: height 500ms;
     }
-    .form-box {
-      padding: 0 20px;
-      overflow: hidden;
+  }
+  .btn-box {
+    position: absolute;
+    top: 0;
+    right: 20px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    height: 36px;
+    & > * {
+      margin-left: 10px;
     }
   }
   .form-box {
@@ -262,10 +270,6 @@ export default defineComponent({
       &--translate {
         transform: rotate(-180deg);
         transition: transform 500ms;
-        &--translate {
-          transform: rotate(-180deg);
-          transition: transform 500ms;
-        }
       }
     }
   }
