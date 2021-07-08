@@ -1,6 +1,6 @@
 import type { IColumnItem } from './types';
 
-import { baseDataPre, getColumnList } from './common';
+import { baseDataPre, enumDataPre, getColumnList } from './common';
 
 export interface IHeader {
   BillCode: string;
@@ -32,7 +32,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'DocumentStatus',
     caption: '单据状态',
-    datatypekeies: 'enum',
+    datatypekeies: `${enumDataPre}documentstatuses`,
   },
   {
     key: 'DeliveryWarehouseCode',
@@ -60,12 +60,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'MarkStatus',
     caption: '标记状态',
-    datatypekeies: 'enum',
+    datatypekeies: `${enumDataPre}markstatuses`,
   },
   {
     key: 'BillTypeCode',
     caption: '单据类型',
-    // datatypekeies: `${baseDataPre}three-service-points`,
+    datatypekeies: `${enumDataPre}shippingOrderTypes`,
   },
   {
     key: 'ServiceItemCode',
@@ -91,7 +91,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'OperationStatus',
     caption: '业务状态',
-    datatypekeies: 'enum',
+    datatypekeies: `${enumDataPre}operationstatuses`,
   },
   {
     key: 'DetailRowsCount',

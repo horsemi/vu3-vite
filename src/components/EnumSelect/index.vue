@@ -20,7 +20,7 @@
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useAppStore } from '/@/store/modules/app';
-  
+
   import DxSelectBox from 'devextreme-vue/select-box';
 
   export default defineComponent({
@@ -35,7 +35,7 @@
         type: String,
         default: '200',
       },
-      type: {
+      datatypekeies: {
         type: String,
         default: '',
       },
@@ -43,9 +43,9 @@
     emits: ['update:value'],
     setup(props) {
       const { prefixCls } = useDesign('enum-select');
-      const options = ref<{ key: string, value: string, description: string }[]>([]);
+      const options = ref<{ key: string; value: string; description: string }[]>([]);
       const appStore = useAppStore();
-      options.value = appStore.getGlobalEnumDataByCode(props.type);
+      options.value = appStore.getGlobalEnumDataByCode(props.datatypekeies.split('_')[1]);
       return {
         prefixCls,
         options,

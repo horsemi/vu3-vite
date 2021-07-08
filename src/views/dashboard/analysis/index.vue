@@ -144,18 +144,18 @@
       };
       const handleTableData = async () => {
         getQueryPlan();
+        schemeData.value = Persistent.getLocal(SCHEME_DATA_KEY) as ISchemeData;
+        const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
+        const fast = schemeData.value.fast;
+        if (fast.length > 0) {
+          scheme.requirement.push(...fast);
+        }
+        filterScheme.value = scheme;
         const columnsData = await getColumns();
         if (columnsData) {
           const { columnList, key, keyType } = columnsData;
           allColumns.value = columnList;
           tableKey.value = key;
-          schemeData.value = Persistent.getLocal(SCHEME_DATA_KEY) as ISchemeData;
-          const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
-          const fast = schemeData.value.fast;
-          if (fast.length > 0) {
-            scheme.requirement.push(...fast);
-          }
-          filterScheme.value = scheme;
           dataSource.value = await getDataSource(
             tableOptions,
             filterScheme.value,
@@ -166,6 +166,10 @@
           columns.value = getCompleteColumns(allColumns.value, dataSource.value.select());
         }
       };
+
+      onMounted(async () => {
+        await handleTableData();
+      });
 
       onMounted(async () => {
         await handleTableData();

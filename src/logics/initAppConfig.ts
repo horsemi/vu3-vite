@@ -43,4 +43,7 @@ export function initGlobalEnumData() {
   AppConfigApi.getGlobalEnum().then((resolve) => {
     appStore.setGlobalEnumData(resolve);
   });
+  AppConfigApi.getBillTypes().then((resolve) => {
+    appStore.setGlobalEnumData(resolve);
+  });
 }

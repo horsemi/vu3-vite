@@ -58,11 +58,13 @@
       >
       </DxDateBox>
       <DxSelectBox
-        v-else-if="paramDatatypekeies === 'enum'"
+        v-else-if="paramDatatypekeies && paramDatatypekeies.startsWith('enum_')"
         :value="value"
         :data-source="options"
         :show-clear-button="true"
-        value-expr="key"
+        :value-expr="
+          paramKey === 'BillTypeCode' ? 'code' : paramKey === 'DocumentStatus' ? 'key' : 'value'
+        "
         display-expr="description"
         width="180"
         @update:value="$emit('update:value', $event)"
@@ -228,8 +230,8 @@
       function initOption(type: string, datatypekeies: string) {
         options.value.splice(0, options.value.length);
         dataType.value = type;
-        if (datatypekeies === 'enum') {
-          options.value.push(...appStore.getGlobalEnumDataByCode(type));
+        if (datatypekeies && datatypekeies.startsWith('enum_')) {
+          options.value.push(...appStore.getGlobalEnumDataByCode(datatypekeies.split('_')[1]));
         } else if (datatypekeies && datatypekeies.startsWith('foundation_')) {
           //
         }

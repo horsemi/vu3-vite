@@ -24,9 +24,11 @@
           :alignment="item.alignment ? item.alignment : 'center'"
         >
           <DxLookup
-            v-if="item.datatypekeies === 'enum'"
-            :data-source="getGlobalEnumDataByCode(item.type)"
-            value-expr="key"
+            v-if="item.datatypekeies && item.datatypekeies.startsWith('enum_')"
+            :data-source="getGlobalEnumDataByCode(item.datatypekeies)"
+            :value-expr="
+              item.key === 'BillTypeCode' ? 'code' : item.key === 'DocumentStatus' ? 'key' : 'value'
+            "
             display-expr="description"
           />
         </DxColumn>
@@ -210,7 +212,7 @@
       );
 
       function getGlobalEnumDataByCode(code: string | undefined) {
-        return code && appStore.getGlobalEnumDataByCode(code);
+        return code && appStore.getGlobalEnumDataByCode(code.split('_')[1]);
       }
 
       return {
