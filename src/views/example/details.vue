@@ -16,28 +16,30 @@
       >
         <template #item="{ data }">
           <div class="tab">
-            <div class="form-wrap" :style="{ height: opened ? formHeight + 'px' : '28px' }">
-              <div ref="formBox" class="form-box">
-                <DetailForm
-                  :form-data="formData"
-                  :form-list="
-                    data.title === '基本信息'
-                      ? baseInformation
-                      : data.title === '收货人信息'
-                      ? consigneeInformation
-                      : data.title === '物流信息'
-                      ? logisticsInformation
-                      : otherInformation
-                  "
-                />
-              </div>
+            <div
+              ref="formBox"
+              class="form-box"
+              :style="{ height: opened ? multiViewItems[selectedIndex].height : '28px' }"
+            >
+              <DetailForm
+                :form-data="formData"
+                :form-list="
+                  data.title === '基本信息'
+                    ? baseInformation
+                    : data.title === '收货人信息'
+                    ? consigneeInformation
+                    : data.title === '物流信息'
+                    ? logisticsInformation
+                    : otherInformation
+                "
+              />
             </div>
             <div class="icon-box">
               <SvgIcon
                 :class="['icon', opened && 'icon--translate']"
                 size="12"
                 name="multi-arrow"
-                @click="onChangeOpened"
+                @click="opened = !opened"
               ></SvgIcon>
             </div>
           </div>
@@ -50,7 +52,6 @@
         <DxButton :width="56" :height="26" text="删除" />
       </div>
       <DxTabPanel
-        class="table-wrap"
         :data-source="multiEntityItems"
         :loop="true"
         :animation-enabled="true"
@@ -72,7 +73,7 @@
 import type { ITableOptions } from '/@/components/Table/types';
 import type { IDetailItem } from '/@/utils/detail/types';
 
-import { defineComponent, onMounted, ref, watch } from 'vue';
+import { defineComponent, nextTick, onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import { cloneDeep } from 'lodash-es';
 
@@ -93,33 +94,35 @@ export default defineComponent({
     DetailForm,
   },
   setup() {
-    const opened = ref(true);
-    const multiViewItems = [
+    const multiViewItems = ref([
       {
         title: '基本信息',
+        height: '',
       },
       {
         title: '收货人信息',
+        height: '',
       },
       {
         title: '物流信息',
+        height: '',
       },
       {
         title: '其他信息',
+        height: '',
       },
-    ];
+    ]);
     const multiEntityItems = [
       {
         title: '明细信息',
       },
     ];
-    const tableData = [];
-    const closeHeight = 36;
-    const formBox = ref();
-    const formHeight = ref();
+
+    const opened = ref(true);
     const selectedIndex = ref(0);
-    let tableOpenedHeight = ref();
-    const tableCloseHeight = 'calc(100vh - 28px - 240px)';
+    const formBox = ref();
+    const tableOpenedHeight = ref('');
+    const tableCloseHeight = 'calc(100vh - 28px - 244px)';
 
     const route = useRoute();
     const Id = parseInt(route.query.Id as string);
@@ -140,37 +143,35 @@ export default defineComponent({
     const dataSource = ref();
     const columns = customDefinite;
 
-    const getTableHeight = () => {
-      const length =
-        selectedIndex.value === 0
-          ? baseInformation.value.length
-          : selectedIndex.value === 1
-          ? consigneeInformation.value.length
-          : selectedIndex.value === 2
-          ? logisticsInformation.value.length
-          : otherInformation.value.length;
-      formHeight.value = Math.ceil(length / 4) * 28 + (Math.ceil(length / 4) - 1) * 5;
-      tableOpenedHeight.value = `calc(100vh - ${formHeight.value}px - 240px)`;
-    };
-    const onChangeOpened = () => {
-      opened.value = !opened.value;
-      getTableHeight();
-    };
     const onRefresh = () => {
       getData();
     };
+
     const onSubmitClick = () => {
       ShippingOrderApi.onShippingOrderSubmit([formData.value.GatheringParentCode]).then(() => {
         onRefresh();
       });
     };
+
     const onApplyClick = () => {
       ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode]).then(() => {
         onRefresh();
       });
     };
+
+    const handleHeight = (index: number) => {
+      nextTick(() => {
+        if (!multiViewItems.value[index].height) {
+          multiViewItems.value[index].height = formBox.value.offsetHeight + 'px';
+        }
+        tableOpenedHeight.value = `calc(100vh - ${multiViewItems.value[index].height} - 244px)`;
+      });
+    };
+
     const getData = async () => {
-      dataSource.value = await getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]);
+      getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]).then(res => {
+        dataSource.value = res;
+      });
       const detailData = await getDetailData(['Id', '=', Id]);
       if (!detailData) return;
       const { baseList, consigneeList, logisticsList, otherList, data } = detailData;
@@ -179,12 +180,11 @@ export default defineComponent({
       consigneeInformation.value = consigneeList;
       logisticsInformation.value = logisticsList;
       otherInformation.value = otherList;
-      
-      getTableHeight();
+      handleHeight(0);
     };
 
-    watch(selectedIndex, () => {
-      getTableHeight();
+    watch(selectedIndex, (val) => {
+      handleHeight(val);
     });
 
     onMounted(async () => {
@@ -192,7 +192,6 @@ export default defineComponent({
     });
 
     return {
-      formHeight,
       baseInformation,
       consigneeInformation,
       logisticsInformation,
@@ -203,14 +202,11 @@ export default defineComponent({
       opened,
       multiViewItems,
       multiEntityItems,
-      tableData,
-      closeHeight,
       formData,
       dataSource,
       tableOptions,
       tableOpenedHeight,
       tableCloseHeight,
-      onChangeOpened,
       onSubmitClick,
       onApplyClick,
       onRefresh,
@@ -238,7 +234,7 @@ export default defineComponent({
   }
 
   .tab {
-    padding: 5px 20px;
+    padding: 8px 20px;
     background-color: #fff;
     &:last-child {
       transition: height 500ms;
@@ -256,21 +252,17 @@ export default defineComponent({
       margin-left: 10px;
     }
   }
-  .form-wrap {
-    flex: 1;
-    overflow: hidden;
-    transition: height 500ms;
-  }
   .form-box {
     padding: 0 20px;
     overflow: hidden;
+    transition: height 500ms;
   }
   .icon-box {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding-top: 5px;
+    padding-top: 8px;
     .icon {
       cursor: pointer;
       transform: rotate(0);
@@ -281,12 +273,9 @@ export default defineComponent({
       }
     }
   }
-  .table-wrap {
-    flex: 1;
-  }
 
   .dx-layout-manager .dx-field-item:not(.dx-first-row) {
-    padding-top: 5px !important;
+    padding-top: 8px !important;
   }
 
   .dx-widget {
