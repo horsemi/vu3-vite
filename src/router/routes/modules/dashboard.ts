@@ -23,7 +23,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
       },
       {
         path: 'exampleDetails',
-        name: 'exampleDetails',
+        name: 'ShippingOrderDetail',
         component: () => import('/@/views/example/details.vue'),
         meta: {
           title: '发货通知单详情',
