@@ -7,6 +7,8 @@
         :show-clear-button="true"
         value-expr="key"
         width="180"
+        :search-enabled="true"
+        search-mode="contains"
         display-expr="caption"
         @update:value="$emit('update:paramKey', $event)"
       ></DxSelectBox>
@@ -16,6 +18,8 @@
         :value="operation"
         :data-source="paramOperations"
         width="95"
+        :search-enabled="true"
+        search-mode="contains"
         value-expr="key"
         display-expr="value"
         @update:value="$emit('update:operation', $event)"
@@ -185,20 +189,43 @@
             context.emit('update:operation', '=');
           }
           initOption(type!, datatypekeies!);
+
+          // TODO 逻辑太恶心 有待优化
+          if (
+            type === 'datetime' &&
+            !props.value &&
+            Object.prototype.toString.call(props.value) !== '[object Date]'
+          ) {
+            context.emit('update:value', new Date());
+          }
+          if (
+            type === 'number' &&
+            !props.value &&
+            Object.prototype.toString.call(props.value) !== '[object Number]'
+          ) {
+            context.emit('update:value', 0);
+          }
+          if (
+            (type === 'string' ||
+              datatypekeies === 'enum' ||
+              type === 'boolean' ||
+              datatypekeies?.startsWith('foundation_')) &&
+            props.value &&
+            Object.prototype.toString.call(props.value) !== '[object String]'
+          ) {
+            context.emit('update:value', '');
+          }
         } else {
           operatorOptions.value = [];
           context.emit('update:paramOperations', operatorOptions.value);
           context.emit('update:operation', '');
           context.emit('update:paramDataType', '');
           context.emit('update:paramDatatypekeies', '');
-          initValue('string');
+          context.emit('update:value', '');
         }
       }
 
       function initOption(type: string, datatypekeies: string) {
-        if (options.value.length > 0) {
-          initValue(datatypekeies || type);
-        }
         options.value.splice(0, options.value.length);
         dataType.value = type;
         if (datatypekeies === 'enum') {
@@ -209,26 +236,6 @@
 
         operatorOptions.value = getOperatorByType(datatypekeies || type);
         context.emit('update:paramOperations', operatorOptions.value);
-      }
-
-      function initValue(type: string) {
-        let initData: unknown = '';
-        let valueType = Object.prototype.toString.call(props.value);
-        switch (type) {
-          case 'datetime': {
-            if (valueType !== '[object Date]') {
-              initData = new Date();
-            }
-            break;
-          }
-          case 'number': {
-            if (valueType !== '[object Number]') {
-              initData = 0;
-            }
-            break;
-          }
-        }
-        context.emit('update:value', initData);
       }
 
       return {
