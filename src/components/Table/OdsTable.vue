@@ -50,9 +50,11 @@
       />
       <DxScrolling v-if="tableOptions.useScrolling" mode="virtual" row-rendering-mode="virtual" />
       <template #billCode="{ data }">
-        <DxButton type="normal" styling-mode="text" @click="$emit('handleBillCodeClick', data)">{{
-          data.value
-        }}</DxButton>
+        <div
+          :class="`${prefixCls}__table-billno-column__wrap`"
+          @click="$emit('handleBillCodeClick', data)"
+          >{{ data.value }}</div
+        >
       </template>
     </DxDataGrid>
     <div
@@ -83,7 +85,6 @@
     DxLookup,
     DxScrolling,
   } from 'devextreme-vue/data-grid';
-  import DxButton from 'devextreme-vue/button';
 
   export default defineComponent({
     components: {
@@ -93,7 +94,6 @@
       DxPager,
       DxLookup,
       DxColumn,
-      DxButton,
       DxScrolling,
     },
     props: {
@@ -255,6 +255,12 @@
     .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > td,
     .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > tr > td {
       background-color: #e6f7ff;
+    }
+
+    &__table-billno-column__wrap {
+      color: #1890ff;
+      text-decoration: underline;
+      cursor: pointer;
     }
 
     // 分页器样式
