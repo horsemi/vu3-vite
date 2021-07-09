@@ -30,34 +30,10 @@ const getFormItem = (info, arr, columnList) => {
   });
 };
 
-export const getFormList = (
-  base: IDetailItem[],
-  consignee: IDetailItem[],
-  logistics: IDetailItem[],
-  other: IDetailItem[],
-  columnList: IColumnItem[]
-) => {
-  const baseList: IDetailItem[] = [];
-  const consigneeList: IDetailItem[] = [];
-  const logisticsList: IDetailItem[] = [];
-  const otherList: IDetailItem[] = [];
-  base.forEach((b) => {
-    getFormItem(b, baseList, columnList);
+export const getFormList = (list: IDetailItem[], columnList: IColumnItem[]) => {
+  const temp: IDetailItem[] = [];
+  list.forEach((b) => {
+    getFormItem(b, temp, columnList);
   });
-  consignee.forEach((b) => {
-    getFormItem(b, consigneeList, columnList);
-  });
-  logistics.forEach((b) => {
-    getFormItem(b, logisticsList, columnList);
-  });
-  other.forEach((b) => {
-    getFormItem(b, otherList, columnList);
-  });
-
-  return {
-    baseList,
-    consigneeList,
-    logisticsList,
-    otherList,
-  };
+  return temp;
 };

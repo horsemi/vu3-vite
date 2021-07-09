@@ -2,16 +2,6 @@ import type { IColumnItem } from './types';
 
 import { baseDataPre, enumDataPre, getColumnList } from './common';
 
-export interface IHeader {
-  BillCode: string;
-  BillDate: string;
-  DocumentStatus: string;
-  IsCancelled: boolean;
-  TotalPackage: number;
-  TotalVolume: number;
-  Id: number;
-}
-
 export const customColumns: IColumnItem[] = [
   {
     key: 'BillCode',

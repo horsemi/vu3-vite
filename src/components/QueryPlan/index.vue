@@ -148,6 +148,7 @@ export default defineComponent({
         handleChangeCheckedDefault(index - 1);
       }
     };
+    // TODO 过滤方案缓存数据更改，此处需要更改（未改）
     // 处理保存数据
     const handleSaveData = (msg: string, scheme: ISchemeItem[], fast: IQueryItem[] = []) => {
       Persistent.setLocal(SCHEME_DATA_KEY, {
@@ -157,6 +158,7 @@ export default defineComponent({
       handleOverLength();
       useMessage(msg, 'success');
     };
+    // TODO 过滤方案缓存数据更改，此处需要更改（未改）
     // 处理默认方案更新
     const handleChangeCheckedDefault = (index: number) => {
       Persistent.setLocal(SCHEME_CHECKED_INDE_KEY, index);

@@ -164,7 +164,7 @@
       ];
       watch(
         () => props.paramKey,
-        (paramKey, prevParamKey) => {
+        (paramKey) => {
           initData(paramKey);
         },
         {
@@ -174,6 +174,7 @@
 
       function initData(paramKey: string) {
         if (paramKey) {
+          if (props.paramList.length === 0) return;
           let { type, operations, datatypekeies } = (props.paramList as IColumnItem[]).filter(
             (item) => paramKey === item.key
           )[0];

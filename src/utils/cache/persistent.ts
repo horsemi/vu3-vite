@@ -20,7 +20,7 @@ interface BasicStore {
   [TOKEN_KEY]: string | number | null | undefined;
   [USER_INFO_KEY]: UserInfo;
   [SYSTEM_CFG_KEY]: SystemConfig;
-  [SCHEME_DATA_KEY]: ISchemeData;
+  [SCHEME_DATA_KEY]: any;
   [SCHEME_CHECKED_INDE_KEY]: number;
 }
 

@@ -26,6 +26,8 @@
                     ? receiverInformation
                     : data.title === '物流信息'
                     ? logisticsInformation
+                    : data.title === '作业信息'
+                    ? taskInformation
                     : otherInformation
                 "
               />
@@ -105,6 +107,10 @@
           height: '',
         },
         {
+          title: '作业信息',
+          height: '',
+        },
+        {
           title: '其他信息',
           height: '',
         },
@@ -127,6 +133,7 @@
       const baseInformation = ref<IDetailItem[]>([]);
       const receiverInformation = ref<IDetailItem[]>([]);
       const logisticsInformation = ref<IDetailItem[]>([]);
+      const taskInformation = ref<IDetailItem[]>([]);
       const otherInformation = ref<IDetailItem[]>([]);
 
       const options: Partial<ITableOptions> = {
@@ -182,11 +189,12 @@
         });
         const detailData = await getDetailData(['Id', '=', Id]);
         if (!detailData) return;
-        const { baseList, receiverList, logisticsList, otherList, data } = detailData;
+        const { baseList, receiverList, logisticsList, taskList, otherList, data } = detailData;
         formData.value = data;
         baseInformation.value = baseList;
         receiverInformation.value = receiverList;
         logisticsInformation.value = logisticsList;
+        taskInformation.value = taskList;
         otherInformation.value = otherList;
         handleHeight(0);
       };
@@ -203,6 +211,7 @@
         baseInformation,
         receiverInformation,
         logisticsInformation,
+        taskInformation,
         otherInformation,
         columns,
         selectedIndex,

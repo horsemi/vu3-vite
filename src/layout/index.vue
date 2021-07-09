@@ -54,6 +54,9 @@
   import { useViewStore } from '/@/store/modules/view';
   import { useDesign } from '/@/hooks/web/useDesign';
 
+  import { Persistent } from '/@/utils/cache/persistent';
+  import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
+
   export default defineComponent({
     name: 'Layout',
     components: {
@@ -76,6 +79,100 @@
       const toggleMenu = () => {
         openState.value = !openState.value;
       };
+
+      const getQueryPlan = () => {
+        const oldSchemeData = Persistent.getLocal(SCHEME_DATA_KEY);
+        if (!oldSchemeData) {
+          const schemeData = {
+            'shipping-order': {
+              scheme: [
+                {
+                  uuid: '0',
+                  title: '缺省方案',
+                  requirement: [
+                    {
+                      requirement: '',
+                      operator: '=',
+                      operatorList: [],
+                      value: '',
+                      type: '',
+                      datatypekeies: '',
+                      logic: '',
+                    },
+                  ],
+                  orderBy: [],
+                  columns: [
+                    'BillCode',
+                    'BillDate',
+                    'DocumentStatus',
+                    'DeliveryWarehouseCode',
+                    'Nickname',
+                    'DeliveryPointCode',
+                    'ThreeServicePointCode',
+                    'TotalVolume',
+                    'TotalPackage',
+                  ],
+                },
+              ],
+              fast: [
+                {
+                  requirement: '',
+                  operator: '=',
+                  operatorList: [],
+                  value: '',
+                  type: '',
+                  datatypekeies: '',
+                },
+              ],
+              checkedIndex: 0
+            },
+            'shipping-advices': {
+              scheme: [
+                {
+                  uuid: '0',
+                  title: '缺省方案',
+                  requirement: [
+                    {
+                      requirement: '',
+                      operator: '=',
+                      operatorList: [],
+                      value: '',
+                      type: '',
+                      datatypekeies: '',
+                      logic: '',
+                    },
+                  ],
+                  orderBy: [],
+                  columns: [
+                    'BillCode',
+                    'BillDate',
+                    'DocumentStatus',
+                    'DeliveryWarehouseCode',
+                    'Nickname',
+                    'DeliveryPointCode',
+                    'ThreeServicePointCode',
+                    'TotalVolume',
+                    'TotalPackage',
+                  ],
+                },
+              ],
+              fast: [
+                {
+                  requirement: '',
+                  operator: '=',
+                  operatorList: [],
+                  value: '',
+                  type: '',
+                  datatypekeies: '',
+                },
+              ],
+              checkedIndex: 0
+            },
+          };
+          Persistent.setLocal(SCHEME_DATA_KEY, schemeData);
+        }
+      };
+      getQueryPlan();
 
       return {
         viewState,

@@ -48,7 +48,7 @@
     getDataSource,
   } from '/@/components/Table/common';
   import { Persistent } from '/@/utils/cache/persistent';
-  import { SCHEME_DATA_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';
+  import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
   import { deepMerge } from '/@/utils';
 
@@ -80,6 +80,7 @@
       const schemeData = ref<ISchemeData>({
         scheme: [],
         fast: [],
+        checkedIndex: 0,
       });
       const schemeCheckedIndex = ref<number>(0);
 
@@ -87,65 +88,9 @@
         filterScheme.value = cloneDeep(data);
       };
 
-      const getQueryPlan = () => {
-        const oldSchemeData = Persistent.getLocal(SCHEME_DATA_KEY);
-        const oldSchemeCheckedIndex = Persistent.getLocal(SCHEME_CHECKED_INDE_KEY) as
-          | number
-          | undefined;
-
-        if (oldSchemeCheckedIndex) {
-          schemeCheckedIndex.value = oldSchemeCheckedIndex;
-        }
-
-        if (!oldSchemeData) {
-          const schemeData = {
-            scheme: [
-              {
-                uuid: '0',
-                title: '缺省方案',
-                requirement: [
-                  {
-                    requirement: '',
-                    operator: '=',
-                    operatorList: [],
-                    value: '',
-                    type: '',
-                    datatypekeies: '',
-                    logic: '',
-                  },
-                ],
-                orderBy: [],
-                columns: [
-                  'BillCode',
-                  'BillDate',
-                  'DocumentStatus',
-                  'DeliveryWarehouseCode',
-                  'Nickname',
-                  'DeliveryPointCode',
-                  'ThreeServicePointCode',
-                  'TotalVolume',
-                  'TotalPackage',
-                ],
-              },
-            ],
-            fast: [
-              {
-                requirement: '',
-                operator: '=',
-                operatorList: [],
-                value: '',
-                type: '',
-                datatypekeies: '',
-              },
-            ],
-          };
-          Persistent.setLocal(SCHEME_DATA_KEY, schemeData);
-        }
-      };
-
       const handleTableData = async () => {
-        getQueryPlan();
-        schemeData.value = Persistent.getLocal(SCHEME_DATA_KEY) as ISchemeData;
+        schemeData.value = (Persistent.getLocal(SCHEME_DATA_KEY) as any )['shipping-order'];
+        schemeCheckedIndex.value = schemeData.value.checkedIndex;
         const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
         const fast = schemeData.value.fast;
         if (fast.length > 0) {

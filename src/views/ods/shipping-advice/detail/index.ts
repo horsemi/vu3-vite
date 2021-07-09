@@ -2,7 +2,7 @@ import type { ITableOptions } from '/@/components/Table/types';
 import type { IDefiniteItem, IDetailItem } from '/@/utils/detail/types';
 
 import { getDefiniteDataSource, getDetailDataSource } from '/@/api/ods/detail';
-import { getColumns } from '/@/model/shipping-orders';
+import { getColumns } from '/@/model/shipping-advices';
 import { getFormList } from '/@/utils/detail';
 
 export const base: IDetailItem[] = [
@@ -13,46 +13,58 @@ export const base: IDetailItem[] = [
     dataField: 'BillDate',
   },
   {
-    dataField: 'TotalPackage',
+    dataField: 'BatchCode',
   },
   {
-    dataField: 'MarkStatus',
+    dataField: 'TotalPackage',
   },
   {
     dataField: 'BillTypeCode',
   },
   {
-    dataField: 'ServiceItemCode',
+    dataField: 'BranchLineType',
   },
   {
-    dataField: 'Group',
+    dataField: 'SendGoodsMode',
+  },
+  {
+    dataField: 'TotalPack',
   },
   {
     dataField: 'DocumentStatus',
   },
   {
-    dataField: 'TotalOrderCount',
+    dataField: 'MarkStatus',
+  },
+  {
+    dataField: 'ServiceItemCode',
   },
   {
     dataField: 'TotalVolume',
   },
   {
-    dataField: 'CustomerSalesman',
-  },
-  {
     dataField: 'OperationStatus',
   },
   {
-    dataField: 'DetailRowsCount',
+    dataField: 'DeliveryWarehouseCode',
+  },
+  {
+    dataField: 'SentStatus',
+  },
+  {
+    dataField: 'SentMemo',
+  },
+  {
+    dataField: 'IsPicking',
   },
   {
     dataField: 'IsGatheringOrder',
   },
   {
-    dataField: 'IsRecycling',
+    dataField: 'IsSmallMode',
   },
   {
-    dataField: 'IsAgencyOrder',
+    dataField: 'IsMergeLockOrder',
   },
 ];
 
@@ -67,7 +79,7 @@ export const receiver: IDetailItem[] = [
     dataField: 'Telephone',
   },
   {
-    dataField: 'RecyclingMemo',
+    dataField: 'TotalActualPrice',
   },
   {
     dataField: 'ProvinceCode',
@@ -99,11 +111,44 @@ export const receiver: IDetailItem[] = [
   {
     dataField: 'ShowroomAddress',
   },
+  {
+    dataField: 'IsAgencyOrder',
+  },
+  {
+    dataField: 'IsInstall',
+  },
+  {
+    dataField: 'IsRecycling',
+  },
+  {
+    dataField: 'IsExistMarble',
+  },
 ];
 
 export const logistics: IDetailItem[] = [
   {
     dataField: 'GatheringPointCode',
+  },
+  {
+    dataField: 'NonstopContractorCode',
+  },
+  {
+    dataField: 'HandCarLine',
+  },
+  {
+    dataField: 'TrainCode',
+  },
+  {
+    dataField: 'DeliveryPointCode',
+  },
+  {
+    dataField: 'TransitContractorCode',
+  },
+  {
+    dataField: 'SmallCarLine',
+  },
+  {
+    dataField: 'CarModeCode',
   },
   {
     dataField: 'ThreeServicePointCode',
@@ -112,10 +157,10 @@ export const logistics: IDetailItem[] = [
     dataField: 'ContractorCode',
   },
   {
-    dataField: 'ThreeServiceFeeTypeCode',
+    dataField: 'HandCarGroup',
   },
   {
-    dataField: 'DeliveryPointCode',
+    dataField: 'LoadType',
   },
   {
     dataField: 'LineAreaCode',
@@ -124,16 +169,94 @@ export const logistics: IDetailItem[] = [
     dataField: 'ThreeServiceSupplierCode',
   },
   {
-    dataField: 'FreightTypeCode',
+    dataField: 'SmallCarGroup',
   },
   {
-    dataField: 'LogisticsCostPrice',
+    dataField: 'DeliveryCos',
+  },
+  {
+    dataField: 'LogisticCode',
+  },
+  {
+    dataField: 'LogisticsLine',
   },
   {
     dataField: 'ThreeServiceCostPrice',
   },
   {
-    dataField: 'LogisticCode',
+    dataField: 'LogisticsCostPrice',
+  },
+  {
+    dataField: 'FreightTypeCode',
+  },
+  {
+    dataField: 'ThreeServiceFeeTypeCode',
+  },
+  {
+    dataField: 'ServiceItemCode',
+  },
+];
+
+export const task: IDetailItem[] = [
+  {
+    dataField: 'LockBatchTime',
+  },
+  {
+    dataField: 'LockBatchUserCode',
+  },
+  {
+    dataField: 'ExpressSiteName',
+  },
+  {
+    dataField: 'PaintMarkerStatus',
+  },
+  {
+    dataField: 'ReturnGoodsStatus',
+  },
+  {
+    dataField: 'PlanSendGoodsDate',
+  },
+  {
+    dataField: 'ExpressStandard',
+  },
+  {
+    dataField: 'PaintMarkerMsg',
+  },
+  {
+    dataField: 'IsCancelled',
+  },
+  {
+    dataField: 'SendGoodsTimeOut',
+  },
+  {
+    dataField: 'BagsCentralizeAddress',
+  },
+  {
+    dataField: 'LogisticNoStatus',
+  },
+  {
+    dataField: 'CancelledTime',
+  },
+  {
+    dataField: 'SendGoodsTime',
+  },
+  {
+    dataField: 'PaintMarker',
+  },
+  {
+    dataField: 'PushDownTime',
+  },
+  {
+    dataField: 'CancellerId',
+  },
+  {
+    dataField: 'SentDate',
+  },
+  {
+    dataField: 'InterceptReasonCode',
+  },
+  {
+    dataField: 'InterceptTypeCode',
   },
 ];
 
@@ -145,7 +268,7 @@ export const other: IDetailItem[] = [
     dataField: 'CreatorId',
   },
   {
-    dataField: 'CustomerTypeCode',
+    dataField: 'OutSourceBillType',
   },
   {
     dataField: 'GatheringParentCode',
@@ -157,7 +280,7 @@ export const other: IDetailItem[] = [
     dataField: 'ApplierId',
   },
   {
-    dataField: 'CustomerCode',
+    dataField: 'OutBillFormCode',
   },
   {
     dataField: 'OutSourceBillCode',
@@ -169,35 +292,38 @@ export const other: IDetailItem[] = [
     dataField: 'UpdaterId',
   },
   {
-    dataField: 'OutBillFormCode',
+    dataField: 'CustomerCode',
   },
   {
     dataField: 'OutSaleBillCode',
   },
   {
-    dataField: 'CancelledTime',
+    dataField: 'TotalWeight',
   },
   {
-    dataField: 'CancellerId',
+    dataField: 'AreaName',
+  },
+  {
+    dataField: 'Group',
   },
   {
     dataField: 'PushDownTime',
   },
   {
-    dataField: 'OutSourceBillType',
+    dataField: 'TotalMarble',
   },
   {
-    dataField: 'IsCancelled',
+    dataField: 'TaoBaoCode',
   },
   {
-    dataField: 'PushDownStatus',
+    dataField: 'CustomerSalesman',
   },
 ];
 
 export const customDefinite: IDefiniteItem[] = [
   {
-    key: 'ShippingOrderId',
-    caption: 'ShippingOrderId',
+    key: 'ShippingOrderDetailId',
+    caption: 'ShippingOrderDetailId',
     hide: true,
   },
   {
@@ -245,17 +371,20 @@ export const getDetailData = async (filter: any[]) => {
   const baseList = getFormList(base, columnList);
   const receiverList = getFormList(receiver, columnList);
   const logisticsList = getFormList(logistics, columnList);
+  const taskList = getFormList(task, columnList);
   const otherList = getFormList(other, columnList);
   const baseKey = baseList.map((item) => item.dataField);
   const receiverKey = receiverList.map((item) => item.dataField);
+  const taskKey = taskList.map((item) => item.dataField);
   const logisticsKey = logisticsList.map((item) => item.dataField);
   const otherKey = otherList.map((item) => item.dataField);
-  const select = baseKey.concat(receiverKey).concat(logisticsKey).concat(otherKey);
-  const data = await getDetailDataSource('shipping-orders', select, filter);
+  const select = baseKey.concat(receiverKey).concat(logisticsKey).concat(taskKey).concat(otherKey);
+  const data = await getDetailDataSource('shipping-advices', select, filter);
   return {
     baseList,
     receiverList,
     logisticsList,
+    taskList,
     otherList,
     data: data[0],
   };
@@ -263,5 +392,5 @@ export const getDetailData = async (filter: any[]) => {
 
 export const getDefiniteData = async (options: ITableOptions, filter: any[]) => {
   const select = customDefinite.map((item) => item.key);
-  return await getDefiniteDataSource('shipping-order-items', select, filter, options);
+  return await getDefiniteDataSource('shipping-advices-items', select, filter, options);
 };
