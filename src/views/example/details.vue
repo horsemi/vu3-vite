@@ -16,11 +16,7 @@
       >
         <template #item="{ data }">
           <div class="tab">
-            <div
-              ref="formBox"
-              class="form-box"
-              :style="{ height: opened ? multiViewItems[selectedIndex].height : '28px' }"
-            >
+            <div ref="formBox" class="form-box" :style="{ height: opened ? '' : '28px' }">
               <DetailForm
                 :form-data="formData"
                 :form-list="
@@ -39,7 +35,7 @@
                 :class="['icon', opened && 'icon--translate']"
                 size="12"
                 name="multi-arrow"
-                @click="opened = !opened"
+                @click="onChangeOpened"
               ></SvgIcon>
             </div>
           </div>
@@ -59,7 +55,7 @@
         :focus-state-enabled="false"
       >
         <template #item>
-          <div class="tab" :style="{ height: opened ? tableOpenedHeight : tableCloseHeight }">
+          <div class="tab">
             <OdsTable :table-options="tableOptions" :data-source="dataSource" :columns="columns">
             </OdsTable>
           </div>
@@ -122,8 +118,8 @@
       const opened = ref(true);
       const selectedIndex = ref(0);
       const formBox = ref();
-      const tableOpenedHeight = ref('');
-      const tableCloseHeight = 'calc(100vh - 28px - 244px)';
+      let tableOpenedHeight = '';
+      const tableCloseHeight = 'calc(100vh - 28px - 260px)';
 
       const route = useRoute();
       const Id = parseInt(route.query.Id as string);
@@ -134,6 +130,7 @@
       const otherInformation = ref<IDetailItem[]>([]);
 
       const options: Partial<ITableOptions> = {
+        height: 'calc(100vh - 28px - 260px)',
         useScrolling: true,
         showBorders: false,
         page: {
@@ -160,12 +157,22 @@
         });
       };
 
+      const onChangeOpened = () => {
+        opened.value = !opened.value;
+        handleHeight(selectedIndex.value);
+      };
+
       const handleHeight = (index: number) => {
         nextTick(() => {
-          if (!multiViewItems.value[index].height) {
+          if (!multiViewItems.value[index].height && opened.value) {
             multiViewItems.value[index].height = formBox.value.offsetHeight + 'px';
           }
-          tableOpenedHeight.value = `calc(100vh - ${multiViewItems.value[index].height} - 244px)`;
+          tableOpenedHeight = `calc(100vh - ${multiViewItems.value[index].height} - 260px)`;
+          if (opened.value) {
+            tableOptions.value.height = tableOpenedHeight;
+          } else {
+            tableOptions.value.height = tableCloseHeight;
+          }
         });
       };
 
@@ -211,6 +218,7 @@
         onSubmitClick,
         onApplyClick,
         onRefresh,
+        onChangeOpened,
       };
     },
   });
@@ -237,9 +245,6 @@
     .tab {
       padding: 8px 20px;
       background-color: #fff;
-      &:last-child {
-        transition: height 500ms;
-      }
     }
     .btn-box {
       position: absolute;
@@ -256,7 +261,6 @@
     .form-box {
       padding: 0 20px;
       overflow: hidden;
-      transition: height 500ms;
     }
     .icon-box {
       display: flex;
