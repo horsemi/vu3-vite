@@ -77,7 +77,7 @@ const handleKeyType = (keyType: IKeyType[]) => {
 export const getFilter = (requirements: IRequirementItem[]) => {
   const filter: any[] = [];
   requirements.forEach((item) => {
-    if (item.requirement && item.value) {
+    if (item.requirement) {
       filter.push([item.requirement, item.operator, item.value]);
       if (item.logic) {
         filter.push(item.logic);

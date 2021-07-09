@@ -129,7 +129,7 @@ export default defineComponent({
     const otherInformation = ref<IDetailItem[]>([]);
 
     const options: Partial<ITableOptions> = {
-      height: 'calc(100vh - 28px - 260px)',
+      height: tableCloseHeight,
       useScrolling: true,
       showBorders: false,
       page: {

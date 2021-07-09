@@ -115,11 +115,12 @@ export default defineComponent({
     };
     // 点击重置触发
     const onReset = () => {
+      const { scheme, fast } = Persistent.getLocal(SCHEME_DATA_KEY) as ISchemeData;
       const popupUuid = schemeList.value[popupIndex.value].uuid;
-      const popupListTemp = schemeListTemp.value.filter((item) => item.uuid === popupUuid);
+      const popupListTemp = scheme.filter((item) => item.uuid === popupUuid);
 
       schemeList.value[popupIndex.value] = cloneDeep(popupListTemp[0]);
-      queryForm.value.changeQueryList(props.schemeData.fast);
+      queryForm.value.changeQueryList(fast);
       onSearch();
     };
     // 点击查询方案触发
@@ -131,7 +132,7 @@ export default defineComponent({
       const queryList = queryForm.value.queryList;
       const scheme = cloneDeep(schemeList.value[popupIndex.value]);
       queryList.forEach((item) => {
-        if (item.requirement && item.value) {
+        if (item.requirement) {
           scheme.requirement.push(item);
         }
       });
@@ -166,7 +167,7 @@ export default defineComponent({
       const scheme = cloneDeep(schemeListTemp.value[checkedIndex.value]);
       const queryList = queryForm.value.queryList;
       queryList.forEach((item) => {
-        if (item.requirement && item.value) {
+        if (item.requirement) {
           scheme.requirement.push(item);
         }
       });

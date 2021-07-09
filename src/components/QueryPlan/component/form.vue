@@ -124,13 +124,19 @@ export default defineComponent({
       queryList.value.splice(index, 1);
     };
     const onSaveFast = () => {
-      ctx.emit('on-save-fast', queryList.value);
+      const temp: IQueryItem[] = [];
+      queryList.value.forEach(item => {
+        if (item.requirement) {
+          temp.push(item);
+        }
+      });
+      ctx.emit('on-save-fast', temp);
     };
     const closePopup = () => {
       opened.value = false;
     };
     const changeQueryList = (data: IQueryItem[]) => {
-      queryList.value = data;
+      queryList.value = cloneDeep(data);
     };
 
     watch(

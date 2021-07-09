@@ -58,7 +58,7 @@
       </template>
     </DxDataGrid>
     <div
-      v-if="tableOptions.dataSourceOptions.paginate && !tableOptions.useScrolling"
+      v-if="tableOptions.dataSourceOptions.paginate && !tableOptions.useScrolling && tableData"
       :class="`${prefixCls}__jump`"
       >跳至<input type="number" @change="handleJump" />页</div
     >

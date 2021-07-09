@@ -73,7 +73,11 @@
             switchedOnText: '是',
             switchedOffText: '否',
           };
-        } else {
+        } else if (item.editorType === 'dxNumberBox') {
+          editorOptions = {
+            showSpinButtons: true,
+          };
+        } else if (item.datatypekeies) {
           editorOptions = { ...item };
         }
         return editorOptions;
