@@ -2,7 +2,7 @@ import type { AppRouteRecordRaw } from '/@/router/types';
 
 import { LAYOUT } from '/@/router/constant';
 
-const iframe: Array<AppRouteRecordRaw> = [
+const orderManagement: Array<AppRouteRecordRaw> = [
   {
     path: '/order-management',
     name: 'OrderManagement',
@@ -29,6 +29,14 @@ const iframe: Array<AppRouteRecordRaw> = [
             },
           },
           {
+            path: 'shipping-advice/list',
+            name: 'OdsShippingAdviceList',
+            component: () => import('/@/views/ods/shipping-advice/list/index.vue'),
+            meta: {
+              title: '发货通知单',
+            },
+          },
+          {
             path: 'shipping-order/detail',
             name: 'OdsShippingOrderDetail',
             component: () => import('/@/views/ods/shipping-order/detail/index.vue'),
@@ -43,4 +51,4 @@ const iframe: Array<AppRouteRecordRaw> = [
   },
 ];
 
-export default iframe;
+export default orderManagement;
