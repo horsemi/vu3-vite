@@ -9,6 +9,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
     redirect: '/dashboard/analysis',
     component: LAYOUT,
     meta: {
+      hideMenu: true,
       title: '根页面',
       icon: 'order',
     },
@@ -19,15 +20,6 @@ const dashboard: Array<AppRouteRecordRaw> = [
         component: () => import('/@/views/dashboard/analysis/index.vue'),
         meta: {
           title: '仪表盘',
-        },
-      },
-      {
-        path: 'exampleDetails',
-        name: 'ShippingOrderDetail',
-        component: () => import('/@/views/example/details.vue'),
-        meta: {
-          title: '发货通知单详情',
-          hideMenu: true,
         },
       },
     ],
