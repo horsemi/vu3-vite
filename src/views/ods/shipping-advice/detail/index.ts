@@ -223,9 +223,6 @@ export const task: IDetailItem[] = [
     dataField: 'PaintMarkerMsg',
   },
   {
-    dataField: 'IsCancelled',
-  },
-  {
     dataField: 'SendGoodsTimeOut',
   },
   {
@@ -257,6 +254,9 @@ export const task: IDetailItem[] = [
   },
   {
     dataField: 'InterceptTypeCode',
+  },
+  {
+    dataField: 'IsCancelled',
   },
 ];
 
@@ -322,8 +322,8 @@ export const other: IDetailItem[] = [
 
 export const customDefinite: IDefiniteItem[] = [
   {
-    key: 'ShippingOrderDetailId',
-    caption: 'ShippingOrderDetailId',
+    key: 'ShippingAdviceId',
+    caption: 'ShippingAdviceId',
     hide: true,
   },
   {
@@ -392,5 +392,5 @@ export const getDetailData = async (filter: any[]) => {
 
 export const getDefiniteData = async (options: ITableOptions, filter: any[]) => {
   const select = customDefinite.map((item) => item.key);
-  return await getDefiniteDataSource('shipping-advices-items', select, filter, options);
+  return await getDefiniteDataSource('shipping-advice-items', select, filter, options);
 };

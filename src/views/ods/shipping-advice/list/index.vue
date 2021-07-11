@@ -49,8 +49,8 @@
     getDataSource,
   } from '/@/components/Table/common';
   import { Persistent } from '/@/utils/cache/persistent';
-  import { SCHEME_DATA_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';
-  import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
+  import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
+  import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { deepMerge } from '/@/utils';
 
   import DxButton from 'devextreme-vue/button';
@@ -92,7 +92,7 @@
 
       const handleTableData = async () => {
         schemeData.value = (Persistent.getLocal(SCHEME_DATA_KEY) as any)[ORDER_CODE];
-        console.log(schemeData.value);
+
         schemeCheckedIndex.value = schemeData.value.checkedIndex;
         const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
         const fast = schemeData.value.fast;
@@ -101,6 +101,7 @@
         }
         filterScheme.value = scheme;
         const columnsData = await getColumns();
+
         if (columnsData) {
           const { columnList, key, keyType } = columnsData;
           allColumns.value = columnList;
@@ -136,15 +137,15 @@
     },
     methods: {
       handleBillCodeClick(data: any) {
-        // this.$router.push({
-        //   name: 'OdsShippingOrderDetail',
-        //   query: { Id: data.data.Id },
-        // });
+        this.$router.push({
+          name: 'OdsShippingAdviceDetail',
+          query: { Id: data.data.Id },
+        });
       },
 
       onSubmitClick() {
         const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData();
-        ShippingOrderApi.onShippingOrderSubmit(
+        ShippingAdviceApi.onShippingAdviceSubmit(
           selectionData.map((item) => item.GatheringParentCode)
         ).then(() => {
           this.onRefresh();
@@ -152,7 +153,7 @@
       },
       onApplyClick() {
         const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData();
-        ShippingOrderApi.onShippingOrderApply(
+        ShippingAdviceApi.onShippingAdviceApply(
           selectionData.map((item) => item.GatheringParentCode)
         ).then(() => {
           this.onRefresh();

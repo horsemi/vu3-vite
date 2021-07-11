@@ -2,8 +2,31 @@
   <div class="detail">
     <div class="tab-panel">
       <div class="btn-box">
-        <DxButton :width="56" :height="26" type="default" text="提交" @click="onSubmitClick" />
-        <DxButton :width="56" :height="26" text="审核" @click="onApplyClick" />
+        <DxDropDownButton
+          :items="dropButtonItems.submit"
+          :split-button="true"
+          :use-select-mode="false"
+          :width="56"
+          :height="26"
+          text="提交"
+          display-expr="name"
+          key-expr="key"
+          @button-click="onSubmitClick"
+          @item-click="onItemButtonClick"
+        />
+        <DxDropDownButton
+          :items="dropButtonItems.apply"
+          :split-button="true"
+          :use-select-mode="false"
+          :width="56"
+          :height="26"
+          text="审核"
+          display-expr="name"
+          key-expr="key"
+          @button-click="onApplyClick"
+          @item-click="onItemButtonClick"
+        />
+        <DxButton :width="56" :height="26" text="下推" @click="onPushClick" />
         <DxButton :width="56" :height="26" text="刷新" @click="onRefresh" />
       </div>
       <DxTabPanel
@@ -79,6 +102,7 @@
   import { getDetailData, getDefiniteData, customDefinite } from './index';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
+  import DxDropDownButton from 'devextreme-vue/drop-down-button';
   import DxButton from 'devextreme-vue/button';
 
   import DetailForm from '/@/components/DetailForm/index.vue';
@@ -88,6 +112,7 @@
     components: {
       DxTabPanel,
       DxButton,
+      DxDropDownButton,
       DetailForm,
     },
     setup() {
@@ -114,7 +139,20 @@
           title: '明细信息',
         },
       ];
-
+      const dropButtonItems = {
+        apply: [
+          {
+            key: 'redraft',
+            name: '反审核',
+          },
+        ],
+        submit: [
+          {
+            key: 'revoke',
+            name: '撤销',
+          },
+        ],
+      };
       const opened = ref(true);
       const selectedIndex = ref(0);
       const formBox = ref();
@@ -155,6 +193,37 @@
         ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode]).then(() => {
           onRefresh();
         });
+      };
+
+      const onPushClick = () => {
+        ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode]).then(() => {
+          onRefresh();
+        });
+      };
+
+      const onRedraftClick = () => {
+        ShippingOrderApi.onShippingOrderRedraft([formData.value.GatheringParentCode]).then(() => {
+          onRefresh();
+        });
+      };
+
+      const onRevokeClick = () => {
+        ShippingOrderApi.onShippingOrderRevoke([formData.value.GatheringParentCode]).then(() => {
+          onRefresh();
+        });
+      };
+
+      const onItemButtonClick = (e) => {
+        switch (e.itemData.key) {
+          case 'redraft': {
+            onRedraftClick();
+            break;
+          }
+          case 'revoke': {
+            onRevokeClick();
+            break;
+          }
+        }
       };
 
       const onChangeOpened = () => {
@@ -210,6 +279,7 @@
         opened,
         multiViewItems,
         multiEntityItems,
+        dropButtonItems,
         formData,
         dataSource,
         tableOptions,
@@ -217,6 +287,8 @@
         tableCloseHeight,
         onSubmitClick,
         onApplyClick,
+        onPushClick,
+        onItemButtonClick,
         onRefresh,
         onChangeOpened,
       };

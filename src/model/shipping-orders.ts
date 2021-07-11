@@ -13,7 +13,6 @@ export const customColumns: IColumnItem[] = [
     key: 'GatheringParentCode',
     caption: '父单号',
     mustKey: true,
-    hide: true,
   },
   {
     key: 'BillDate',
@@ -167,10 +166,10 @@ export const customColumns: IColumnItem[] = [
     caption: '三包费用类型',
     datatypekeies: `${baseDataPre}three-service-cost-types`,
   },
-
   {
     key: 'LineAreaCode',
     caption: '线路区域',
+    datatypekeies: `${baseDataPre}line-areas`,
   },
   {
     key: 'ThreeServiceSupplierCode',

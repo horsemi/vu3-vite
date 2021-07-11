@@ -1,9 +1,5 @@
 import type { ITableOptions, ISortItem } from './types';
-import type {
-  IOrderByItem,
-  IRequirementItem,
-  ISchemeItem,
-} from '../QueryPopup/content/types';
+import type { IOrderByItem, IRequirementItem, ISchemeItem } from '../QueryPopup/content/types';
 import type { IColumnItem, IKeyType } from '/@/model/types';
 
 import ODataStore from 'devextreme/data/odata/store';
@@ -99,17 +95,22 @@ export const getSort = (orderBy: IOrderByItem[], tableSort: ISortItem[] = []) =>
 };
 
 // 获取格式化后的表字段
-export const getSelect = (
-  allColumns: IColumnItem[],
-  columns: string[],
-  key: string[] = []
-) => {
+export const getSelect = (allColumns: IColumnItem[], columns: string[], key: string[] = []) => {
   const select: string[] = [];
-  columns.forEach(key => {
-    if (allColumns.some(allCol => allCol.key === key)) {
+
+  columns.forEach((key) => {
+    if (allColumns.some((allCol) => allCol.key === key) && select.indexOf(key)) {
       select.push(key);
     }
   });
+  allColumns
+    .filter((item) => item.mustKey)
+    .forEach((item) => {
+      if (select.indexOf(item.key)) {
+        select.push(item.key);
+      }
+    });
+
   return select.concat(key);
 };
 

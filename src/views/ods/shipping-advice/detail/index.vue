@@ -2,8 +2,42 @@
   <div class="detail">
     <div class="tab-panel">
       <div class="btn-box">
-        <DxButton :width="56" :height="26" type="default" text="提交" @click="onSubmitClick" />
-        <DxButton :width="56" :height="26" text="审核" @click="onApplyClick" />
+        <DxDropDownButton
+          :items="dropButtonItems.submit"
+          :split-button="true"
+          :use-select-mode="false"
+          :width="56"
+          :height="26"
+          text="提交"
+          display-expr="name"
+          key-expr="key"
+          @button-click="onSubmitClick"
+          @item-click="onItemButtonClick"
+        />
+        <DxDropDownButton
+          :items="dropButtonItems.apply"
+          :split-button="true"
+          :use-select-mode="false"
+          :width="56"
+          :height="26"
+          text="审核"
+          display-expr="name"
+          key-expr="key"
+          @button-click="onApplyClick"
+          @item-click="onItemButtonClick"
+        />
+        <DxDropDownButton
+          :items="dropButtonItems.send"
+          :split-button="true"
+          :use-select-mode="false"
+          :width="56"
+          :height="26"
+          text="发送"
+          display-expr="name"
+          key-expr="key"
+          @button-click="onSendClick"
+          @item-click="onItemButtonClick"
+        />
         <DxButton :width="56" :height="26" text="刷新" @click="onRefresh" />
       </div>
       <DxTabPanel
@@ -77,19 +111,21 @@
 
   import { defaultTableOptions } from '/@/components/Table/common';
   import { deepMerge } from '/@/utils';
-  import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
+  import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { getDetailData, getDefiniteData, customDefinite } from './index';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
+  import DxDropDownButton from 'devextreme-vue/drop-down-button';
   import DxButton from 'devextreme-vue/button';
 
   import DetailForm from '/@/components/DetailForm/index.vue';
 
   export default defineComponent({
-    name: 'OdsShippingOrderDetail',
+    name: 'OdsShippingAdviceDetail',
     components: {
       DxTabPanel,
       DxButton,
+      DxDropDownButton,
       DetailForm,
     },
     setup() {
@@ -120,6 +156,27 @@
           title: '明细信息',
         },
       ];
+
+      const dropButtonItems = {
+        apply: [
+          {
+            key: 'redraft',
+            name: '反审核',
+          },
+        ],
+        submit: [
+          {
+            key: 'revoke',
+            name: '撤销',
+          },
+        ],
+        send: [
+          {
+            key: 'recall',
+            name: '撤回发送',
+          },
+        ],
+      };
 
       const opened = ref(true);
       const selectedIndex = ref(0);
@@ -153,15 +210,56 @@
       };
 
       const onSubmitClick = () => {
-        ShippingOrderApi.onShippingOrderSubmit([formData.value.GatheringParentCode]).then(() => {
+        ShippingAdviceApi.onShippingAdviceSubmit([formData.value.GatheringParentCode]).then(() => {
           onRefresh();
         });
       };
 
       const onApplyClick = () => {
-        ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode]).then(() => {
+        ShippingAdviceApi.onShippingAdviceSubmit([formData.value.GatheringParentCode]).then(() => {
           onRefresh();
         });
+      };
+
+      const onSendClick = () => {
+        ShippingAdviceApi.onShippingAdviceSend([formData.value.GatheringParentCode]).then(() => {
+          onRefresh();
+        });
+      };
+
+      const onRecallClick = () => {
+        ShippingAdviceApi.onShippingAdviceRecall([formData.value.GatheringParentCode]).then(() => {
+          onRefresh();
+        });
+      };
+
+      const onRedraftClick = () => {
+        ShippingAdviceApi.onShippingAdviceRedraft([formData.value.GatheringParentCode]).then(() => {
+          onRefresh();
+        });
+      };
+
+      const onRevokeClick = () => {
+        ShippingAdviceApi.onShippingAdviceRevoke([formData.value.GatheringParentCode]).then(() => {
+          onRefresh();
+        });
+      };
+
+      const onItemButtonClick = (e) => {
+        switch (e.itemData.key) {
+          case 'redraft': {
+            onRedraftClick();
+            break;
+          }
+          case 'revoke': {
+            onRevokeClick();
+            break;
+          }
+          case 'recall': {
+            onRecallClick();
+            break;
+          }
+        }
       };
 
       const onChangeOpened = () => {
@@ -184,7 +282,7 @@
       };
 
       const getData = async () => {
-        getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]).then((res) => {
+        getDefiniteData(tableOptions.value, ['ShippingAdviceId', '=', Id]).then((res) => {
           dataSource.value = res;
         });
         const detailData = await getDetailData(['Id', '=', Id]);
@@ -219,6 +317,7 @@
         opened,
         multiViewItems,
         multiEntityItems,
+        dropButtonItems,
         formData,
         dataSource,
         tableOptions,
@@ -226,6 +325,8 @@
         tableCloseHeight,
         onSubmitClick,
         onApplyClick,
+        onSendClick,
+        onItemButtonClick,
         onRefresh,
         onChangeOpened,
       };

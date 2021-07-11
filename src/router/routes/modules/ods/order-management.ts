@@ -45,6 +45,15 @@ const orderManagement: Array<AppRouteRecordRaw> = [
               hideMenu: true,
             },
           },
+          {
+            path: 'shipping-advice/detail',
+            name: 'OdsShippingAdviceDetail',
+            component: () => import('/@/views/ods/shipping-advice/detail/index.vue'),
+            meta: {
+              title: '发货通知单详情',
+              hideMenu: true,
+            },
+          },
         ],
       },
     ],

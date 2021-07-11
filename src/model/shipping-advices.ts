@@ -10,6 +10,11 @@ export const customColumns: IColumnItem[] = [
     mustKey: true,
   },
   {
+    key: 'GatheringParentCode',
+    caption: '父单号',
+    mustKey: true,
+  },
+  {
     key: 'BillDate',
     caption: '单据日期',
   },
@@ -24,14 +29,17 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'BillTypeCode',
     caption: '单据类型',
+    datatypekeies: `${enumDataPre}shippingAdviceTypes`,
   },
   {
     key: 'BranchLineType',
     caption: '支装类型',
+    datatypekeies: `${enumDataPre}branchlinetypes`,
   },
   {
     key: 'SendGoodsMode',
     caption: '发货模式',
+    datatypekeies: `${enumDataPre}sendgoodsmodes`,
   },
   {
     key: 'TotalPack',
@@ -39,11 +47,13 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'DocumentStatus',
-    caption: '单据状态:',
+    caption: '单据状态',
+    datatypekeies: `${enumDataPre}documentstatuses`,
   },
   {
     key: 'MarkStatus',
     caption: '标记状态',
+    datatypekeies: `${enumDataPre}markstatuses`,
   },
   {
     key: 'ServiceItemCode',
@@ -56,6 +66,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'OperationStatus',
     caption: '业务状态',
+    datatypekeies: `${enumDataPre}operationstatuses`,
   },
   {
     key: 'DeliveryWarehouseCode',
@@ -64,6 +75,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'SentStatus',
     caption: '发送状态',
+    datatypekeies: `${enumDataPre}sentstatuses`,
   },
   {
     key: 'SentMemo',
@@ -120,6 +132,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'AgencyCode',
     caption: '经销商',
+    datatypekeies: `${baseDataPre}customers`,
   },
   {
     key: 'PromisedDeliveryDate',
@@ -160,10 +173,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'GatheringPointCode',
     caption: '集货点',
+    datatypekeies: `${baseDataPre}gathering-points`,
   },
   {
     key: 'NonstopContractorCode',
     caption: '直达承运商',
+    datatypekeies: `${baseDataPre}suppliers`,
   },
   {
     key: 'HandCarLine',
@@ -176,10 +191,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'DeliveryPointCode',
     caption: '提货点',
+    datatypekeies: `${baseDataPre}delivery-points`,
   },
   {
     key: 'TransitContractorCode',
     caption: '转运承运商',
+    datatypekeies: `${baseDataPre}suppliers`,
   },
   {
     key: 'SmallCarLine',
@@ -192,10 +209,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ThreeServicePointCode',
     caption: '三包点',
+    datatypekeies: `${baseDataPre}three-service-points`,
   },
   {
     key: 'ContractorCode',
     caption: '中转承运商',
+    datatypekeies: `${baseDataPre}suppliers`,
   },
   {
     key: 'HandCarGroup',
@@ -204,6 +223,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'LoadType',
     caption: '配载方式',
+    datatypekeies: `${enumDataPre}loadtypes`,
   },
   {
     key: 'LineAreaCode',
@@ -212,6 +232,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ThreeServiceSupplierCode',
     caption: '三包服务商',
+    datatypekeies: `${baseDataPre}suppliers`,
   },
   {
     key: 'SmallCarGroup',
@@ -244,6 +265,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ThreeServiceFeeTypeCode',
     caption: '三包费用类型',
+    datatypekeies: `${baseDataPre}three-service-cost-types`,
   },
   {
     key: 'ServiceItemCode',
@@ -264,10 +286,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'PaintMarkerStatus',
     caption: '大头笔接口状态',
+    datatypekeies: `${enumDataPre}paintmarkerstatuses`,
   },
   {
     key: 'ReturnGoodsStatus',
     caption: '退货状态',
+    datatypekeies: `${enumDataPre}returngoodsstatuses`,
   },
   {
     key: 'PlanSendGoodsDate',
@@ -296,6 +320,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'LogisticNoStatus',
     caption: '快递号接口状态',
+    datatypekeies: `${enumDataPre}logisticnostatuses`,
   },
   {
     key: 'CancelledTime',
@@ -340,12 +365,6 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'OutSourceBillType',
     caption: '外部原单类型',
-  },
-  {
-    key: 'GatheringParentCode',
-    caption: '父单号',
-    mustKey: true,
-    hide: true,
   },
   {
     key: 'AppliedTime',
