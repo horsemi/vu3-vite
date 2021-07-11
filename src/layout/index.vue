@@ -124,9 +124,9 @@
                   datatypekeies: '',
                 },
               ],
-              checkedIndex: 0
+              checkedIndex: 0,
             },
-            'shipping-advices': {
+            'shipping-advice': {
               scheme: [
                 {
                   uuid: '0',
@@ -166,7 +166,7 @@
                   datatypekeies: '',
                 },
               ],
-              checkedIndex: 0
+              checkedIndex: 0,
             },
           };
           Persistent.setLocal(SCHEME_DATA_KEY, schemeData);

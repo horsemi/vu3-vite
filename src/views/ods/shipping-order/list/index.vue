@@ -2,6 +2,7 @@
   <div class="list">
     <QueryPlan
       ref="QueryPlan"
+      :order-code="ORDER_CODE"
       :all-columns="allColumns"
       :scheme-data="schemeData"
       :scheme-checked-index="schemeCheckedIndex"
@@ -63,11 +64,12 @@
       DxButton,
     },
     setup() {
+      const ORDER_CODE = 'shipping-order';
       const options: Partial<ITableOptions> = {
         height: 'calc(100vh - 287px)',
         dataSourceOptions: {
           oDataOptions: {
-            url: '/api/odata/shipping-orders',
+            url: `/api/odata/${ORDER_CODE}s`,
           },
         },
       };
@@ -89,7 +91,7 @@
       };
 
       const handleTableData = async () => {
-        schemeData.value = (Persistent.getLocal(SCHEME_DATA_KEY) as any )['shipping-order'];
+        schemeData.value = (Persistent.getLocal(SCHEME_DATA_KEY) as any)[ORDER_CODE];
         schemeCheckedIndex.value = schemeData.value.checkedIndex;
         const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
         const fast = schemeData.value.fast;
@@ -118,6 +120,7 @@
       });
 
       return {
+        ORDER_CODE,
         tableOptions,
         tableKey,
         dataSource,
