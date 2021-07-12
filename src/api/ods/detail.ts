@@ -45,7 +45,7 @@ export const getDefiniteDataSource = (
     store: new ODataStore({
       url: `/api/odata/${code}`,
       key: 'Id',
-      keyType: 'int64',
+      keyType: 'string',
       version: 4,
     }),
     select: [...select, 'Id'],

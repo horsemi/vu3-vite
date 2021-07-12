@@ -160,7 +160,7 @@
       const tableCloseHeight = 'calc(100vh - 28px - 260px)';
 
       const route = useRoute();
-      const Id = parseInt(route.query.Id as string);
+      const Id = route.query.Id as string;
       const formData = ref();
       const baseInformation = ref<IDetailItem[]>([]);
       const receiverInformation = ref<IDetailItem[]>([]);
