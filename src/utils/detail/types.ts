@@ -52,6 +52,16 @@ export interface IDetailItem {
    * @description: 过滤类型
    */
   datatypekeies?: string;
+
+  /**
+   * @description: 指定使用自定义组件的名称
+   */
+  template?: string;
+
+  /**
+   * @description: 占多少列（全部分为8列）
+   */
+  colSpan?: number;
 }
 
 export interface IDefiniteItem {

@@ -52,6 +52,23 @@ export const base: IDetailItem[] = [
     dataField: 'SentMemo',
   },
   {
+    dataField: 'IsTally',
+    template: 'stepBar',
+    colSpan: 4,
+  },
+  {
+    dataField: 'IsEntry',
+    hide: true,
+  },
+  {
+    dataField: 'IsTransfer',
+    hide: true,
+  },
+  {
+    dataField: 'IsClean',
+    hide: true,
+  },
+  {
     dataField: 'IsPicking',
   },
   {
