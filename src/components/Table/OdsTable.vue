@@ -24,7 +24,7 @@
           :alignment="item.alignment ? item.alignment : 'center'"
         >
           <DxLookup
-            v-if="item.datatypekeies && item.datatypekeies.startsWith('enum_')"
+            v-if="item.type === 'enum'"
             :data-source="getGlobalEnumDataByCode(item.datatypekeies)"
             value-expr="key"
             display-expr="description"
@@ -156,11 +156,12 @@
 
       const handleFilterScheme = (scheme: ISchemeItem) => {
         if (!isEmpty(tableData.value) && !isEmpty(scheme)) {
-          const select = getSelect(props.allColumns, scheme.columns, props.tableKey);
+          const { select, expand } = getSelect(props.allColumns, scheme.columns, props.tableKey);
           const filter = getFilter(scheme.requirement);
           const sort = getSort(scheme.orderBy, props.tableOptions.dataSourceOptions.sort);
           tableData.value.filter(filter);
           tableData.value.select(select);
+          tableData.value.expand = expand;
           tableColumns.value = getCompleteColumns(props.allColumns, tableData.value.select());
           // 清空排序，处理相同字段desc失效
           dataGrid.value.instance.clearSorting();

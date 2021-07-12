@@ -40,7 +40,8 @@ export const getDataSource = async (
   key: string[] = [],
   keyType: IKeyType[] = []
 ) => {
-  const select = getSelect(allColumns, scheme.columns, key);
+  const { select, expand } = getSelect(allColumns, scheme.columns, key);
+
   const filter = getFilter(scheme.requirement);
   const sort = getSort(scheme.orderBy, options.dataSourceOptions.sort);
   const data = new DataSource({
@@ -54,6 +55,7 @@ export const getDataSource = async (
       ...options.dataSourceOptions.oDataOptions,
     }),
     select: select,
+    expand: expand,
   });
   return data;
 };
@@ -97,9 +99,15 @@ export const getSort = (orderBy: IOrderByItem[], tableSort: ISortItem[] = []) =>
 // 获取格式化后的表字段
 export const getSelect = (allColumns: IColumnItem[], columns: string[], key: string[] = []) => {
   const select: string[] = [];
+  const expands: string[] = [];
 
   columns.forEach((key) => {
     if (allColumns.some((allCol) => allCol.key === key) && select.indexOf(key)) {
+      const { type, expand } = allColumns.filter((allCol) => allCol.key === key)[0];
+      // 判断是否为基础数据类型
+      if (expand && type === 'string') {
+        expands.push(expand);
+      }
       select.push(key);
     }
   });
@@ -111,7 +119,10 @@ export const getSelect = (allColumns: IColumnItem[], columns: string[], key: str
       }
     });
 
-  return select.concat(key);
+  return {
+    select: select.concat(key),
+    expand: expands,
+  };
 };
 
 // 获取格式化后的表头数据
@@ -120,7 +131,23 @@ export const getCompleteColumns = (allColumns: IColumnItem[], select: string[]) 
   select.forEach((item) => {
     allColumns.forEach((col) => {
       if (item === col.key) {
+        if (col.expand && col.type === 'string') {
+          columns.push({
+            ...col,
+            caption: `${col.caption}编码`,
+          });
+
+          columns.push({
+            ...col,
+            key: col.expand,
+            type: 'foundation',
+          });
+
+          return;
+        }
+
         columns.push(col);
+
         return;
       }
     });

@@ -37,9 +37,6 @@ export const base: IDetailItem[] = [
     dataField: 'MarkStatus',
   },
   {
-    dataField: 'ServiceItemCode',
-  },
-  {
     dataField: 'TotalVolume',
   },
   {

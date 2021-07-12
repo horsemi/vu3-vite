@@ -27,6 +27,11 @@ export interface IColumnItem {
   type?: string;
 
   /**
+   * @description 关联字段
+   */
+  expand?: string;
+
+  /**
    * @description: 自定义模板名称
    */
   cellTemplate?: string;
@@ -60,6 +65,7 @@ export interface IColumnItem {
 export interface IFieldType {
   key: string;
   type: string;
+  expand: string;
 }
 
 export interface IKeyType {

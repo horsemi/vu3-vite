@@ -56,10 +56,6 @@ export const customColumns: IColumnItem[] = [
     datatypekeies: `${enumDataPre}markstatuses`,
   },
   {
-    key: 'ServiceItemCode',
-    caption: '备货区',
-  },
-  {
     key: 'TotalVolume',
     caption: '总体积',
   },
