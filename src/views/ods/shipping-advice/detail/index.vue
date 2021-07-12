@@ -64,6 +64,8 @@
                     ? taskInformation
                     : otherInformation
                 "
+                :step-data="stepData"
+                :step-active-index="stepActiveIndex"
               />
             </div>
             <div class="icon-box">
@@ -178,6 +180,9 @@
         ],
       };
 
+      const stepData = ['理货', '进场', '交接', '清货'];
+      const stepActiveIndex = ref(0);
+
       const opened = ref(true);
       const selectedIndex = ref(0);
       const formBox = ref();
@@ -281,6 +286,16 @@
         });
       };
 
+      const handleStepActiveIndex = () => {
+        if (formData.value.isClean) {
+          stepActiveIndex.value = 3;
+        } else if (formData.value.isTransfer) {
+          stepActiveIndex.value = 2;
+        } else if (formData.value.isEntry) {
+          stepActiveIndex.value = 1;
+        }
+      };
+
       const getData = async () => {
         getDefiniteData(tableOptions.value, ['ShippingAdviceId', '=', Id]).then((res) => {
           dataSource.value = res;
@@ -295,6 +310,7 @@
         taskInformation.value = taskList;
         otherInformation.value = otherList;
         handleHeight(0);
+        handleStepActiveIndex();
       };
 
       watch(selectedIndex, (val) => {
@@ -323,6 +339,8 @@
         tableOptions,
         tableOpenedHeight,
         tableCloseHeight,
+        stepData,
+        stepActiveIndex,
         onSubmitClick,
         onApplyClick,
         onSendClick,

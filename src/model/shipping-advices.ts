@@ -55,10 +55,10 @@ export const customColumns: IColumnItem[] = [
     caption: '标记状态',
     datatypekeies: `${enumDataPre}markstatuses`,
   },
-  {
-    key: 'ServiceItemCode',
-    caption: '备货区',
-  },
+  // {
+  //   key: 'ServiceItemCode',
+  //   caption: '备货区',
+  // },
   {
     key: 'TotalVolume',
     caption: '总体积',
@@ -425,6 +425,22 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CustomerSalesman',
     caption: '客户业务员',
+  },
+  {
+    key: 'IsTally',
+    caption: '理货',
+  },
+  {
+    key: 'IsEntry',
+    caption: '进场',
+  },
+  {
+    key: 'IsTransfer',
+    caption: '交接',
+  },
+  {
+    key: 'IsClean',
+    caption: '清货',
   },
 ];
 
