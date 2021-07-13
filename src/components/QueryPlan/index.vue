@@ -1,6 +1,6 @@
 <template>
   <div :class="prefixCls">
-    <QueryFrom ref="queryForm" :columns="allColumns" :fast="fast" @on-save-fast="onSaveFast" />
+    <QueryFrom ref="queryForm" :columns="allColumns" :fast="fast" @on-save-fast="onSaveFast" @on-search="onSearch" />
     <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
     <QueryQuick
       :checked-index="checkedIndex"
@@ -45,7 +45,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Persistent } from '/@/utils/cache/persistent';
   import { getUuid } from '/@/utils/uuid';
-  import { SCHEME_DATA_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';
+  import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
 
   import QueryFrom from './component/form.vue';
   import QueryButton from './component/button.vue';

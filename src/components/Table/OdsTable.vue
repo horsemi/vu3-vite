@@ -17,6 +17,7 @@
       <template v-for="(item, index) in tableColumns" :key="index">
         <DxColumn
           v-if="!item.hide"
+          css-class="header-bold"
           :data-field="item.key"
           :caption="item.caption"
           :data-type="item.type"
@@ -243,6 +244,11 @@
     position: relative;
     width: 100%;
     height: 100%;
+
+    // 表头字段加粗
+    .dx-header-row .header-bold {
+      font-weight: bold;
+    }
 
     // 隔行换色
     .dx-datagrid .dx-row-alt > td,

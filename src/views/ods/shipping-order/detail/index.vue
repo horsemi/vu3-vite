@@ -170,9 +170,8 @@
       const options: Partial<ITableOptions> = {
         height: 'calc(100vh - 28px - 260px)',
         useScrolling: true,
-        showBorders: false,
         page: {
-          size: 10,
+          size: 20,
         },
       };
       const tableOptions = ref<ITableOptions>(deepMerge(cloneDeep(defaultTableOptions), options));
@@ -377,9 +376,5 @@
       margin: 0 !important;
     }
 
-    .dx-datagrid-table .dx-freespace-row > td {
-      // 去掉空余空间的边框，当指定表格高度时，会出现这个占满空余空间
-      border: none !important;
-    }
   }
 </style>

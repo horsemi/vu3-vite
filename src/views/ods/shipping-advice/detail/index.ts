@@ -90,12 +90,7 @@ export const receiver: IDetailItem[] = [
   },
   {
     dataField: 'DetailAddress',
-  },
-  {
-    dataField: 'IsAgencyOrder',
-  },
-  {
-    dataField: 'IsInstall',
+    colSpan: 4,
   },
   {
     dataField: 'ShowroomContacts',
@@ -105,6 +100,13 @@ export const receiver: IDetailItem[] = [
   },
   {
     dataField: 'ShowroomAddress',
+    colSpan: 4,
+  },
+  {
+    dataField: 'IsAgencyOrder',
+  },
+  {
+    dataField: 'IsInstall',
   },
   {
     dataField: 'IsRecycling',
@@ -224,34 +226,34 @@ export const task: IDetailItem[] = [
     dataField: 'PromisedDeliveryDate',
   },
   {
+    dataField: 'SentDate',
+  },
+  {
+    dataField: 'ReturnGoodsStatus',
+  },
+  {
     dataField: 'LockBatchTime',
-  },
-  {
-    dataField: 'InterceptTypeCode',
-  },
-  {
-    dataField: 'SendGoodsTime',
   },
   {
     dataField: 'SendGoodsTimeOut',
   },
   {
-    dataField: 'LockBatchUserCode',
+    dataField: 'CancelledTime',
   },
   {
     dataField: 'InterceptReasonCode',
   },
   {
-    dataField: 'SentDate',
+    dataField: 'LockBatchUserCode',
   },
   {
-    dataField: 'CancelledTime',
+    dataField: 'SendGoodsTime',
   },
   {
     dataField: 'CancellerId',
   },
   {
-    dataField: 'ReturnGoodsStatus',
+    dataField: 'InterceptTypeCode',
   },
   {
     dataField: 'IsTally',
