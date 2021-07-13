@@ -13,7 +13,6 @@ export const customColumns: IColumnItem[] = [
     key: 'GatheringParentCode',
     caption: '父单号',
     mustKey: true,
-    hide: true,
   },
   {
     key: 'BillDate',
