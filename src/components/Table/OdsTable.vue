@@ -16,7 +16,7 @@
     >
       <template v-for="(item, index) in tableColumns" :key="index">
         <DxColumn
-          v-if="!item.hide"
+          v-if="!item.hide && item.type !== 'foundation'"
           css-class="header-bold"
           :data-field="item.key"
           :caption="item.caption"
@@ -30,6 +30,15 @@
             value-expr="key"
             display-expr="description"
           />
+        </DxColumn>
+        <DxColumn
+          v-else-if="item.type === 'foundation'"
+          css-class="header-bold"
+          :data-field="`${item.key}.Name`"
+          :caption="item.caption"
+          data-type="object"
+          :alignment="item.alignment ? item.alignment : 'center'"
+        >
         </DxColumn>
       </template>
       <DxSelection
@@ -186,6 +195,7 @@
         () => props.filterScheme,
         (val) => {
           handleFilterScheme(val);
+          console.log(tableColumns);
         },
         {
           immediate: true,
