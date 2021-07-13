@@ -196,7 +196,7 @@
       };
 
       const onPushClick = () => {
-        ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode]).then(() => {
+        ShippingOrderApi.onShippingOrderPush([formData.value.GatheringParentCode]).then(() => {
           onRefresh();
         });
       };
