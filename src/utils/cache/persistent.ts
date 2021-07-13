@@ -10,7 +10,6 @@ import {
   APP_LOCAL_CACHE_KEY,
   APP_SESSION_CACHE_KEY,
   SCHEME_DATA_KEY,
-  SCHEME_CHECKED_INDE_KEY,
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
 import { UserInfo } from '/@/store/types';
@@ -21,7 +20,6 @@ interface BasicStore {
   [USER_INFO_KEY]: UserInfo;
   [SYSTEM_CFG_KEY]: SystemConfig;
   [SCHEME_DATA_KEY]: any;
-  [SCHEME_CHECKED_INDE_KEY]: number;
 }
 
 type LocalStore = BasicStore;

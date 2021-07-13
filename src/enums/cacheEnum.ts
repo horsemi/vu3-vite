@@ -9,8 +9,6 @@ export const SYSTEM_CFG_KEY = 'SYSTEM_CFG__';
 
 export const SCHEME_DATA_KEY = 'SCHEME_DATA__';
 
-export const SCHEME_CHECKED_INDE_KEY = 'SCHEME_CHECKED_INDEX__';
-
 // base global local key
 export const APP_LOCAL_CACHE_KEY = 'COMMON__LOCAL__KEY__';
 

@@ -1,7 +1,5 @@
 <template>
-  <!-- TOFIX v-click-outside指令 -->
-  <!-- <div v-click-outside="closePopup" :class="prefixCls"> -->
-  <div :class="prefixCls">
+  <div  v-click-outside="closePopup" :class="prefixCls" @keyup.enter="onSearch">
     <div
       :class="`${prefixCls}__box`"
       :style="{
@@ -9,7 +7,6 @@
         paddingBottom: 0,
         boxShadow: opened ? '10px 0 12px 0 rgb(0 0 0 / 10%)' : '',
       }"
-      @click.stop=""
     >
       <DynamicSelect
         v-model:value="queryList[0].value"
@@ -95,7 +92,7 @@
         },
       },
     },
-    emits: ['on-save-fast'],
+    emits: ['on-save-fast', 'on-search'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('query-form');
       const opened = ref<boolean>(false);
@@ -120,9 +117,11 @@
           datatypekeies: '',
         });
       };
+
       const onDelRequirement = (index: number) => {
         queryList.value.splice(index, 1);
       };
+
       const onSaveFast = () => {
         const temp: IQueryItem[] = [];
         queryList.value.forEach((item) => {
@@ -142,11 +141,17 @@
         }
         ctx.emit('on-save-fast', temp);
       };
+
       const closePopup = () => {
         opened.value = false;
       };
+
       const changeQueryList = (data: IQueryItem[]) => {
         queryList.value = cloneDeep(data);
+      };
+
+      const onSearch = () => {
+        ctx.emit('on-search');
       };
 
       watch(
@@ -170,6 +175,7 @@
         onSaveFast,
         changeQueryList,
         closePopup,
+        onSearch,
       };
     },
   });
