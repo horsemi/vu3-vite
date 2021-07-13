@@ -13,6 +13,7 @@ export const customColumns: IColumnItem[] = [
     key: 'GatheringParentCode',
     caption: '父单号',
     mustKey: true,
+    hide: true,
   },
   {
     key: 'BillDate',
@@ -55,13 +56,9 @@ export const customColumns: IColumnItem[] = [
     caption: '标记状态',
     datatypekeies: `${enumDataPre}markstatuses`,
   },
-  // {
-  //   key: 'ServiceItemCode',
-  //   caption: '备货区',
-  // },
   {
     key: 'TotalVolume',
-    caption: '总体积',
+    caption: '总体积数',
   },
   {
     key: 'OperationStatus',
@@ -80,6 +77,10 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'SentMemo',
     caption: '发送备注',
+  },
+  {
+    key: 'TotalOrderCount',
+    caption: '总订单数',
   },
   {
     key: 'IsPicking',
@@ -231,7 +232,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'ThreeServiceSupplierCode',
-    caption: '三包服务商',
+    caption: '三包承运商',
     datatypekeies: `${baseDataPre}suppliers`,
   },
   {
@@ -335,7 +336,7 @@ export const customColumns: IColumnItem[] = [
     caption: '大头笔',
   },
   {
-    key: 'PushDownTime',
+    key: 'LogisticNoMsg',
     caption: '快递号接口信息',
   },
   {
@@ -411,7 +412,7 @@ export const customColumns: IColumnItem[] = [
     caption: '分组',
   },
   {
-    key: 'PushDownTime',
+    key: 'Memo',
     caption: '备注',
   },
   {

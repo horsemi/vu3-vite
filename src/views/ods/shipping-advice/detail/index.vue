@@ -60,6 +60,8 @@
                     ? receiverInformation
                     : data.title === '物流信息'
                     ? logisticsInformation
+                    : data.title === '快递信息'
+                    ? expressListInformation
                     : data.title === '作业信息'
                     ? taskInformation
                     : otherInformation
@@ -145,6 +147,10 @@
           height: '',
         },
         {
+          title: '快递信息',
+          height: '',
+        },
+        {
           title: '作业信息',
           height: '',
         },
@@ -195,6 +201,7 @@
       const baseInformation = ref<IDetailItem[]>([]);
       const receiverInformation = ref<IDetailItem[]>([]);
       const logisticsInformation = ref<IDetailItem[]>([]);
+      const expressListInformation = ref<IDetailItem[]>([]);
       const taskInformation = ref<IDetailItem[]>([]);
       const otherInformation = ref<IDetailItem[]>([]);
 
@@ -302,11 +309,20 @@
         });
         const detailData = await getDetailData(['Id', '=', Id]);
         if (!detailData) return;
-        const { baseList, receiverList, logisticsList, taskList, otherList, data } = detailData;
+        const {
+          baseList,
+          receiverList,
+          logisticsList,
+          expressList,
+          taskList,
+          otherList,
+          data,
+        } = detailData;
         formData.value = data;
         baseInformation.value = baseList;
         receiverInformation.value = receiverList;
         logisticsInformation.value = logisticsList;
+        expressListInformation.value = expressList;
         taskInformation.value = taskList;
         otherInformation.value = otherList;
         handleHeight(0);
@@ -325,6 +341,7 @@
         baseInformation,
         receiverInformation,
         logisticsInformation,
+        expressListInformation,
         taskInformation,
         otherInformation,
         columns,

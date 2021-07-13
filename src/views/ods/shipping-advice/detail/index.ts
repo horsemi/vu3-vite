@@ -10,75 +10,47 @@ export const base: IDetailItem[] = [
     dataField: 'BillCode',
   },
   {
-    dataField: 'BillDate',
-  },
-  {
-    dataField: 'BatchCode',
-  },
-  {
-    dataField: 'TotalPackage',
-  },
-  {
     dataField: 'BillTypeCode',
-  },
-  {
-    dataField: 'BranchLineType',
-  },
-  {
-    dataField: 'SendGoodsMode',
-  },
-  {
-    dataField: 'TotalPack',
-  },
-  {
-    dataField: 'DocumentStatus',
-  },
-  {
-    dataField: 'MarkStatus',
-  },
-  {
-    dataField: 'ServiceItemCode',
-  },
-  {
-    dataField: 'TotalVolume',
-  },
-  {
-    dataField: 'OperationStatus',
   },
   {
     dataField: 'DeliveryWarehouseCode',
   },
   {
-    dataField: 'SentStatus',
+    dataField: 'TotalPackage',
   },
   {
-    dataField: 'SentMemo',
+    dataField: 'DocumentStatus',
   },
   {
-    dataField: 'IsTally',
-    template: 'stepBar',
+    dataField: 'BillDate',
+  },
+  {
+    dataField: 'BranchLineType',
+  },
+  {
+    dataField: 'TotalPack',
+  },
+  {
+    dataField: 'OperationStatus',
+  },
+  {
+    dataField: 'MarkStatus',
+  },
+  {
+    dataField: 'TotalOrderCount',
+  },
+  {
+    dataField: 'TotalVolume',
+  },
+  {
+    dataField: 'Memo',
     colSpan: 4,
   },
   {
-    dataField: 'IsEntry',
-    hide: true,
-  },
-  {
-    dataField: 'IsTransfer',
-    hide: true,
-  },
-  {
-    dataField: 'IsClean',
-    hide: true,
-  },
-  {
-    dataField: 'IsPicking',
+    dataField: 'SentStatus',
   },
   {
     dataField: 'IsGatheringOrder',
-  },
-  {
-    dataField: 'IsSmallMode',
   },
   {
     dataField: 'IsMergeLockOrder',
@@ -120,6 +92,12 @@ export const receiver: IDetailItem[] = [
     dataField: 'DetailAddress',
   },
   {
+    dataField: 'IsAgencyOrder',
+  },
+  {
+    dataField: 'IsInstall',
+  },
+  {
     dataField: 'ShowroomContacts',
   },
   {
@@ -127,12 +105,6 @@ export const receiver: IDetailItem[] = [
   },
   {
     dataField: 'ShowroomAddress',
-  },
-  {
-    dataField: 'IsAgencyOrder',
-  },
-  {
-    dataField: 'IsInstall',
   },
   {
     dataField: 'IsRecycling',
@@ -180,7 +152,7 @@ export const logistics: IDetailItem[] = [
     dataField: 'LoadType',
   },
   {
-    dataField: 'LineAreaCode',
+    dataField: 'ThreeServiceCostPrice',
   },
   {
     dataField: 'ThreeServiceSupplierCode',
@@ -189,49 +161,46 @@ export const logistics: IDetailItem[] = [
     dataField: 'SmallCarGroup',
   },
   {
-    dataField: 'DeliveryCos',
+    dataField: 'SendGoodsMode',
   },
   {
-    dataField: 'LogisticCode',
+    dataField: 'ThreeServiceFeeTypeCode', 
   },
   {
-    dataField: 'LogisticsLine',
-  },
-  {
-    dataField: 'ThreeServiceCostPrice',
+    dataField: 'LineAreaCode',
   },
   {
     dataField: 'LogisticsCostPrice',
   },
   {
+    dataField: 'LogisticCode',
+  },
+  {
     dataField: 'FreightTypeCode',
   },
   {
-    dataField: 'ThreeServiceFeeTypeCode',
+    dataField: 'LogisticsLine',
   },
   {
     dataField: 'ServiceItemCode',
   },
 ];
 
-export const task: IDetailItem[] = [
+export const express: IDetailItem[] = [
   {
-    dataField: 'LockBatchTime',
-  },
-  {
-    dataField: 'LockBatchUserCode',
+    dataField: 'BagsCentralizeAddress',
   },
   {
     dataField: 'ExpressSiteName',
   },
   {
-    dataField: 'PaintMarkerStatus',
+    dataField: 'LogisticNoMsg',
   },
   {
-    dataField: 'ReturnGoodsStatus',
+    dataField: 'LogisticNoStatus',
   },
   {
-    dataField: 'PlanSendGoodsDate',
+    dataField: 'PaintMarker',
   },
   {
     dataField: 'ExpressStandard',
@@ -240,37 +209,66 @@ export const task: IDetailItem[] = [
     dataField: 'PaintMarkerMsg',
   },
   {
-    dataField: 'SendGoodsTimeOut',
+    dataField: 'PaintMarkerStatus',
   },
   {
-    dataField: 'BagsCentralizeAddress',
+    dataField: 'TotalWeight',
+  },
+];
+
+export const task: IDetailItem[] = [
+  {
+    dataField: 'BatchCode',
   },
   {
-    dataField: 'LogisticNoStatus',
+    dataField: 'PromisedDeliveryDate',
   },
   {
-    dataField: 'CancelledTime',
+    dataField: 'LockBatchTime',
+  },
+  {
+    dataField: 'InterceptTypeCode',
   },
   {
     dataField: 'SendGoodsTime',
   },
   {
-    dataField: 'PaintMarker',
+    dataField: 'SendGoodsTimeOut',
   },
   {
-    dataField: 'PushDownTime',
-  },
-  {
-    dataField: 'CancellerId',
-  },
-  {
-    dataField: 'SentDate',
+    dataField: 'LockBatchUserCode',
   },
   {
     dataField: 'InterceptReasonCode',
   },
   {
-    dataField: 'InterceptTypeCode',
+    dataField: 'SentDate',
+  },
+  {
+    dataField: 'CancelledTime',
+  },
+  {
+    dataField: 'CancellerId'
+  },
+  {
+    dataField: 'ReturnGoodsStatus'
+  },
+  {
+    dataField: 'IsTally',
+    template: 'stepBar',
+    colSpan: 4,
+  },
+  {
+    dataField: 'IsEntry',
+    hide: true,
+  },
+  {
+    dataField: 'IsTransfer',
+    hide: true,
+  },
+  {
+    dataField: 'IsClean',
+    hide: true,
   },
   {
     dataField: 'IsCancelled',
@@ -282,49 +280,40 @@ export const other: IDetailItem[] = [
     dataField: 'CreatedTime',
   },
   {
-    dataField: 'CreatorId',
-  },
-  {
-    dataField: 'OutSourceBillType',
-  },
-  {
-    dataField: 'GatheringParentCode',
-  },
-  {
-    dataField: 'AppliedTime',
-  },
-  {
-    dataField: 'ApplierId',
-  },
-  {
-    dataField: 'OutBillFormCode',
-  },
-  {
-    dataField: 'OutSourceBillCode',
-  },
-  {
     dataField: 'UpdatedTime',
-  },
-  {
-    dataField: 'UpdaterId',
   },
   {
     dataField: 'CustomerCode',
   },
   {
-    dataField: 'OutSaleBillCode',
+    dataField: 'GatheringParentCode',
   },
   {
-    dataField: 'TotalWeight',
+    dataField: 'CreatorId',
   },
   {
-    dataField: 'AreaName',
+    dataField: 'UpdaterId',
   },
   {
     dataField: 'Group',
   },
   {
-    dataField: 'PushDownTime',
+    dataField: 'OutSourceBillCode',
+  },
+  {
+    dataField: 'AppliedTime',
+  },
+  {
+    dataField: 'AreaName',
+  },
+  {
+    dataField: 'CustomerSalesman',
+  },
+  {
+    dataField: 'OutSaleBillCode',
+  },
+  {
+    dataField: 'ApplierId',
   },
   {
     dataField: 'TotalMarble',
@@ -333,7 +322,14 @@ export const other: IDetailItem[] = [
     dataField: 'TaoBaoCode',
   },
   {
-    dataField: 'CustomerSalesman',
+    dataField: 'OutBillFormCode',
+  },
+  {
+    dataField: 'SentMemo',
+    colSpan: 6,
+  },
+  {
+    dataField: 'OutSourceBillType',
   },
 ];
 
@@ -348,36 +344,168 @@ export const customDefinite: IDefiniteItem[] = [
     caption: '物料编码',
   },
   {
-    key: 'BomCode',
-    caption: 'BOM版本',
+    key: 'MaterialName',
+    caption: '物料名称',
+  },
+  // {
+  //   key: '',
+  //   caption: '规格描述',
+  // },
+  // {
+  //   key: '',
+  //   caption: '小商品条码',
+  // },
+  {
+    key: 'DefaultAreaCode',
+    caption: '默认区域',
   },
   {
-    key: 'CustomerMaterialName',
-    caption: '客户物料名称',
+    key: 'UnitCode',
+    caption: '单位',
   },
   {
     key: 'Qty',
     caption: '数量',
   },
   {
+    key: 'LotCode',
+    caption: '批号',
+  },
+  {
+    key: 'BomCode',
+    caption: 'BOM版本',
+  },
+  {
+    key: 'WarehouseCode',
+    caption: '仓库',
+  },
+  {
     key: 'PackageQuantity',
     caption: '包件数',
   },
   {
-    key: 'Shop',
-    caption: '店铺',
+    key: 'PackageCount',
+    caption: '总包件数',
+  },
+  {
+    key: 'VolumeQuantity',
+    caption: '体积',
+  },
+  {
+    key: 'VolumeCount',
+    caption: '总体积',
+  },
+  {
+    key: 'CustomerMaterialName',
+    caption: '客户物料名称',
+  },
+  // {
+  //   key: '',
+  //   caption: '父项物业编码',
+  // },
+  {
+    key: 'IsMarble',
+    caption: '大理石',
+  },
+  {
+    key: 'IsGaAllows',
+    caption: '打木架',
+  },
+  {
+    key: 'OutSourceBillCode',
+    caption: '外部原单编号',
+  },
+  {
+    key: 'ActualSalePrice',
+    caption: '实际售价',
+  },
+  {
+    key: 'Memo',
+    caption: '备注',
+  },
+  // {
+  //   key: '',
+  //   caption: '源单编号',
+  // },
+  {
+    key: 'OutRowCode',
+    caption: '源单行号',
+  },
+  {
+    key: 'TaoBaoCode',
+    caption: '淘宝单号',
+  },
+  {
+    key: 'TaoBaoSubCode',
+    caption: '淘宝子单号',
+  },
+  {
+    key: 'IsVerification',
+    caption: '是否核销',
   },
   {
     key: 'Channel',
     caption: '渠道',
   },
   {
+    key: 'CategoryLCode',
+    caption: '产品大类',
+  },
+  {
+    key: 'CategoryMCode',
+    caption: '产品中类',
+  },
+  {
+    key: 'CategorySCode',
+    caption: '产品小类',
+  },
+  {
+    key: 'CategoryXSCode',
+    caption: '产品细类',
+  },
+  {
+    key: 'Shop',
+    caption: '店铺',
+  },
+  {
+    key: 'BuyShop',
+    caption: '收入店铺',
+  },
+  {
     key: 'ProvideSalePrice',
     caption: '供货售价',
   },
   {
-    key: 'ActualSalePrice',
-    caption: '实际售价',
+    key: 'InWarehouseCode',
+    caption: '进仓编号',
+  },
+  {
+    key: 'ProductName',
+    caption: '品名',
+  },
+  {
+    key: 'Sku',
+    caption: 'SKU',
+  },
+  {
+    key: 'SkuCode',
+    caption: 'SKUID',
+  },
+  {
+    key: 'Texture',
+    caption: '材质',
+  },
+  {
+    key: 'SourceMaterialCode',
+    caption: '来源商品编码',
+  },
+  {
+    key: 'SourceProductBomCode',
+    caption: '来源商品BOM',
+  },
+  {
+    key: 'SourceProductLotCode',
+    caption: '来源商品批号',
   },
 ];
 
@@ -388,19 +516,22 @@ export const getDetailData = async (filter: any[]) => {
   const baseList = getFormList(base, columnList);
   const receiverList = getFormList(receiver, columnList);
   const logisticsList = getFormList(logistics, columnList);
+  const expressList = getFormList(express, columnList);
   const taskList = getFormList(task, columnList);
   const otherList = getFormList(other, columnList);
   const baseKey = baseList.map((item) => item.dataField);
   const receiverKey = receiverList.map((item) => item.dataField);
   const taskKey = taskList.map((item) => item.dataField);
   const logisticsKey = logisticsList.map((item) => item.dataField);
+  const expressKey = expressList.map((item) => item.dataField);
   const otherKey = otherList.map((item) => item.dataField);
-  const select = baseKey.concat(receiverKey).concat(logisticsKey).concat(taskKey).concat(otherKey);
+  const select = baseKey.concat(receiverKey).concat(logisticsKey).concat(expressKey).concat(taskKey).concat(otherKey);
   const data = await getDetailDataSource('shipping-advices', select, filter);
   return {
     baseList,
     receiverList,
     logisticsList,
+    expressList,
     taskList,
     otherList,
     data: data[0],

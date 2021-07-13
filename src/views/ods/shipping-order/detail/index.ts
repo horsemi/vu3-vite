@@ -16,7 +16,7 @@ export const base: IDetailItem[] = [
     dataField: 'TotalPackage',
   },
   {
-    dataField: 'MarkStatus',
+    dataField: 'Group',
   },
   {
     dataField: 'BillTypeCode',
@@ -25,25 +25,32 @@ export const base: IDetailItem[] = [
     dataField: 'ServiceItemCode',
   },
   {
-    dataField: 'Group',
-  },
-  {
-    dataField: 'DocumentStatus',
-  },
-  {
-    dataField: 'TotalOrderCount',
-  },
-  {
     dataField: 'TotalVolume',
   },
   {
     dataField: 'CustomerSalesman',
   },
   {
+    dataField: 'DocumentStatus',
+  },
+  {
     dataField: 'OperationStatus',
   },
   {
+    dataField: 'TotalOrderCount',
+  },
+  {
     dataField: 'DetailRowsCount',
+  },
+  {
+    dataField: 'DeliveryWarehouseCode',
+  },
+  {
+    dataField: 'MarkStatus',
+  },
+  {
+    dataField: 'Memo',
+    colSpan: 4,
   },
   {
     dataField: 'IsGatheringOrder',
@@ -89,6 +96,7 @@ export const receiver: IDetailItem[] = [
   },
   {
     dataField: 'DetailAddress',
+    colSpan: 4,
   },
   {
     dataField: 'ShowroomContacts',
@@ -98,6 +106,7 @@ export const receiver: IDetailItem[] = [
   },
   {
     dataField: 'ShowroomAddress',
+    colSpan: 4,
   },
 ];
 
@@ -106,10 +115,10 @@ export const logistics: IDetailItem[] = [
     dataField: 'GatheringPointCode',
   },
   {
-    dataField: 'ThreeServicePointCode',
+    dataField: 'LineAreaCode',
   },
   {
-    dataField: 'ContractorCode',
+    dataField: 'ThreeServiceCostPrice',
   },
   {
     dataField: 'ThreeServiceFeeTypeCode',
@@ -118,19 +127,19 @@ export const logistics: IDetailItem[] = [
     dataField: 'DeliveryPointCode',
   },
   {
-    dataField: 'LineAreaCode',
-  },
-  {
-    dataField: 'ThreeServiceSupplierCode',
-  },
-  {
-    dataField: 'FreightTypeCode',
+    dataField: 'ContractorCode',
   },
   {
     dataField: 'LogisticsCostPrice',
   },
   {
-    dataField: 'ThreeServiceCostPrice',
+    dataField: 'FreightTypeCode',
+  },
+  {
+    dataField: 'ThreeServicePointCode',
+  },
+  {
+    dataField: 'ThreeServiceSupplierCode',
   },
   {
     dataField: 'LogisticCode',
@@ -204,37 +213,121 @@ export const customDefinite: IDefiniteItem[] = [
     key: 'MaterialCode',
     caption: '物料编码',
   },
+  // {
+  //   key: '',
+  //   caption: '物料名称',
+  // },
+  // {
+  //   key: '',
+  //   caption: '规格描述',
+  // },
   {
-    key: 'BomCode',
-    caption: 'BOM版本',
-  },
-  {
-    key: 'CustomerMaterialName',
-    caption: '客户物料名称',
+    key: 'UnitCode',
+    caption: '单位',
   },
   {
     key: 'Qty',
     caption: '数量',
   },
   {
+    key: 'LotCode',
+    caption: '批号',
+  },
+  {
+    key: 'BomCode',
+    caption: 'BOM版本',
+  },
+  {
+    key: 'WarehouseCode',
+    caption: '仓库',
+  },
+  {
     key: 'PackageQuantity',
     caption: '包件数',
+  },
+  {
+    key: 'PackageCount',
+    caption: '总包件数',
+  },
+  {
+    key: 'VolumeQuantity',
+    caption: '体积',
+  },
+  {
+    key: 'VolumeCount',
+    caption: '总体积',
+  },
+  {
+    key: 'CustomerMaterialName',
+    caption: '客户物料名称',
+  },
+  {
+    key: 'ParentMaterialCode',
+    caption: '父项物料编码',
+  },
+  {
+    key: 'OutSourceBillCode',
+    caption: '外部原单编号',
+  },
+  {
+    key: 'ActualSalePrice',
+    caption: '实际售价',
+  },
+  {
+    key: 'Memo',
+    caption: '备注',
+  },
+  {
+    key: 'TaoBaoCode',
+    caption: '淘宝单号',
+  },
+  {
+    key: 'TaoBaoSubCode',
+    caption: '淘宝子单号',
   },
   {
     key: 'Shop',
     caption: '店铺',
   },
   {
-    key: 'Channel',
-    caption: '渠道',
+    key: 'BuyShop',
+    caption: '收入店铺',
   },
   {
     key: 'ProvideSalePrice',
     caption: '供货售价',
   },
   {
-    key: 'ActualSalePrice',
-    caption: '实际售价',
+    key: 'InWarehouseCode',
+    caption: '进仓编号',
+  },
+  {
+    key: 'ProductName',
+    caption: '品名',
+  },
+  {
+    key: 'Sku',
+    caption: 'SKU',
+  },
+  {
+    key: 'SkuCode',
+    caption: 'SKUID',
+  },
+  {
+    key: 'Texture',
+    caption: '材质',
+  },
+  {
+    key: 'SourceMaterialCode',
+    caption: '来源商品编码',
+  },
+  {
+    key: 'SourceProductBomCode',
+    caption: '来源商品BOM',
+  },
+  {
+    key: 'SourceProductLotCode',
+    caption: '来源商品批号',
   },
 ];
 

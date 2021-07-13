@@ -13,6 +13,7 @@ export const customColumns: IColumnItem[] = [
     key: 'GatheringParentCode',
     caption: '父单号',
     mustKey: true,
+    hide: true,
   },
   {
     key: 'BillDate',
@@ -44,7 +45,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'TotalVolume',
-    caption: '总体积',
+    caption: '总体积数',
   },
   {
     key: 'MarkStatus',
@@ -76,6 +77,10 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CustomerSalesman',
     caption: '客户业务员',
+  },
+  {
+    key: 'Memo',
+    caption: '备注',
   },
   {
     key: 'OperationStatus',
