@@ -119,7 +119,7 @@
       };
       // 点击重置触发
       const onReset = () => {
-        const { scheme, fast } = Persistent.getLocal(SCHEME_DATA_KEY) as ISchemeData;
+        const { scheme, fast } = (Persistent.getLocal(SCHEME_DATA_KEY) as any )[props.orderCode];
         const popupUuid = schemeList.value[popupIndex.value].uuid;
         const popupListTemp = scheme.filter((item) => item.uuid === popupUuid);
 
@@ -152,10 +152,9 @@
           handleChangeCheckedDefault(index - 1);
         }
       };
-      // TODO 过滤方案缓存数据更改，此处需要更改（未改）
       // 处理保存数据
       const handleSaveData = (msg: string, scheme: ISchemeItem[], fast: IQueryItem[] = []) => {
-        let schemeListTemp = Persistent.getLocal<ISchemeData[]>(SCHEME_DATA_KEY);
+        let schemeListTemp = Persistent.getLocal(SCHEME_DATA_KEY) as any;
         let checkedIndex = 0;
 
         if (schemeListTemp) {
@@ -171,10 +170,9 @@
         handleOverLength();
         useMessage(msg, 'success');
       };
-      // TODO 过滤方案缓存数据更改，此处需要更改（未改）
       // 处理默认方案更新
       const handleChangeCheckedDefault = (index: number) => {
-        let schemeListTemp = Persistent.getLocal<ISchemeData[]>(SCHEME_DATA_KEY);
+        let schemeListTemp = Persistent.getLocal(SCHEME_DATA_KEY) as any;
 
         if (schemeListTemp) {
           schemeListTemp[props.orderCode].checkedIndex = index;
