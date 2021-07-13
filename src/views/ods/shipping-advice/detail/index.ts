@@ -164,7 +164,7 @@ export const logistics: IDetailItem[] = [
     dataField: 'SendGoodsMode',
   },
   {
-    dataField: 'ThreeServiceFeeTypeCode', 
+    dataField: 'ThreeServiceFeeTypeCode',
   },
   {
     dataField: 'LineAreaCode',
@@ -248,10 +248,10 @@ export const task: IDetailItem[] = [
     dataField: 'CancelledTime',
   },
   {
-    dataField: 'CancellerId'
+    dataField: 'CancellerId',
   },
   {
-    dataField: 'ReturnGoodsStatus'
+    dataField: 'ReturnGoodsStatus',
   },
   {
     dataField: 'IsTally',
@@ -343,10 +343,10 @@ export const customDefinite: IDefiniteItem[] = [
     key: 'MaterialCode',
     caption: '物料编码',
   },
-  {
-    key: 'MaterialName',
-    caption: '物料名称',
-  },
+  // {
+  //   key: 'MaterialName',
+  //   caption: '物料名称',
+  // },
   // {
   //   key: '',
   //   caption: '规格描述',
@@ -525,7 +525,12 @@ export const getDetailData = async (filter: any[]) => {
   const logisticsKey = logisticsList.map((item) => item.dataField);
   const expressKey = expressList.map((item) => item.dataField);
   const otherKey = otherList.map((item) => item.dataField);
-  const select = baseKey.concat(receiverKey).concat(logisticsKey).concat(expressKey).concat(taskKey).concat(otherKey);
+  const select = baseKey
+    .concat(receiverKey)
+    .concat(logisticsKey)
+    .concat(expressKey)
+    .concat(taskKey)
+    .concat(otherKey);
   const data = await getDetailDataSource('shipping-advices', select, filter);
   return {
     baseList,
