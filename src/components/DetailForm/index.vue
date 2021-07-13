@@ -47,7 +47,6 @@
   import EnumSelect from '/@/components/EnumSelect/index.vue';
   import StepBar from '/@/components/StepBar/index.vue';
 
-
   export default defineComponent({
     components: {
       DxForm,

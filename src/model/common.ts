@@ -29,6 +29,7 @@ export const getColumnList = async (
         if (fieldType.key === column.key) {
           columnList.push({
             type: handleType(fieldType.type),
+            expand: fieldType.expand,
             ...column,
           });
         }
