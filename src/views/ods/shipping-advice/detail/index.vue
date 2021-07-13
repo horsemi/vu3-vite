@@ -193,7 +193,7 @@
       const selectedIndex = ref(0);
       const formBox = ref();
       let tableOpenedHeight = '';
-      const tableCloseHeight = 'calc(100vh - 28px - 260px)';
+      const tableCloseHeight = 'calc(100vh - 28px - 322px)';
 
       const route = useRoute();
       const Id = route.query.Id as string;
@@ -206,7 +206,7 @@
       const otherInformation = ref<IDetailItem[]>([]);
 
       const options: Partial<ITableOptions> = {
-        height: 'calc(100vh - 28px - 260px)',
+        height: 'calc(100vh - 28px - 322px)',
         useScrolling: true,
         page: {
           size: 20,
@@ -283,7 +283,7 @@
           if (!multiViewItems.value[index].height && opened.value) {
             multiViewItems.value[index].height = formBox.value.offsetHeight + 'px';
           }
-          tableOpenedHeight = `calc(100vh - ${multiViewItems.value[index].height} - 260px)`;
+          tableOpenedHeight = `calc(100vh - ${multiViewItems.value[index].height} - 322px)`;
           if (opened.value) {
             tableOptions.value.height = tableOpenedHeight;
           } else {
@@ -370,9 +370,6 @@
 
 <style lang="less">
   .detail {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
 
     .tab-panel {
@@ -391,13 +388,11 @@
       background-color: #fff;
     }
     .btn-box {
-      position: absolute;
-      top: 0;
-      right: 20px;
-      z-index: 100;
       display: flex;
-      align-items: center;
-      height: 36px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      width: 100%;
+      padding: 5px 5px 0;
       & > * {
         margin-left: 10px;
       }
@@ -424,30 +419,33 @@
     }
 
     .dx-layout-manager .dx-field-item:not(.dx-first-row) {
-      padding-top: 8px !important;
+      padding-top: 8px;
     }
 
     .dx-widget {
-      font-size: 12px !important;
+      font-size: 12px;
     }
 
     .dx-box-item-content {
-      font-size: 12px !important;
+      font-size: 12px;
     }
 
     .dx-texteditor-input {
-      min-height: 0 !important;
-      padding: 5px 9px 5px !important;
+      min-height: 0;
+      padding: 5px 9px 5px;
     }
 
     .dx-button-has-text .dx-button-content {
-      padding: 0 !important;
+      padding: 0;
+    }
+
+    .dx-button-has-icon .dx-button-content {
+      padding: 0;
     }
 
     .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-checkbox,
     .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-switch {
-      margin: 0 !important;
+      margin: 0;
     }
-
   }
 </style>
