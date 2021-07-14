@@ -5,7 +5,6 @@ import { getDefiniteDataSource, getDetailDataSource } from '/@/api/ods/detail';
 import { getColumns } from '/@/model/shipping-orders';
 import { getFormList } from '/@/utils/detail';
 import { isFoundationType } from '/@/model/common';
-import { customColumns } from '/@/model/shipping-advices';
 
 export const base: IDetailItem[] = [
   {
