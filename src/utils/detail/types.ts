@@ -68,20 +68,3 @@ export interface IDetailItem {
    */
   colSpan?: number;
 }
-
-export interface IDefiniteItem {
-  /**
-   * @description 列的字段
-   */
-  key: string;
-
-  /**
-   * @description 列的标题
-   */
-  caption: string;
-
-  /**
-   * @description 是否隐藏
-   */
-  hide?: boolean;
-}

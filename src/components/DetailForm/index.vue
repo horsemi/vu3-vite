@@ -8,7 +8,7 @@
           :label="{ text: item.label, visible: !item.template }"
           :data-field="item.dataField"
           :editor-type="item.editorType"
-          :disabled="item.disabled"
+          :disabled="!item.disabled"
           :editor-options="handleEditorOptions(item)"
           :col-span="item.colSpan ? item.colSpan : item.editorType === 'dxSwitch' ? 1 : 2"
           :template="item.expand ? 'expand' : item.template"
@@ -119,6 +119,16 @@
   .@{prefix-cls} {
     .item-center {
       align-items: center !important;
+    }
+
+    // 禁用样式
+    .dx-state-disabled .dx-widget,
+    .dx-state-disabled.dx-widget {
+      opacity: 0.6;
+      &.dx-texteditor.dx-editor-outlined {
+        background: #f5f7fa;
+        opacity: 1;
+      }
     }
   }
 </style>
