@@ -29,7 +29,7 @@
           v-else
           width="100%"
           :value="formData[data.dataField]"
-          :datatypekeies="data.editorOptions.expand"
+          :expand="data.editorOptions.expand"
         />
       </template>
     </DxForm>

@@ -25,7 +25,7 @@
         >
           <DxLookup
             v-if="item.type === 'enum'"
-            :data-source="getGlobalEnumDataByCode(item.datatypekeies)"
+            :data-source="getGlobalEnumDataByCode(item.type)"
             value-expr="key"
             display-expr="description"
           />
