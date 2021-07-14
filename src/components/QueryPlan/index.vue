@@ -33,7 +33,6 @@
   import type {
     IOrderByItem,
     IRequirementItem,
-    ISchemeColumnsItem,
     ISchemeItem,
   } from '../QueryPopup/content/types';
   import type { IQueryItem, ISchemeData } from './types';
@@ -201,14 +200,8 @@
         schemeList.value[popupIndex.value].orderBy = data;
       };
       // 接收显示隐藏列更新
-      const onChangeColumn = (data: ISchemeColumnsItem[]) => {
-        const columns: string[] = [];
-        data.forEach((item) => {
-          if (item.show) {
-            columns.push(item.key);
-          }
-        });
-        schemeList.value[popupIndex.value].columns = columns;
+      const onChangeColumn = (data: string[]) => {
+        schemeList.value[popupIndex.value].columns = data;
       };
       // 接收标题更新
       const onTitleChange = (title: string) => {

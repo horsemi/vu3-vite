@@ -61,7 +61,7 @@
 
 <script lang="ts">
 import type { IColumnItem } from '/@/model/types';
-import type { IFieldItem, IOrderByItem, ISchemeColumnsItem, ISortOptions } from './types';
+import type { IFieldItem, IOrderByItem, ISortOptions } from './types';
 
 import { defineComponent, PropType, ref, watch } from 'vue';
 import { cloneDeep } from 'lodash-es';
@@ -92,7 +92,7 @@ export default defineComponent({
       },
     },
     columns: {
-      type: Array as PropType<ISchemeColumnsItem[]>,
+      type: Array as PropType<string[]>,
       default: () => {
         return [];
       },
@@ -129,20 +129,24 @@ export default defineComponent({
       ctx.emit('on-change-sort', data);
     };
     // 外派显示隐藏列更新事件
-    const onChangeColumn = (data: ISchemeColumnsItem[]) => {
+    const onChangeColumn = (data: string[]) => {
       ctx.emit('on-change-column', data);
     };
 
     // 处理字段有排序但是没有显示的情况
     const handleFieldShow = (data: IOrderByItem[]) => {
-      const columns = cloneDeep(props.columns);
+      const columns = [...props.columns];
+      const length = props.columns.length;
       data.forEach((sort) => {
-        columns.forEach((col) => {
-          if (sort.key === col.key && !col.show) {
-            col.show = true;
-            return;
+        let count = 0;
+        props.columns.forEach((key) => {
+          if (sort.key !== key) {
+            count++;
           }
         });
+        if (count === length) {
+          columns.push(sort.key);
+        }
       });
       onChangeColumn(columns);
     };

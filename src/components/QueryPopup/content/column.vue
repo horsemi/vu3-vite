@@ -81,7 +81,8 @@
 
       // 外派显示隐藏列更新事件
       const onChangeColumn = (data: ISchemeColumnsItem[]) => {
-        ctx.emit('on-change-column', data);
+        const temp: string[] = data.filter(item => item.show).map(item => item.key);
+        ctx.emit('on-change-column', temp);
       };
       // 外派排序更新事件
       const onChangeSort = (data: IOrderByItem[]) => {

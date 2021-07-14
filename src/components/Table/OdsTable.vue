@@ -270,6 +270,13 @@
       background-color: #e6f7ff;
     }
 
+    // 行hover样式
+    .dx-datagrid-table
+      .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row):not(.dx-row-focused)
+      > td:not(.dx-focused) {
+      background-color: #e6f7ff;
+    }
+
     &__table-billno-column__wrap {
       color: #1890ff;
       text-decoration: underline;

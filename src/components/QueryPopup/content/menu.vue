@@ -156,8 +156,8 @@ export default defineComponent({
     border-bottom: 1px solid @border-color-primary;
     span {
       flex: 1;
-      height: 44px;
-      line-height: 44px;
+      height: 35px;
+      line-height: 35px;
       text-align: center;
       cursor: pointer;
       &:hover {

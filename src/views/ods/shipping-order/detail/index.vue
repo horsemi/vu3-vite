@@ -91,15 +91,16 @@
 <script lang="ts">
   import type { ITableOptions } from '/@/components/Table/types';
   import type { IDetailItem } from '/@/utils/detail/types';
+  import type { IColumnItem } from '/@/model/types';
 
-  import { defineComponent, nextTick, onMounted, ref, watch } from 'vue';
+  import { defineComponent, nextTick, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
 
   import { defaultTableOptions } from '/@/components/Table/common';
   import { deepMerge } from '/@/utils';
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
-  import { getDetailData, getDefiniteData, customDefinite } from './index';
+  import { getDetailData, getDefiniteData } from './index';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
@@ -176,7 +177,7 @@
       };
       const tableOptions = ref<ITableOptions>(deepMerge(cloneDeep(defaultTableOptions), options));
       const dataSource = ref();
-      const columns = customDefinite;
+      const columns = ref<IColumnItem[]>([]);
 
       const onRefresh = () => {
         getData();
@@ -244,28 +245,31 @@
         });
       };
 
-      const getData = async () => {
-        getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]).then((res) => {
-          dataSource.value = res;
+      const getData = () => {
+        getDetailData(['Id', '=', Id]).then((res) => {
+          if (res) {
+            const { baseList, receiverList, logisticsList, otherList, data } = res;
+            formData.value = data;
+            baseInformation.value = baseList;
+            receiverInformation.value = receiverList;
+            logisticsInformation.value = logisticsList;
+            otherInformation.value = otherList;
+            handleHeight(0);
+          }
         });
-        const detailData = await getDetailData(['Id', '=', Id]);
-        if (!detailData) return;
-        const { baseList, receiverList, logisticsList, otherList, data } = detailData;
-        formData.value = data;
-        baseInformation.value = baseList;
-        receiverInformation.value = receiverList;
-        logisticsInformation.value = logisticsList;
-        otherInformation.value = otherList;
-        handleHeight(0);
+        getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]).then((res) => {
+          if (res) {
+            columns.value = res.columnList;
+            dataSource.value = res.data;
+          }
+        });
       };
 
       watch(selectedIndex, (val) => {
         handleHeight(val);
       });
 
-      onMounted(async () => {
-        await getData();
-      });
+      getData();
 
       return {
         baseInformation,
@@ -374,6 +378,5 @@
     .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-switch {
       margin: 0;
     }
-
   }
 </style>

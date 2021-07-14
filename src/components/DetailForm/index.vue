@@ -90,6 +90,9 @@
           editorOptions = {
             switchedOnText: '是',
             switchedOffText: '否',
+            focusStateEnabled: false,
+            hoverStateEnabled: false,
+            activeStateEnabled: false,
           };
         } else if (item.editorType === 'dxNumberBox') {
           editorOptions = {
