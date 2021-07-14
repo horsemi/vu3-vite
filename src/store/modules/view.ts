@@ -172,7 +172,7 @@ export const useViewStore = defineStore({
       }
 
       /**
-       * @description: 关闭页面时在 viewsState 删除对应的路由
+       * @description 关闭页面时在 viewsState 删除对应的路由
        */
       const close = (route: RouteLocationNormalized) => {
         const { fullPath, meta: { affix } = {} } = route;

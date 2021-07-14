@@ -12,7 +12,7 @@ export function getStorageShortName() {
 }
 
 /**
- * @description: Get environment variables
+ * @description Get environment variables
  * @returns:
  * @example:
  */
@@ -21,7 +21,7 @@ export function getEnv(): string {
 }
 
 /**
- * @description: Is it a development mode
+ * @description Is it a development mode
  * @returns:
  * @example:
  */

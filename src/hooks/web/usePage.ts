@@ -28,7 +28,7 @@ export function useGo() {
 }
 
 /**
- * @description: redo current page
+ * @description redo current page
  */
 export const useRedo = () => {
   const { push, currentRoute } = router;

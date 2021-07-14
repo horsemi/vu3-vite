@@ -195,7 +195,6 @@
         () => props.filterScheme,
         (val) => {
           handleFilterScheme(val);
-          console.log(tableColumns);
         },
         {
           immediate: true,
