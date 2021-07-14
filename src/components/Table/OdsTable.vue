@@ -54,6 +54,8 @@
         :visible="tableOptions.dataSourceOptions.paginate && !tableOptions.useScrolling"
         :show-info="true"
         :show-navigation-buttons="true"
+        :show-page-size-selector="true"
+        :allowed-page-sizes="[50, 100, 200]"
         info-text="共{1}页，{2}条数据"
         display-mode="full"
       />
@@ -322,15 +324,22 @@
 
     // 页码样式
     .dx-pager .dx-pages .dx-page {
-      width: 33px;
       height: 33px;
-      padding: 0;
+      padding: 0 10px;
       margin: 0 5px 0 0;
       line-height: 31px;
       color: #666;
       text-align: center;
       border: 1px solid #d3d3d3;
       border-radius: 4px;
+    }
+
+    // 行数设置样式
+    .dx-pager .dx-page-sizes .dx-page-size {
+      height: 33px;
+      padding: 0 10px;
+      line-height: 31px;
+      text-align: center;
     }
 
     // 跳转分页样式

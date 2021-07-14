@@ -66,7 +66,9 @@ export default defineComponent({
         return `${prefixCls}-item__container--active`;
       } else if (route.children) {
         for (let item of route.children) {
-          return isActive(item);
+          if (isActive(item)) {
+            return isActive(item);
+          }
         }
       } else {
         return '';

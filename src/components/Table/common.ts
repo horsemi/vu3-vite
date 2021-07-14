@@ -30,7 +30,7 @@ export const defaultTableOptions: ITableOptions = {
     checkBoxesMode: 'always',
   },
   page: {
-    size: 20,
+    size: 50,
   },
 };
 
