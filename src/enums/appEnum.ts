@@ -14,3 +14,13 @@ export enum TabRouterModeEnum {
   SINGLE = 'SINGLE',
   MULTIPLE = 'MULTIPLE',
 }
+
+/**
+ * @description 密码校验
+ */
+export enum PasswordStateEnum {
+  UNEXPIRED = 1,
+  WARNING = 2,
+  EXPIRED = 3,
+  WEAKPASSWORD = 4,
+}

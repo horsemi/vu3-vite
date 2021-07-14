@@ -9,18 +9,18 @@
       styling-mode="text"
     >
     </DxDropDownButton>
-    <PasswordModal 
+    <PasswordModal
       v-model:popup-visable="popupVisable"
       :show-close-button="true"
       :password-pattern="passwordPattern"
       @closePopup="ClosePopup"
-      />
+    />
   </div>
 </template>
 
 <script lang="ts">
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
-  import { defineComponent , ref } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
   import PasswordModal from '/@/components/PasswordModal/index.vue';
@@ -28,7 +28,7 @@
   export default defineComponent({
     components: {
       DxDropDownButton,
-      PasswordModal
+      PasswordModal,
     },
     setup() {
       const { prefixCls } = useDesign('header-user');
@@ -39,41 +39,36 @@
       const items = [
         {
           name: '登录记录',
-          onClick: (e) => {
+          onClick: () => {
             //
           },
         },
         {
           name: '修改密码',
-          onClick: async (e) => {
+          onClick: async () => {
             passwordPattern.value = await userStore.getPasswordPolicy();
-            console.log(popupVisable.value);
-            popupVisable.value= true;
+            popupVisable.value = true;
           },
         },
         {
           name: '退出登录',
-          onClick: (e) => {
+          onClick: () => {
             userStore.logout();
           },
         },
       ];
 
-      function onItemClick(e) {
-        console.log(e);
-      };
-      const ClosePopup = (value:boolean)=>{
-        popupVisable.value= value;
+      const ClosePopup = (value: boolean) => {
+        popupVisable.value = value;
       };
 
       return {
         prefixCls,
-        onItemClick,
         items,
         userName,
         popupVisable,
         ClosePopup,
-        passwordPattern
+        passwordPattern,
       };
     },
   });
