@@ -1,7 +1,7 @@
 export interface UserInfo {
-  userId: string | number;
+  userId?: string | number;
   userName: string;
-  roles: string[];
+  roles?: string[];
   permissions: string[];
 }
 

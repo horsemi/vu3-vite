@@ -16,7 +16,6 @@
 
 <script lang="ts">
   import { defineComponent } from 'vue';
-
   export default defineComponent({
     name: 'Home',
     setup() {
@@ -28,6 +27,7 @@
         loading: false,
       };
     },
+  
     methods: {
       loadingChange() {
         this.loading = true;

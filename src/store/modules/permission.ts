@@ -61,8 +61,8 @@ export const usePermissionStore = defineStore({
       const userStore = useUserStore();
       const appStore = useAppStoreWidthOut();
       const { permissionMode } = appStore.getSystemConfig;
-      const roleList = toRaw(userStore.getUserInfo).roles;
-      const permissionList = toRaw(userStore.getUserInfo).permissions;
+      const roleList = toRaw(userStore.getUserInfo).roles || [];
+      const menuPermissionList = await userStore.getMenus();
       // role mode
       if (permissionMode === PermissionModeEnum.ROLE) {
         const routeFilter = (route: AppRouteRecordRaw) => {
@@ -79,7 +79,7 @@ export const usePermissionStore = defineStore({
           const { meta } = route;
           const { permissions } = meta || {};
           if (!permissions) return true;
-          return permissionList.some((permission) => permissions.includes(permission));
+          return menuPermissionList.some((permission) => permissions.includes(permission.code));
         };
         routes = filter(asyncRoutes, routeFilter);
         routes = routes.filter(routeFilter);

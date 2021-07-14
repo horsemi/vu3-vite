@@ -4,10 +4,11 @@ import { defineStore } from 'pinia';
 
 import { store } from '/@/store';
 import { PageEnum } from '/@/enums/pageEnum';
-
+import { usePermissionStore } from '/@/store/modules/permission';
 import { TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import router from '/@/router';
+import { UserApi, UserData } from '/@/api/user';
 
 interface UserState {
   token?: string;
@@ -41,12 +42,87 @@ export const useUserStore = defineStore({
       this.userInfo = null;
       this.token = '';
     },
-    logout(goLogin = false): void {
-      goLogin && router.push(PageEnum.BASE_LOGIN);
+    getMenus(): Promise<any[]> {
+      return new Promise((resolve, reject) => {
+        UserApi.getMenus()
+          .then((res) => {
+            resolve(res.menus);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     },
-    async login(): Promise<void> {
-      this.setUserInfo({ userId: 1, userName: 'TEST', roles: [], permissions: ['TEST'] });
-      this.setToken('TEST');
+    getPermission(): Promise<any[]> {
+      return new Promise((resolve, reject) => {
+        UserApi.getPermission()
+          .then((res) => {
+            const permissionStore = usePermissionStore();
+            this.setUserInfo({ userName: res.userName, roles: [], permissions: res.behaviors });
+            permissionStore.changePermissionCode();
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    getPasswordPolicy(): Promise<any> {
+      return new Promise((resolve, reject) => {
+        UserApi.queryPasswordPolicy()
+          .then((res) => {
+            resolve(res[0].regexp);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    checkPassword(userInfo: UserData): Promise<any> {
+      return new Promise((resolve) => {
+        UserApi.checkPassword(userInfo).then((data) => {
+          resolve(data);
+        });
+      });
+    },
+    changePassword(data: {
+      userName: string;
+      oldPassword: string;
+      newPassword: string;
+      newPasswordRe: string;
+    }): Promise<any> {
+      return new Promise((resolve, reject) => {
+        UserApi.changePassword(data)
+          .then((res) => {
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    logout(): Promise<void> {
+      return new Promise((resolve, reject) => {
+        UserApi.logout()
+          .then(() => {
+            router.push(PageEnum.BASE_LOGIN);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
+    },
+    async login(userData: UserData): Promise<void> {
+      return new Promise((resolve, reject) => {
+        UserApi.login(userData)
+          .then(async (res) => {
+            this.setToken(res.token);
+            resolve(res);
+          })
+          .catch((error) => {
+            reject(error);
+          });
+      });
     },
   },
 });

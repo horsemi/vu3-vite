@@ -4,7 +4,6 @@ import { PageEnum } from '/@/enums/pageEnum';
 import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { useUserStoreWidthOut } from '/@/store/modules/user';
 import { usePermissionStoreWidthOut } from '/@/store/modules/permission';
-
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
 const whitePathList: PageEnum[] = [LOGIN_PATH];
@@ -68,6 +67,7 @@ export function createPermissionGuard(router: Router) {
       return;
     }
 
+    await userStore.getPermission();
     // 构建路由
     const routes = await permissionStore.buildRoutesAction();
     routes.forEach((route) => {

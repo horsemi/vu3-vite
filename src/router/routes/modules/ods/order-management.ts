@@ -26,6 +26,7 @@ const orderManagement: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/ods/shipping-order/list/index.vue'),
             meta: {
               title: '发货单',
+              permissions: ['OdsShippingOrderList'],
             },
           },
           {
@@ -34,6 +35,7 @@ const orderManagement: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/ods/shipping-advice/list/index.vue'),
             meta: {
               title: '发货通知单',
+              permissions: ['OdsShippingAdviceList'],
             },
           },
           {

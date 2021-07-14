@@ -50,19 +50,28 @@
         <div class="foot-title__wrap">让生活过得更好</div>
         <div class="foot-line__inner"></div>
       </div>
+      <PasswordModal 
+      :popup-visable="popupVisable"
+      :show-close-button="false"
+      :show-text-close="true"
+      :login-user-name="loginData.userName"
+      :password-pattern="passwordPattern"
+      @closePopup="ClosePopup"
+      />
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive } from 'vue';
+  import { defineComponent, reactive ,ref} from 'vue';
+  
   import { useUserStore } from '/@/store/modules/user';
   import { useDesign } from '/@/hooks/web/useDesign';
-
   import DxButton from 'devextreme-vue/button';
-  import { DxForm, DxItem, DxLabel, DxRequiredRule } from 'devextreme-vue/form';
+  import {DxRequiredRule} from 'devextreme-vue/validator';
+  import { DxForm, DxItem, DxLabel} from 'devextreme-vue/form';
   import SvgIcon from '/@/components/Icon/SvgIcon.vue';
-
+  import PasswordModal from '/@/components/PasswordModal/index.vue';
   export default defineComponent({
     name: 'Login',
     components: {
@@ -72,22 +81,41 @@
       DxItem,
       DxLabel,
       DxRequiredRule,
+      PasswordModal,
     },
     setup() {
       const userStore = useUserStore();
       let loginData = reactive({ userName: '', password: '' });
       const { prefixCls } = useDesign('login');
+      const popupVisable = ref<boolean>(false);
       return {
         prefixCls,
         userStore,
         loginData,
+        popupVisable,
+      };
+    },
+    data(){
+      return {
+        passwordPattern:''
       };
     },
     methods: {
-      async onLogin() {
-        await this.userStore.login();
-        this.$router.replace('/');
-      },
+      async onLogin() { 
+        this.userStore.login(this.loginData).then(()=>{
+          this.userStore.checkPassword(this.loginData).then(async(res)=>{
+             if (res.warningType === 3 || res.warningType === 4) {
+                this.popupVisable=true;
+                this.passwordPattern = await this.userStore.getPasswordPolicy();
+              }else{
+                this.$router.replace('/'); 
+              }
+          });
+        }); 
+      }, 
+      ClosePopup(value:boolean){
+        this.popupVisable = value;
+      }
     },
   });
 </script>
