@@ -11,7 +11,6 @@
       :show-row-lines="tableOptions.showRowLines"
       :show-borders="tableOptions.showBorders"
       :row-alternation-enabled="tableOptions.rowAlternationEnabled"
-      :customize-columns="customizeColumns"
       @selection-changed="onSelectionChanged"
     >
       <template v-for="(item, index) in tableColumns" :key="index">
@@ -160,9 +159,6 @@
         const index = parseInt(e.target.value) - 1;
         pageIndex.value = index >= 0 ? index : 0;
       };
-      const customizeColumns = () => {
-        // console.log(columns);
-      };
 
       const handleFilterScheme = (scheme: ISchemeItem) => {
         if (!isEmpty(tableData.value) && !isEmpty(scheme)) {
@@ -232,7 +228,6 @@
         pageIndex,
         onSelectionChanged,
         handleJump,
-        customizeColumns,
         getGlobalEnumDataByCode,
         search,
       };
