@@ -4,6 +4,8 @@ import type { IDefiniteItem, IDetailItem } from '/@/utils/detail/types';
 import { getDefiniteDataSource, getDetailDataSource } from '/@/api/ods/detail';
 import { getColumns } from '/@/model/shipping-orders';
 import { getFormList } from '/@/utils/detail';
+import { isFoundationType } from '/@/model/common';
+import { customColumns } from '/@/model/shipping-advices';
 
 export const base: IDetailItem[] = [
   {
@@ -339,12 +341,36 @@ export const getDetailData = async (filter: any[]) => {
   const receiverList = getFormList(receiver, columnList);
   const logisticsList = getFormList(logistics, columnList);
   const otherList = getFormList(other, columnList);
-  const baseKey = baseList.map((item) => item.dataField);
-  const receiverKey = receiverList.map((item) => item.dataField);
-  const logisticsKey = logisticsList.map((item) => item.dataField);
-  const otherKey = otherList.map((item) => item.dataField);
-  const select = baseKey.concat(receiverKey).concat(logisticsKey).concat(otherKey);
-  const data = await getDetailDataSource('shipping-orders', select, filter);
+
+  const select: string[] = [];
+  const expand: string[] = [];
+
+  baseList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  receiverList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  logisticsList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  otherList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+
+  const data = await getDetailDataSource('shipping-orders', select, expand, filter);
   return {
     baseList,
     receiverList,

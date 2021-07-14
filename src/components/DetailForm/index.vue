@@ -11,27 +11,25 @@
           :disabled="item.disabled"
           :editor-options="handleEditorOptions(item)"
           :col-span="item.colSpan ? item.colSpan : item.editorType === 'dxSwitch' ? 1 : 2"
-          :template="item.datatypekeies ? 'datatypekeies' : item.template"
+          :template="item.expand ? 'expand' : item.template"
         />
         <DxSwitch />
       </template>
       <template #stepBar>
         <StepBar :step-data="stepData" :step-active-index="stepActiveIndex" />
       </template>
-      <template #datatypekeies="{ data }">
-        <EnumSelect
-          v-if="
-            data.editorOptions.datatypekeies && data.editorOptions.datatypekeies.startsWith('enum_')
-          "
+      <template #expand="{ data }">
+        <FoundationText
+          v-if="isFoundationType(data.editorOptions)"
           width="100%"
           :value="formData[data.dataField]"
-          :datatypekeies="data.editorOptions.datatypekeies"
+          :foundation-data="formData[data.editorOptions.expand]"
         />
-        <FoundationSelect
+        <EnumSelect
           v-else
           width="100%"
           :value="formData[data.dataField]"
-          :foundation-code="data.editorOptions.datatypekeies"
+          :datatypekeies="data.editorOptions.expand"
         />
       </template>
     </DxForm>
@@ -48,7 +46,8 @@
   import { DxForm, DxItem } from 'devextreme-vue/form';
   import { DxSwitch } from 'devextreme-vue/switch';
 
-  import FoundationSelect from '/@/components/FoundationSelect/index.vue';
+  import { isFoundationType } from '/@/model/common';
+  import FoundationText from '/@/components/FoundationText/index.vue';
   import EnumSelect from '/@/components/EnumSelect/index.vue';
   import StepBar from '/@/components/StepBar/index.vue';
 
@@ -57,7 +56,7 @@
       DxForm,
       DxItem,
       DxSwitch,
-      FoundationSelect,
+      FoundationText,
       EnumSelect,
       StepBar,
     },
@@ -83,9 +82,8 @@
         default: 0,
       },
     },
-    setup() {
+    setup(prop) {
       const { prefixCls } = useDesign('detail-form');
-
       const handleEditorOptions = (item: IDetailItem) => {
         let editorOptions;
         if (item.editorType === 'dxSwitch') {
@@ -97,7 +95,7 @@
           editorOptions = {
             showSpinButtons: true,
           };
-        } else if (item.datatypekeies) {
+        } else if (item.expand) {
           editorOptions = { ...item };
         }
         return editorOptions;
@@ -106,6 +104,7 @@
       return {
         prefixCls,
         handleEditorOptions,
+        isFoundationType,
       };
     },
   });

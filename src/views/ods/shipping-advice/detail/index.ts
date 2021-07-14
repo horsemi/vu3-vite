@@ -4,6 +4,7 @@ import type { IDefiniteItem, IDetailItem } from '/@/utils/detail/types';
 import { getDefiniteDataSource, getDetailDataSource } from '/@/api/ods/detail';
 import { getColumns } from '/@/model/shipping-advices';
 import { getFormList } from '/@/utils/detail';
+import { isFoundationType } from '/@/model/common';
 
 export const base: IDetailItem[] = [
   {
@@ -521,19 +522,48 @@ export const getDetailData = async (filter: any[]) => {
   const expressList = getFormList(express, columnList);
   const taskList = getFormList(task, columnList);
   const otherList = getFormList(other, columnList);
-  const baseKey = baseList.map((item) => item.dataField);
-  const receiverKey = receiverList.map((item) => item.dataField);
-  const taskKey = taskList.map((item) => item.dataField);
-  const logisticsKey = logisticsList.map((item) => item.dataField);
-  const expressKey = expressList.map((item) => item.dataField);
-  const otherKey = otherList.map((item) => item.dataField);
-  const select = baseKey
-    .concat(receiverKey)
-    .concat(logisticsKey)
-    .concat(expressKey)
-    .concat(taskKey)
-    .concat(otherKey);
-  const data = await getDetailDataSource('shipping-advices', select, filter);
+
+  const select: string[] = [];
+  const expand: string[] = [];
+
+  baseList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  receiverList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  logisticsList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  expressList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  taskList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  otherList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+
+  const data = await getDetailDataSource('shipping-advices', select, expand, filter);
   return {
     baseList,
     receiverList,

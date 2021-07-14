@@ -45,7 +45,7 @@
       const { prefixCls } = useDesign('enum-select');
       const options = ref<{ key: string; value: string; description: string }[]>([]);
       const appStore = useAppStore();
-      options.value = appStore.getGlobalEnumDataByCode(props.datatypekeies.split('_')[1]);
+      options.value = appStore.getGlobalEnumDataByCode(props.datatypekeies);
       return {
         prefixCls,
         options,

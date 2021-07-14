@@ -6,6 +6,7 @@ import DataSource from 'devextreme/data/data_source';
 export const getDetailDataSource = (
   code: string,
   select: string[],
+  expand: string[],
   filter: unknown[]
 ): Promise<unknown[]> => {
   return new Promise((reslove, reject) => {
@@ -19,6 +20,7 @@ export const getDetailDataSource = (
         version: 4,
       }),
       select: [...select, 'Id'],
+      expand: expand,
     });
 
     data.load().then(

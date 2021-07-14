@@ -5,6 +5,8 @@ import type { IColumnItem, IKeyType } from '/@/model/types';
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
 
+import { isFoundationType } from '/@/model/common';
+
 // 基础表格默认配置
 export const defaultTableOptions: ITableOptions = {
   dataSourceOptions: {
@@ -103,10 +105,10 @@ export const getSelect = (allColumns: IColumnItem[], columns: string[], key: str
 
   columns.forEach((key) => {
     if (allColumns.some((allCol) => allCol.key === key) && select.indexOf(key)) {
-      const { type, expand } = allColumns.filter((allCol) => allCol.key === key)[0];
+      const columns = allColumns.filter((allCol) => allCol.key === key)[0];
       // 判断是否为基础数据类型
-      if (expand && type === 'string') {
-        expands.push(expand);
+      if (isFoundationType(columns)) {
+        expands.push(columns.expand as string);
       }
       select.push(key);
     }
@@ -131,7 +133,8 @@ export const getCompleteColumns = (allColumns: IColumnItem[], select: string[]) 
   select.forEach((item) => {
     allColumns.forEach((col) => {
       if (item === col.key) {
-        if (col.expand && col.type === 'string') {
+        // 判断是否为基础数据类型
+        if (isFoundationType(col)) {
           columns.push({
             ...col,
             caption: `${col.caption}编码`,
@@ -139,7 +142,7 @@ export const getCompleteColumns = (allColumns: IColumnItem[], select: string[]) 
 
           columns.push({
             ...col,
-            key: col.expand,
+            key: col.expand as string,
             type: 'foundation',
           });
 
