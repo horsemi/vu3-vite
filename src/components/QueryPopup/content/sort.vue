@@ -1,25 +1,22 @@
 <template>
   <div :class="prefixCls">
     <div :class="`${prefixCls}__field`">
-      <div :class="`${prefixCls}__field__title`">字段</div>
-      <DxScrollView height="calc(100% - 33px)">
-        <div>
-          <div
-            v-for="(item, index) in fieldList"
-            :key="index"
-            :class="[
-              `${prefixCls}__field__item`,
-              item.checked && `${prefixCls}__field__item--active`,
-            ]"
-            @click="item.checked = !item.checked"
-          >
-            <div @click.stop="">
-              <DxCheckBox v-model:value="item.checked" />
-            </div>
-            <span>{{ item.caption }}</span>
-          </div>
-        </div>
-      </DxScrollView>
+      <DxDataGrid
+        height="100%"
+        :data-source="fieldList"
+        :show-borders="true"
+        :show-column-lines="false"
+        :show-row-lines="true"
+        @rowClick="onRowClick"
+      >
+        <DxFilterRow :visible="true" />
+        <DxPaging :enabled="false" />
+        <DxColumn caption="全部字段" cell-template="show" :width="80" alignment="center" />
+        <DxColumn data-field="caption" caption="" alignment="center" />
+        <template #show="{ data }">
+          <DxCheckBox :value="data.data.checked" />
+        </template>
+      </DxDataGrid>
     </div>
     <div :class="`${prefixCls}__next`" @click="onAddCol">
       <i class="dx-icon-chevronnext" />
@@ -32,11 +29,18 @@
         :show-column-lines="false"
         :show-row-lines="true"
       >
+        <DxFilterRow :visible="true" />
         <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" drop-feedback-mode="push" />
         <DxPaging :enabled="false" />
         <DxColumn caption="序号" cell-template="index" alignment="center" />
         <DxColumn data-field="caption" caption="字段" alignment="center" />
-        <DxColumn data-field="sort" caption="排序方式" cell-template="sort" alignment="center" />
+        <DxColumn
+          data-field="sort"
+          caption="排序方式"
+          cell-template="sort"
+          alignment="center"
+          :allow-filtering="false"
+        />
         <DxColumn caption="操作" cell-template="handle" alignment="center" />
         <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
         <template #sort="{ data }">
@@ -70,8 +74,13 @@
   import { handleArrayTransposition } from '/@/utils';
 
   import { DxCheckBox } from 'devextreme-vue/check-box';
-  import { DxDataGrid, DxColumn, DxPaging, DxRowDragging } from 'devextreme-vue/data-grid';
-  import { DxScrollView } from 'devextreme-vue/scroll-view';
+  import {
+    DxDataGrid,
+    DxColumn,
+    DxPaging,
+    DxRowDragging,
+    DxFilterRow,
+  } from 'devextreme-vue/data-grid';
   import DxSelectBox from 'devextreme-vue/select-box';
 
   export default defineComponent({
@@ -79,20 +88,14 @@
       DxCheckBox,
       DxDataGrid,
       DxColumn,
-      DxScrollView,
       DxSelectBox,
       DxPaging,
       DxRowDragging,
+      DxFilterRow,
     },
     props: {
       allColumns: {
         type: Array as PropType<IColumnItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-      columns: {
-        type: Array as PropType<string[]>,
         default: () => {
           return [];
         },
@@ -104,7 +107,7 @@
         },
       },
     },
-    emits: ['on-change-sort', 'on-change-column'],
+    emits: ['on-change-sort'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('content-sort');
       // 升降序下拉框配置项
@@ -128,50 +131,34 @@
       const onChangeSort = (data: IOrderByItem[]) => {
         ctx.emit('on-change-sort', data);
       };
-      // 外派显示隐藏列更新事件
-      const onChangeColumn = (data: string[]) => {
-        ctx.emit('on-change-column', data);
+
+      // 点击全部字段行
+      const onRowClick = (e) => {
+        e.data.checked = !e.data.checked;
       };
 
-      // 处理字段有排序但是没有显示的情况
-      const handleFieldShow = (data: IOrderByItem[]) => {
-        const columns = [...props.columns];
-        const length = props.columns.length;
-        data.forEach((sort) => {
-          let count = 0;
-          props.columns.forEach((key) => {
-            if (sort.key !== key) {
-              count++;
-            }
-          });
-          if (count === length) {
-            columns.push(sort.key);
-          }
-        });
-        onChangeColumn(columns);
-      };
       // 点击中间箭头触发
       const onAddCol = () => {
         // 更新排序列表数据
-        const addColArr = fieldList.value.filter((item) => item.checked);
-        const data: IOrderByItem[] = [];
-        addColArr.forEach((item) => {
-          data.push({
-            key: item.key,
-            caption: item.caption,
-            desc: false,
+        dataSource.value = fieldList.value
+          .filter((item) => item.checked)
+          .map((item) => {
+            return {
+              key: item.key,
+              caption: item.caption,
+              desc: false,
+            };
           });
-        });
-        dataSource.value = data;
-        handleFieldShow(dataSource.value);
         onChangeSort(dataSource.value);
       };
+
       // 拖动位置触发
       const onReorder = (e) => {
         // 调用数组换位函数
         dataSource.value = handleArrayTransposition(dataSource.value, e.fromIndex, e.toIndex);
         onChangeSort(dataSource.value);
       };
+
       // 点击删除触发
       const onDel = (index: number) => {
         const temp = cloneDeep(dataSource.value);
@@ -179,6 +166,7 @@
         dataSource.value = temp;
         onChangeSort(dataSource.value);
       };
+
       // 处理组件数据
       const handleData = (allColumns: IColumnItem[], orderBy: IOrderByItem[]) => {
         const fields: IFieldItem[] = [];
@@ -231,6 +219,7 @@
         fieldList,
         dataSource,
         sortOptions,
+        onRowClick,
         onAddCol,
         onReorder,
         onDel,
@@ -251,31 +240,6 @@
     &__field {
       width: 30%;
       height: 100%;
-      border: 1px solid @border-color-primary;
-    }
-
-    &__field__title {
-      height: 33px;
-      padding-left: 20px;
-      font-weight: bold;
-      line-height: 33px;
-      background-color: #fafafa;
-      border-bottom: 1px solid @border-color-primary;
-    }
-
-    &__field__item {
-      display: flex;
-      align-items: center;
-      height: 40px;
-      padding: 0 20px;
-      cursor: pointer;
-      span {
-        padding-left: 10px;
-      }
-      &--active,
-      &:hover {
-        background-color: #e6f7ff;
-      }
     }
 
     &__next {
@@ -298,6 +262,14 @@
       flex: 1;
       height: 100%;
       border: 1px solid @border-color-primary;
+
+      // 重置表格行高，解决行不垂直居中
+      .dx-datagrid-content .dx-datagrid-table .dx-row > td {
+        line-height: 35px;
+      }
+      .dx-datagrid-headers .dx-datagrid-table .dx-row > td {
+        line-height: inherit !important;
+      }
     }
 
     &__table__handle {
@@ -306,14 +278,6 @@
         color: @color-primary;
         cursor: pointer;
       }
-    }
-
-    // 重置表格行高，解决行不垂直居中
-    .dx-datagrid-content .dx-datagrid-table .dx-row > td {
-      line-height: 35px;
-    }
-    .dx-datagrid-headers .dx-datagrid-table .dx-row > td {
-      line-height: inherit !important;
     }
   }
 </style>

@@ -98,7 +98,7 @@
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
 
-  import { defineComponent, watch, PropType, ref } from 'vue';
+  import { defineComponent, watch, PropType, ref, nextTick } from 'vue';
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -223,6 +223,9 @@
 
       function handleItemClick() {
         valueBox.value.instance.reset();
+        nextTick(() => {
+          valueBox.value.instance.reset();
+        });
       }
 
       return {

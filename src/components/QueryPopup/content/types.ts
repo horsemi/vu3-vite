@@ -24,6 +24,11 @@ export interface IFieldItem {
    * @description 是否选中
    */
   checked: boolean;
+
+  /**
+   * @description 是否必要
+   */
+  mustKey?: boolean;
 }
 
 export interface IOrderByItem {
@@ -53,11 +58,6 @@ export interface ISchemeColumnsItem {
    * @description 标题
    */
   caption: string;
-
-  /**
-   * @description 是否显示
-   */
-  show: boolean;
 
   /**
    * @description 是否必要
