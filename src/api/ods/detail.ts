@@ -3,6 +3,8 @@ import type { ITableOptions } from '/@/components/Table/types';
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
 
+const prefixUrls = '/ods/api/odata/';
+
 export const getDetailDataSource = (
   code: string,
   select: string[],
@@ -15,7 +17,7 @@ export const getDetailDataSource = (
       paginate: false,
       pageSize: 1,
       store: new ODataStore({
-        url: `/ods/api/odata/${code}`,
+        url: `${prefixUrls}${code}`,
         key: 'Id',
         version: 4,
       }),
@@ -45,7 +47,7 @@ export const getDefiniteDataSource = (
     paginate: options.dataSourceOptions.paginate,
     pageSize: options.page?.size,
     store: new ODataStore({
-      url: `/ods/api/odata/${code}`,
+      url: `${prefixUrls}${code}`,
       key: 'Id',
       keyType: 'string',
       version: 4,
