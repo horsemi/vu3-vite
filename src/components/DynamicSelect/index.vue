@@ -99,6 +99,7 @@
   import type { IColumnItem } from '/@/model/types';
 
   import { defineComponent, watch, PropType, ref, nextTick } from 'vue';
+  import moment from 'moment';
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -221,10 +222,14 @@
         context.emit('update:paramOperations', operatorOptions.value);
       }
 
-      function handleItemClick() {
+      function handleItemClick(e) {
         valueBox.value.instance.reset();
         nextTick(() => {
-          valueBox.value.instance.reset();
+          if (e.itemData.type === 'datetime') {
+            context.emit('update:value', moment().format('YYYY/MM/DD HH:mm:ss').toString());
+          } else {
+            valueBox.value.instance.reset();
+          }
         });
       }
 

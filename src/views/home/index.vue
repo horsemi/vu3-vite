@@ -11,15 +11,33 @@
       <option>7</option>
     </select>
     <button @click="loadingChange"> loading </button>
+    <DxDateBox
+      v-model:value="valueDate"
+      type="datetime"
+      display-format="yyyy-MM-dd HH:mm:ss"
+      :show-clear-button="true"
+    >
+    </DxDateBox>
+    <h2>{{ valueDate }}</h2>
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
+  import { defineComponent, ref } from 'vue';
+  import DxDateBox from 'devextreme-vue/date-box';
+  import moment from 'moment';
+
   export default defineComponent({
     name: 'Home',
+    components: {
+      DxDateBox,
+    },
     setup() {
-      //
+      const valueDate = ref(moment().format('YYYY-MM-DD HH:mm:ss').toString());
+
+      return {
+        valueDate,
+      };
     },
     data: () => {
       return {
@@ -27,7 +45,7 @@
         loading: false,
       };
     },
-  
+
     methods: {
       loadingChange() {
         this.loading = true;
