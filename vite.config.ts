@@ -53,15 +53,13 @@ export default defineConfig(
             target: 'http://10.10.14.207:30035',
             changeOrigin: true,
           },
-          '/api': {
-            target: 'http://10.10.14.207:30037',
+          '/ods/api': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
           },
           '/passport': {
-            // target: 'http://10.10.14.207:30036',
-            target: 'http://10.20.4.214:30024',
+            target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
-            // rewrite: (path) => path.replace(/^\/permission/, ''),
           },
         },
         cors: true,

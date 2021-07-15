@@ -1,11 +1,11 @@
 import { defHttp } from '/@/utils/http/axios';
 
 enum apiUrl {
-  onShippingOrderSubmitUrl = '/api/v1/shipping-orders/submit',
-  onShippingOrderApplyUrl = '/api/v1/shipping-orders/apply',
-  onShippingOrderPushUrl = '/api/v1/shipping-orders/push',
-  onShippingOrderRevokeUrl = '/api/v1/shipping-orders/revoke',
-  onShippingOrderRedraftUrl = '/api/v1/shipping-orders/redraft',
+  onShippingOrderSubmitUrl = '/ods/api/v1/shipping-orders/submit',
+  onShippingOrderApplyUrl = '/ods/api/v1/shipping-orders/apply',
+  onShippingOrderPushUrl = '/ods/api/v1/shipping-orders/push',
+  onShippingOrderRevokeUrl = '/ods/api/v1/shipping-orders/revoke',
+  onShippingOrderRedraftUrl = '/ods/api/v1/shipping-orders/redraft',
 }
 
 export class ShippingOrderApi {

@@ -1,15 +1,15 @@
 import { defHttp } from '/@/utils/http/axios';
 
-export interface UserData {
+export interface IUserData {
   userName: string;
   password: string;
 }
-export interface updatePassword {
+export interface IUpdatePassword {
   oldPassword: string;
   newPassword: string;
   newPasswordRe: string;
 }
-export interface sumbitPassword extends updatePassword {
+export interface ISumbitPassword extends IUpdatePassword {
   userName: string;
 }
 enum apiUrl {
@@ -22,7 +22,7 @@ enum apiUrl {
   passwordPolicy = '/passport/api/password-policy',
 }
 export class UserApi {
-  static login(data: UserData) {
+  static login(data: IUserData) {
     return defHttp.post({
       url: apiUrl.login,
       params: data,
@@ -48,13 +48,13 @@ export class UserApi {
       url: apiUrl.queryPasswordPolicy,
     });
   }
-  static changePassword(data: sumbitPassword) {
+  static changePassword(data: ISumbitPassword) {
     return defHttp.post({
       url: apiUrl.changePassword,
       params: data,
     });
   }
-  static checkPassword(data: UserData) {
+  static checkPassword(data: IUserData) {
     return defHttp.post({
       url: apiUrl.passwordPolicy,
       params: data,

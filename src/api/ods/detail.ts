@@ -14,7 +14,7 @@ export const getDetailDataSource = (
       paginate: false,
       pageSize: 1,
       store: new ODataStore({
-        url: `/api/odata/${code}`,
+        url: `/ods/api/odata/${code}`,
         key: 'Id',
         version: 4,
       }),
@@ -43,7 +43,7 @@ export const getDefiniteDataSource = (
     paginate: options.dataSourceOptions.paginate,
     pageSize: options.page?.size,
     store: new ODataStore({
-      url: `/api/odata/${code}`,
+      url: `/ods/api/odata/${code}`,
       key: 'Id',
       keyType: 'int64',
       version: 4,

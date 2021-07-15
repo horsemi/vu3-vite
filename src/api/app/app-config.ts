@@ -3,8 +3,8 @@ import type { GlobalEnumType } from '/@/store/types';
 import { defHttp } from '/@/utils/http/axios';
 
 enum apiUrl {
-  getGlobalEnumUrl = '/api/odata/enums',
-  getBillTypesUrl = '/api/odata/billTypes',
+  getGlobalEnumUrl = '/ods/api/odata/enums',
+  getBillTypesUrl = '/ods/api/odata/billTypes',
 }
 
 export class AppConfigApi {

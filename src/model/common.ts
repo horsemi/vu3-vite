@@ -1,6 +1,6 @@
 import type { IColumnItem, IFieldType, IKeyType } from './types';
 
-import { getList } from '/@/api/index';
+import { getList } from '/@/api/ods/common';
 
 // columns的dataType 接受的类型有 'string' | 'number' | 'date' | 'boolean' | 'object' | 'datetime'
 const handleType = (val: string): string => {

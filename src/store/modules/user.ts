@@ -1,5 +1,5 @@
 import type { UserInfo } from '../types';
-import type { sumbitPassword } from '/@/api/user';
+import type { ISumbitPassword } from '/@/api/user';
 
 import { defineStore } from 'pinia';
 
@@ -9,13 +9,13 @@ import { usePermissionStore } from '/@/store/modules/permission';
 import { TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import router from '/@/router';
-import { UserApi, UserData } from '/@/api/user';
+import { UserApi, IUserData } from '/@/api/user';
 
 interface UserState {
   token?: string;
   userInfo: Nullable<UserInfo>;
 }
-interface menuType {
+interface MenuType {
   code: string;
   name: string;
   url: string;
@@ -48,7 +48,7 @@ export const useUserStore = defineStore({
       this.userInfo = null;
       this.token = '';
     },
-    getMenus(): Promise<menuType[]> {
+    getMenus(): Promise<MenuType[]> {
       return new Promise((resolve, reject) => {
         UserApi.getMenus()
           .then((res) => {
@@ -84,14 +84,14 @@ export const useUserStore = defineStore({
           });
       });
     },
-    checkPassword(userInfo: UserData): Promise<{ warningType: number }> {
+    checkPassword(userInfo: IUserData): Promise<{ warningType: number }> {
       return new Promise((resolve) => {
         UserApi.checkPassword(userInfo).then((data) => {
           resolve(data);
         });
       });
     },
-    changePassword(data: sumbitPassword): Promise<void> {
+    changePassword(data: ISumbitPassword): Promise<void> {
       return new Promise((resolve, reject) => {
         UserApi.changePassword(data)
           .then((res) => {
@@ -113,7 +113,7 @@ export const useUserStore = defineStore({
           });
       });
     },
-    async login(userData: UserData): Promise<{ token: string }> {
+    async login(userData: IUserData): Promise<{ token: string }> {
       return new Promise((resolve, reject) => {
         UserApi.login(userData)
           .then(async (res) => {

@@ -69,7 +69,7 @@
         height: 'calc(100vh - 287px)',
         dataSourceOptions: {
           oDataOptions: {
-            url: `/api/odata/${ORDER_CODE}s`,
+            url: `/ods/api/odata/${ORDER_CODE}s`,
           },
         },
       };

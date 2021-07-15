@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive, ref ,onMounted} from 'vue';
+  import { defineComponent, reactive, ref, onMounted } from 'vue';
 
   import DxButton from 'devextreme-vue/button';
   import { DxRequiredRule } from 'devextreme-vue/validator';
@@ -73,9 +73,9 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import SvgIcon from '/@/components/Icon/SvgIcon.vue';
   import PasswordModal from '/@/components/PasswordModal/index.vue';
-  import { setCookie , getCookie , checkCookie } from '/@/utils/cache/cookies';
-  import { CHANGE_PASSWORD_FLAG_KEY , USERNAME_KEY} from '/@/enums/cacheEnum';
-  import { PasswordStateEnum , isChangePasswordEnum } from '/@/enums/appEnum';
+  import { setCookie, getCookie, checkCookie } from '/@/utils/cache/cookies';
+  import { CHANGE_PASSWORD_FLAG_KEY, USERNAME_KEY } from '/@/enums/cacheEnum';
+  import { PasswordStateEnum, isChangePasswordEnum } from '/@/enums/appEnum';
   import { useMessage } from '/@/hooks/web/useMessage';
 
   export default defineComponent({
@@ -97,12 +97,12 @@
       const loginData = reactive({ userName: '', password: '' });
       const username = '';
       const cookieEnabled = checkCookie();
-      
+
       if (!cookieEnabled) {
-        useMessage('请开启浏览器Cookie功能','warning');
-      };
-      onMounted(async()=>{
-        if(getCookie(CHANGE_PASSWORD_FLAG_KEY) === isChangePasswordEnum.CHANGE){
+        useMessage('请开启浏览器Cookie功能', 'warning');
+      }
+      onMounted(async () => {
+        if (getCookie(CHANGE_PASSWORD_FLAG_KEY) === isChangePasswordEnum.CHANGE) {
           popupVisable.value = true;
           passwordPattern.value = await userStore.getPasswordPolicy();
         }
@@ -113,7 +113,7 @@
         loginData,
         passwordPattern,
         popupVisable,
-        username
+        username,
       };
     },
     methods: {
@@ -126,7 +126,7 @@
           result.warningType === PasswordStateEnum.WEAKPASSWORD
         ) {
           setCookie(CHANGE_PASSWORD_FLAG_KEY, isChangePasswordEnum.CHANGE);
-          setCookie(USERNAME_KEY,this.loginData.userName);
+          setCookie(USERNAME_KEY, this.loginData.userName);
           this.popupVisable = true;
           this.passwordPattern = await this.userStore.getPasswordPolicy();
         } else {
