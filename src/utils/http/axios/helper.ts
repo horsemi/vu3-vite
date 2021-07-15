@@ -18,7 +18,7 @@ export function createNow(join: boolean, restful = false): string | Record<strin
 
 const DATE_TIME_FORMAT = 'YYYY-MM-DD HH:mm';
 /**
- * @description: Format request parameter time
+ * @description Format request parameter time
  */
 export function formatRequestDate(params: any): void {
   for (const key in params) {

@@ -14,11 +14,11 @@ import { errorMessage, successMessage } from '/@/hooks/web/useMessage';
 import { checkStatus } from './checkStatues';
 
 /**
- * @description: 数据处理，方便区分多种处理方式
+ * @description 数据处理，方便区分多种处理方式
  */
 const transform: AxiosTransform = {
   /**
-   * @description: 处理请求数据
+   * @description 处理请求数据
    */
   transformRequestHook: (res: AxiosResponse<Result>, options: RequestOptions) => {
     const { isTransformRequestResult } = options;
@@ -106,7 +106,7 @@ const transform: AxiosTransform = {
   },
 
   /**
-   * @description: 请求拦截器处理
+   * @description 请求拦截器处理
    */
   requestInterceptors: (config) => {
     // 请求之前处理config
@@ -121,7 +121,7 @@ const transform: AxiosTransform = {
   },
 
   /**
-   * @description: 响应错误处理
+   * @description 响应错误处理
    */
   responseInterceptorsCatch: (error: any) => {
     const errorLogStore = useErrorLogStoreWithOut();

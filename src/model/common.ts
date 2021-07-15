@@ -1,4 +1,5 @@
 import type { IColumnItem, IFieldType, IKeyType } from './types';
+import type { IDetailItem } from '/@/utils/detail/types';
 
 import { getList } from '/@/api/ods/common';
 
@@ -29,6 +30,7 @@ export const getColumnList = async (
         if (fieldType.key === column.key) {
           columnList.push({
             type: handleType(fieldType.type),
+            expand: fieldType.expand,
             ...column,
           });
         }
@@ -42,4 +44,8 @@ export const getColumnList = async (
   } catch (err) {
     Promise.reject(err);
   }
+};
+
+export const isFoundationType = (columnItem: IDetailItem | IColumnItem) => {
+  return columnItem.type !== 'enum' && columnItem.expand;
 };

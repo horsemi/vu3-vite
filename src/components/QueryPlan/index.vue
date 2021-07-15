@@ -1,6 +1,12 @@
 <template>
   <div :class="prefixCls">
-    <QueryFrom ref="queryForm" :columns="allColumns" :fast="fast" @on-save-fast="onSaveFast" />
+    <QueryFrom
+      ref="queryForm"
+      :columns="allColumns"
+      :fast="fast"
+      @on-save-fast="onSaveFast"
+      @on-search="onSearch"
+    />
     <QueryButton @on-search="onSearch" @on-reset="onReset" @on-queryPlan="onQueryPlan" />
     <QueryQuick
       :checked-index="checkedIndex"
@@ -30,12 +36,7 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type {
-    IOrderByItem,
-    IRequirementItem,
-    ISchemeColumnsItem,
-    ISchemeItem,
-  } from '../QueryPopup/content/types';
+  import type { IOrderByItem, IRequirementItem, ISchemeItem } from '../QueryPopup/content/types';
   import type { IQueryItem, ISchemeData } from './types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';
@@ -45,7 +46,7 @@
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Persistent } from '/@/utils/cache/persistent';
   import { getUuid } from '/@/utils/uuid';
-  import { SCHEME_DATA_KEY, SCHEME_CHECKED_INDE_KEY } from '/@/enums/cacheEnum';
+  import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
 
   import QueryFrom from './component/form.vue';
   import QueryButton from './component/button.vue';
@@ -119,7 +120,7 @@
       };
       // 点击重置触发
       const onReset = () => {
-        const { scheme, fast } = Persistent.getLocal(SCHEME_DATA_KEY) as ISchemeData;
+        const { scheme, fast } = (Persistent.getLocal(SCHEME_DATA_KEY) as any)[props.orderCode];
         const popupUuid = schemeList.value[popupIndex.value].uuid;
         const popupListTemp = scheme.filter((item) => item.uuid === popupUuid);
 
@@ -152,10 +153,9 @@
           handleChangeCheckedDefault(index - 1);
         }
       };
-      // TODO 过滤方案缓存数据更改，此处需要更改（未改）
       // 处理保存数据
       const handleSaveData = (msg: string, scheme: ISchemeItem[], fast: IQueryItem[] = []) => {
-        let schemeListTemp = Persistent.getLocal<ISchemeData[]>(SCHEME_DATA_KEY);
+        let schemeListTemp = Persistent.getLocal(SCHEME_DATA_KEY) as any;
         let checkedIndex = 0;
 
         if (schemeListTemp) {
@@ -171,10 +171,9 @@
         handleOverLength();
         useMessage(msg, 'success');
       };
-      // TODO 过滤方案缓存数据更改，此处需要更改（未改）
       // 处理默认方案更新
       const handleChangeCheckedDefault = (index: number) => {
-        let schemeListTemp = Persistent.getLocal<ISchemeData[]>(SCHEME_DATA_KEY);
+        let schemeListTemp = Persistent.getLocal(SCHEME_DATA_KEY) as any;
 
         if (schemeListTemp) {
           schemeListTemp[props.orderCode].checkedIndex = index;
@@ -203,14 +202,8 @@
         schemeList.value[popupIndex.value].orderBy = data;
       };
       // 接收显示隐藏列更新
-      const onChangeColumn = (data: ISchemeColumnsItem[]) => {
-        const columns: string[] = [];
-        data.forEach((item) => {
-          if (item.show) {
-            columns.push(item.key);
-          }
-        });
-        schemeList.value[popupIndex.value].columns = columns;
+      const onChangeColumn = (data: string[]) => {
+        schemeList.value[popupIndex.value].columns = data;
       };
       // 接收标题更新
       const onTitleChange = (title: string) => {

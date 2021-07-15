@@ -21,6 +21,7 @@ const getFormItem = (info, arr, columnList) => {
       arr.push({
         ...info,
         label: col.caption,
+        expand: col.expand,
         editorType: getEditorType(col.type),
         type: col.type,
         datatypekeies: col.datatypekeies,
@@ -32,8 +33,8 @@ const getFormItem = (info, arr, columnList) => {
 
 export const getFormList = (list: IDetailItem[], columnList: IColumnItem[]) => {
   const temp: IDetailItem[] = [];
-  list.forEach((b) => {
-    getFormItem(b, temp, columnList);
+  list.forEach((item) => {
+    getFormItem(item, temp, columnList);
   });
   return temp;
 };

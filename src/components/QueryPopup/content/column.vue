@@ -81,7 +81,8 @@
 
       // 外派显示隐藏列更新事件
       const onChangeColumn = (data: ISchemeColumnsItem[]) => {
-        ctx.emit('on-change-column', data);
+        const temp: string[] = data.filter((item) => item.show).map((item) => item.key);
+        ctx.emit('on-change-column', temp);
       };
       // 外派排序更新事件
       const onChangeSort = (data: IOrderByItem[]) => {
@@ -110,47 +111,47 @@
         onChangeColumn(dataSource.value);
       };
 
-    // 根据全部列处理显示隐藏列数据
-    const handleColumns = (allColumns: IColumnItem[], columns: string[]) => {
-      const preData: ISchemeColumnsItem[] = [];
-      const sortPreData: ISchemeColumnsItem[] = [];
-      const nextData: ISchemeColumnsItem[] = [];
-      allColumns.forEach(allCol => {
-        if (columns.some((key) => allCol.key === key)) {
-          preData.push({
-            key: allCol.key,
-            caption: allCol.caption,
-            show: true,
-            mustKey: allCol.mustKey,
-          });
-        } else {
-          nextData.push({
-            key: allCol.key,
-            caption: allCol.caption,
-            show: false,
-          });
-        }
-      });
-      columns.forEach(key => {
-        preData.forEach(pre => {
-          if (key === pre.key) {
-            sortPreData.push(pre);
+      // 根据全部列处理显示隐藏列数据
+      const handleColumns = (allColumns: IColumnItem[], columns: string[]) => {
+        const preData: ISchemeColumnsItem[] = [];
+        const sortPreData: ISchemeColumnsItem[] = [];
+        const nextData: ISchemeColumnsItem[] = [];
+        allColumns.forEach((allCol) => {
+          if (columns.some((key) => allCol.key === key)) {
+            preData.push({
+              key: allCol.key,
+              caption: allCol.caption,
+              show: true,
+              mustKey: allCol.mustKey,
+            });
+          } else {
+            nextData.push({
+              key: allCol.key,
+              caption: allCol.caption,
+              show: false,
+            });
           }
         });
-      });
-      return sortPreData.concat(nextData);
-    };
+        columns.forEach((key) => {
+          preData.forEach((pre) => {
+            if (key === pre.key) {
+              sortPreData.push(pre);
+            }
+          });
+        });
+        return sortPreData.concat(nextData);
+      };
 
-    // 实时更新组件中的显示隐藏列数据
-    watch(
-      () => [props.allColumns, props.columns],
-      ([allColumns, columns]) => {
-        dataSource.value = handleColumns(allColumns as IColumnItem[], columns as string[]);
-      },
-      {
-        immediate: true,
-      }
-    );
+      // 实时更新组件中的显示隐藏列数据
+      watch(
+        () => [props.allColumns, props.columns],
+        ([allColumns, columns]) => {
+          dataSource.value = handleColumns(allColumns as IColumnItem[], columns as string[]);
+        },
+        {
+          immediate: true,
+        }
+      );
 
       return {
         dataSource,

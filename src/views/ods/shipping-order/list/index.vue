@@ -39,7 +39,7 @@
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
 
-  import { defineComponent, onMounted, ref } from 'vue';
+  import { defineComponent, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
 
   import { getColumns } from '/@/model/shipping-orders';
@@ -73,12 +73,18 @@
           },
         },
       };
-      const filterScheme = ref<ISchemeItem>();
+      const filterScheme = ref<ISchemeItem>({
+        uuid: '',
+        title: '',
+        requirement: [],
+        orderBy: [],
+        columns: [],
+      });
       const tableOptions: ITableOptions = deepMerge(cloneDeep(defaultTableOptions), options);
       const tableKey = ref<string[]>([]);
       const dataSource = ref();
-      const columns = ref<IColumnItem[] | undefined>();
-      const allColumns = ref<IColumnItem[] | undefined>();
+      const columns = ref<IColumnItem[]>([]);
+      const allColumns = ref<IColumnItem[]>([]);
       const schemeData = ref<ISchemeData>({
         scheme: [],
         fast: [],
@@ -90,7 +96,7 @@
         filterScheme.value = cloneDeep(data);
       };
 
-      const handleTableData = async () => {
+      const getTableData = () => {
         schemeData.value = (Persistent.getLocal(SCHEME_DATA_KEY) as any)[ORDER_CODE];
         schemeCheckedIndex.value = schemeData.value.checkedIndex;
         const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
@@ -99,25 +105,22 @@
           scheme.requirement.push(...fast);
         }
         filterScheme.value = scheme;
-        const columnsData = await getColumns();
-        if (columnsData) {
-          const { columnList, key, keyType } = columnsData;
-          allColumns.value = columnList;
-          tableKey.value = key;
-          dataSource.value = await getDataSource(
-            tableOptions,
-            filterScheme.value,
-            allColumns.value,
-            key,
-            keyType
-          );
-          columns.value = getCompleteColumns(allColumns.value, dataSource.value.select());
-        }
+        getColumns().then((res) => {
+          if (res) {
+            const { columnList, key, keyType } = res;
+            allColumns.value = columnList;
+            tableKey.value = key;
+            getDataSource(tableOptions, filterScheme.value, allColumns.value, key, keyType).then(
+              (data) => {
+                dataSource.value = data;
+                columns.value = getCompleteColumns(allColumns.value, dataSource.value.select());
+              }
+            );
+          }
+        });
       };
 
-      onMounted(async () => {
-        await handleTableData();
-      });
+      getTableData();
 
       return {
         ORDER_CODE,

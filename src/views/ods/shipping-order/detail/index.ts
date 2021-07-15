@@ -1,9 +1,11 @@
 import type { ITableOptions } from '/@/components/Table/types';
-import type { IDefiniteItem, IDetailItem } from '/@/utils/detail/types';
+import type { IDetailItem } from '/@/utils/detail/types';
 
 import { getDefiniteDataSource, getDetailDataSource } from '/@/api/ods/detail';
 import { getColumns } from '/@/model/shipping-orders';
+import { getDefiniteColumns } from '/@/model/shipping-order-items';
 import { getFormList } from '/@/utils/detail';
+import { isFoundationType } from '/@/model/common';
 
 export const base: IDetailItem[] = [
   {
@@ -16,7 +18,7 @@ export const base: IDetailItem[] = [
     dataField: 'TotalPackage',
   },
   {
-    dataField: 'MarkStatus',
+    dataField: 'Group',
   },
   {
     dataField: 'BillTypeCode',
@@ -25,25 +27,32 @@ export const base: IDetailItem[] = [
     dataField: 'ServiceItemCode',
   },
   {
-    dataField: 'Group',
-  },
-  {
-    dataField: 'DocumentStatus',
-  },
-  {
-    dataField: 'TotalOrderCount',
-  },
-  {
     dataField: 'TotalVolume',
   },
   {
     dataField: 'CustomerSalesman',
   },
   {
+    dataField: 'DocumentStatus',
+  },
+  {
     dataField: 'OperationStatus',
   },
   {
+    dataField: 'TotalOrderCount',
+  },
+  {
     dataField: 'DetailRowsCount',
+  },
+  {
+    dataField: 'DeliveryWarehouseCode',
+  },
+  {
+    dataField: 'MarkStatus',
+  },
+  {
+    dataField: 'Memo',
+    colSpan: 4,
   },
   {
     dataField: 'IsGatheringOrder',
@@ -89,6 +98,7 @@ export const receiver: IDetailItem[] = [
   },
   {
     dataField: 'DetailAddress',
+    colSpan: 4,
   },
   {
     dataField: 'ShowroomContacts',
@@ -98,6 +108,7 @@ export const receiver: IDetailItem[] = [
   },
   {
     dataField: 'ShowroomAddress',
+    colSpan: 4,
   },
 ];
 
@@ -106,10 +117,10 @@ export const logistics: IDetailItem[] = [
     dataField: 'GatheringPointCode',
   },
   {
-    dataField: 'ThreeServicePointCode',
+    dataField: 'LineAreaCode',
   },
   {
-    dataField: 'ContractorCode',
+    dataField: 'ThreeServiceCostPrice',
   },
   {
     dataField: 'ThreeServiceFeeTypeCode',
@@ -118,19 +129,19 @@ export const logistics: IDetailItem[] = [
     dataField: 'DeliveryPointCode',
   },
   {
-    dataField: 'LineAreaCode',
-  },
-  {
-    dataField: 'ThreeServiceSupplierCode',
-  },
-  {
-    dataField: 'FreightTypeCode',
+    dataField: 'ContractorCode',
   },
   {
     dataField: 'LogisticsCostPrice',
   },
   {
-    dataField: 'ThreeServiceCostPrice',
+    dataField: 'FreightTypeCode',
+  },
+  {
+    dataField: 'ThreeServicePointCode',
+  },
+  {
+    dataField: 'ThreeServiceSupplierCode',
   },
   {
     dataField: 'LogisticCode',
@@ -194,50 +205,6 @@ export const other: IDetailItem[] = [
   },
 ];
 
-export const customDefinite: IDefiniteItem[] = [
-  {
-    key: 'ShippingOrderId',
-    caption: 'ShippingOrderId',
-    hide: true,
-  },
-  {
-    key: 'MaterialCode',
-    caption: '物料编码',
-  },
-  {
-    key: 'BomCode',
-    caption: 'BOM版本',
-  },
-  {
-    key: 'CustomerMaterialName',
-    caption: '客户物料名称',
-  },
-  {
-    key: 'Qty',
-    caption: '数量',
-  },
-  {
-    key: 'PackageQuantity',
-    caption: '包件数',
-  },
-  {
-    key: 'Shop',
-    caption: '店铺',
-  },
-  {
-    key: 'Channel',
-    caption: '渠道',
-  },
-  {
-    key: 'ProvideSalePrice',
-    caption: '供货售价',
-  },
-  {
-    key: 'ActualSalePrice',
-    caption: '实际售价',
-  },
-];
-
 export const getDetailData = async (filter: any[]) => {
   const columnsData = await getColumns();
   if (!columnsData) return;
@@ -246,12 +213,36 @@ export const getDetailData = async (filter: any[]) => {
   const receiverList = getFormList(receiver, columnList);
   const logisticsList = getFormList(logistics, columnList);
   const otherList = getFormList(other, columnList);
-  const baseKey = baseList.map((item) => item.dataField);
-  const receiverKey = receiverList.map((item) => item.dataField);
-  const logisticsKey = logisticsList.map((item) => item.dataField);
-  const otherKey = otherList.map((item) => item.dataField);
-  const select = baseKey.concat(receiverKey).concat(logisticsKey).concat(otherKey);
-  const data = await getDetailDataSource('shipping-orders', select, filter);
+
+  const select: string[] = [];
+  const expand: string[] = [];
+
+  baseList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  receiverList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  logisticsList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+  otherList.forEach((item) => {
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+    select.push(item.dataField);
+  });
+
+  const data = await getDetailDataSource('shipping-orders', select, expand, filter);
   return {
     baseList,
     receiverList,
@@ -262,6 +253,13 @@ export const getDetailData = async (filter: any[]) => {
 };
 
 export const getDefiniteData = async (options: ITableOptions, filter: any[]) => {
-  const select = customDefinite.map((item) => item.key);
-  return await getDefiniteDataSource('shipping-order-items', select, filter, options);
+  const columnsData = await getDefiniteColumns();
+  if (!columnsData) return;
+  const { columnList } = columnsData;
+  const select = columnList.map((item) => item.key);
+  const data = await getDefiniteDataSource('shipping-order-items', select, filter, options);
+  return {
+    columnList,
+    data,
+  };
 };

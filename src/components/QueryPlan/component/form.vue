@@ -1,7 +1,5 @@
 <template>
-  <!-- TOFIX v-click-outside指令 -->
-  <!-- <div v-click-outside="closePopup" :class="prefixCls"> -->
-  <div :class="prefixCls">
+  <div v-click-outside="closePopup" :class="prefixCls" @keyup.enter="onSearch">
     <div
       :class="`${prefixCls}__box`"
       :style="{
@@ -9,7 +7,6 @@
         paddingBottom: 0,
         boxShadow: opened ? '10px 0 12px 0 rgb(0 0 0 / 10%)' : '',
       }"
-      @click.stop=""
     >
       <DynamicSelect
         v-model:value="queryList[0].value"
@@ -65,165 +62,184 @@
 </template>
 
 <script lang="ts">
-import type { IColumnItem } from '/@/model/types';
-import type { IQueryItem } from '../types';
+  import type { IColumnItem } from '/@/model/types';
+  import type { IQueryItem } from '../types';
 
-import { defineComponent, PropType, ref, watch } from 'vue';
-import { cloneDeep } from 'lodash-es';
+  import { defineComponent, PropType, ref, watch } from 'vue';
+  import { cloneDeep } from 'lodash-es';
 
-import { useDesign } from '/@/hooks/web/useDesign';
+  import { useDesign } from '/@/hooks/web/useDesign';
 
-import DxButton from 'devextreme-vue/button';
-import DynamicSelect from '/@/components/DynamicSelect/index.vue';
+  import DxButton from 'devextreme-vue/button';
+  import DynamicSelect from '/@/components/DynamicSelect/index.vue';
 
-export default defineComponent({
-  components: {
-    DxButton,
-    DynamicSelect,
-  },
-  props: {
-    columns: {
-      type: Array as PropType<IColumnItem[]>,
-      default: () => {
-        return [];
+  export default defineComponent({
+    components: {
+      DxButton,
+      DynamicSelect,
+    },
+    props: {
+      columns: {
+        type: Array as PropType<IColumnItem[]>,
+        default: () => {
+          return [];
+        },
+      },
+      fast: {
+        type: Array as PropType<IQueryItem[]>,
+        default: () => {
+          return [];
+        },
       },
     },
-    fast: {
-      type: Array as PropType<IQueryItem[]>,
-      default: () => {
-        return [];
-      },
+    emits: ['on-save-fast', 'on-search'],
+    setup(props, ctx) {
+      const { prefixCls } = useDesign('query-form');
+      const opened = ref<boolean>(false);
+      const queryList = ref<IQueryItem[]>([
+        {
+          requirement: '',
+          operator: '=',
+          operatorList: [],
+          value: undefined,
+          type: '',
+          datatypekeies: '',
+        },
+      ]);
+
+      const onAddRequirement = () => {
+        queryList.value.push({
+          requirement: '',
+          operator: '=',
+          operatorList: [],
+          value: '',
+          type: '',
+          datatypekeies: '',
+        });
+      };
+
+      const onDelRequirement = (index: number) => {
+        queryList.value.splice(index, 1);
+      };
+
+      const onSaveFast = () => {
+        const temp: IQueryItem[] = [];
+        queryList.value.forEach((item) => {
+          if (item.requirement) {
+            temp.push(item);
+          }
+        });
+        if (temp.length === 0) {
+          temp.push({
+            requirement: '',
+            operator: '=',
+            operatorList: [],
+            value: '',
+            type: '',
+            datatypekeies: '',
+          });
+        }
+        ctx.emit('on-save-fast', temp);
+      };
+
+      const closePopup = () => {
+        opened.value = false;
+      };
+
+      const changeQueryList = (data: IQueryItem[]) => {
+        queryList.value = cloneDeep(data);
+      };
+
+      const onSearch = () => {
+        ctx.emit('on-search');
+      };
+
+      watch(
+        () => props.fast,
+        (val) => {
+          if (val.length > 0) {
+            queryList.value = cloneDeep(val);
+          }
+        },
+        {
+          immediate: true,
+        }
+      );
+
+      return {
+        prefixCls,
+        opened,
+        queryList,
+        onAddRequirement,
+        onDelRequirement,
+        onSaveFast,
+        changeQueryList,
+        closePopup,
+        onSearch,
+      };
     },
-  },
-  emits: ['on-save-fast'],
-  setup(props, ctx) {
-    const { prefixCls } = useDesign('query-form');
-    const opened = ref<boolean>(false);
-    const queryList = ref<IQueryItem[]>([
-      {
-        requirement: '',
-        operator: '=',
-        operatorList: [],
-        value: '',
-        type: '',
-        datatypekeies: '',
-      },
-    ]);
-
-    const onAddRequirement = () => {
-      queryList.value.push({
-        requirement: '',
-        operator: '=',
-        operatorList: [],
-        value: '',
-        type: '',
-        datatypekeies: '',
-      });
-    };
-    const onDelRequirement = (index: number) => {
-      queryList.value.splice(index, 1);
-    };
-    const onSaveFast = () => {
-      const temp: IQueryItem[] = [];
-      queryList.value.forEach(item => {
-        if (item.requirement) {
-          temp.push(item);
-        }
-      });
-      ctx.emit('on-save-fast', temp);
-    };
-    const closePopup = () => {
-      opened.value = false;
-    };
-    const changeQueryList = (data: IQueryItem[]) => {
-      queryList.value = cloneDeep(data);
-    };
-
-    watch(
-      () => props.fast,
-      (val) => {
-        if (val.length > 0) {
-          queryList.value = cloneDeep(val);
-        }
-      },
-      {
-        immediate: true,
-      }
-    );
-
-    return {
-      prefixCls,
-      opened,
-      queryList,
-      onAddRequirement,
-      onDelRequirement,
-      onSaveFast,
-      changeQueryList,
-      closePopup,
-    };
-  },
-});
+  });
 </script>
 
 <style lang="less" scoped>
-@prefix-cls: ~'@{namespace}-query-form';
+  @prefix-cls: ~'@{namespace}-query-form';
 
-.@{prefix-cls} {
-  position: relative;
-  .zoom-animation(top, scaleY(0), scaleY(1), center top);
+  .@{prefix-cls} {
+    position: relative;
+    .zoom-animation(top, scaleY(0), scaleY(1), center top);
 
-  &__box {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding-bottom: 16px;
-    padding-left: 20px;
+    &__box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 16px;
+      padding-left: 20px;
 
-    & > * {
-      margin-right: 10px;
+      & > * {
+        margin-right: 10px;
+      }
+
+      input {
+        width: 200px;
+        height: 34px;
+        padding: 0 10px;
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        outline: none;
+        box-sizing: border-box;
+      }
     }
 
-    input {
-      width: 200px;
-      height: 34px;
-      padding: 0 10px;
+    &__icon {
+      margin-right: 20px;
+      margin-left: 10px;
       cursor: pointer;
-      background: #fff;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      outline: none;
-      box-sizing: border-box;
+      transform: rotate(0);
+      transition: transform 300ms;
+    }
+
+    &__icon--translate {
+      transform: rotate(-180deg);
+      transition: transform 300ms;
+    }
+
+    &__overflow {
+      position: absolute;
+      top: 64px;
+      z-index: @page-popup-z-index;
+      width: 100%;
+      background-color: #fff;
+      box-shadow: 10px 10px 12px 0 rgb(0 0 0 / 10%);
+    }
+
+    &__plus {
+      margin: 0 6px;
+    }
+
+    &__btn {
+      margin-right: 57px;
     }
   }
-
-  &__icon {
-    margin-right: 20px;
-    margin-left: 10px;
-    cursor: pointer;
-    transform: rotate(0);
-    transition: transform 300ms;
-  }
-
-  &__icon--translate {
-    transform: rotate(-180deg);
-    transition: transform 300ms;
-  }
-
-  &__overflow {
-    position: absolute;
-    top: 64px;
-    z-index: @page-popup-z-index;
-    width: 100%;
-    background-color: #fff;
-    box-shadow: 10px 10px 12px 0 rgb(0 0 0 / 10%);
-  }
-
-  &__plus {
-    margin: 0 6px;
-  }
-
-  &__btn {
-    margin-right: 57px;
-  }
-}
 </style>

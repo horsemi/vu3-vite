@@ -27,7 +27,7 @@ export class AxiosCanceler {
   }
 
   /**
-   * @description: 清除所有等待队列请求
+   * @description 清除所有等待队列请求
    */
   removeAllPending() {
     pendingMap.forEach((cancel) => {
@@ -53,7 +53,7 @@ export class AxiosCanceler {
   }
 
   /**
-   * @description: 重置等待请求队列
+   * @description 重置等待请求队列
    */
   reset(): void {
     pendingMap = new Map<string, Canceler>();

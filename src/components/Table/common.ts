@@ -4,6 +4,9 @@ import type { IColumnItem, IKeyType } from '/@/model/types';
 
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
+import { isNil } from 'lodash-es';
+
+import { isFoundationType } from '/@/model/common';
 
 // 基础表格默认配置
 export const defaultTableOptions: ITableOptions = {
@@ -28,7 +31,7 @@ export const defaultTableOptions: ITableOptions = {
     checkBoxesMode: 'always',
   },
   page: {
-    size: 20,
+    size: 50,
   },
 };
 
@@ -40,7 +43,8 @@ export const getDataSource = async (
   key: string[] = [],
   keyType: IKeyType[] = []
 ) => {
-  const select = getSelect(allColumns, scheme.columns, key);
+  const { select, expand } = getSelect(allColumns, scheme.columns, key);
+
   const filter = getFilter(scheme.requirement);
   const sort = getSort(scheme.orderBy, options.dataSourceOptions.sort);
   const data = new DataSource({
@@ -54,6 +58,7 @@ export const getDataSource = async (
       ...options.dataSourceOptions.oDataOptions,
     }),
     select: select,
+    expand: expand,
   });
   return data;
 };
@@ -73,7 +78,7 @@ const handleKeyType = (keyType: IKeyType[]) => {
 export const getFilter = (requirements: IRequirementItem[]) => {
   const filter: any[] = [];
   requirements.forEach((item) => {
-    if (item.requirement) {
+    if (item.requirement && !isNil(item.value)) {
       filter.push([item.requirement, item.operator, item.value]);
       if (item.logic) {
         filter.push(item.logic);
@@ -97,9 +102,15 @@ export const getSort = (orderBy: IOrderByItem[], tableSort: ISortItem[] = []) =>
 // 获取格式化后的表字段
 export const getSelect = (allColumns: IColumnItem[], columns: string[], key: string[] = []) => {
   const select: string[] = [];
+  const expands: string[] = [];
 
   columns.forEach((key) => {
     if (allColumns.some((allCol) => allCol.key === key) && select.indexOf(key)) {
+      const columns = allColumns.filter((allCol) => allCol.key === key)[0];
+      // 判断是否为基础数据类型
+      if (isFoundationType(columns)) {
+        expands.push(columns.expand as string);
+      }
       select.push(key);
     }
   });
@@ -111,7 +122,10 @@ export const getSelect = (allColumns: IColumnItem[], columns: string[], key: str
       }
     });
 
-  return select.concat(key);
+  return {
+    select: select.concat(key),
+    expand: expands,
+  };
 };
 
 // 获取格式化后的表头数据
@@ -120,7 +134,24 @@ export const getCompleteColumns = (allColumns: IColumnItem[], select: string[]) 
   select.forEach((item) => {
     allColumns.forEach((col) => {
       if (item === col.key) {
+        // 判断是否为基础数据类型
+        if (isFoundationType(col)) {
+          columns.push({
+            ...col,
+            caption: `${col.caption}编码`,
+          });
+
+          columns.push({
+            ...col,
+            key: col.expand as string,
+            type: 'foundation',
+          });
+
+          return;
+        }
+
         columns.push(col);
+
         return;
       }
     });

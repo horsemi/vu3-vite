@@ -44,16 +44,10 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type {
-    IMultiViewItem,
-    IOrderByItem,
-    IRequirementItem,
-    ISchemeColumnsItem,
-    ISchemeItem,
-  } from './types';
+  import type { IMultiViewItem, IOrderByItem, IRequirementItem, ISchemeItem } from './types';
 
   import { computed, defineComponent, PropType, ref } from 'vue';
-  
+
   import { useDesign } from '/@/hooks/web/useDesign';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
@@ -142,7 +136,7 @@
         ctx.emit('on-change-sort', data);
       };
       // 外派显示隐藏列更新
-      const onChangeColumn = (data: ISchemeColumnsItem[]) => {
+      const onChangeColumn = (data: string[]) => {
         ctx.emit('on-change-column', data);
       };
       // 外派标题更新
@@ -201,6 +195,7 @@
     &__left {
       width: 20%;
       height: 100%;
+      min-width: 200px;
     }
 
     &__right {

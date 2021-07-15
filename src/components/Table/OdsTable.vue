@@ -11,12 +11,12 @@
       :show-row-lines="tableOptions.showRowLines"
       :show-borders="tableOptions.showBorders"
       :row-alternation-enabled="tableOptions.rowAlternationEnabled"
-      :customize-columns="customizeColumns"
       @selection-changed="onSelectionChanged"
     >
       <template v-for="(item, index) in tableColumns" :key="index">
         <DxColumn
-          v-if="!item.hide"
+          v-if="!item.hide && item.type !== 'foundation'"
+          css-class="header-bold"
           :data-field="item.key"
           :caption="item.caption"
           :data-type="item.type"
@@ -24,11 +24,20 @@
           :alignment="item.alignment ? item.alignment : 'center'"
         >
           <DxLookup
-            v-if="item.datatypekeies && item.datatypekeies.startsWith('enum_')"
-            :data-source="getGlobalEnumDataByCode(item.datatypekeies)"
+            v-if="item.type === 'enum'"
+            :data-source="getGlobalEnumDataByCode(item.type)"
             value-expr="key"
             display-expr="description"
           />
+        </DxColumn>
+        <DxColumn
+          v-else-if="item.type === 'foundation'"
+          css-class="header-bold"
+          :data-field="`${item.key}.Name`"
+          :caption="item.caption"
+          data-type="object"
+          :alignment="item.alignment ? item.alignment : 'center'"
+        >
         </DxColumn>
       </template>
       <DxSelection
@@ -45,6 +54,8 @@
         :visible="tableOptions.dataSourceOptions.paginate && !tableOptions.useScrolling"
         :show-info="true"
         :show-navigation-buttons="true"
+        :show-page-size-selector="true"
+        :allowed-page-sizes="[50, 100, 200]"
         info-text="共{1}页，{2}条数据"
         display-mode="full"
       />
@@ -150,17 +161,15 @@
         const index = parseInt(e.target.value) - 1;
         pageIndex.value = index >= 0 ? index : 0;
       };
-      const customizeColumns = () => {
-        // console.log(columns);
-      };
 
       const handleFilterScheme = (scheme: ISchemeItem) => {
         if (!isEmpty(tableData.value) && !isEmpty(scheme)) {
-          const select = getSelect(props.allColumns, scheme.columns, props.tableKey);
+          const { select, expand } = getSelect(props.allColumns, scheme.columns, props.tableKey);
           const filter = getFilter(scheme.requirement);
           const sort = getSort(scheme.orderBy, props.tableOptions.dataSourceOptions.sort);
           tableData.value.filter(filter);
           tableData.value.select(select);
+          tableData.value.expand = expand;
           tableColumns.value = getCompleteColumns(props.allColumns, tableData.value.select());
           // 清空排序，处理相同字段desc失效
           dataGrid.value.instance.clearSorting();
@@ -221,7 +230,6 @@
         pageIndex,
         onSelectionChanged,
         handleJump,
-        customizeColumns,
         getGlobalEnumDataByCode,
         search,
       };
@@ -243,6 +251,11 @@
     width: 100%;
     height: 100%;
 
+    // 表头字段加粗
+    .dx-header-row .header-bold {
+      font-weight: bold;
+    }
+
     // 隔行换色
     .dx-datagrid .dx-row-alt > td,
     .dx-datagrid .dx-row-alt > tr > td {
@@ -257,10 +270,22 @@
       background-color: #e6f7ff;
     }
 
+    // 行hover样式
+    .dx-datagrid-table
+      .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row):not(.dx-row-focused)
+      > td:not(.dx-focused) {
+      background-color: #e6f7ff;
+    }
+
     &__table-billno-column__wrap {
       color: #1890ff;
       text-decoration: underline;
       cursor: pointer;
+    }
+
+    .dx-datagrid-table .dx-freespace-row > td {
+      // 去掉空余空间的边框，当指定表格高度时，会出现这个占满空余空间
+      border: none !important;
     }
 
     // 分页器样式
@@ -311,15 +336,22 @@
 
     // 页码样式
     .dx-pager .dx-pages .dx-page {
-      width: 33px;
       height: 33px;
-      padding: 0;
+      padding: 0 10px;
       margin: 0 5px 0 0;
       line-height: 31px;
       color: #666;
       text-align: center;
       border: 1px solid #d3d3d3;
       border-radius: 4px;
+    }
+
+    // 行数设置样式
+    .dx-pager .dx-page-sizes .dx-page-size {
+      height: 33px;
+      padding: 0 10px;
+      line-height: 31px;
+      text-align: center;
     }
 
     // 跳转分页样式

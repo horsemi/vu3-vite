@@ -23,10 +23,10 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IOrderByItem, IRequirementItem, ISchemeColumnsItem, ISchemeItem } from './content/types';
+  import type { IOrderByItem, IRequirementItem, ISchemeItem } from './content/types';
 
   import { defineComponent, PropType, ref } from 'vue';
-  
+
   import { useDesign } from '/@/hooks/web/useDesign';
 
   import { DxPopup } from 'devextreme-vue/popup';
@@ -101,7 +101,7 @@
         ctx.emit('on-change-sort', data);
       };
       // 外派显示隐藏列更新
-      const onChangeColumn = (data: ISchemeColumnsItem[]) => {
+      const onChangeColumn = (data: string[]) => {
         ctx.emit('on-change-column', data);
       };
       // 外派标题更新

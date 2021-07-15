@@ -80,7 +80,7 @@ export class Request {
   }
 
   /**
-   * @description:  文件上传
+   * @description  文件上传
    */
   uploadFile<T = any>(
     config: AxiosRequestConfig,

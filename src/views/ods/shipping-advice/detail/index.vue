@@ -60,10 +60,14 @@
                     ? receiverInformation
                     : data.title === '物流信息'
                     ? logisticsInformation
+                    : data.title === '快递信息'
+                    ? expressListInformation
                     : data.title === '作业信息'
                     ? taskInformation
                     : otherInformation
                 "
+                :step-data="stepData"
+                :step-active-index="stepActiveIndex"
               />
             </div>
             <div class="icon-box">
@@ -104,15 +108,16 @@
 <script lang="ts">
   import type { ITableOptions } from '/@/components/Table/types';
   import type { IDetailItem } from '/@/utils/detail/types';
+  import type { IColumnItem } from '/@/model/types';
 
-  import { defineComponent, nextTick, onMounted, ref, watch } from 'vue';
+  import { defineComponent, nextTick, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
 
   import { defaultTableOptions } from '/@/components/Table/common';
   import { deepMerge } from '/@/utils';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
-  import { getDetailData, getDefiniteData, customDefinite } from './index';
+  import { getDetailData, getDefiniteData } from './index';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
@@ -140,6 +145,10 @@
         },
         {
           title: '物流信息',
+          height: '',
+        },
+        {
+          title: '快递信息',
           height: '',
         },
         {
@@ -178,32 +187,35 @@
         ],
       };
 
+      const stepData = ['理货', '进场', '交接', '清货'];
+      const stepActiveIndex = ref(0);
+
       const opened = ref(true);
       const selectedIndex = ref(0);
       const formBox = ref();
       let tableOpenedHeight = '';
-      const tableCloseHeight = 'calc(100vh - 28px - 260px)';
+      const tableCloseHeight = 'calc(100vh - 28px - 322px)';
 
       const route = useRoute();
-      const Id = parseInt(route.query.Id as string);
+      const Id = route.query.Id as string;
       const formData = ref();
       const baseInformation = ref<IDetailItem[]>([]);
       const receiverInformation = ref<IDetailItem[]>([]);
       const logisticsInformation = ref<IDetailItem[]>([]);
+      const expressListInformation = ref<IDetailItem[]>([]);
       const taskInformation = ref<IDetailItem[]>([]);
       const otherInformation = ref<IDetailItem[]>([]);
 
       const options: Partial<ITableOptions> = {
-        height: 'calc(100vh - 28px - 260px)',
+        height: 'calc(100vh - 28px - 322px)',
         useScrolling: true,
-        showBorders: false,
         page: {
-          size: 10,
+          size: 20,
         },
       };
       const tableOptions = ref<ITableOptions>(deepMerge(cloneDeep(defaultTableOptions), options));
       const dataSource = ref();
-      const columns = customDefinite;
+      const columns = ref<IColumnItem[]>([]);
 
       const onRefresh = () => {
         getData();
@@ -272,7 +284,7 @@
           if (!multiViewItems.value[index].height && opened.value) {
             multiViewItems.value[index].height = formBox.value.offsetHeight + 'px';
           }
-          tableOpenedHeight = `calc(100vh - ${multiViewItems.value[index].height} - 260px)`;
+          tableOpenedHeight = `calc(100vh - ${multiViewItems.value[index].height} - 322px)`;
           if (opened.value) {
             tableOptions.value.height = tableOpenedHeight;
           } else {
@@ -281,34 +293,58 @@
         });
       };
 
-      const getData = async () => {
-        getDefiniteData(tableOptions.value, ['ShippingAdviceId', '=', Id]).then((res) => {
-          dataSource.value = res;
+      const handleStepActiveIndex = () => {
+        if (formData.value.isClean) {
+          stepActiveIndex.value = 3;
+        } else if (formData.value.isTransfer) {
+          stepActiveIndex.value = 2;
+        } else if (formData.value.isEntry) {
+          stepActiveIndex.value = 1;
+        }
+      };
+
+      const getData = () => {
+        getDetailData(['Id', '=', Id]).then((res) => {
+          if (res) {
+            const {
+              baseList,
+              receiverList,
+              logisticsList,
+              expressList,
+              taskList,
+              otherList,
+              data,
+            } = res;
+            formData.value = data;
+            baseInformation.value = baseList;
+            receiverInformation.value = receiverList;
+            logisticsInformation.value = logisticsList;
+            expressListInformation.value = expressList;
+            taskInformation.value = taskList;
+            otherInformation.value = otherList;
+            handleHeight(0);
+            handleStepActiveIndex();
+          }
         });
-        const detailData = await getDetailData(['Id', '=', Id]);
-        if (!detailData) return;
-        const { baseList, receiverList, logisticsList, taskList, otherList, data } = detailData;
-        formData.value = data;
-        baseInformation.value = baseList;
-        receiverInformation.value = receiverList;
-        logisticsInformation.value = logisticsList;
-        taskInformation.value = taskList;
-        otherInformation.value = otherList;
-        handleHeight(0);
+        getDefiniteData(tableOptions.value, ['ShippingAdviceId', '=', Id]).then((res) => {
+          if (res) {
+            columns.value = res.columnList;
+            dataSource.value = res.data;
+          }
+        });
       };
 
       watch(selectedIndex, (val) => {
         handleHeight(val);
       });
 
-      onMounted(async () => {
-        await getData();
-      });
+      getData();
 
       return {
         baseInformation,
         receiverInformation,
         logisticsInformation,
+        expressListInformation,
         taskInformation,
         otherInformation,
         columns,
@@ -323,6 +359,8 @@
         tableOptions,
         tableOpenedHeight,
         tableCloseHeight,
+        stepData,
+        stepActiveIndex,
         onSubmitClick,
         onApplyClick,
         onSendClick,
@@ -336,9 +374,6 @@
 
 <style lang="less">
   .detail {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
     overflow: hidden;
 
     .tab-panel {
@@ -357,13 +392,11 @@
       background-color: #fff;
     }
     .btn-box {
-      position: absolute;
-      top: 0;
-      right: 20px;
-      z-index: 100;
       display: flex;
-      align-items: center;
-      height: 36px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+      width: 100%;
+      padding: 5px 5px 0;
       & > * {
         margin-left: 10px;
       }
@@ -390,34 +423,33 @@
     }
 
     .dx-layout-manager .dx-field-item:not(.dx-first-row) {
-      padding-top: 8px !important;
+      padding-top: 8px;
     }
 
     .dx-widget {
-      font-size: 12px !important;
+      font-size: 12px;
     }
 
     .dx-box-item-content {
-      font-size: 12px !important;
+      font-size: 12px;
     }
 
     .dx-texteditor-input {
-      min-height: 0 !important;
-      padding: 5px 9px 5px !important;
+      min-height: 0;
+      padding: 5px 9px 5px;
     }
 
     .dx-button-has-text .dx-button-content {
-      padding: 0 !important;
+      padding: 0;
+    }
+
+    .dx-button-has-icon .dx-button-content {
+      padding: 0;
     }
 
     .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-checkbox,
     .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-switch {
-      margin: 0 !important;
-    }
-
-    .dx-datagrid-table .dx-freespace-row > td {
-      // 去掉空余空间的边框，当指定表格高度时，会出现这个占满空余空间
-      border: none !important;
+      margin: 0;
     }
   }
 </style>
