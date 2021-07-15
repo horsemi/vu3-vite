@@ -80,6 +80,7 @@
 </template>
 
 <script lang="ts">
+  import type { sumbitPassword , updatePassword  } from '/@/api/user';
   import { defineComponent, reactive } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -90,15 +91,9 @@
   import { DxForm, DxItem, DxLabel } from 'devextreme-vue/form';
   import { successMessage } from '/@/hooks/web/useMessage';
   import router from '/@/router/index';
+  import { CHANGE_PASSWORD_FLAG_KEY, USERNAME_KEY} from '/@/enums/cacheEnum';
+  import { setCookie , getCookie  } from '/@/utils/cache/cookies';
 
-  interface updatePassword {
-    oldPassword: string;
-    newPassword: string;
-    newPasswordRe: string;
-  }
-  interface sumbitPassword extends updatePassword {
-    userName: string;
-  }
   export default defineComponent({
     name: 'PasswordModal',
     components: {
@@ -153,12 +148,13 @@
       const passwordComparison = () => changePasswordData.newPassword;
       const onChangePassword = async () => {
         const params: sumbitPassword = {
-          userName: prop.loginUserName || userStore.getUserInfo.userName,
+          userName: prop.loginUserName || getCookie(USERNAME_KEY) ||userStore.getUserInfo.userName ,
           oldPassword: changePasswordData.oldPassword,
           newPassword: changePasswordData.newPassword,
           newPasswordRe: changePasswordData.newPasswordRe,
         };
         userStore.changePassword(params).then(() => {
+          setCookie(CHANGE_PASSWORD_FLAG_KEY,'0');
           successMessage('修改成功');
           onClose();
           if (prop.loginUserName) {

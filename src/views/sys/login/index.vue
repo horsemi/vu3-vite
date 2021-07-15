@@ -54,7 +54,7 @@
         :popup-visable="popupVisable"
         :show-close-button="false"
         :show-text-close="true"
-        :login-user-name="loginData.userName"
+        :login-user-name="username"
         :password-pattern="passwordPattern"
         @closePopup="ClosePopup"
       />
@@ -63,7 +63,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive, ref } from 'vue';
+  import { defineComponent, reactive, ref ,onMounted} from 'vue';
 
   import DxButton from 'devextreme-vue/button';
   import { DxRequiredRule } from 'devextreme-vue/validator';
@@ -73,8 +73,10 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import SvgIcon from '/@/components/Icon/SvgIcon.vue';
   import PasswordModal from '/@/components/PasswordModal/index.vue';
-
+  import { setCookie , getCookie , checkCookie } from '/@/utils/cache/cookies';
+  import { CHANGE_PASSWORD_FLAG_KEY , USERNAME_KEY} from '/@/enums/cacheEnum';
   import { PasswordStateEnum } from '/@/enums/appEnum';
+  import { useMessage } from '/@/hooks/web/useMessage';
 
   export default defineComponent({
     name: 'Login',
@@ -93,23 +95,37 @@
       const popupVisable = ref<boolean>(false);
       const passwordPattern = ref<string>('');
       const loginData = reactive({ userName: '', password: '' });
-
+      const username = '';
+      const cookieEnabled = checkCookie();
+      if (!cookieEnabled) {
+        useMessage('请开启浏览器Cookie功能','warning');
+      }
+      onMounted(async()=>{
+        if(getCookie(CHANGE_PASSWORD_FLAG_KEY) === '1'){
+          popupVisable.value = true;
+          passwordPattern.value = await userStore.getPasswordPolicy();
+        }
+      });
       return {
         prefixCls,
         userStore,
         loginData,
         passwordPattern,
         popupVisable,
+        username
       };
     },
     methods: {
       async onLogin() {
         await this.userStore.login(this.loginData);
+        this.username = this.loginData.userName || getCookie(USERNAME_KEY);
         const result = await this.userStore.checkPassword(this.loginData);
         if (
           result.warningType === PasswordStateEnum.EXPIRED ||
           result.warningType === PasswordStateEnum.WEAKPASSWORD
         ) {
+          setCookie(CHANGE_PASSWORD_FLAG_KEY,'1');
+          setCookie(USERNAME_KEY,this.loginData.userName);
           this.popupVisable = true;
           this.passwordPattern = await this.userStore.getPasswordPolicy();
         } else {

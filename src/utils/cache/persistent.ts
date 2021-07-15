@@ -11,6 +11,7 @@ import {
   APP_SESSION_CACHE_KEY,
   SCHEME_DATA_KEY,
   SCHEME_CHECKED_INDE_KEY,
+  CHANGE_PASSWORD_FLAG_KEY,
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
 import { UserInfo } from '/@/store/types';
@@ -22,6 +23,7 @@ interface BasicStore {
   [SYSTEM_CFG_KEY]: SystemConfig;
   [SCHEME_DATA_KEY]: any;
   [SCHEME_CHECKED_INDE_KEY]: number;
+  [CHANGE_PASSWORD_FLAG_KEY]: string;
 }
 
 type LocalStore = BasicStore;

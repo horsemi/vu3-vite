@@ -1,4 +1,5 @@
 import type { UserInfo } from '../types';
+import type { sumbitPassword } from '/@/api/user';
 
 import { defineStore } from 'pinia';
 
@@ -13,6 +14,11 @@ import { UserApi, UserData } from '/@/api/user';
 interface UserState {
   token?: string;
   userInfo: Nullable<UserInfo>;
+}
+interface menuType {
+  code: string;
+  name: string;
+  url: string;
 }
 
 export const useUserStore = defineStore({
@@ -42,7 +48,7 @@ export const useUserStore = defineStore({
       this.userInfo = null;
       this.token = '';
     },
-    getMenus(): Promise<any[]> {
+    getMenus(): Promise<menuType[]> {
       return new Promise((resolve, reject) => {
         UserApi.getMenus()
           .then((res) => {
@@ -53,7 +59,7 @@ export const useUserStore = defineStore({
           });
       });
     },
-    getPermission(): Promise<any[]> {
+    getPermission(): Promise<{ behaviors: string[]; userName: string }> {
       return new Promise((resolve, reject) => {
         UserApi.getPermission()
           .then((res) => {
@@ -67,7 +73,7 @@ export const useUserStore = defineStore({
           });
       });
     },
-    getPasswordPolicy(): Promise<any> {
+    getPasswordPolicy(): Promise<string> {
       return new Promise((resolve, reject) => {
         UserApi.queryPasswordPolicy()
           .then((res) => {
@@ -78,19 +84,14 @@ export const useUserStore = defineStore({
           });
       });
     },
-    checkPassword(userInfo: UserData): Promise<any> {
+    checkPassword(userInfo: UserData): Promise<{ warningType: number }> {
       return new Promise((resolve) => {
         UserApi.checkPassword(userInfo).then((data) => {
           resolve(data);
         });
       });
     },
-    changePassword(data: {
-      userName: string;
-      oldPassword: string;
-      newPassword: string;
-      newPasswordRe: string;
-    }): Promise<any> {
+    changePassword(data: sumbitPassword): Promise<void> {
       return new Promise((resolve, reject) => {
         UserApi.changePassword(data)
           .then((res) => {
@@ -112,7 +113,7 @@ export const useUserStore = defineStore({
           });
       });
     },
-    async login(userData: UserData): Promise<void> {
+    async login(userData: UserData): Promise<{ token: string }> {
       return new Promise((resolve, reject) => {
         UserApi.login(userData)
           .then(async (res) => {

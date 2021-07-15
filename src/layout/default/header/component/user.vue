@@ -24,6 +24,8 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
   import PasswordModal from '/@/components/PasswordModal/index.vue';
+  import { CHANGE_PASSWORD_FLAG_KEY , USERNAME_KEY} from '/@/enums/cacheEnum';
+  import { removeCookie } from '/@/utils/cache/cookies';
 
   export default defineComponent({
     components: {
@@ -53,6 +55,8 @@
         {
           name: '退出登录',
           onClick: () => {
+            removeCookie(CHANGE_PASSWORD_FLAG_KEY);
+            removeCookie(USERNAME_KEY);
             userStore.logout();
           },
         },

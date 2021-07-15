@@ -4,6 +4,14 @@ export interface UserData {
   userName: string;
   password: string;
 }
+export interface updatePassword {
+  oldPassword: string;
+  newPassword: string;
+  newPasswordRe: string;
+}
+export interface sumbitPassword extends updatePassword {
+  userName: string;
+}
 enum apiUrl {
   login = '/passport/api/login',
   logout = '/passport/api/logout',
@@ -40,7 +48,7 @@ export class UserApi {
       url: apiUrl.queryPasswordPolicy,
     });
   }
-  static changePassword(data: any) {
+  static changePassword(data: sumbitPassword) {
     return defHttp.post({
       url: apiUrl.changePassword,
       params: data,
