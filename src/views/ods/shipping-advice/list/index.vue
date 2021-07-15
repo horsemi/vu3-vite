@@ -52,6 +52,7 @@
   import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { deepMerge } from '/@/utils';
+  import { getOdsListUrlByCode } from '/@/api/ods/common';
 
   import DxButton from 'devextreme-vue/button';
 
@@ -69,7 +70,7 @@
         height: 'calc(100vh - 287px)',
         dataSourceOptions: {
           oDataOptions: {
-            url: `/ods/api/odata/${ORDER_CODE}s`,
+            url: getOdsListUrlByCode(ORDER_CODE),
           },
         },
       };

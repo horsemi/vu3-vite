@@ -7,7 +7,7 @@
 <script lang="ts">
   import { defineComponent } from 'vue';
   import { AppProvider } from '/@/components/Application';
-  import { initAppConfigStore, initGlobalEnumData } from '/@/logics/initAppConfig';
+  import { initAppConfigStore } from '/@/logics/initAppConfig';
 
   import zhMessages from 'devextreme/localization/messages/zh.json';
   import { locale, loadMessages } from 'devextreme/localization';
@@ -19,7 +19,6 @@
     },
     setup() {
       initAppConfigStore();
-      initGlobalEnumData();
       loadMessages(zhMessages);
       locale(navigator.language);
     },

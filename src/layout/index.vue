@@ -44,6 +44,7 @@
 
 <script lang="ts">
   import { defineComponent, computed, ref } from 'vue';
+
   import LayoutContent from './default/content/index.vue';
   import LayoutHeader from './default/header/index.vue';
   import LayoutMenu from './default/menu/index.vue';
@@ -51,8 +52,10 @@
 
   import DxDrawer from 'devextreme-vue/drawer';
   import DxScrollView from 'devextreme-vue/scroll-view';
+
   import { useViewStore } from '/@/store/modules/view';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { initGlobalEnumData } from '/@/logics/initAppConfig';
 
   import { Persistent } from '/@/utils/cache/persistent';
   import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
@@ -72,6 +75,7 @@
         max: 200,
         min: 54,
       };
+      initGlobalEnumData();
       const viewStore = useViewStore();
       const { prefixCls } = useDesign('layout');
       const viewState = computed(() => viewStore.getViewList);

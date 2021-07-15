@@ -16,7 +16,7 @@ export function checkStatus(status: number, msg: string): void {
       router.push(PageEnum.BASE_LOGIN);
       break;
     case 403:
-      error('用户得到授权，但是访问是被禁止的。!');
+      error('用户得到授权，但是访问是被禁止的!');
       break;
     // 404请求不存在
     case 404:

@@ -25,7 +25,7 @@
         >
           <DxLookup
             v-if="item.type === 'enum'"
-            :data-source="getGlobalEnumDataByCode(item.type)"
+            :data-source="getGlobalEnumDataByCode(item.expand)"
             value-expr="key"
             display-expr="description"
           />
@@ -219,7 +219,7 @@
       );
 
       function getGlobalEnumDataByCode(code: string | undefined) {
-        return code && appStore.getGlobalEnumDataByCode(code.split('_')[1]);
+        return code && appStore.getGlobalEnumDataByCode(code);
       }
 
       return {
