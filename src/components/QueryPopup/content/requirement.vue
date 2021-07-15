@@ -80,7 +80,7 @@
         requirement: '',
         operator: '',
         operatorList: [],
-        value: '',
+        value: undefined,
         type: '',
         datatypekeies: '',
         logic: 'and',

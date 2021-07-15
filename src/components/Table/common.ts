@@ -4,6 +4,7 @@ import type { IColumnItem, IKeyType } from '/@/model/types';
 
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
+import { isNil } from 'lodash-es';
 
 import { isFoundationType } from '/@/model/common';
 
@@ -77,7 +78,7 @@ const handleKeyType = (keyType: IKeyType[]) => {
 export const getFilter = (requirements: IRequirementItem[]) => {
   const filter: any[] = [];
   requirements.forEach((item) => {
-    if (item.requirement) {
+    if (item.requirement && !isNil(item.value)) {
       filter.push([item.requirement, item.operator, item.value]);
       if (item.logic) {
         filter.push(item.logic);

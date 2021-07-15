@@ -53,7 +53,9 @@
 
   .@{prefix-cls} {
     display: flex;
+    align-items: center;
     width: 100%;
+    height: 28px;
 
     &__item {
       flex: 1;

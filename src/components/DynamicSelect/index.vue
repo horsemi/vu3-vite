@@ -10,6 +10,7 @@
         :search-enabled="true"
         search-mode="contains"
         display-expr="caption"
+        @itemClick="handleItemClick"
         @update:value="$emit('update:paramKey', $event)"
       ></DxSelectBox>
     </div>
@@ -29,6 +30,7 @@
     <div>
       <DxNumberBox
         v-if="paramDataType === 'number'"
+        ref="valueBox"
         :value="value"
         :show-spin-buttons="true"
         format="###,##0.###"
@@ -38,6 +40,7 @@
       </DxNumberBox>
       <DxSelectBox
         v-else-if="paramDataType === 'boolean'"
+        ref="valueBox"
         :value="value"
         :data-source="booleanOptions"
         :show-clear-button="true"
@@ -49,6 +52,7 @@
       </DxSelectBox>
       <DxDateBox
         v-else-if="paramDataType === 'datetime'"
+        ref="valueBox"
         :value="value"
         type="datetime"
         display-format="yyyy-MM-dd HH:mm:ss"
@@ -59,6 +63,7 @@
       </DxDateBox>
       <DxSelectBox
         v-else-if="paramDatatypekeies && paramDatatypekeies.startsWith('enum_')"
+        ref="valueBox"
         :value="value"
         :data-source="options"
         :show-clear-button="true"
@@ -70,6 +75,7 @@
       </DxSelectBox>
       <FoundationSelect
         v-else-if="paramDatatypekeies && paramDatatypekeies.startsWith('foundation_')"
+        ref="valueBox"
         width="180"
         :value="value"
         :foundation-code="paramDatatypekeies"
@@ -78,6 +84,7 @@
       </FoundationSelect>
       <DxTextBox
         v-else
+        ref="valueBox"
         :value="value"
         :show-clear-button="true"
         width="180"
@@ -110,7 +117,7 @@
     props: {
       value: {
         type: [String, Number, Boolean, Date],
-        default: '',
+        default: undefined,
       },
       paramKey: {
         type: String,
@@ -148,6 +155,7 @@
     setup(props, context) {
       const appStore = useAppStore();
       const { prefixCls } = useDesign('dynamic-select');
+      const valueBox = ref();
       let options = ref<{ key: string; value: string }[]>([]);
       let operatorOptions = ref<{ key: string; value: string }[]>([]);
       let dataType = ref<string>('');
@@ -190,39 +198,13 @@
             context.emit('update:operation', '=');
           }
           initOption(type!, datatypekeies!);
-
-          // TODO 逻辑太恶心 有待优化
-          if (
-            type === 'datetime' &&
-            !props.value &&
-            Object.prototype.toString.call(props.value) !== '[object Date]'
-          ) {
-            context.emit('update:value', new Date());
-          }
-          if (
-            type === 'number' &&
-            !props.value &&
-            Object.prototype.toString.call(props.value) !== '[object Number]'
-          ) {
-            context.emit('update:value', 0);
-          }
-          if (
-            (type === 'string' ||
-              datatypekeies === 'enum' ||
-              type === 'boolean' ||
-              datatypekeies?.startsWith('foundation_')) &&
-            props.value &&
-            Object.prototype.toString.call(props.value) !== '[object String]'
-          ) {
-            context.emit('update:value', '');
-          }
         } else {
           operatorOptions.value = [];
           context.emit('update:paramOperations', operatorOptions.value);
           context.emit('update:operation', '');
           context.emit('update:paramDataType', '');
           context.emit('update:paramDatatypekeies', '');
-          context.emit('update:value', '');
+          context.emit('update:value', undefined);
         }
       }
 
@@ -239,12 +221,18 @@
         context.emit('update:paramOperations', operatorOptions.value);
       }
 
+      function handleItemClick() {
+        valueBox.value.instance.reset();
+      }
+
       return {
         prefixCls,
         options,
         dataType,
         operatorOptions,
         booleanOptions,
+        valueBox,
+        handleItemClick,
       };
     },
   });

@@ -283,6 +283,11 @@
       cursor: pointer;
     }
 
+    .dx-datagrid-table .dx-freespace-row > td {
+      // 去掉空余空间的边框，当指定表格高度时，会出现这个占满空余空间
+      border: none !important;
+    }
+
     // 分页器样式
     .dx-datagrid-pager {
       padding-top: 20px;

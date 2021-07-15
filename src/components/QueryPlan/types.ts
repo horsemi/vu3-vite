@@ -4,7 +4,7 @@ export interface IQueryItem {
   requirement: string;
   operator: string;
   operatorList: string[];
-  value: string;
+  value: string | number | boolean | Date | undefined;
   type: string;
   datatypekeies: string;
 }
