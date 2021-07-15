@@ -8,6 +8,7 @@
       :show-title="true"
       :width="500"
       :height="370"
+      shading-color="transparent"
       title="修改密码"
       @hidden="onClose"
     >
@@ -80,7 +81,7 @@
 </template>
 
 <script lang="ts">
-  import type { sumbitPassword , updatePassword  } from '/@/api/user';
+  import type { ISumbitPassword , IUpdatePassword  } from '/@/api/user';
   import { defineComponent, reactive } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -141,14 +142,14 @@
     setup(prop, context) {
       const userStore = useUserStore();
       const { prefixCls } = useDesign('password-modal');
-      const changePasswordData: updatePassword = reactive({
+      const changePasswordData: IUpdatePassword = reactive({
         oldPassword: '',
         newPassword: '',
         newPasswordRe: '',
       });
       const passwordComparison = () => changePasswordData.newPassword;
       const onChangePassword = async () => {
-        const params: sumbitPassword = {
+        const params: ISumbitPassword = {
           userName: prop.loginUserName || getCookie(USERNAME_KEY) ||userStore.getUserInfo.userName ,
           oldPassword: changePasswordData.oldPassword,
           newPassword: changePasswordData.newPassword,
