@@ -93,6 +93,7 @@
   import router from '/@/router/index';
   import { CHANGE_PASSWORD_FLAG_KEY, USERNAME_KEY} from '/@/enums/cacheEnum';
   import { setCookie , getCookie  } from '/@/utils/cache/cookies';
+  import { isChangePasswordEnum } from '/@/enums/appEnum';
 
   export default defineComponent({
     name: 'PasswordModal',
@@ -154,7 +155,7 @@
           newPasswordRe: changePasswordData.newPasswordRe,
         };
         userStore.changePassword(params).then(() => {
-          setCookie(CHANGE_PASSWORD_FLAG_KEY,'0');
+          setCookie(CHANGE_PASSWORD_FLAG_KEY,isChangePasswordEnum.UNCHANGE);
           successMessage('修改成功');
           onClose();
           if (prop.loginUserName) {
