@@ -82,7 +82,7 @@
 
 <script lang="ts">
   import type { ISumbitPassword , IUpdatePassword  } from '/@/api/user';
-  import { defineComponent, reactive } from 'vue';
+  import { defineComponent, reactive , ref  } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
@@ -92,9 +92,7 @@
   import { DxForm, DxItem, DxLabel } from 'devextreme-vue/form';
   import { successMessage } from '/@/hooks/web/useMessage';
   import router from '/@/router/index';
-  import { CHANGE_PASSWORD_FLAG_KEY, USERNAME_KEY} from '/@/enums/cacheEnum';
-  import { setCookie , getCookie  } from '/@/utils/cache/cookies';
-  import { isChangePasswordEnum } from '/@/enums/appEnum';
+
 
   export default defineComponent({
     name: 'PasswordModal',
@@ -142,6 +140,7 @@
     setup(prop, context) {
       const userStore = useUserStore();
       const { prefixCls } = useDesign('password-modal');
+      const passwordForm = ref(null);
       const changePasswordData: IUpdatePassword = reactive({
         oldPassword: '',
         newPassword: '',
@@ -150,22 +149,21 @@
       const passwordComparison = () => changePasswordData.newPassword;
       const onChangePassword = async () => {
         const params: ISumbitPassword = {
-          userName: prop.loginUserName || getCookie(USERNAME_KEY) ||userStore.getUserInfo.userName ,
+          userName: prop.loginUserName || userStore.getUserInfo.userName ,
           oldPassword: changePasswordData.oldPassword,
           newPassword: changePasswordData.newPassword,
           newPasswordRe: changePasswordData.newPasswordRe,
         };
         userStore.changePassword(params).then(() => {
-          setCookie(CHANGE_PASSWORD_FLAG_KEY,isChangePasswordEnum.UNCHANGE);
           successMessage('修改成功');
           onClose();
-          if (prop.loginUserName) {
-            router.replace('/');
-          }
+          // if (prop.loginUserName) {
+          //   router.replace('/');
+          // }
         });
       };
       const onClose = () => {
-        context.emit('closePopup', false);
+        context.emit('closePopup', false );
       };
       return {
         prefixCls,
@@ -173,6 +171,7 @@
         onChangePassword,
         passwordComparison,
         onClose,
+        passwordForm
       };
     },
   });
