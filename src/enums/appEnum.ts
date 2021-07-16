@@ -24,11 +24,3 @@ export enum PasswordStateEnum {
   EXPIRED = 3,
   WEAKPASSWORD = 4,
 }
-
-/**
- * @description 是否强制修改密码
- */
-export enum isChangePasswordEnum {
-  CHANGE = '1',
-  UNCHANGE = '0',
-}
