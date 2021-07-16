@@ -6,6 +6,21 @@
   border-bottom: none !important;
 }
 
+// 行被选中样式
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > td,
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > tr > td,
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > td,
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > tr > td {
+  background-color: #e6f7ff !important;
+}
+
+// 表格行hover样式
+.dx-datagrid-table
+  .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row):not(.dx-row-focused)
+  > td:not(.dx-focused) {
+  background-color: #e6f7ff !important;
+}
+
 // 重置选择框样式
 .dx-checkbox-checked .dx-checkbox-icon {
   color: #fff !important;

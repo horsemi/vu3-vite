@@ -4,6 +4,7 @@
       <DxDataGrid
         height="100%"
         :data-source="fieldList"
+        :hover-state-enabled="true"
         :show-borders="true"
         :show-column-lines="false"
         :show-row-lines="true"
@@ -25,6 +26,7 @@
       <DxDataGrid
         height="100%"
         :data-source="dataSource"
+        :hover-state-enabled="true"
         :show-borders="false"
         :show-column-lines="false"
         :show-row-lines="true"
@@ -68,7 +70,6 @@
   import type { IFieldItem, IOrderByItem, ISortOptions } from './types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';
-  import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { handleArrayTransposition } from '/@/utils';
@@ -100,6 +101,12 @@
           return [];
         },
       },
+      columns: {
+        type: Array as PropType<string[]>,
+        default: () => {
+          return [];
+        },
+      },
       orderBy: {
         type: Array as PropType<IOrderByItem[]>,
         default: () => {
@@ -107,7 +114,7 @@
         },
       },
     },
-    emits: ['on-change-sort'],
+    emits: ['on-change-sort', 'on-change-column'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('content-sort');
       // 升降序下拉框配置项
@@ -132,9 +139,25 @@
         ctx.emit('on-change-sort', data);
       };
 
+      // 外派显示隐藏列更新事件
+      const onChangeColumn = (data: string[]) => {
+        ctx.emit('on-change-column', data);
+      };
+
       // 点击全部字段行
       const onRowClick = (e) => {
         e.data.checked = !e.data.checked;
+      };
+
+      // 处理字段有排序但是没有显示的情况
+      const handleFieldShow = (data: IOrderByItem[]) => {
+        const columns = [...props.columns];
+        data.forEach((sort) => {
+          if (columns.indexOf(sort.key) === -1) {
+            columns.push(sort.key);
+          }
+        });
+        onChangeColumn(columns);
       };
 
       // 点击中间箭头触发
@@ -150,6 +173,7 @@
             };
           });
         onChangeSort(dataSource.value);
+        handleFieldShow(dataSource.value);
       };
 
       // 拖动位置触发
@@ -161,9 +185,8 @@
 
       // 点击删除触发
       const onDel = (index: number) => {
-        const temp = cloneDeep(dataSource.value);
-        temp.splice(index, 1);
-        dataSource.value = temp;
+        if (!dataSource.value[index]) return;
+        dataSource.value.splice(index, 1);
         onChangeSort(dataSource.value);
       };
 

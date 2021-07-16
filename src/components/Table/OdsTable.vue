@@ -182,11 +182,17 @@
       };
 
       const search = () => {
-        tableData.value.reload();
+        const instance = dataGrid.value.instance;
+        if (instance && !isEmpty(tableData.value)) {
+          instance.clearSelection();
+          tableData.value.reload();
+        }
       };
 
       onBeforeUnmount(() => {
-        props.dataSource && props.dataSource.dispose();
+        if (!isEmpty(props.dataSource)) {
+          props.dataSource.dispose();
+        }
       });
 
       watch(
@@ -222,6 +228,10 @@
         return code && appStore.getGlobalEnumDataByCode(code);
       }
 
+      function getSelectedRowsData() {
+        return dataGrid.value.instance.getSelectedRowsData();
+      }
+
       return {
         dataGrid,
         tableData,
@@ -232,13 +242,8 @@
         handleJump,
         getGlobalEnumDataByCode,
         search,
+        getSelectedRowsData,
       };
-    },
-    methods: {
-      getSelectedRowsData() {
-        const dataGrid = (this.$refs.dataGrid as any).instance;
-        return dataGrid.getSelectedRowsData();
-      },
     },
   });
 </script>
@@ -260,21 +265,6 @@
     .dx-datagrid .dx-row-alt > td,
     .dx-datagrid .dx-row-alt > tr > td {
       background-color: #fafafa;
-    }
-
-    // 行被选中样式
-    .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > td,
-    .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > tr > td,
-    .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > td,
-    .dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > tr > td {
-      background-color: #e6f7ff;
-    }
-
-    // 行hover样式
-    .dx-datagrid-table
-      .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row):not(.dx-row-focused)
-      > td:not(.dx-focused) {
-      background-color: #e6f7ff;
     }
 
     &__table-billno-column__wrap {

@@ -14,15 +14,14 @@
             item.template
               ? item.template
               : item.editorType === 'dxSwitch'
-              ? 'switch'
+              ? 'OdsSwitch'
               : item.expand
               ? 'expand'
               : ''
           "
         />
-        <DxSwitch />
       </template>
-      <template #switch="{ data }">
+      <template #OdsSwitch="{ data }">
         <Switch
           :style="{ opacity: !data.editorType.disabled ? 0.6 : 1, margin: '4px 0' }"
           :value="formData[data.dataField]"
@@ -60,7 +59,6 @@
   import { isFoundationType } from '/@/model/common';
 
   import { DxForm, DxItem } from 'devextreme-vue/form';
-  import { DxSwitch } from 'devextreme-vue/switch';
 
   import FoundationText from '/@/components/FoundationText/index.vue';
   import EnumSelect from '/@/components/EnumSelect/index.vue';
@@ -71,7 +69,6 @@
     components: {
       DxForm,
       DxItem,
-      DxSwitch,
       FoundationText,
       EnumSelect,
       StepBar,

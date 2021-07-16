@@ -132,7 +132,9 @@ export const getSelect = (allColumns: IColumnItem[], columns: string[], key: str
 export const getCompleteColumns = (allColumns: IColumnItem[], select: string[]) => {
   const columns: IColumnItem[] = [];
   select.forEach((item) => {
-    allColumns.forEach((col) => {
+    if (item === 'Id') return;
+    for (let i = 0; i < allColumns.length; i++) {
+      const col = allColumns[i];
       if (item === col.key) {
         // 判断是否为基础数据类型
         if (isFoundationType(col)) {
@@ -146,15 +148,12 @@ export const getCompleteColumns = (allColumns: IColumnItem[], select: string[]) 
             key: col.expand as string,
             type: 'foundation',
           });
-
-          return;
+        } else {
+          columns.push(col);
         }
-
-        columns.push(col);
-
-        return;
+        break;
       }
-    });
+    }
   });
   return columns;
 };

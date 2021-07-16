@@ -4,6 +4,7 @@
       <DxDataGrid
         height="100%"
         :data-source="fieldList"
+        :hover-state-enabled="true"
         :show-borders="true"
         :show-column-lines="false"
         :show-row-lines="true"
@@ -25,6 +26,7 @@
       <DxDataGrid
         height="100%"
         :data-source="dataSource"
+        :hover-state-enabled="true"
         :show-borders="true"
         :show-column-lines="false"
         :show-row-lines="true"
@@ -37,7 +39,12 @@
         <DxColumn caption="操作" alignment="center" cell-template="handle" />
         <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
         <template #handle="{ data }">
-          <span v-if="!data.data.mustKey" :class="`${prefixCls}__table__del`" @click="onDel(data.rowIndex)">删除</span>
+          <span
+            v-if="!data.data.mustKey"
+            :class="`${prefixCls}__table__del`"
+            @click="onDel(data.rowIndex)"
+            >删除</span
+          >
         </template>
       </DxDataGrid>
     </div>
@@ -49,7 +56,6 @@
   import type { IColumnItem } from '/@/model/types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';
-  import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { handleArrayTransposition } from '/@/utils';
@@ -110,22 +116,6 @@
         ctx.emit('on-change-sort', data);
       };
 
-      // 是否显示选择框更新触发
-      const onChangeShow = (show: boolean, key: string) => {
-        // 如果不显示且排序中有此字段，则把排序中的此字段去除
-        if (!show) {
-          const orderBy = cloneDeep(props.orderBy);
-          props.orderBy.forEach((item, index) => {
-            if (item.key === key) {
-              orderBy.splice(index, 1);
-              return;
-            }
-          });
-          onChangeSort(orderBy);
-        }
-        onChangeColumn(dataSource.value);
-      };
-
       // 点击全部字段行
       const onRowClick = (e) => {
         if (e.data.mustKey) return;
@@ -148,6 +138,13 @@
 
       // 点击删除触发
       const onDel = (index: number) => {
+        if (!dataSource.value[index]) return;
+        const orderIndex = props.orderBy.findIndex((item) => item.key === dataSource.value[index].key);
+        if (orderIndex >= 0) {
+          const orderBy = [...props.orderBy];
+          orderBy.splice(orderIndex, 1);
+          onChangeSort(orderBy);
+        }
         dataSource.value.splice(index, 1);
         onChangeColumn(dataSource.value);
       };
@@ -206,7 +203,6 @@
         dataSource,
         prefixCls,
         fieldList,
-        onChangeShow,
         onAddCol,
         onDel,
         onRowClick,
@@ -216,7 +212,7 @@
   });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
   @prefix-cls: ~'@{namespace}-content-column';
 
   .@{prefix-cls} {
