@@ -4,6 +4,9 @@ import { TabRouterModeEnum } from '/@/enums/appEnum';
 import { useAppStoreWidthOut } from '/@/store/modules/app';
 import { getUuid } from '/@/utils/uuid';
 
+// 白名单, 不需要uuid的页面
+const unIdPageList = ['/home/demo/index', '/home', '/'];
+
 export function createPageUuidGuard(router: Router) {
   router.beforeEach((to, from, next) => {
     const appStore = useAppStoreWidthOut();
@@ -13,8 +16,12 @@ export function createPageUuidGuard(router: Router) {
       if (to.query && to.query.uuid) {
         next();
       } else {
-        const queryData = Object.assign(to.query, { uuid: getUuid() });
-        next({ path: to.path, query: queryData });
+        if (unIdPageList.includes(to.path)) {
+          next();
+        } else {
+          const queryData = Object.assign(to.query, { uuid: getUuid() });
+          next({ path: to.path, query: queryData });
+        }
       }
     } else {
       next();

@@ -48,6 +48,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/home/index.vue'),
             meta: {
               title: '主页',
+              affix: true,
             },
           },
         ],

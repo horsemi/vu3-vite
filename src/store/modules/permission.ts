@@ -19,6 +19,7 @@ interface PermissionState {
   isDynamicAddedRoute: boolean;
   // Three level routing used by menu
   menuList: AppRouteRecordRaw[];
+  permissionRoutes: AppRouteRecordRaw[];
 }
 
 export const usePermissionStore = defineStore({
@@ -27,6 +28,7 @@ export const usePermissionStore = defineStore({
     permCodeList: [],
     isDynamicAddedRoute: false,
     menuList: [],
+    permissionRoutes: [],
   }),
   getters: {
     getPermCodeList() {
@@ -38,6 +40,9 @@ export const usePermissionStore = defineStore({
     getMenuList() {
       return this.menuList;
     },
+    getPermissionRoutes() {
+      return this.permissionRoutes;
+    },
   },
   actions: {
     setDynamicAddedRoute(added: boolean): void {
@@ -45,6 +50,9 @@ export const usePermissionStore = defineStore({
     },
     setMenuList(menuList: AppRouteRecordRaw[]): void {
       this.menuList = menuList.filter((item) => !item.meta.hideMenu);
+    },
+    setPermissionRoutes(permissionRoutes: AppRouteRecordRaw[]): void {
+      this.permissionRoutes = permissionRoutes;
     },
     resetState(): void {
       this.isDynamicAddedRoute = false;
@@ -101,6 +109,9 @@ export const usePermissionStore = defineStore({
             }
           );
       });
+      
+      this.setPermissionRoutes(routes);
+      
       return routes;
     },
   },

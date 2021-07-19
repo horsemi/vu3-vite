@@ -134,6 +134,7 @@
               mustKey: item.mustKey,
             };
           });
+        onChangeColumn(dataSource.value);
       };
 
       // 点击删除触发

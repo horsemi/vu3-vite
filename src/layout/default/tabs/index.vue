@@ -3,6 +3,7 @@
     <DxScrollView show-scrollbar="onHover" direction="horizontal" :height="40">
       <div style="white-space: nowrap">
         <DxSortable
+          :filter="`.tabs-move`"
           item-orientation="horizontal"
           drag-direction="horizontal"
           @reorder="onTabDrop($event)"
@@ -10,12 +11,16 @@
           <div
             v-for="item in viewState"
             :key="item.fullPath"
-            :class="`${prefixCls}-tabs__container`"
+            :class="[`${prefixCls}-tabs__container`, !isAffix(item) && 'tabs-move']"
             @click="handleItemClick(item)"
           >
             <div :class="[`${prefixCls}-tabs__wrapper`, isActive(item) ? 'active' : '']">
               <span :class="`${prefixCls}-tabs-title__wrapper`">{{ item.meta.title }}</span>
-              <i class="dx-icon dx-icon-close" @click.stop="handleItemClose(item)" />
+              <i
+                v-if="!isAffix(item)"
+                class="dx-icon dx-icon-close"
+                @click.stop="handleItemClose(item)"
+              />
             </div>
           </div>
         </DxSortable>
@@ -27,12 +32,13 @@
 <script lang="ts">
   import type { RouteLocationNormalized } from 'vue-router';
 
-  import { computed, defineComponent, unref } from 'vue';
-  import { useRouter } from 'vue-router';
+  import { computed, defineComponent, unref, watchEffect } from 'vue';
+  import { useRoute, useRouter } from 'vue-router';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useViewStore } from '/@/store/modules/view';
   import { useGo } from '/@/hooks/web/usePage';
+  import { usePermissionStore } from '/@/store/modules/permission';
 
   import { DxSortable } from 'devextreme-vue/sortable';
   import { DxScrollView } from 'devextreme-vue/scroll-view';
@@ -48,6 +54,8 @@
       const viewStore = useViewStore();
       const go = useGo();
       const router = useRouter();
+      const route = useRoute();
+      const permissionStore = usePermissionStore();
 
       const viewState = computed(() => viewStore.getViewList);
 
@@ -69,11 +77,62 @@
       }
 
       function onTabDrop(e) {
+        const affixLen = viewState.value.filter(item => item.meta && item.meta.affix).length;
         viewStore.sortViews({
-          oldIndex: e.fromIndex,
-          newIndex: e.toIndex,
+          oldIndex: e.fromIndex + affixLen,
+          newIndex: e.toIndex + affixLen,
         });
       }
+
+      function isAffix(item: RouteLocationNormalized) {
+        return item.meta && item.meta.affix;
+      }
+
+      function addTags() {
+        const { name } = route;
+        if (name) {
+          viewStore.addView(route);
+        }
+        return false;
+      }
+
+      function filterAffixTags(routes, basePath = '/') {
+        let tags: RouteLocationNormalized[] = [];
+        routes.forEach((route) => {
+          const tagPath = basePath + '/' + route.path;
+          if (route.meta && route.meta.affix) {
+            tags.push({
+              ...route,
+              fullPath: tagPath,
+              path: tagPath,
+            });
+          }
+          if (route.children) {
+            const tempTags = filterAffixTags(route.children, route.path);
+            if (tempTags.length >= 1) {
+              tags = [...tags, ...tempTags];
+            }
+          }
+        });
+        return tags;
+      }
+
+      function initTags() {
+        const affixTags = filterAffixTags(permissionStore.getPermissionRoutes);
+        for (const tag of affixTags) {
+          // Must have tag name
+          if (tag.name) {
+            viewStore.addView(tag);
+          }
+        }
+      }
+
+      initTags();
+      addTags();
+
+      watchEffect(() => {
+        addTags();
+      });
 
       return {
         prefixCls,
@@ -81,6 +140,7 @@
         handleItemClick,
         handleItemClose,
         onTabDrop,
+        isAffix,
       };
     },
     methods: {
