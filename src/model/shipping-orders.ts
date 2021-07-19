@@ -54,7 +54,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'BillTypeCode',
     caption: '单据类型',
-    datatypekeies: `${enumDataPre}shippingOrderTypes`,
+    datatypekeies: `${baseDataPre}bill-types`,
   },
   {
     key: 'ServiceItemCode',

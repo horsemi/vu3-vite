@@ -1,15 +1,17 @@
 <template>
   <div :class="[prefixCls]">
     <SvgIcon size="22" name="user"></SvgIcon>
-    <DxDropDownButton
-      :height="50"
-      display-expr="name"
-      :items="items"
-      :text="`Hi, ${userName}`"
-      styling-mode="text"
-    >
-    </DxDropDownButton>
-    
+    <div style="min-width: 100px">
+      <DxDropDownButton
+        width="100%"
+        :height="50"
+        display-expr="name"
+        :items="items"
+        :text="`Hi, ${userName}`"
+        styling-mode="text"
+      >
+      </DxDropDownButton>
+    </div>
   </div>
   <div>
     <PasswordModal
@@ -46,6 +48,9 @@
           onClick: () => {
             //
           },
+          template: () => {
+            return '<div style="text-align: center;">登录记录</div>';
+          }
         },
         {
           name: '修改密码',
@@ -53,16 +58,22 @@
             passwordPattern.value = await userStore.getPasswordPolicy();
             popupVisable.value = true;
           },
+          template: () => {
+            return '<div style="text-align: center;">修改密码</div>';
+          }
         },
         {
           name: '退出登录',
           onClick: () => {
             userStore.logout();
           },
+          template: () => {
+            return '<div style="text-align: center;">退出登录</div>';
+          }
         },
       ];
 
-      const ClosePopup = (value: boolean ) => {
+      const ClosePopup = (value: boolean) => {
         popupVisable.value = value;
       };
 
@@ -98,5 +109,6 @@
         color: #fff;
       }
     }
+
   }
 </style>
