@@ -90,7 +90,7 @@
 
 <script lang="ts">
   import type { ITableOptions } from '/@/components/Table/types';
-  import type { IDetailItem } from '/@/utils/detail/types';
+  import type { IDetailItem } from '/@/utils/bill/types';
   import type { IColumnItem } from '/@/model/types';
 
   import { defineComponent, nextTick, ref, watch } from 'vue';

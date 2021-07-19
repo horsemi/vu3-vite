@@ -51,7 +51,7 @@
 </template>
 
 <script lang="ts">
-  import type { IDetailItem } from '/@/utils/detail/types';
+  import type { IDetailItem } from '/@/utils/bill/types';
 
   import { defineComponent, PropType } from 'vue';
 
