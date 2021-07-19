@@ -1,10 +1,10 @@
 import type { ITableOptions } from '/@/components/Table/types';
-import type { IDetailItem } from '/@/utils/detail/types';
+import type { IDetailItem } from '/@/utils/bill/types';
 
 import { getDefiniteDataSource, getDetailDataSource } from '/@/api/ods/detail';
 import { getColumns } from '/@/model/shipping-orders';
 import { getDefiniteColumns } from '/@/model/shipping-order-items';
-import { getFormList } from '/@/utils/detail';
+import { getFormList } from '/@/utils/bill';
 import { isFoundationType } from '/@/model/common';
 
 export const base: IDetailItem[] = [

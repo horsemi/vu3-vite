@@ -228,7 +228,7 @@
       };
 
       const onApplyClick = () => {
-        ShippingAdviceApi.onShippingAdviceSubmit([formData.value.GatheringParentCode]).then(() => {
+        ShippingAdviceApi.onShippingAdviceApply([formData.value.GatheringParentCode]).then(() => {
           onRefresh();
         });
       };

@@ -49,6 +49,7 @@
     getCompleteColumns,
     getDataSource,
   } from '/@/components/Table/common';
+  import { isArrayEmpty } from '/@/utils/bill/index';
   import { Persistent } from '/@/utils/cache/persistent';
   import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
@@ -109,32 +110,40 @@
       };
 
       const onSubmitClick = () => {
-        const selectionData = dataGrid.value.getSelectedRowsData();
-        if (selectionData.length > 0) {
+        const selectionData = dataGrid.value.getSelectedRowsData() as {
+          GatheringParentCode: string;
+        }[];
+        if (isArrayEmpty(selectionData)) {
           loading.value = true;
           ShippingOrderApi.onShippingOrderSubmit(
             selectionData.map((item) => item.GatheringParentCode)
-          ).then(() => {
-            loading.value = false;
-            onRefresh();
-          }).catch(() => {
-            loading.value = false;
-          });
+          )
+            .then(() => {
+              loading.value = false;
+              onRefresh();
+            })
+            .catch(() => {
+              loading.value = false;
+            });
         }
       };
 
       const onApplyClick = () => {
-        const selectionData = dataGrid.value.getSelectedRowsData();
-        if (selectionData.length > 0) {
+        const selectionData = dataGrid.value.getSelectedRowsData() as {
+          GatheringParentCode: string;
+        }[];
+        if (isArrayEmpty(selectionData)) {
           loading.value = true;
           ShippingOrderApi.onShippingOrderApply(
             selectionData.map((item) => item.GatheringParentCode)
-          ).then(() => {
-            loading.value = false;
-            onRefresh();
-          }).catch(() => {
-            loading.value = false;
-          });
+          )
+            .then(() => {
+              loading.value = false;
+              onRefresh();
+            })
+            .catch(() => {
+              loading.value = false;
+            });
         }
       };
 

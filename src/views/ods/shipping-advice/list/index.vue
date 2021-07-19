@@ -52,6 +52,7 @@
   import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { deepMerge } from '/@/utils';
+  import { isArrayEmpty } from '/@/utils/bill/index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
 
   import DxButton from 'devextreme-vue/button';
@@ -147,20 +148,28 @@
       },
 
       onSubmitClick() {
-        const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData();
-        ShippingAdviceApi.onShippingAdviceSubmit(
-          selectionData.map((item) => item.GatheringParentCode)
-        ).then(() => {
-          this.onRefresh();
-        });
+        const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData() as {
+          GatheringParentCode: string;
+        }[];
+        if (isArrayEmpty(selectionData)) {
+          ShippingAdviceApi.onShippingAdviceSubmit(
+            selectionData.map((item) => item.GatheringParentCode)
+          ).then(() => {
+            this.onRefresh();
+          });
+        }
       },
       onApplyClick() {
-        const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData();
-        ShippingAdviceApi.onShippingAdviceApply(
-          selectionData.map((item) => item.GatheringParentCode)
-        ).then(() => {
-          this.onRefresh();
-        });
+        const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData() as {
+          GatheringParentCode: string;
+        }[];
+        if (isArrayEmpty(selectionData)) {
+          ShippingAdviceApi.onShippingAdviceApply(
+            selectionData.map((item) => item.GatheringParentCode)
+          ).then(() => {
+            this.onRefresh();
+          });
+        }
       },
       onRefresh() {
         (this.$refs.dataGrid as any).search();

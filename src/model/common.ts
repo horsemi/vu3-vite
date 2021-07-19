@@ -1,5 +1,5 @@
 import type { IColumnItem, IFieldType, IKeyType } from './types';
-import type { IDetailItem } from '/@/utils/detail/types';
+import type { IDetailItem } from '/@/utils/bill/types';
 
 import { getList } from '/@/api/ods/common';
 

@@ -1,6 +1,8 @@
 import type { EditorType, IDetailItem } from './types';
 import type { IColumnItem } from '/@/model/types';
 
+import { warningMessage } from '/@/hooks/web/useMessage';
+
 const getEditorType = (type) => {
   let editorType: EditorType | undefined = undefined;
   if (type === 'string') {
@@ -37,4 +39,19 @@ export const getFormList = (list: IDetailItem[], columnList: IColumnItem[]) => {
     getFormItem(item, temp, columnList);
   });
   return temp;
+};
+
+/**
+ * @description 验证数组是否为空
+ * @param array
+ * @param msg
+ * @returns
+ */
+export const isArrayEmpty = (array: any[], msg = '请选择操作项'): boolean => {
+  if (Array.isArray(array) && array.length > 0) {
+    return true;
+  } else {
+    warningMessage(msg);
+    return false;
+  }
 };
