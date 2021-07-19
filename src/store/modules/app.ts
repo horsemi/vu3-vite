@@ -52,7 +52,6 @@ export const useAppStore = defineStore({
     },
     async resumeAllState() {
       resetRouter();
-      console.log(1);
       removeCookie(TOKEN_KEY);
       Persistent.clearAll();
     },
