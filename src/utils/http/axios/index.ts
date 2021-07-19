@@ -148,7 +148,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
   return new Request(
     deepMerge(
       {
-        timeout: 10 * 1000,
+        // timeout: 10 * 1000,
         // 基础接口地址
         // baseURL: globSetting.apiUrl,
         headers: { 'Content-Type': ContentTypeEnum.JSON },
