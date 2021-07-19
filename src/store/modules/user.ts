@@ -10,6 +10,8 @@ import { TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import router from '/@/router';
 import { UserApi, IUserData } from '/@/api/user';
+import { setCookie } from '/@/utils/cache/cookies';
+import { getToken } from '/@/utils/auth';
 
 interface UserState {
   token?: string;
@@ -29,7 +31,7 @@ export const useUserStore = defineStore({
   }),
   getters: {
     getToken(): string {
-      return this.token || getAuthCache<string>(TOKEN_KEY);
+      return this.token || getToken();
     },
     getUserInfo(): UserInfo {
       return this.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {};
@@ -38,7 +40,7 @@ export const useUserStore = defineStore({
   actions: {
     setToken(value: string): void {
       this.token = value;
-      setAuthCache(TOKEN_KEY, value);
+      setCookie(TOKEN_KEY, value);
     },
     setUserInfo(info: UserInfo): void {
       this.userInfo = info;

@@ -1,5 +1,5 @@
 // token key
-export const TOKEN_KEY = 'TOKEN__';
+export const TOKEN_KEY = 'permissionAuthorization';
 
 export const USER_INFO_KEY = 'USER_INFO__';
 
