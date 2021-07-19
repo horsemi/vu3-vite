@@ -71,10 +71,12 @@
   import { DxForm, DxItem, DxLabel } from 'devextreme-vue/form';
 
   import { useUserStore } from '/@/store/modules/user';
+  import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
   import SvgIcon from '/@/components/Icon/SvgIcon.vue';
   import PasswordModal from '/@/components/PasswordModal/index.vue';
   import { PasswordStateEnum } from '/@/enums/appEnum';
+  import { getToken } from '/@/utils/auth';
   
 
   export default defineComponent({
@@ -90,6 +92,7 @@
     },
     setup() {
       const userStore = useUserStore();
+      const appStore = useAppStore();
       const { prefixCls } = useDesign('login');
       const popupVisable = ref<boolean>(false);
       const passwordPattern = ref<string>('');
@@ -98,6 +101,7 @@
       return {
         prefixCls,
         userStore,
+        appStore,
         loginData,
         passwordPattern,
         popupVisable,
@@ -105,7 +109,11 @@
     },
     methods: {
       async onLogin() {
-        await this.userStore.login(this.loginData);;
+        if(getToken()){
+          this.appStore.resumeAllState();
+          this.userStore.resetState();
+        }
+        await this.userStore.login(this.loginData);
         const result = await this.userStore.checkPassword(this.loginData);
         if (
           result.warningType === PasswordStateEnum.EXPIRED ||
