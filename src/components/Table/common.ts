@@ -172,7 +172,7 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
       if (item.key === allCol[i].key) {
         // 判断是否为基础数据类型
         columnList.push({
-          // ...item,
+          ...item,
           ...allCol[i],
         });
         break;
