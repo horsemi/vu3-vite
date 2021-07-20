@@ -3,6 +3,9 @@ import type { ITableOptions } from '/@/components/Table/types';
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
 
+import { tokenHeaderKey } from '/@/utils/http/axios/const';
+import { useUserStoreWidthOut } from '/@/store/modules/user';
+
 const prefixUrls = '/ods/api/odata/';
 
 export const getDetailDataSource = (
@@ -20,6 +23,11 @@ export const getDetailDataSource = (
         url: `${prefixUrls}${code}`,
         key: 'Id',
         version: 4,
+        beforeSend: (e) => {
+          e.headers = {
+            [tokenHeaderKey]: useUserStoreWidthOut().getToken,
+          };
+        },
       }),
       select: [...select, 'Id'],
       expand: expand,
@@ -51,6 +59,11 @@ export const getDefiniteDataSource = (
       key: 'Id',
       keyType: 'string',
       version: 4,
+      beforeSend: (e) => {
+        e.headers = {
+          [tokenHeaderKey]: useUserStoreWidthOut().getToken,
+        };
+      },
     }),
     select: [...select, 'Id'],
   });

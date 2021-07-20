@@ -1,7 +1,7 @@
 import Cookies from 'js-cookie';
 
 export function setCookie(key: string, value: string) {
-  Cookies.set(key, value, { expires: 1 });
+  Cookies.set(key, value, { expires: 1, domain: 'linshimuye.com' });
 }
 
 export function getCookie(key: string) {
@@ -22,5 +22,5 @@ export function checkCookie(): boolean {
   }
 }
 export function removeCookie(key: string) {
-  Cookies.remove(key);
+  Cookies.remove(key, { domain: 'linshimuye.com' });
 }

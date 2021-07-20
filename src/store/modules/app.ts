@@ -4,11 +4,15 @@ import { store } from '/@/store';
 
 import { defineStore } from 'pinia';
 
-import { SYSTEM_CFG_KEY } from '/@/enums/cacheEnum';
+import { SYSTEM_CFG_KEY, TOKEN_KEY } from '/@/enums/cacheEnum';
 import { resetRouter } from '/@/router';
 import { SystemConfig } from '/#/config';
 import { Persistent } from '/@/utils/cache/persistent';
 import { deepMerge } from '/@/utils';
+import { removeCookie } from '/@/utils/cache/cookies';
+import { useViewStore } from '/@/store/modules/view';
+import { useUserStore } from '/@/store/modules/user';
+import { usePermissionStore } from '/@/store/modules/permission';
 
 let timeId: TimeoutHandle;
 
@@ -50,7 +54,11 @@ export const useAppStore = defineStore({
       }
     },
     async resumeAllState() {
+      usePermissionStore().resetState();
+      useViewStore().resetState();
+      useUserStore().resetState();
       resetRouter();
+      removeCookie(TOKEN_KEY);
       Persistent.clearAll();
     },
     setSystemConfig(systemConfig: SystemConfig): void {

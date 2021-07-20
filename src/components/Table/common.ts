@@ -11,12 +11,20 @@ import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
 import { isNil } from 'lodash-es';
 
+import { useUserStoreWidthOut } from '/@/store/modules/user';
+import { tokenHeaderKey } from '/@/utils/http/axios/const';
+
 // 基础表格默认配置
 export const defaultTableOptions: ITableOptions = {
   dataSourceOptions: {
     paginate: true,
     oDataOptions: {
       url: '',
+      beforeSend: (e) => {
+        e.headers = {
+          [tokenHeaderKey]: useUserStoreWidthOut().getToken,
+        };
+      },
       version: 4,
     },
   },
@@ -171,6 +179,5 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
       }
     }
   });
-  console.log(columnList);
   return columnList;
 };
