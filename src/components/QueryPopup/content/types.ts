@@ -9,28 +9,6 @@ export interface IRequirementItem extends IQueryItem {
   logic?: string;
 }
 
-export interface IFieldItem {
-  /**
-   * @description 字段
-   */
-  key: string;
-
-  /**
-   * @description 标题
-   */
-  caption: string;
-
-  /**
-   * @description 是否选中
-   */
-  checked: boolean;
-
-  /**
-   * @description 是否必要
-   */
-  mustKey?: boolean;
-}
-
 export interface IOrderByItem {
   /**
    * @description 字段
@@ -60,9 +38,26 @@ export interface ISchemeColumnsItem {
   caption: string;
 
   /**
+   * @description 基础数据的关联字段
+   */
+  expand?: string;
+
+  /**
+   * @description 基础数据的关联必要的字段
+   */
+  relationKey?: string;
+
+  /**
    * @description 是否必要
    */
   mustKey?: boolean;
+}
+
+export interface IFieldItem extends ISchemeColumnsItem {
+  /**
+   * @description 是否选中
+   */
+  checked: boolean;
 }
 
 export interface ISchemeItem {
@@ -89,7 +84,7 @@ export interface ISchemeItem {
   /**
    * @description 显示隐藏列
    */
-  columns: string[];
+  columns: ISchemeColumnsItem[];
 }
 
 export interface ISortOptions {

@@ -1,12 +1,15 @@
 import type { ITableOptions, ISortItem } from './types';
-import type { IOrderByItem, IRequirementItem, ISchemeItem } from '../QueryPopup/content/types';
+import type {
+  IOrderByItem,
+  IRequirementItem,
+  ISchemeColumnsItem,
+  ISchemeItem,
+} from '../QueryPopup/content/types';
 import type { IColumnItem, IKeyType } from '/@/model/types';
 
 import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
 import { isNil } from 'lodash-es';
-
-import { isFoundationType } from '/@/model/common';
 
 // 基础表格默认配置
 export const defaultTableOptions: ITableOptions = {
@@ -43,7 +46,7 @@ export const getDataSource = async (
   key: string[] = [],
   keyType: IKeyType[] = []
 ) => {
-  const { select, expand } = getSelect(allColumns, scheme.columns, key);
+  const { select, expand } = getSelectAndExpand(allColumns, scheme.columns, key);
 
   const filter = getFilter(scheme.requirement);
   const sort = getSort(scheme.orderBy, options.dataSourceOptions.sort);
@@ -99,61 +102,75 @@ export const getSort = (orderBy: IOrderByItem[], tableSort: ISortItem[] = []) =>
   return sort.concat(tableSort);
 };
 
-// 获取格式化后的表字段
-export const getSelect = (allColumns: IColumnItem[], columns: string[], key: string[] = []) => {
-  const select: string[] = [];
-  const expands: string[] = [];
-
-  columns.forEach((key) => {
-    if (allColumns.some((allCol) => allCol.key === key) && select.indexOf(key)) {
-      const columns = allColumns.filter((allCol) => allCol.key === key)[0];
-      // 判断是否为基础数据类型
-      if (isFoundationType(columns)) {
-        expands.push(columns.expand as string);
-      }
-      select.push(key);
+const handleAllCol = (allColumns: IColumnItem[]) => {
+  const newArr: IColumnItem[] = [];
+  allColumns.forEach((item) => {
+    if (item.foundationList && item.foundationList.length > 0) {
+      newArr.push(item);
+      item.foundationList.forEach((field) => {
+        newArr.push({
+          ...item,
+          ...field,
+        });
+      });
+    } else {
+      newArr.push(item);
     }
   });
-  allColumns
-    .filter((item) => item.mustKey)
-    .forEach((item) => {
-      if (select.indexOf(item.key)) {
-        select.push(item.key);
-      }
-    });
-
-  return {
-    select: select.concat(key),
-    expand: expands,
-  };
+  return newArr;
 };
 
-// 获取格式化后的表头数据
-export const getCompleteColumns = (allColumns: IColumnItem[], select: string[]) => {
-  const columns: IColumnItem[] = [];
-  select.forEach((item) => {
-    if (item === 'Id') return;
-    for (let i = 0; i < allColumns.length; i++) {
-      const col = allColumns[i];
-      if (item === col.key) {
-        // 判断是否为基础数据类型
-        if (isFoundationType(col)) {
-          columns.push({
-            ...col,
-            caption: `${col.caption}编码`,
-          });
+// 获取格式化后的表字段
+export const getSelectAndExpand = (
+  allColumns: IColumnItem[],
+  columns: ISchemeColumnsItem[],
+  key: string[] = []
+) => {
+  const select: string[] = [];
+  const expand: string[] = [];
 
-          columns.push({
-            ...col,
-            key: col.expand as string,
-            type: 'foundation',
-          });
+  const allCol = handleAllCol(allColumns);
+
+  columns.forEach((item) => {
+    for (let i = 0; i < allCol.length; i++) {
+      if (item.key === allCol[i].key) {
+        if (item.expand && item.relationKey) {
+          if (!expand.includes(item.expand)) {
+            expand.push(item.expand);
+          }
+          if (!select.includes(item.relationKey)) {
+            select.push(item.relationKey);
+          }
         } else {
-          columns.push(col);
+          select.push(item.key);
         }
         break;
       }
     }
   });
-  return columns;
+
+  return {
+    select: select.concat(key),
+    expand: expand,
+  };
+};
+
+// 获取格式化后的表头数据
+export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeColumnsItem[]) => {
+  const columnList: IColumnItem[] = [];
+  const allCol = handleAllCol(allColumns);
+  columns.forEach((item) => {
+    for (let i = 0; i < allCol.length; i++) {
+      if (item.key === allCol[i].key) {
+        // 判断是否为基础数据类型
+        columnList.push({
+          // ...item,
+          ...allCol[i],
+        });
+        break;
+      }
+    }
+  });
+  console.log(columnList);
+  return columnList;
 };

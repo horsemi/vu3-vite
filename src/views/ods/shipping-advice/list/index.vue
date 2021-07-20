@@ -26,6 +26,7 @@
         :all-columns="allColumns"
         :filter-scheme="filterScheme"
         :table-key="tableKey"
+        :table-key-type="tableKeyType"
         @handle-bill-code-click="handleBillCodeClick"
       >
       </OdsTable>
@@ -34,7 +35,7 @@
 </template>
 
 <script lang="ts">
-  import type { IColumnItem } from '/@/model/types';
+  import type { IColumnItem, IKeyType } from '/@/model/types';
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
@@ -45,8 +46,6 @@
   import { getColumns } from '/@/model/shipping-advices';
   import {
     defaultTableOptions,
-    getCompleteColumns,
-    getDataSource,
   } from '/@/components/Table/common';
   import { Persistent } from '/@/utils/cache/persistent';
   import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
@@ -84,6 +83,7 @@
       });
       const tableOptions: ITableOptions = deepMerge(cloneDeep(defaultTableOptions), options);
       const tableKey = ref<string[]>([]);
+      const tableKeyType = ref<IKeyType[]>([]);
       const dataSource = ref();
       const columns = ref<IColumnItem[]>([]);
       const allColumns = ref<IColumnItem[]>([]);
@@ -107,18 +107,13 @@
         if (fast.length > 0) {
           scheme.requirement.push(...fast);
         }
-        filterScheme.value = scheme;
         getColumns().then((res) => {
           if (res) {
             const { columnList, key, keyType } = res;
             allColumns.value = columnList;
+            filterScheme.value = scheme;
             tableKey.value = key;
-            getDataSource(tableOptions, filterScheme.value, allColumns.value, key, keyType).then(
-              (data) => {
-                dataSource.value = data;
-                columns.value = getCompleteColumns(allColumns.value, dataSource.value.select());
-              }
-            );
+            tableKeyType.value = keyType;
           }
         });
       };
@@ -129,6 +124,7 @@
         ORDER_CODE,
         tableOptions,
         tableKey,
+        tableKeyType,
         dataSource,
         columns,
         allColumns,

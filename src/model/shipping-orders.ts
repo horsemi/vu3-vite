@@ -25,7 +25,17 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'DeliveryWarehouseCode',
-    caption: '仓库',
+    caption: '仓库编码',
+    foundationList: [
+      {
+        key: 'Name',
+        caption: '仓库'
+      },
+      {
+        key: 'GroupName',
+        caption: '仓库分组'
+      }
+    ],
     datatypekeies: `${baseDataPre}stocks`,
   },
   {
@@ -34,12 +44,12 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'DeliveryPointCode',
-    caption: '提货点',
+    caption: '提货点编码',
     datatypekeies: `${baseDataPre}delivery-points`,
   },
   {
     key: 'ThreeServicePointCode',
-    caption: '三包点',
+    caption: '三包点编码',
     datatypekeies: `${baseDataPre}three-service-points`,
   },
   {

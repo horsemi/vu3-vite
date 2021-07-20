@@ -44,7 +44,7 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IMultiViewItem, IOrderByItem, IRequirementItem, ISchemeItem } from './types';
+  import type { IMultiViewItem, IOrderByItem, IRequirementItem, ISchemeColumnsItem, ISchemeItem } from './types';
 
   import { computed, defineComponent, PropType, ref } from 'vue';
 
@@ -136,7 +136,7 @@
         ctx.emit('on-change-sort', data);
       };
       // 外派显示隐藏列更新
-      const onChangeColumn = (data: string[]) => {
+      const onChangeColumn = (data: ISchemeColumnsItem[]) => {
         ctx.emit('on-change-column', data);
       };
       // 外派标题更新
