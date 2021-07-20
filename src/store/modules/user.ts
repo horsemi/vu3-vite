@@ -6,6 +6,7 @@ import { defineStore } from 'pinia';
 import { store } from '/@/store';
 import { PageEnum } from '/@/enums/pageEnum';
 import { usePermissionStore } from '/@/store/modules/permission';
+import { useAppStore } from '/@/store/modules/app';
 import { TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 import router from '/@/router';
@@ -108,6 +109,7 @@ export const useUserStore = defineStore({
       return new Promise((resolve, reject) => {
         UserApi.logout()
           .then(() => {
+            useAppStore().resumeAllState();
             router.push(PageEnum.BASE_LOGIN);
           })
           .catch((error) => {
