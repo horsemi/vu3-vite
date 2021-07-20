@@ -45,6 +45,19 @@ interface IODataOptions {
   url: string;
 
   /**
+   * @description 请求前钩子函数
+   */
+  beforeSend?: (options: {
+    url?: string;
+    async?: boolean;
+    method?: string;
+    timeout?: number;
+    params?: any;
+    payload?: any;
+    headers?: any;
+  }) => void;
+
+  /**
    * @description 列表主键
    */
   key?: string;

@@ -7,7 +7,7 @@ import { createNow, formatRequestDate } from './helper';
 import { RequestEnum, ResultEnum, ContentTypeEnum } from '/@/enums/httpEnum';
 import { isString } from '/@/utils/is';
 import { setObjToUrlParams, deepMerge } from '/@/utils';
-import { errorResult } from './const';
+import { errorResult, tokenHeaderKey } from './const';
 import { useUserStoreWidthOut } from '/@/store/modules/user';
 import { useErrorLogStoreWithOut } from '/@/store/modules/error';
 import { errorMessage, successMessage } from '/@/hooks/web/useMessage';
@@ -115,7 +115,7 @@ const transform: AxiosTransform = {
     if (token) {
       // jwt token
       // config.headers.Authorization = token;
-      config.headers['X-Otwb-Passport-Session'] = token;
+      config.headers[tokenHeaderKey] = token;
     }
     return config;
   },
