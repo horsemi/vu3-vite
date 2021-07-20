@@ -77,7 +77,7 @@
       }
 
       function onTabDrop(e) {
-        const affixLen = viewState.value.filter(item => item.meta && item.meta.affix).length;
+        const affixLen = viewState.value.filter((item) => item.meta && item.meta.affix).length;
         viewStore.sortViews({
           oldIndex: e.fromIndex + affixLen,
           newIndex: e.toIndex + affixLen,
@@ -129,10 +129,6 @@
 
       initTags();
       addTags();
-
-      watchEffect(() => {
-        addTags();
-      });
 
       return {
         prefixCls,
