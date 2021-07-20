@@ -2,12 +2,13 @@ import { Persistent, BasicKeys } from '/@/utils/cache/persistent';
 import { CacheTypeEnum } from '/@/enums/cacheEnum';
 import systemSetting from '/@/settings/systemSetting';
 import { TOKEN_KEY } from '/@/enums/cacheEnum';
+import { getCookie } from '/@/utils/cache/cookies';
 
 const { permissionCacheType } = systemSetting;
 const isLocal = permissionCacheType === CacheTypeEnum.LOCAL;
 
 export function getToken() {
-  return getAuthCache(TOKEN_KEY);
+  return getCookie(TOKEN_KEY);
 }
 
 export function getAuthCache<T>(key: BasicKeys) {

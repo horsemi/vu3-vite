@@ -1,6 +1,7 @@
 import { errorMessage } from '/@/hooks/web/useMessage';
 import router from '/@/router';
 import { PageEnum } from '/@/enums/pageEnum';
+import { useAppStore } from '/@/store/modules/app';
 
 const error = errorMessage;
 export function checkStatus(status: number, msg: string): void {
@@ -13,6 +14,7 @@ export function checkStatus(status: number, msg: string): void {
     // Return to the current page after successful login. This step needs to be operated on the login page.
     case 401:
       error('用户没有权限（令牌、用户名、密码错误）!');
+      useAppStore().resumeAllState();
       router.push(PageEnum.BASE_LOGIN);
       break;
     case 403:
