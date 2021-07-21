@@ -80,7 +80,7 @@
     },
     props: {
       columns: {
-        type: Array as PropType<string[]>,
+        type: Array as PropType<ISchemeColumnsItem[]>,
         default: () => {
           return [];
         },
@@ -108,8 +108,7 @@
 
       // 外派显示隐藏列更新事件
       const onChangeColumn = (data: ISchemeColumnsItem[]) => {
-        const temp: string[] = data.map((item) => item.key);
-        ctx.emit('on-change-column', temp);
+        ctx.emit('on-change-column', data);
       };
       // 外派排序更新事件
       const onChangeSort = (data: IOrderByItem[]) => {
@@ -131,6 +130,8 @@
             return {
               key: item.key,
               caption: item.caption,
+              expand: item.expand,
+              relationKey: item.relationKey,
               mustKey: item.mustKey,
             };
           });
@@ -140,7 +141,9 @@
       // 点击删除触发
       const onDel = (index: number) => {
         if (!dataSource.value[index]) return;
-        const orderIndex = props.orderBy.findIndex((item) => item.key === dataSource.value[index].key);
+        const orderIndex = props.orderBy.findIndex(
+          (item) => item.key === dataSource.value[index].key
+        );
         if (orderIndex >= 0) {
           const orderBy = [...props.orderBy];
           orderBy.splice(orderIndex, 1);
@@ -158,29 +161,62 @@
       };
 
       // 根据全部列处理显示隐藏列数据
-      const handleColumns = (allColumns: IColumnItem[], columns: string[]) => {
+      const handleColumns = (allColumns: IColumnItem[], columns: ISchemeColumnsItem[]) => {
         const fieldListTemp: IFieldItem[] = [];
         const data: ISchemeColumnsItem[] = [];
         const sortData: ISchemeColumnsItem[] = [];
         allColumns.forEach((item) => {
-          const inAllCol = columns.some((key) => item.key === key);
-          fieldListTemp.push({
-            key: item.key,
-            caption: item.caption,
-            checked: item.mustKey ? item.mustKey : inAllCol,
-            mustKey: item.mustKey,
-          });
-          if (inAllCol) {
-            data.push({
+          if (item.foundationList && item.foundationList.length > 0) {
+            const inAllCol = columns.some((col) => item.key === col.key);
+            if (inAllCol) {
+              data.push({
+                key: item.key,
+                caption: item.caption,
+                mustKey: item.mustKey,
+              });
+            }
+            fieldListTemp.push({
               key: item.key,
               caption: item.caption,
+              checked: item.mustKey ? item.mustKey : inAllCol,
               mustKey: item.mustKey,
+            });
+            item.foundationList.forEach((field) => {
+              const inAllCol = columns.some((col) => field.key === col.key);
+              if (inAllCol) {
+                data.push({
+                  ...field,
+                  expand: item.expand,
+                  relationKey: item.key,
+                  mustKey: item.mustKey,
+                });
+              }
+              fieldListTemp.push({
+                ...field,
+                expand: item.expand,
+                checked: item.mustKey ? item.mustKey : inAllCol,
+                relationKey: item.key,
+                mustKey: item.mustKey,
+              });
+            });
+          } else {
+            const inAllCol = columns.some((col) => item.key === col.key);
+            if (inAllCol) {
+              data.push({
+                key: item.key,
+                caption: item.caption,
+                mustKey: item.mustKey,
+              });
+            }
+            fieldListTemp.push({
+              ...item,
+              checked: item.mustKey ? item.mustKey : inAllCol,
             });
           }
         });
-        columns.forEach((key) => {
+        columns.forEach((col) => {
           data.forEach((pre) => {
-            if (key === pre.key) {
+            if (col.key === pre.key) {
               sortData.push(pre);
             }
           });
@@ -193,7 +229,7 @@
       watch(
         () => [props.allColumns, props.columns],
         ([allColumns, columns]) => {
-          handleColumns(allColumns as IColumnItem[], columns as string[]);
+          handleColumns(allColumns as IColumnItem[], columns as ISchemeColumnsItem[]);
         },
         {
           immediate: true,

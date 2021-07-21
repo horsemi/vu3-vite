@@ -15,12 +15,12 @@
     >
       <template v-for="(item, index) in tableColumns" :key="index">
         <DxColumn
-          v-if="!item.hide && item.type !== 'foundation'"
+          v-if="!item.hide"
           css-class="header-bold"
-          :data-field="item.key"
+          :data-field="getKey(item.expand, item.relationKey, item.key)"
           :caption="item.caption"
           :data-type="item.type"
-          :cell-template="item.cellTemplate"
+          :cell-template="getTemplate(item.expand, item.relationKey, item.cellTemplate)"
           :alignment="item.alignment ? item.alignment : 'center'"
         >
           <DxLookup
@@ -29,15 +29,6 @@
             value-expr="key"
             display-expr="description"
           />
-        </DxColumn>
-        <DxColumn
-          v-else-if="item.type === 'foundation'"
-          css-class="header-bold"
-          :data-field="`${item.key}.Name`"
-          :caption="item.caption"
-          data-type="object"
-          :alignment="item.alignment ? item.alignment : 'center'"
-        >
         </DxColumn>
       </template>
       <DxSelection
@@ -67,6 +58,18 @@
           >{{ data.value }}</div
         >
       </template>
+      <template #foundation="{ data: rowInfo }">
+        <div
+          v-if="
+            tableColumns[rowInfo.columnIndex - 1] && tableColumns[rowInfo.columnIndex - 1].expand
+          "
+          >{{
+            rowInfo.data[tableColumns[rowInfo.columnIndex - 1].expand][
+              tableColumns[rowInfo.columnIndex - 1].key
+            ]
+          }}</div
+        >
+      </template>
     </DxDataGrid>
     <div
       v-if="tableOptions.dataSourceOptions.paginate && !tableOptions.useScrolling && tableData"
@@ -78,14 +81,14 @@
 
 <script lang="ts">
   import type { ITableOptions } from './types';
-  import type { IColumnItem } from '/@/model/types';
+  import type { IColumnItem, IKeyType } from '/@/model/types';
   import type { ISchemeItem } from '../QueryPopup/content/types';
 
-  import { defineComponent, onBeforeUnmount, ref, PropType, watch, nextTick } from 'vue';
+  import { defineComponent, onBeforeUnmount, ref, PropType, watch } from 'vue';
   import { isEmpty } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defaultTableOptions, getFilter, getSort, getSelect, getCompleteColumns } from './common';
+  import { defaultTableOptions, getCompleteColumns, getDataSource } from './common';
   import { useAppStore } from '/@/store/modules/app';
 
   import DxDataGrid, {
@@ -116,6 +119,12 @@
       },
       tableKey: {
         type: Array as PropType<string[]>,
+        default: () => {
+          return [];
+        },
+      },
+      tableKeyType: {
+        type: Array as PropType<IKeyType[]>,
         default: () => {
           return [];
         },
@@ -163,20 +172,22 @@
       };
 
       const handleFilterScheme = (scheme: ISchemeItem) => {
-        if (!isEmpty(tableData.value) && !isEmpty(scheme)) {
-          const { select, expand } = getSelect(props.allColumns, scheme.columns, props.tableKey);
-          const filter = getFilter(scheme.requirement);
-          const sort = getSort(scheme.orderBy, props.tableOptions.dataSourceOptions.sort);
-          tableData.value.filter(filter);
-          tableData.value.select(select);
-          tableData.value.expand = expand;
-          tableColumns.value = getCompleteColumns(props.allColumns, tableData.value.select());
-          // 清空排序，处理相同字段desc失效
-          dataGrid.value.instance.clearSorting();
-          // 排序字段在列更新后加载，解决列未更新，排序无法加上问题
-          nextTick(() => {
-            tableData.value.sort(sort);
-            search();
+        if (
+          !isEmpty(scheme) &&
+          !isEmpty(scheme.columns) &&
+          props.allColumns.length > 0 &&
+          props.tableKey.length > 0 &&
+          props.tableKeyType.length > 0
+        ) {
+          getDataSource(
+            props.tableOptions,
+            scheme,
+            props.allColumns,
+            props.tableKey,
+            props.tableKeyType
+          ).then((res) => {
+            tableData.value = res;
+            tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
           });
         }
       };
@@ -186,6 +197,24 @@
         if (instance && !isEmpty(tableData.value)) {
           instance.clearSelection();
           tableData.value.reload();
+        }
+      };
+
+      const getKey = (expand, relationKey, key) => {
+        if (expand && relationKey) {
+          return expand + key;
+        } else {
+          return key;
+        }
+      };
+
+      const getTemplate = (expand, relationKey, template) => {
+        if (expand && relationKey) {
+          return 'foundation';
+        } else if (template) {
+          return template;
+        } else {
+          return '';
         }
       };
 
@@ -199,9 +228,6 @@
         () => props.filterScheme,
         (val) => {
           handleFilterScheme(val);
-        },
-        {
-          immediate: true,
         }
       );
 
@@ -243,6 +269,8 @@
         getGlobalEnumDataByCode,
         search,
         getSelectedRowsData,
+        getKey,
+        getTemplate,
       };
     },
   });

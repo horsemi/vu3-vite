@@ -36,7 +36,7 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IOrderByItem, IRequirementItem, ISchemeItem } from '../QueryPopup/content/types';
+  import type { IOrderByItem, IRequirementItem, ISchemeColumnsItem, ISchemeItem } from '../QueryPopup/content/types';
   import type { IQueryItem, ISchemeData } from './types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';
@@ -202,7 +202,7 @@
         schemeList.value[popupIndex.value].orderBy = data;
       };
       // 接收显示隐藏列更新
-      const onChangeColumn = (data: string[]) => {
+      const onChangeColumn = (data: ISchemeColumnsItem[]) => {
         schemeList.value[popupIndex.value].columns = data;
       };
       // 接收标题更新

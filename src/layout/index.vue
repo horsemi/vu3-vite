@@ -106,15 +106,48 @@
                   ],
                   orderBy: [],
                   columns: [
-                    'BillCode',
-                    'BillDate',
-                    'DocumentStatus',
-                    'DeliveryWarehouseCode',
-                    'Nickname',
-                    'DeliveryPointCode',
-                    'ThreeServicePointCode',
-                    'TotalVolume',
-                    'TotalPackage',
+                    {
+                      key: 'BillCode',
+                      caption: '单据编码',
+                    },
+                    {
+                      key: 'BillDate',
+                      caption: '单据日期',
+                    },
+                    {
+                      key: 'DocumentStatus',
+                      caption: '单据状态',
+                    },
+                    {
+                      key: 'Name',
+                      caption: '仓库',
+                      expand: 'DeliveryWarehouse',
+                      relationKey: 'DeliveryWarehouseCode',
+                    },
+                    {
+                      key: 'Nickname',
+                      caption: '买家昵称',
+                    },
+                    {
+                      key: 'DeliveryPointCode',
+                      caption: '提货点编码',
+                    },
+                    {
+                      key: 'ThreeServicePointCode',
+                      caption: '三包点编码',
+                    },
+                    {
+                      key: 'TotalVolume',
+                      caption: '总体积数',
+                    },
+                    {
+                      key: 'TotalPackage',
+                      caption: '总包件数',
+                    },
+                    {
+                      key: 'GatheringParentCode',
+                      caption: '父单号',
+                    },
                   ],
                 },
               ],
@@ -148,15 +181,48 @@
                   ],
                   orderBy: [],
                   columns: [
-                    'BillCode',
-                    'BillDate',
-                    'DocumentStatus',
-                    'DeliveryWarehouseCode',
-                    'Nickname',
-                    'DeliveryPointCode',
-                    'ThreeServicePointCode',
-                    'TotalVolume',
-                    'TotalPackage',
+                    {
+                      key: 'BillCode',
+                      caption: '单据编码',
+                    },
+                    {
+                      key: 'BillDate',
+                      caption: '单据日期',
+                    },
+                    {
+                      key: 'DocumentStatus',
+                      caption: '单据状态',
+                    },
+                    {
+                      key: 'Name',
+                      caption: '仓库',
+                      expand: 'DeliveryWarehouse',
+                      relationKey: 'DeliveryWarehouseCode',
+                    },
+                    {
+                      key: 'Nickname',
+                      caption: '买家昵称',
+                    },
+                    {
+                      key: 'DeliveryPointCode',
+                      caption: '提货点编码',
+                    },
+                    {
+                      key: 'ThreeServicePointCode',
+                      caption: '三包点编码',
+                    },
+                    {
+                      key: 'TotalVolume',
+                      caption: '总体积数',
+                    },
+                    {
+                      key: 'TotalPackage',
+                      caption: '总包件数',
+                    },
+                    {
+                      key: 'GatheringParentCode',
+                      caption: '父单号',
+                    },
                   ],
                 },
               ],

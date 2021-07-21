@@ -1,5 +1,10 @@
 type alignmentType = 'center' | 'left' | 'right';
 
+interface IFoundationItem {
+  key: string;
+  caption: string;
+}
+
 export interface IColumnItem {
   /**
    * @description 列的字段
@@ -30,6 +35,16 @@ export interface IColumnItem {
    * @description 关联字段
    */
   expand?: string;
+
+  /**
+   * @description 关联字段必要的key
+   */
+  relationKey?: string;
+
+  /**
+   * @description 指定基础数据中的字段
+   */
+  foundationList?: IFoundationItem[];
 
   /**
    * @description 自定义模板名称
