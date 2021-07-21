@@ -91,7 +91,6 @@
   import { DxRequiredRule, DxCompareRule, DxPatternRule } from 'devextreme-vue/validator';
   import { DxForm, DxItem, DxLabel } from 'devextreme-vue/form';
   import { successMessage } from '/@/hooks/web/useMessage';
-  import router from '/@/router/index';
 
 
   export default defineComponent({
