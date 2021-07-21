@@ -17,10 +17,11 @@
         <DxColumn
           v-if="!item.hide"
           css-class="header-bold"
-          :data-field="getKey(item.expand, item.relationKey, item.key)"
+          :data-field="item.key"
+          :allow-sorting="getSorting(item.allowSort, item.expand, item.relationKey)"
           :caption="item.caption"
           :data-type="item.type"
-          :cell-template="getTemplate(item.expand, item.relationKey, item.cellTemplate)"
+          :cell-template="getTemplate(item.cellTemplate, item.expand, item.relationKey)"
           :alignment="item.alignment ? item.alignment : 'center'"
         >
           <DxLookup
@@ -61,11 +62,15 @@
       <template #foundation="{ data: rowInfo }">
         <div
           v-if="
-            tableColumns[rowInfo.columnIndex - 1] && tableColumns[rowInfo.columnIndex - 1].expand
+            tableColumns[rowInfo.columnIndex - 1] &&
+            tableColumns[rowInfo.columnIndex - 1].expand &&
+            rowInfo.data[tableColumns[rowInfo.columnIndex - 1].expand]
           "
           >{{
             rowInfo.data[tableColumns[rowInfo.columnIndex - 1].expand][
-              tableColumns[rowInfo.columnIndex - 1].key
+              tableColumns[rowInfo.columnIndex - 1].key.split(
+                tableColumns[rowInfo.columnIndex - 1].expand + '_'
+              )[1]
             ]
           }}</div
         >
@@ -84,11 +89,11 @@
   import type { IColumnItem, IKeyType } from '/@/model/types';
   import type { ISchemeItem } from '../QueryPopup/content/types';
 
-  import { defineComponent, onBeforeUnmount, ref, PropType, watch } from 'vue';
+  import { defineComponent, onBeforeUnmount, ref, PropType, watch, nextTick } from 'vue';
   import { isEmpty } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defaultTableOptions, getCompleteColumns, getDataSource } from './common';
+  import { defaultTableOptions, getCompleteColumns, getTableDataSource } from './common';
   import { useAppStore } from '/@/store/modules/app';
 
   import DxDataGrid, {
@@ -179,14 +184,15 @@
           props.tableKey.length > 0 &&
           props.tableKeyType.length > 0
         ) {
-          getDataSource(
+          tableData.value = getTableDataSource(
             props.tableOptions,
             scheme,
             props.allColumns,
             props.tableKey,
             props.tableKeyType
-          ).then((res) => {
-            tableData.value = res;
+          );
+          tableColumns.value = [];
+          nextTick(() => {
             tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
           });
         }
@@ -200,15 +206,17 @@
         }
       };
 
-      const getKey = (expand, relationKey, key) => {
+      const getSorting = (allowSort, expand, relationKey) => {
         if (expand && relationKey) {
-          return expand + key;
+          return false;
+        } else if (allowSort !== undefined) {
+          return allowSort;
         } else {
-          return key;
+          return true;
         }
       };
 
-      const getTemplate = (expand, relationKey, template) => {
+      const getTemplate = (template, expand, relationKey) => {
         if (expand && relationKey) {
           return 'foundation';
         } else if (template) {
@@ -219,8 +227,8 @@
       };
 
       onBeforeUnmount(() => {
-        if (!isEmpty(props.dataSource)) {
-          props.dataSource.dispose();
+        if (!isEmpty(tableData.value)) {
+          tableData.value.dispose();
         }
       });
 
@@ -269,7 +277,7 @@
         getGlobalEnumDataByCode,
         search,
         getSelectedRowsData,
-        getKey,
+        getSorting,
         getTemplate,
       };
     },

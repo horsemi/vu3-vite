@@ -21,12 +21,12 @@ export interface IDetailItem {
   /**
    * @description 字段名
    */
-  dataField: string;
+  key: string;
 
   /**
    * @description 标题
    */
-  label?: string;
+  caption: string;
 
   /**
    * @description 是否禁用

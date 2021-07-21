@@ -9,199 +9,260 @@ import { isFoundationType } from '/@/model/common';
 
 export const base: IDetailItem[] = [
   {
-    dataField: 'BillCode',
+    key: 'BillCode',
+    caption: '单据编码',
   },
   {
-    dataField: 'BillDate',
+    key: 'BillDate',
+    caption: '单据日期',
   },
   {
-    dataField: 'TotalPackage',
+    key: 'TotalPackage',
+    caption: '总包件数',
   },
   {
-    dataField: 'Group',
+    key: 'Group',
+    caption: '分组',
   },
   {
-    dataField: 'BillTypeCode',
+    key: 'BillTypeCode',
+    caption: '单据类型',
   },
   {
-    dataField: 'ServiceItemCode',
+    key: 'ServiceItemCode',
+    caption: '服务项目',
   },
   {
-    dataField: 'TotalVolume',
+    key: 'TotalVolume',
+    caption: '总体积数',
   },
   {
-    dataField: 'CustomerSalesman',
+    key: 'CustomerSalesman',
+    caption: '客户业务员',
   },
   {
-    dataField: 'DocumentStatus',
+    key: 'DocumentStatus',
+    caption: '单据状态',
   },
   {
-    dataField: 'OperationStatus',
+    key: 'OperationStatus',
+    caption: '业务状态',
   },
   {
-    dataField: 'TotalOrderCount',
+    key: 'TotalOrderCount',
+    caption: '订单总数',
   },
   {
-    dataField: 'DetailRowsCount',
+    key: 'DetailRowsCount',
+    caption: '明细行数',
   },
   {
-    dataField: 'DeliveryWarehouseCode',
+    key: 'DeliveryWarehouseCode',
+    caption: '仓库',
   },
   {
-    dataField: 'MarkStatus',
+    key: 'MarkStatus',
+    caption: '标记状态',
   },
   {
-    dataField: 'Memo',
+    key: 'Memo',
+    caption: '备注',
     colSpan: 4,
   },
   {
-    dataField: 'IsGatheringOrder',
+    key: 'IsGatheringOrder',
+    caption: '集货订单',
   },
   {
-    dataField: 'IsRecycling',
+    key: 'IsRecycling',
+    caption: '回收服务',
   },
   {
-    dataField: 'IsAgencyOrder',
+    key: 'IsAgencyOrder',
+    caption: '经销商订单',
   },
 ];
 
 export const receiver: IDetailItem[] = [
   {
-    dataField: 'Nickname',
+    key: 'Nickname',
+    caption: '买家昵称',
   },
   {
-    dataField: 'Receiver',
+    key: 'Receiver',
+    caption: '收货人',
   },
   {
-    dataField: 'Telephone',
+    key: 'Telephone',
+    caption: '电话',
   },
   {
-    dataField: 'RecyclingMemo',
+    key: 'RecyclingMemo',
+    caption: '回收备注',
   },
   {
-    dataField: 'ProvinceCode',
+    key: 'ProvinceCode',
+    caption: '省',
   },
   {
-    dataField: 'CityCode',
+    key: 'CityCode',
+    caption: '市',
   },
   {
-    dataField: 'DistrictCode',
+    key: 'DistrictCode',
+    caption: '区',
   },
   {
-    dataField: 'StreetCode',
+    key: 'StreetCode',
+    caption: '街道',
   },
   {
-    dataField: 'AgencyCode',
+    key: 'AgencyCode',
+    caption: '经销商',
   },
   {
-    dataField: 'PromisedDeliveryDate',
+    key: 'PromisedDeliveryDate',
+    caption: '承诺发货时间',
   },
   {
-    dataField: 'DetailAddress',
+    key: 'DetailAddress',
+    caption: '详细地址',
     colSpan: 4,
   },
   {
-    dataField: 'ShowroomContacts',
+    key: 'ShowroomContacts',
+    caption: '展厅联系人',
   },
   {
-    dataField: 'ShowroomTelephone',
+    key: 'ShowroomTelephone',
+    caption: '展厅电话',
   },
   {
-    dataField: 'ShowroomAddress',
+    key: 'ShowroomAddress',
+    caption: '展厅提货地址',
     colSpan: 4,
   },
 ];
 
 export const logistics: IDetailItem[] = [
   {
-    dataField: 'GatheringPointCode',
+    key: 'GatheringPointCode',
+    caption: '集货点',
   },
   {
-    dataField: 'LineAreaCode',
+    key: 'LineAreaCode',
+    caption: '线路区域',
   },
   {
-    dataField: 'ThreeServiceCostPrice',
+    key: 'ThreeServiceCostPrice',
+    caption: '三包成本',
   },
   {
-    dataField: 'ThreeServiceFeeTypeCode',
+    key: 'ThreeServiceFeeTypeCode',
+    caption: '三包费用类型',
   },
   {
-    dataField: 'DeliveryPointCode',
+    key: 'DeliveryPointCode',
+    caption: '提货点',
   },
   {
-    dataField: 'ContractorCode',
+    key: 'ContractorCode',
+    caption: '中转承运商',
   },
   {
-    dataField: 'LogisticsCostPrice',
+    key: 'LogisticsCostPrice',
+    caption: '物流成本',
   },
   {
-    dataField: 'FreightTypeCode',
+    key: 'FreightTypeCode',
+    caption: '运费类型',
   },
   {
-    dataField: 'ThreeServicePointCode',
+    key: 'ThreeServicePointCode',
+    caption: '三包点',
   },
   {
-    dataField: 'ThreeServiceSupplierCode',
+    key: 'ThreeServiceSupplierCode',
+    caption: '三包服务商',
   },
   {
-    dataField: 'LogisticCode',
+    key: 'LogisticCode',
+    caption: '物流单号',
   },
 ];
 
 export const other: IDetailItem[] = [
   {
-    dataField: 'CreatedTime',
+    key: 'CreatedTime',
+    caption: '创建时间',
   },
   {
-    dataField: 'CreatorId',
+    key: 'CreatorId',
+    caption: '创建人',
   },
   {
-    dataField: 'CustomerTypeCode',
+    key: 'CustomerTypeCode',
+    caption: '客户类型',
   },
   {
-    dataField: 'GatheringParentCode',
+    key: 'GatheringParentCode',
+    caption: '父单号',
   },
   {
-    dataField: 'AppliedTime',
+    key: 'AppliedTime',
+    caption: '审核时间',
   },
   {
-    dataField: 'ApplierId',
+    key: 'ApplierId',
+    caption: '审核人',
   },
   {
-    dataField: 'CustomerCode',
+    key: 'CustomerCode',
+    caption: '客户',
   },
   {
-    dataField: 'OutSourceBillCode',
+    key: 'OutSourceBillCode',
+    caption: '外部原单编号',
   },
   {
-    dataField: 'UpdatedTime',
+    key: 'UpdatedTime',
+    caption: '修改时间',
   },
   {
-    dataField: 'UpdaterId',
+    key: 'UpdaterId',
+    caption: '修改人',
   },
   {
-    dataField: 'OutBillFormCode',
+    key: 'OutBillFormCode',
+    caption: '外部原单标识',
   },
   {
-    dataField: 'OutSaleBillCode',
+    key: 'OutSaleBillCode',
+    caption: '外部销售单号',
   },
   {
-    dataField: 'CancelledTime',
+    key: 'CancelledTime',
+    caption: '作废时间',
   },
   {
-    dataField: 'CancellerId',
+    key: 'CancellerId',
+    caption: '作废人',
   },
   {
-    dataField: 'PushDownTime',
+    key: 'PushDownTime',
+    caption: '下推时间',
   },
   {
-    dataField: 'OutSourceBillType',
+    key: 'OutSourceBillType',
+    caption: '外部原单类型',
   },
   {
-    dataField: 'IsCancelled',
+    key: 'IsCancelled',
+    caption: '作废状态',
   },
   {
-    dataField: 'PushDownStatus',
+    key: 'PushDownStatus',
+    caption: '下推状态',
   },
 ];
 
@@ -221,28 +282,29 @@ export const getDetailData = async (filter: any[]) => {
     if (isFoundationType(item)) {
       expand.push(item.expand as string);
     }
-    select.push(item.dataField);
+    select.push(item.key);
   });
   receiverList.forEach((item) => {
     if (isFoundationType(item)) {
       expand.push(item.expand as string);
     }
-    select.push(item.dataField);
+    select.push(item.key);
   });
   logisticsList.forEach((item) => {
     if (isFoundationType(item)) {
       expand.push(item.expand as string);
     }
-    select.push(item.dataField);
+    select.push(item.key);
   });
   otherList.forEach((item) => {
     if (isFoundationType(item)) {
       expand.push(item.expand as string);
     }
-    select.push(item.dataField);
+    select.push(item.key);
   });
 
   const data = await getDetailDataSource('shipping-orders', select, expand, filter);
+
   return {
     baseList,
     receiverList,
@@ -257,7 +319,7 @@ export const getDefiniteData = async (options: ITableOptions, filter: any[]) => 
   if (!columnsData) return;
   const { columnList } = columnsData;
   const select = columnList.map((item) => item.key);
-  const data = await getDefiniteDataSource('shipping-order-items', select, filter, options);
+  const data = getDefiniteDataSource('shipping-order-items', select, filter, options);
   return {
     columnList,
     data,

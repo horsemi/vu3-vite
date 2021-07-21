@@ -25,14 +25,14 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'DeliveryWarehouseCode',
-    caption: '仓库编码',
+    caption: '仓库',
     foundationList: [
       {
-        key: 'Name',
+        key: 'DeliveryWarehouse_Name',
         caption: '仓库'
       },
       {
-        key: 'GroupName',
+        key: 'DeliveryWarehouse_GroupName',
         caption: '仓库分组'
       }
     ],
@@ -44,12 +44,24 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'DeliveryPointCode',
-    caption: '提货点编码',
+    caption: '提货点',
+    foundationList: [
+      {
+        key: 'DeliveryPoint_Name',
+        caption: '提货点'
+      },
+    ],
     datatypekeies: `${baseDataPre}delivery-points`,
   },
   {
     key: 'ThreeServicePointCode',
-    caption: '三包点编码',
+    caption: '三包点',
+    foundationList: [
+      {
+        key: 'ThreeServicePoint_Name',
+        caption: '三包点'
+      },
+    ],
     datatypekeies: `${baseDataPre}three-service-points`,
   },
   {
@@ -64,11 +76,23 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'BillTypeCode',
     caption: '单据类型',
+    foundationList: [
+      {
+        key: 'BillType_Name',
+        caption: '单据类型'
+      },
+    ],
     datatypekeies: `${baseDataPre}bill-types`,
   },
   {
     key: 'ServiceItemCode',
     caption: '服务项目',
+    foundationList: [
+      {
+        key: 'ServiceItem_Name',
+        caption: '服务项目'
+      },
+    ],
     datatypekeies: `${baseDataPre}service-contents`,
   },
   {
@@ -143,6 +167,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'AgencyCode',
     caption: '经销商',
+    foundationList: [
+      {
+        key: 'Agency_Name',
+        caption: '经销商'
+      },
+    ],
     datatypekeies: `${baseDataPre}customers`,
   },
   {
@@ -168,26 +198,56 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'GatheringPointCode',
     caption: '集货点',
+    foundationList: [
+      {
+        key: 'GatheringPoint_Name',
+        caption: '集货点'
+      },
+    ],
     datatypekeies: `${baseDataPre}gathering-points`,
   },
   {
     key: 'ContractorCode',
     caption: '中转承运商',
+    foundationList: [
+      {
+        key: 'Contractor_Name',
+        caption: '中转承运商'
+      },
+    ],
     datatypekeies: `${baseDataPre}suppliers`,
   },
   {
     key: 'ThreeServiceFeeTypeCode',
     caption: '三包费用类型',
+    foundationList: [
+      {
+        key: 'ThreeServiceFeeType_Name',
+        caption: '三包费用类型'
+      },
+    ],
     datatypekeies: `${baseDataPre}three-service-cost-types`,
   },
   {
     key: 'LineAreaCode',
     caption: '线路区域',
+    foundationList: [
+      {
+        key: 'LineArea_Name',
+        caption: '线路区域'
+      },
+    ],
     datatypekeies: `${baseDataPre}line-areas`,
   },
   {
     key: 'ThreeServiceSupplierCode',
     caption: '三包服务商',
+    foundationList: [
+      {
+        key: 'ThreeServiceSupplier_Name',
+        caption: '三包服务商'
+      },
+    ],
     datatypekeies: `${baseDataPre}suppliers`,
   },
   {
@@ -217,6 +277,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CustomerTypeCode',
     caption: '客户类型',
+    foundationList: [
+      {
+        key: 'CustomerType_Name',
+        caption: '客户类型'
+      },
+    ],
     datatypekeies: `${baseDataPre}customer-types`,
   },
   {
@@ -230,6 +296,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CustomerCode',
     caption: '客户',
+    foundationList: [
+      {
+        key: 'Customer_Name',
+        caption: '客户'
+      },
+    ],
     datatypekeies: `${baseDataPre}customers`,
   },
   {

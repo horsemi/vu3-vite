@@ -4,8 +4,8 @@
       <template v-for="(item, index) in formList" :key="index">
         <DxItem
           v-if="!item.hide"
-          :label="{ text: item.label, visible: !item.template }"
-          :data-field="item.dataField"
+          :label="{ text: item.caption, visible: !item.template }"
+          :data-field="item.key"
           :editor-type="item.editorType"
           :disabled="!item.disabled"
           :editor-options="handleEditorOptions(item)"
@@ -32,18 +32,18 @@
         <StepBar :step-data="stepData" :step-active-index="stepActiveIndex" />
       </template>
       <template #expand="{ data }">
-        <FoundationText
-          v-if="isFoundationType(data.editorOptions)"
-          width="100%"
-          :value="formData[data.dataField]"
-          :foundation-data="formData[data.editorOptions.expand]"
-        />
         <EnumSelect
-          v-else
+          v-if="data.editorOptions.type === 'enum'"
           :value="formData[data.dataField]"
           width="100%"
           :expand="data.editorOptions.expand"
           @update:value="onChangeData($event, data.dataField)"
+        />
+        <FoundationText
+         v-else
+          width="100%"
+          :value="formData[data.dataField]"
+          :foundation-data="formData[data.editorOptions.expand]"
         />
       </template>
     </DxForm>
@@ -56,7 +56,6 @@
   import { defineComponent, PropType } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { isFoundationType } from '/@/model/common';
 
   import { DxForm, DxItem } from 'devextreme-vue/form';
 
@@ -113,15 +112,14 @@
         return editorOptions;
       };
 
-      function onChangeData($event, dataField) {
+      function onChangeData($event, key) {
         data = props.formData;
-        data[dataField] = $event;
+        data[key] = $event;
       }
 
       return {
         prefixCls,
         handleEditorOptions,
-        isFoundationType,
         onChangeData,
       };
     },

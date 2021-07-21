@@ -1,18 +1,8 @@
+import type { IODataStore, ISortItem } from '/@/api/ods/types';
+
 type allModeType = 'allPages' | 'page';
 
 type checkBoxesModeType = 'none' | 'onClick' | 'onLongTap' | 'always';
-
-export interface ISortItem {
-  /**
-   * @description 排序字段
-   */
-  selector: string;
-
-  /**
-   * @description 是否降序
-   */
-  desc?: boolean;
-}
 
 interface ISelection {
   /**
@@ -38,41 +28,6 @@ interface IPage {
   index?: number;
 }
 
-interface IODataOptions {
-  /**
-   * @description 请求地址
-   */
-  url: string;
-
-  /**
-   * @description 请求前钩子函数
-   */
-  beforeSend?: (options: {
-    url?: string;
-    async?: boolean;
-    method?: string;
-    timeout?: number;
-    params?: any;
-    payload?: any;
-    headers?: any;
-  }) => void;
-
-  /**
-   * @description 列表主键
-   */
-  key?: string;
-
-  /**
-   * @description 主键类型
-   */
-  keyType?: string;
-
-  /**
-   * @description oData版本号
-   */
-  version?: number;
-}
-
 interface IDataSourceOptions {
   /**
    * @description 排序字段
@@ -82,7 +37,7 @@ interface IDataSourceOptions {
   /**
    * @description oData配置
    */
-  oDataOptions: IODataOptions;
+  oDataOptions: IODataStore;
 
   /**
    * @description 是否分页

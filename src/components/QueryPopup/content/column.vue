@@ -103,6 +103,10 @@
       const { prefixCls } = useDesign('content-column');
       // 显示字段数据
       const dataSource = ref<ISchemeColumnsItem[]>([]);
+
+      // 显示字段数据副本，用于记录点击箭头前的数据
+      let dataSourceTemp: ISchemeColumnsItem[] = [];
+
       // 全部字段数据
       const fieldList = ref<IFieldItem[]>([]);
 
@@ -119,22 +123,25 @@
       const onRowClick = (e) => {
         if (e.data.mustKey) return;
         e.data.checked = !e.data.checked;
+        if (e.data.checked) {
+          const item = fieldList.value.filter(item => item.key === e.data.key)[0];
+          dataSourceTemp.push({
+            key: item.key,
+            caption: item.caption,
+            expand: item.expand,
+            relationKey: item.relationKey,
+            mustKey: item.mustKey,
+          });
+        } else {
+          const index = dataSourceTemp.findIndex(item => item.key === e.data.key);
+          dataSourceTemp.splice(index, 1);
+        }
       };
 
       // 点击中间箭头触发
       const onAddCol = () => {
         // 更新显示字段数据
-        dataSource.value = fieldList.value
-          .filter((item) => item.checked)
-          .map((item) => {
-            return {
-              key: item.key,
-              caption: item.caption,
-              expand: item.expand,
-              relationKey: item.relationKey,
-              mustKey: item.mustKey,
-            };
-          });
+        dataSource.value = [...dataSourceTemp];
         onChangeColumn(dataSource.value);
       };
 
@@ -171,13 +178,13 @@
             if (inAllCol) {
               data.push({
                 key: item.key,
-                caption: item.caption,
+                caption: item.caption + '编码',
                 mustKey: item.mustKey,
               });
             }
             fieldListTemp.push({
               key: item.key,
-              caption: item.caption,
+              caption: item.caption + '编码',
               checked: item.mustKey ? item.mustKey : inAllCol,
               mustKey: item.mustKey,
             });
@@ -223,6 +230,7 @@
         });
         fieldList.value = fieldListTemp;
         dataSource.value = sortData;
+        dataSourceTemp = [...sortData];
       };
 
       // 实时更新组件中的显示隐藏列数据

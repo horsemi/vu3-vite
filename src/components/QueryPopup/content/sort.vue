@@ -67,7 +67,7 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IFieldItem, IOrderByItem, ISortOptions } from './types';
+  import type { IFieldItem, IOrderByItem, ISchemeColumnsItem, ISortOptions } from './types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';
 
@@ -102,7 +102,7 @@
         },
       },
       columns: {
-        type: Array as PropType<string[]>,
+        type: Array as PropType<ISchemeColumnsItem[]>,
         default: () => {
           return [];
         },
@@ -131,8 +131,12 @@
 
       // 左侧选择框字段数据
       const fieldList = ref<IFieldItem[]>([]);
+
       // 右侧排序列表数据
       const dataSource = ref<IOrderByItem[]>([]);
+
+      // 右侧排序列表数据副本，用于记录点击箭头前的数据
+      let dataSourceTemp: IOrderByItem[] = [];
 
       // 外派排序更新事件
       const onChangeSort = (data: IOrderByItem[]) => {
@@ -140,21 +144,36 @@
       };
 
       // 外派显示隐藏列更新事件
-      const onChangeColumn = (data: string[]) => {
+      const onChangeColumn = (data: ISchemeColumnsItem[]) => {
         ctx.emit('on-change-column', data);
       };
 
       // 点击全部字段行
       const onRowClick = (e) => {
         e.data.checked = !e.data.checked;
+        if (e.data.checked) {
+          const item = fieldList.value.filter(item => item.key === e.data.key)[0];
+          dataSourceTemp.push({
+            key: item.key,
+            caption: item.caption,
+            desc: false,
+          });
+        } else {
+          const index = dataSourceTemp.findIndex(item => item.key === e.data.key);
+          dataSourceTemp.splice(index, 1);
+        }
       };
 
       // 处理字段有排序但是没有显示的情况
       const handleFieldShow = (data: IOrderByItem[]) => {
         const columns = [...props.columns];
         data.forEach((sort) => {
-          if (columns.indexOf(sort.key) === -1) {
-            columns.push(sort.key);
+          const index = columns.findIndex(item => item.key === sort.key);
+          if (index === -1) {
+            columns.push({
+              key: sort.key,
+              caption: sort.caption,
+            });
           }
         });
         onChangeColumn(columns);
@@ -163,15 +182,7 @@
       // 点击中间箭头触发
       const onAddCol = () => {
         // 更新排序列表数据
-        dataSource.value = fieldList.value
-          .filter((item) => item.checked)
-          .map((item) => {
-            return {
-              key: item.key,
-              caption: item.caption,
-              desc: false,
-            };
-          });
+        dataSource.value = [...dataSourceTemp];
         onChangeSort(dataSource.value);
         handleFieldShow(dataSource.value);
       };
@@ -198,11 +209,12 @@
           if (item.allowSort !== false) {
             fields.push({
               key: item.key,
-              caption: item.caption,
+              caption: item.foundationList && item.foundationList.length > 0 ? item.caption  + '编码' : item.caption,
               checked: false,
             });
           }
         });
+
         orderBy.forEach((item) => {
           fields.forEach((field) => {
             if (field.key === item.key) {
@@ -224,6 +236,7 @@
         }
         fieldList.value = fields;
         dataSource.value = sorts;
+        dataSourceTemp = [...sorts];
       };
 
       // 监听全部列和排序数据的更新，处理组件数据（全部列指的是前端model中获取到的列）
