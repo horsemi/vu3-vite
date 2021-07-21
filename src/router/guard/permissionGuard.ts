@@ -5,6 +5,7 @@ import { PAGE_NOT_FOUND_ROUTE } from '/@/router/routes/basic';
 import { useUserStoreWidthOut } from '/@/store/modules/user';
 import { usePermissionStoreWidthOut } from '/@/store/modules/permission';
 import { useAppStoreWidthOut } from '/@/store/modules/app';
+import { getToken } from '/@/utils/auth';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
@@ -24,7 +25,7 @@ export function createPermissionGuard(router: Router) {
       return;
     }
 
-    const token = userStore.getToken;
+    const token = getToken();
 
     // token does not exist
     if (!token) {

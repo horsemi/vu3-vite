@@ -8,10 +8,10 @@ import { RequestEnum, ResultEnum, ContentTypeEnum } from '/@/enums/httpEnum';
 import { isString } from '/@/utils/is';
 import { setObjToUrlParams, deepMerge } from '/@/utils';
 import { errorResult, tokenHeaderKey } from './const';
-import { useUserStoreWidthOut } from '/@/store/modules/user';
 import { useErrorLogStoreWithOut } from '/@/store/modules/error';
 import { errorMessage, successMessage } from '/@/hooks/web/useMessage';
 import { checkStatus } from './checkStatues';
+import { getToken } from '/@/utils/auth';
 
 /**
  * @description 数据处理，方便区分多种处理方式
@@ -110,8 +110,7 @@ const transform: AxiosTransform = {
    */
   requestInterceptors: (config) => {
     // 请求之前处理config
-    const userStore = useUserStoreWidthOut();
-    const token = userStore.getToken;
+    const token = getToken();
     if (token) {
       // jwt token
       // config.headers.Authorization = token;
