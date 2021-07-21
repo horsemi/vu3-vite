@@ -45,9 +45,7 @@
   import { cloneDeep } from 'lodash-es';
 
   import { getColumns } from '/@/model/shipping-orders';
-  import {
-    defaultTableOptions,
-  } from '/@/components/Table/common';
+  import { defaultTableOptions } from '/@/components/Table/common';
   import { isArrayEmpty } from '/@/utils/bill/index';
   import { Persistent } from '/@/utils/cache/persistent';
   import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
@@ -105,7 +103,10 @@
       const handleBillCodeClick = (data) => {
         router.push({
           name: 'OdsShippingOrderDetail',
-          query: { Id: data.data.Id },
+          query: {
+            Id: data.data.Id,
+            BillCode: data.data.BillCode,
+          },
         });
       };
 
