@@ -318,8 +318,18 @@ export const getDefiniteData = async (options: ITableOptions, filter: any[]) => 
   const columnsData = await getDefiniteColumns();
   if (!columnsData) return;
   const { columnList } = columnsData;
-  const select = columnList.map((item) => item.key);
-  const data = getDefiniteDataSource('shipping-order-items', select, filter, options);
+
+  const select: string[] = [];
+  const expand: string[] = [];
+
+  columnList.forEach((item) => {
+    select.push(item.key);
+    if (isFoundationType(item)) {
+      expand.push(item.expand as string);
+    }
+  });
+
+  const data = getDefiniteDataSource('shipping-order-items', select, filter, options, expand);
   return {
     columnList,
     data,

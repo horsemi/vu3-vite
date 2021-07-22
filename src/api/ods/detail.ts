@@ -42,7 +42,8 @@ export const getDefiniteDataSource = (
   code: string,
   select: string[],
   filter: unknown[],
-  options: ITableOptions
+  options: ITableOptions,
+  expand?: string[]
 ) => {
   return getDataSource(
     {
@@ -50,6 +51,7 @@ export const getDefiniteDataSource = (
       paginate: options.dataSourceOptions.paginate,
       pageSize: options.page?.size,
       select: [...select, 'Id'],
+      expand: expand,
     },
     {
       url: `${prefixUrls}${code}`,
