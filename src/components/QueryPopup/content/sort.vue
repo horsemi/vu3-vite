@@ -32,7 +32,7 @@
         :show-row-lines="true"
       >
         <DxFilterRow :visible="true" />
-        <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" drop-feedback-mode="push" />
+        <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" />
         <DxPaging :enabled="false" />
         <DxColumn caption="序号" cell-template="index" alignment="center" />
         <DxColumn data-field="caption" caption="字段" alignment="center" />
@@ -189,8 +189,10 @@
 
       // 拖动位置触发
       const onReorder = (e) => {
-        // 调用数组换位函数
-        dataSource.value = handleArrayTransposition(dataSource.value, e.fromIndex, e.toIndex);
+        const newTasks = [...dataSource.value];
+        newTasks.splice(e.fromIndex, 1);
+        newTasks.splice(e.toIndex, 0, e.itemData);
+        dataSource.value = newTasks;
         onChangeSort(dataSource.value);
       };
 

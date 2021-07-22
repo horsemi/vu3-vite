@@ -98,7 +98,7 @@
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
 
-  import { defineComponent, watch, PropType, ref } from 'vue';
+  import { defineComponent, watch, PropType, ref, nextTick } from 'vue';
   import moment from 'moment';
 
   import { useAppStore } from '/@/store/modules/app';
@@ -222,12 +222,26 @@
         context.emit('update:paramOperations', operatorOptions.value);
       }
 
-      function handleItemClick(e) {
-        if (e.itemData.type === 'datetime') {
-          context.emit('update:value', moment().format('YYYY/MM/DD HH:mm:ss').toString());
-        } else if (valueBox.value.instance) {
+      function handleResetValue() {
+        if (valueBox.value.instance) {
           valueBox.value.instance.reset();
+        } else if (
+          valueBox.value.$refs.foundationSelect &&
+          valueBox.value.$refs.foundationSelect.instance
+        ) {
+          valueBox.value.$refs.foundationSelect.instance.reset();
         }
+      }
+
+      function handleItemClick(e) {
+        handleResetValue();
+        nextTick(() => {
+          if (e.itemData.type === 'datetime') {
+            context.emit('update:value', moment().format('YYYY/MM/DD HH:mm:ss').toString());
+          } else {
+            handleResetValue();
+          }
+        });
       }
 
       return {
