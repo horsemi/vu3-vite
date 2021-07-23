@@ -6,6 +6,7 @@ export interface IQueryItem {
   operatorList: string[];
   value: string | number | boolean | Date | undefined;
   type: string;
+  relationKey: string;
   datatypekeies: string;
 }
 

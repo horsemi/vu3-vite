@@ -57,7 +57,7 @@
         </template>
         <template #handle="{ data }">
           <div :class="`${prefixCls}__table__handle`">
-            <span @click="onDel(data.rowIndex)">删除</span>
+            <span @click="onDel(data)">删除</span>
           </div>
         </template>
       </DxDataGrid>
@@ -72,7 +72,6 @@
   import { defineComponent, PropType, ref, watch } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { handleArrayTransposition } from '/@/utils';
 
   import { DxCheckBox } from 'devextreme-vue/check-box';
   import {
@@ -152,14 +151,14 @@
       const onRowClick = (e) => {
         e.data.checked = !e.data.checked;
         if (e.data.checked) {
-          const item = fieldList.value.filter(item => item.key === e.data.key)[0];
+          const item = fieldList.value.filter((item) => item.key === e.data.key)[0];
           dataSourceTemp.push({
             key: item.key,
             caption: item.caption,
             desc: false,
           });
         } else {
-          const index = dataSourceTemp.findIndex(item => item.key === e.data.key);
+          const index = dataSourceTemp.findIndex((item) => item.key === e.data.key);
           dataSourceTemp.splice(index, 1);
         }
       };
@@ -168,7 +167,7 @@
       const handleFieldShow = (data: IOrderByItem[]) => {
         const columns = [...props.columns];
         data.forEach((sort) => {
-          const index = columns.findIndex(item => item.key === sort.key);
+          const index = columns.findIndex((item) => item.key === sort.key);
           if (index === -1) {
             columns.push({
               key: sort.key,
@@ -197,10 +196,12 @@
       };
 
       // 点击删除触发
-      const onDel = (index: number) => {
-        if (!dataSource.value[index]) return;
-        dataSource.value.splice(index, 1);
-        onChangeSort(dataSource.value);
+      const onDel = (data) => {
+        const index = dataSource.value.indexOf(data.data);
+        if (index >= 0) {
+          dataSource.value.splice(index, 1);
+          onChangeSort(dataSource.value);
+        }
       };
 
       // 处理组件数据
@@ -208,10 +209,10 @@
         const fields: IFieldItem[] = [];
         const sorts: IOrderByItem[] = [];
         allColumns.forEach((item) => {
-          if (item.allowSort !== false) {
+          if (item.allowSort !== false && !item.relationKey) {
             fields.push({
               key: item.key,
-              caption: item.foundationList && item.foundationList.length > 0 ? item.caption  + '编码' : item.caption,
+              caption: item.caption,
               checked: false,
             });
           }

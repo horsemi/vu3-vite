@@ -53,7 +53,7 @@
 
       function getFoundationByCode(foundationCode: string) {
         FoundationApi.getFoundationByCode(
-          foundationCode.slice(foundationCode.indexOf('_') + 1) as FoundationMap,
+          foundationCode as FoundationMap,
           { isall: true }
         ).then((resolve) => {
           options.value = resolve;

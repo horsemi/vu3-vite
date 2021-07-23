@@ -84,14 +84,22 @@ export const getFilter = (requirements: IRequirementItem[]) => {
   const filter: any[] = [];
   requirements.forEach((item) => {
     if (item.requirement && !isNil(item.value)) {
-      filter.push([item.requirement, item.operator, item.value]);
+
+      if (item.relationKey) {
+        filter.push([item.relationKey, item.operator, item.value]);
+      } else {
+        filter.push([item.requirement, item.operator, item.value]);
+      }
+      
       if (item.logic) {
         filter.push(item.logic);
       } else {
         filter.push('and');
       }
+
     }
   });
+
   return filter.length > 0 ? filter : '';
 };
 

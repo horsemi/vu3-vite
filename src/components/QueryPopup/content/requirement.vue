@@ -2,7 +2,7 @@
   <div :class="prefixCls">
     <div :class="`${prefixCls}__header`">
       <span style="width: 180px">字段</span>
-      <span style="width: 95px">比较</span>
+      <span style="width: 110px">比较</span>
       <span style="width: 180px">值</span>
       <span style="width: 130px">逻辑</span>
       <span style="width: 120px">操作</span>
@@ -17,6 +17,7 @@
             v-model:paramDataType="item.type"
             v-model:paramOperations="item.operatorList"
             v-model:paramDatatypekeies="item.datatypekeies"
+            v-model:paramRelationKey="item.relationKey"
             :param-list="allColumns"
           />
           <DxSelectBox
@@ -105,6 +106,7 @@
           value: undefined,
           type: '',
           datatypekeies: '',
+          relationKey: '',
           logic: 'and',
         });
         dataSource.value = temp;
@@ -120,6 +122,7 @@
           value: undefined,
           type: '',
           datatypekeies: '',
+          relationKey: '',
           logic: 'and',
         });
         dataSource.value = temp;

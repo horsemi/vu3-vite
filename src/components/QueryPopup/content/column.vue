@@ -42,7 +42,7 @@
           <span
             v-if="!data.data.mustKey"
             :class="`${prefixCls}__table__del`"
-            @click="onDel(data.rowIndex)"
+            @click="onDel(data)"
             >删除</span
           >
         </template>
@@ -145,18 +145,20 @@
       };
 
       // 点击删除触发
-      const onDel = (index: number) => {
-        if (!dataSource.value[index]) return;
+      const onDel = (data) => {
+        const index = dataSource.value.indexOf(data.data);
         const orderIndex = props.orderBy.findIndex(
-          (item) => item.key === dataSource.value[index].key
+          (item) => item.key === data.data.key
         );
         if (orderIndex >= 0) {
           const orderBy = [...props.orderBy];
           orderBy.splice(orderIndex, 1);
           onChangeSort(orderBy);
         }
-        dataSource.value.splice(index, 1);
-        onChangeColumn(dataSource.value);
+        if (index >= 0) {
+          dataSource.value.splice(index, 1);
+          onChangeColumn(dataSource.value);
+        }
       };
 
       // 拖动位置触发
@@ -173,29 +175,16 @@
         const fieldListTemp: IFieldItem[] = [];
         const data: ISchemeColumnsItem[] = [];
         const sortData: ISchemeColumnsItem[] = [];
+
         allColumns.forEach((item) => {
           if (item.foundationList && item.foundationList.length > 0) {
-            const inAllCol = columns.some((col) => item.key === col.key);
-            if (inAllCol) {
-              data.push({
-                key: item.key,
-                caption: item.caption + '编码',
-                mustKey: item.mustKey,
-              });
-            }
-            fieldListTemp.push({
-              key: item.key,
-              caption: item.caption + '编码',
-              checked: item.mustKey ? item.mustKey : inAllCol,
-              mustKey: item.mustKey,
-            });
             item.foundationList.forEach((field) => {
               const inAllCol = columns.some((col) => field.key === col.key);
               if (inAllCol) {
                 data.push({
                   ...field,
                   expand: item.expand,
-                  relationKey: item.key,
+                  relationKey: item.relationKey,
                   mustKey: item.mustKey,
                 });
               }
@@ -203,7 +192,7 @@
                 ...field,
                 expand: item.expand,
                 checked: item.mustKey ? item.mustKey : inAllCol,
-                relationKey: item.key,
+                relationKey: item.relationKey,
                 mustKey: item.mustKey,
               });
             });

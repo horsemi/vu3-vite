@@ -184,12 +184,13 @@
           props.tableKey.length > 0 &&
           props.tableKeyType.length > 0
         ) {
-          // 清空排序，处理相同字段desc失效
           const instance = dataGrid.value.instance;
           if (instance) {
+            // 清空排序，处理相同字段desc失效
             instance.clearSorting();
+            // 回到第一页
+            instance.pageIndex(0);
           }
-
           tableData.value = getTableDataSource(
             props.tableOptions,
             scheme,

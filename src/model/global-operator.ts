@@ -47,6 +47,7 @@ export const globalOperator = {
   stringOperators: ['equal', 'notEqual', 'contains', 'notcontains', 'startswith', 'endswith'],
   numberOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
   datetimeOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
+  dateOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
   booleanOperators: ['equal', 'notEqual'],
   enumOperators: ['equal', 'notEqual'],
   foundationOperators: ['equal', 'notEqual'],

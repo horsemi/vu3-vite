@@ -96,12 +96,13 @@
                   requirement: [
                     {
                       requirement: '',
-                      operator: '=',
+                      operator: '',
                       operatorList: [],
                       value: undefined,
                       type: '',
                       datatypekeies: '',
-                      logic: '',
+                      relationKey: '',
+                      logic: 'and',
                     },
                   ],
                   orderBy: [],
@@ -158,11 +159,12 @@
               fast: [
                 {
                   requirement: '',
-                  operator: '=',
+                  operator: '',
                   operatorList: [],
                   value: undefined,
                   type: '',
                   datatypekeies: '',
+                  relationKey: '',
                 },
               ],
               checkedIndex: 0,
@@ -175,12 +177,13 @@
                   requirement: [
                     {
                       requirement: '',
-                      operator: '=',
+                      operator: '',
                       operatorList: [],
                       value: undefined,
                       type: '',
                       datatypekeies: '',
-                      logic: '',
+                      relationKey: '',
+                      logic: 'and',
                     },
                   ],
                   orderBy: [],
@@ -237,11 +240,12 @@
               fast: [
                 {
                   requirement: '',
-                  operator: '=',
+                  operator: '',
                   operatorList: [],
                   value: undefined,
                   type: '',
                   datatypekeies: '',
+                  relationKey: '',
                 },
               ],
               checkedIndex: 0,

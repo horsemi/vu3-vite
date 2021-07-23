@@ -18,7 +18,7 @@
       <DxSelectBox
         :value="operation"
         :data-source="paramOperations"
-        width="95"
+        width="110"
         :search-enabled="true"
         search-mode="contains"
         value-expr="key"
@@ -51,18 +51,20 @@
       >
       </DxSelectBox>
       <DxDateBox
-        v-else-if="paramDataType === 'datetime'"
+        v-else-if="paramDataType === 'datetime' || paramDataType === 'date'"
         ref="valueBox"
         :value="value"
-        type="datetime"
-        display-format="yyyy-MM-dd HH:mm:ss"
+        :type="paramDataType"
+        apply-value-mode="useButtons"
+        :display-format="paramDataType === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"
+        :show-analog-clock="false"
         :show-clear-button="true"
         width="180"
         @update:value="$emit('update:value', $event)"
       >
       </DxDateBox>
       <DxSelectBox
-        v-else-if="paramDatatypekeies && paramDatatypekeies.startsWith('enum_')"
+        v-else-if="paramDataType === 'enum'"
         ref="valueBox"
         :value="value"
         :data-source="options"
@@ -74,7 +76,7 @@
       >
       </DxSelectBox>
       <FoundationSelect
-        v-else-if="paramDatatypekeies && paramDatatypekeies.startsWith('foundation_')"
+        v-else-if="paramDatatypekeies"
         ref="valueBox"
         width="180"
         :value="value"
@@ -88,6 +90,7 @@
         :value="value"
         :show-clear-button="true"
         width="180"
+        placeholder="请输入"
         @update:value="$emit('update:value', $event)"
       >
       </DxTextBox>
@@ -136,6 +139,10 @@
         type: String,
         default: '',
       },
+      paramRelationKey: {
+        type: String,
+        default: '',
+      },
       paramDatatypekeies: {
         type: String,
         default: '',
@@ -151,6 +158,7 @@
       'update:operation',
       'update:paramDataType',
       'update:paramOperations',
+      'update:paramRelationKey',
       'update:paramDatatypekeies',
     ],
     setup(props, context) {
@@ -184,7 +192,7 @@
       function initData(paramKey: string) {
         if (paramKey) {
           if (props.paramList.length === 0) return;
-          let { type, operations, datatypekeies } = (props.paramList as IColumnItem[]).filter(
+          let { type, operations, datatypekeies, relationKey, expand } = (props.paramList as IColumnItem[]).filter(
             (item) => paramKey === item.key
           )[0];
 
@@ -195,25 +203,27 @@
 
           context.emit('update:paramDataType', type);
           context.emit('update:paramDatatypekeies', datatypekeies);
+          context.emit('update:paramRelationKey', relationKey);
           if (!props.operation) {
             context.emit('update:operation', '=');
           }
-          initOption(type!, datatypekeies!);
+          initOption(type!, datatypekeies!, expand!);
         } else {
           operatorOptions.value = [];
           context.emit('update:paramOperations', operatorOptions.value);
           context.emit('update:operation', '');
           context.emit('update:paramDataType', '');
           context.emit('update:paramDatatypekeies', '');
+          context.emit('update:paramRelationKey', '');
           context.emit('update:value', undefined);
         }
       }
 
-      function initOption(type: string, datatypekeies: string) {
+      function initOption(type: string, datatypekeies: string, expand: string) {
         options.value.splice(0, options.value.length);
         dataType.value = type;
-        if (datatypekeies && datatypekeies.startsWith('enum_')) {
-          options.value.push(...appStore.getGlobalEnumDataByCode(datatypekeies.split('_')[1]));
+        if (type ==='enum' && expand) {
+          options.value.push(...appStore.getGlobalEnumDataByCode(expand));
         } else if (datatypekeies && datatypekeies.startsWith('foundation_')) {
           //
         }
@@ -236,8 +246,9 @@
       function handleItemClick(e) {
         handleResetValue();
         nextTick(() => {
-          if (e.itemData.type === 'datetime') {
-            context.emit('update:value', moment().format('YYYY/MM/DD HH:mm:ss').toString());
+          if (e.itemData.type === 'datetime' || e.itemData.type === 'date') {
+            
+            context.emit('update:value', moment([moment().year(), moment().month(), moment().date()]).format('YYYY/MM/DD HH:mm:ss').toString());
           } else {
             handleResetValue();
           }
