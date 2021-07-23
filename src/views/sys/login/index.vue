@@ -76,10 +76,7 @@
   import SvgIcon from '/@/components/Icon/SvgIcon.vue';
   import PasswordModal from '/@/components/PasswordModal/index.vue';
   import { PasswordStateEnum } from '/@/enums/appEnum';
-<<<<<<< HEAD
   import { removeCookie } from '/@/utils/cache/cookies';
-=======
->>>>>>> a05ff255416b1d417313494d38e0e2f81c93480c
 
   export default defineComponent({
     name: 'Login',
