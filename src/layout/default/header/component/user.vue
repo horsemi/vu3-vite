@@ -50,7 +50,7 @@
           },
           template: () => {
             return '<div style="text-align: center;">登录记录</div>';
-          }
+          },
         },
         {
           name: '修改密码',
@@ -60,7 +60,7 @@
           },
           template: () => {
             return '<div style="text-align: center;">修改密码</div>';
-          }
+          },
         },
         {
           name: '退出登录',
@@ -69,7 +69,7 @@
           },
           template: () => {
             return '<div style="text-align: center;">退出登录</div>';
-          }
+          },
         },
       ];
 
@@ -109,6 +109,5 @@
         color: #fff;
       }
     }
-
   }
 </style>

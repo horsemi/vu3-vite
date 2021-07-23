@@ -10,7 +10,7 @@
   import { defineComponent } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  
+
   import DxButton from 'devextreme-vue/button';
 
   export default defineComponent({

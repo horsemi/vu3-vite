@@ -10,7 +10,9 @@
     "lint:prettier": "prettier --write --loglevel warn \"src/**/*.{js,json,tsx,css,less,scss,vue,html,md}\"",
     "lint:stylelint": "stylelint --fix \"**/*.{vue,less,postcss,css,scss}\" --cache --cache-location node_modules/.cache/stylelint/",
     "lint:eslint": "eslint \"{src,mock}/**/*.{vue,ts,tsx}\" --fix",
-    "lint:lint-staged": "lint-staged -c ./.husky/.lintstagedrc.js"
+    "lint:lint-staged": "lint-staged -c ./.husky/.lintstagedrc.js",
+    "install:husky": "is-ci || husky install",
+    "postinstall": "npm run install:husky"
   },
   "dependencies": {
     "@types/lodash-es": "^4.17.4",
