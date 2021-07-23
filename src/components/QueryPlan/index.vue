@@ -36,7 +36,12 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IOrderByItem, IRequirementItem, ISchemeColumnsItem, ISchemeItem } from '../QueryPopup/content/types';
+  import type {
+    IOrderByItem,
+    IRequirementItem,
+    ISchemeColumnsItem,
+    ISchemeItem,
+  } from '../QueryPopup/content/types';
   import type { IQueryItem, ISchemeData } from './types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';
@@ -213,30 +218,32 @@
       };
       // 接收保存事件
       const onSubmitScheme = (fast: IQueryItem[] = []) => {
-        const temp = cloneDeep(schemeListTemp.value);
-        temp[popupIndex.value] = cloneDeep(schemeList.value[popupIndex.value]);
-        schemeListTemp.value = temp;
-        handleSaveData('保存成功', schemeListTemp.value, fast);
+        if (popupIndex.value !== 0) {
+          schemeListTemp.value[popupIndex.value] = cloneDeep(schemeList.value[popupIndex.value]);
+          handleSaveData('保存成功', schemeListTemp.value, fast);
+        } else {
+          onSaveScheme();
+        }
       };
       // 接收另存事件
       const onSaveScheme = () => {
-        const temp = cloneDeep(schemeList.value);
-        temp.push({ ...cloneDeep(schemeList.value[popupIndex.value]), title: '', uuid: getUuid() });
-        schemeList.value = temp;
+        schemeList.value.push({ ...cloneDeep(schemeList.value[popupIndex.value]), title: '', uuid: getUuid() });
         popupIndex.value = schemeList.value.length - 1;
       };
       // 接收删除事件
       const onDelScheme = () => {
         // 两个数据都需要删除
         const index = popupIndex.value;
-        const temp = cloneDeep(schemeList.value);
-        const data = cloneDeep(schemeListTemp.value);
+        const temp = [...schemeList.value];
         temp.splice(index, 1);
-        data.splice(index, 1);
         schemeList.value = temp;
-        schemeListTemp.value = data;
         popupIndex.value = index - 1;
-        handleSaveData('删除成功', schemeListTemp.value);
+        if (index < schemeListTemp.value.length) {
+          const data = [...schemeListTemp.value];
+          data.splice(index, 1);
+          schemeListTemp.value = data;
+          handleSaveData('删除成功', schemeListTemp.value);
+        }
       };
       // 接收重置事件
       const onResetScheme = () => {

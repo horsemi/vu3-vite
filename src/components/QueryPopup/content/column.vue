@@ -32,7 +32,7 @@
         :show-row-lines="true"
       >
         <DxFilterRow :visible="true" />
-        <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" drop-feedback-mode="push" />
+        <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" />
         <DxPaging :enabled="false" />
         <DxColumn caption="序号" cell-template="index" alignment="center" />
         <DxColumn data-field="caption" caption="显示字段" alignment="center" />
@@ -42,7 +42,7 @@
           <span
             v-if="!data.data.mustKey"
             :class="`${prefixCls}__table__del`"
-            @click="onDel(data.rowIndex)"
+            @click="onDel(data)"
             >删除</span
           >
         </template>
@@ -58,7 +58,6 @@
   import { defineComponent, PropType, ref, watch } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { handleArrayTransposition } from '/@/utils';
 
   import {
     DxDataGrid,
@@ -103,6 +102,10 @@
       const { prefixCls } = useDesign('content-column');
       // 显示字段数据
       const dataSource = ref<ISchemeColumnsItem[]>([]);
+
+      // 显示字段数据副本，用于记录点击箭头前的数据
+      let dataSourceTemp: ISchemeColumnsItem[] = [];
+
       // 全部字段数据
       const fieldList = ref<IFieldItem[]>([]);
 
@@ -119,44 +122,51 @@
       const onRowClick = (e) => {
         if (e.data.mustKey) return;
         e.data.checked = !e.data.checked;
+        if (e.data.checked) {
+          const item = fieldList.value.filter((item) => item.key === e.data.key)[0];
+          dataSourceTemp.push({
+            key: item.key,
+            caption: item.caption,
+            expand: item.expand,
+            relationKey: item.relationKey,
+            mustKey: item.mustKey,
+          });
+        } else {
+          const index = dataSourceTemp.findIndex((item) => item.key === e.data.key);
+          dataSourceTemp.splice(index, 1);
+        }
       };
 
       // 点击中间箭头触发
       const onAddCol = () => {
         // 更新显示字段数据
-        dataSource.value = fieldList.value
-          .filter((item) => item.checked)
-          .map((item) => {
-            return {
-              key: item.key,
-              caption: item.caption,
-              expand: item.expand,
-              relationKey: item.relationKey,
-              mustKey: item.mustKey,
-            };
-          });
+        dataSource.value = [...dataSourceTemp];
         onChangeColumn(dataSource.value);
       };
 
       // 点击删除触发
-      const onDel = (index: number) => {
-        if (!dataSource.value[index]) return;
+      const onDel = (data) => {
+        const index = dataSource.value.indexOf(data.data);
         const orderIndex = props.orderBy.findIndex(
-          (item) => item.key === dataSource.value[index].key
+          (item) => item.key === data.data.key
         );
         if (orderIndex >= 0) {
           const orderBy = [...props.orderBy];
           orderBy.splice(orderIndex, 1);
           onChangeSort(orderBy);
         }
-        dataSource.value.splice(index, 1);
-        onChangeColumn(dataSource.value);
+        if (index >= 0) {
+          dataSource.value.splice(index, 1);
+          onChangeColumn(dataSource.value);
+        }
       };
 
       // 拖动位置触发
       const onReorder = (e) => {
-        // 调用数组换位函数
-        dataSource.value = handleArrayTransposition(dataSource.value, e.fromIndex, e.toIndex);
+        const newTasks = [...dataSource.value];
+        newTasks.splice(e.fromIndex, 1);
+        newTasks.splice(e.toIndex, 0, e.itemData);
+        dataSource.value = newTasks;
         onChangeColumn(dataSource.value);
       };
 
@@ -165,29 +175,16 @@
         const fieldListTemp: IFieldItem[] = [];
         const data: ISchemeColumnsItem[] = [];
         const sortData: ISchemeColumnsItem[] = [];
+
         allColumns.forEach((item) => {
           if (item.foundationList && item.foundationList.length > 0) {
-            const inAllCol = columns.some((col) => item.key === col.key);
-            if (inAllCol) {
-              data.push({
-                key: item.key,
-                caption: item.caption,
-                mustKey: item.mustKey,
-              });
-            }
-            fieldListTemp.push({
-              key: item.key,
-              caption: item.caption,
-              checked: item.mustKey ? item.mustKey : inAllCol,
-              mustKey: item.mustKey,
-            });
             item.foundationList.forEach((field) => {
               const inAllCol = columns.some((col) => field.key === col.key);
               if (inAllCol) {
                 data.push({
                   ...field,
                   expand: item.expand,
-                  relationKey: item.key,
+                  relationKey: item.relationKey,
                   mustKey: item.mustKey,
                 });
               }
@@ -195,7 +192,7 @@
                 ...field,
                 expand: item.expand,
                 checked: item.mustKey ? item.mustKey : inAllCol,
-                relationKey: item.key,
+                relationKey: item.relationKey,
                 mustKey: item.mustKey,
               });
             });
@@ -223,6 +220,7 @@
         });
         fieldList.value = fieldListTemp;
         dataSource.value = sortData;
+        dataSourceTemp = [...sortData];
       };
 
       // 实时更新组件中的显示隐藏列数据

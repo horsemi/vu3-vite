@@ -11,18 +11,32 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'MaterialCode',
     caption: '物料编码',
+    foundationList: [
+      {
+        key: 'Material_Name',
+        caption: '物料',
+      },
+      {
+        key: 'Material_GroupName',
+        caption: '物料分组',
+      },
+    ],
+    datatypekeies: 'material',
   },
-  // {
-  //   key: '',
-  //   caption: '物料名称',
-  // },
   // {
   //   key: '',
   //   caption: '规格描述',
   // },
   {
     key: 'UnitCode',
-    caption: '单位',
+    caption: '单位编码',
+    foundationList: [
+      {
+        key: 'Unit_Name',
+        caption: '单位',
+      },
+    ],
+    datatypekeies: 'unit',
   },
   {
     key: 'Qty',
@@ -38,7 +52,18 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'WarehouseCode',
-    caption: '仓库',
+    caption: '仓库编码',
+    foundationList: [
+      {
+        key: 'DeliveryWarehouse_Name',
+        caption: '仓库名称',
+      },
+      {
+        key: 'DeliveryWarehouse_GroupName',
+        caption: '仓库分组',
+      },
+    ],
+    datatypekeies: 'stocks',
   },
   {
     key: 'PackageQuantity',

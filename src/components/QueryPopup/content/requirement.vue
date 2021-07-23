@@ -2,7 +2,7 @@
   <div :class="prefixCls">
     <div :class="`${prefixCls}__header`">
       <span style="width: 180px">字段</span>
-      <span style="width: 95px">比较</span>
+      <span style="width: 110px">比较</span>
       <span style="width: 180px">值</span>
       <span style="width: 130px">逻辑</span>
       <span style="width: 120px">操作</span>
@@ -17,6 +17,7 @@
             v-model:paramDataType="item.type"
             v-model:paramOperations="item.operatorList"
             v-model:paramDatatypekeies="item.datatypekeies"
+            v-model:paramRelationKey="item.relationKey"
             :param-list="allColumns"
           />
           <DxSelectBox
@@ -75,16 +76,6 @@
     emits: ['on-change-requirement'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('content-requirement');
-      // 上加和下加需要用到的空条件元素
-      const requirementItem: IRequirementItem = {
-        requirement: '',
-        operator: '',
-        operatorList: [],
-        value: undefined,
-        type: '',
-        datatypekeies: '',
-        logic: 'and',
-      };
       // 逻辑下拉框配置项
       const logicOptions: ILogicOptions[] = [
         {
@@ -108,14 +99,32 @@
       // 点击上加触发
       const onUpAdd = (index) => {
         const temp = cloneDeep(dataSource.value);
-        temp.splice(index, 0, requirementItem);
+        temp.splice(index, 0, {
+          requirement: '',
+          operator: '',
+          operatorList: [],
+          value: undefined,
+          type: '',
+          datatypekeies: '',
+          relationKey: '',
+          logic: 'and',
+        });
         dataSource.value = temp;
         onChangeRequirement(dataSource.value);
       };
       // 点击下加触发
       const onDownAdd = (index) => {
         const temp = cloneDeep(dataSource.value);
-        temp.splice(index + 1, 0, requirementItem);
+        temp.splice(index + 1, 0, {
+          requirement: '',
+          operator: '',
+          operatorList: [],
+          value: undefined,
+          type: '',
+          datatypekeies: '',
+          relationKey: '',
+          logic: 'and',
+        });
         dataSource.value = temp;
         onChangeRequirement(dataSource.value);
       };

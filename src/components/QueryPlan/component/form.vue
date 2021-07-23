@@ -15,6 +15,7 @@
         v-model:paramDataType="queryList[0].type"
         v-model:paramOperations="queryList[0].operatorList"
         v-model:paramDatatypekeies="queryList[0].datatypekeies"
+        v-model:paramRelationKey="queryList[0].relationKey"
         :param-list="columns"
       />
       <SvgIcon
@@ -34,13 +35,14 @@
             v-model:paramDataType="item.type"
             v-model:paramOperations="item.operatorList"
             v-model:paramDatatypekeies="item.datatypekeies"
+            v-model:paramRelationKey="item.relationKey"
             :param-list="columns"
           />
           <SvgIcon
             :class="`${prefixCls}__icon`"
             size="16"
             name="subtract"
-            @click="onDelRequirement(index + 1)"
+            @click.stop="onDelRequirement(index + 1)"
           ></SvgIcon>
         </div>
         <div :class="`${prefixCls}__box`">
@@ -104,6 +106,7 @@
           value: undefined,
           type: '',
           datatypekeies: '',
+          relationKey: '',
         },
       ]);
 
@@ -115,6 +118,7 @@
           value: '',
           type: '',
           datatypekeies: '',
+          relationKey: '',
         });
       };
 
@@ -137,6 +141,7 @@
             value: '',
             type: '',
             datatypekeies: '',
+            relationKey: '',
           });
         }
         ctx.emit('on-save-fast', temp);

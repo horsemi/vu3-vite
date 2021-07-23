@@ -32,7 +32,7 @@
         :show-row-lines="true"
       >
         <DxFilterRow :visible="true" />
-        <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" drop-feedback-mode="push" />
+        <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" />
         <DxPaging :enabled="false" />
         <DxColumn caption="序号" cell-template="index" alignment="center" />
         <DxColumn data-field="caption" caption="字段" alignment="center" />
@@ -57,7 +57,7 @@
         </template>
         <template #handle="{ data }">
           <div :class="`${prefixCls}__table__handle`">
-            <span @click="onDel(data.rowIndex)">删除</span>
+            <span @click="onDel(data)">删除</span>
           </div>
         </template>
       </DxDataGrid>
@@ -67,12 +67,11 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IFieldItem, IOrderByItem, ISortOptions } from './types';
+  import type { IFieldItem, IOrderByItem, ISchemeColumnsItem, ISortOptions } from './types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { handleArrayTransposition } from '/@/utils';
 
   import { DxCheckBox } from 'devextreme-vue/check-box';
   import {
@@ -102,7 +101,7 @@
         },
       },
       columns: {
-        type: Array as PropType<string[]>,
+        type: Array as PropType<ISchemeColumnsItem[]>,
         default: () => {
           return [];
         },
@@ -131,8 +130,12 @@
 
       // 左侧选择框字段数据
       const fieldList = ref<IFieldItem[]>([]);
+
       // 右侧排序列表数据
       const dataSource = ref<IOrderByItem[]>([]);
+
+      // 右侧排序列表数据副本，用于记录点击箭头前的数据
+      let dataSourceTemp: IOrderByItem[] = [];
 
       // 外派排序更新事件
       const onChangeSort = (data: IOrderByItem[]) => {
@@ -140,21 +143,36 @@
       };
 
       // 外派显示隐藏列更新事件
-      const onChangeColumn = (data: string[]) => {
+      const onChangeColumn = (data: ISchemeColumnsItem[]) => {
         ctx.emit('on-change-column', data);
       };
 
       // 点击全部字段行
       const onRowClick = (e) => {
         e.data.checked = !e.data.checked;
+        if (e.data.checked) {
+          const item = fieldList.value.filter((item) => item.key === e.data.key)[0];
+          dataSourceTemp.push({
+            key: item.key,
+            caption: item.caption,
+            desc: false,
+          });
+        } else {
+          const index = dataSourceTemp.findIndex((item) => item.key === e.data.key);
+          dataSourceTemp.splice(index, 1);
+        }
       };
 
       // 处理字段有排序但是没有显示的情况
       const handleFieldShow = (data: IOrderByItem[]) => {
         const columns = [...props.columns];
         data.forEach((sort) => {
-          if (columns.indexOf(sort.key) === -1) {
-            columns.push(sort.key);
+          const index = columns.findIndex((item) => item.key === sort.key);
+          if (index === -1) {
+            columns.push({
+              key: sort.key,
+              caption: sort.caption,
+            });
           }
         });
         onChangeColumn(columns);
@@ -163,31 +181,27 @@
       // 点击中间箭头触发
       const onAddCol = () => {
         // 更新排序列表数据
-        dataSource.value = fieldList.value
-          .filter((item) => item.checked)
-          .map((item) => {
-            return {
-              key: item.key,
-              caption: item.caption,
-              desc: false,
-            };
-          });
+        dataSource.value = [...dataSourceTemp];
         onChangeSort(dataSource.value);
         handleFieldShow(dataSource.value);
       };
 
       // 拖动位置触发
       const onReorder = (e) => {
-        // 调用数组换位函数
-        dataSource.value = handleArrayTransposition(dataSource.value, e.fromIndex, e.toIndex);
+        const newTasks = [...dataSource.value];
+        newTasks.splice(e.fromIndex, 1);
+        newTasks.splice(e.toIndex, 0, e.itemData);
+        dataSource.value = newTasks;
         onChangeSort(dataSource.value);
       };
 
       // 点击删除触发
-      const onDel = (index: number) => {
-        if (!dataSource.value[index]) return;
-        dataSource.value.splice(index, 1);
-        onChangeSort(dataSource.value);
+      const onDel = (data) => {
+        const index = dataSource.value.indexOf(data.data);
+        if (index >= 0) {
+          dataSource.value.splice(index, 1);
+          onChangeSort(dataSource.value);
+        }
       };
 
       // 处理组件数据
@@ -195,7 +209,7 @@
         const fields: IFieldItem[] = [];
         const sorts: IOrderByItem[] = [];
         allColumns.forEach((item) => {
-          if (item.allowSort !== false) {
+          if (item.allowSort !== false && !item.relationKey) {
             fields.push({
               key: item.key,
               caption: item.caption,
@@ -203,6 +217,7 @@
             });
           }
         });
+
         orderBy.forEach((item) => {
           fields.forEach((field) => {
             if (field.key === item.key) {
@@ -224,6 +239,7 @@
         }
         fieldList.value = fields;
         dataSource.value = sorts;
+        dataSourceTemp = [...sorts];
       };
 
       // 监听全部列和排序数据的更新，处理组件数据（全部列指的是前端model中获取到的列）

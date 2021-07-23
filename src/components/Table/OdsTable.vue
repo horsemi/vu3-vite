@@ -17,10 +17,11 @@
         <DxColumn
           v-if="!item.hide"
           css-class="header-bold"
-          :data-field="getKey(item.expand, item.relationKey, item.key)"
+          :data-field="item.key"
+          :allow-sorting="getSorting(item.allowSort, item.expand, item.relationKey)"
           :caption="item.caption"
           :data-type="item.type"
-          :cell-template="getTemplate(item.expand, item.relationKey, item.cellTemplate)"
+          :cell-template="getTemplate(item.cellTemplate, item.expand, item.relationKey)"
           :alignment="item.alignment ? item.alignment : 'center'"
         >
           <DxLookup
@@ -59,16 +60,7 @@
         >
       </template>
       <template #foundation="{ data: rowInfo }">
-        <div
-          v-if="
-            tableColumns[rowInfo.columnIndex - 1] && tableColumns[rowInfo.columnIndex - 1].expand
-          "
-          >{{
-            rowInfo.data[tableColumns[rowInfo.columnIndex - 1].expand][
-              tableColumns[rowInfo.columnIndex - 1].key
-            ]
-          }}</div
-        >
+        <div>{{ getFoundationData(rowInfo) }}</div>
       </template>
     </DxDataGrid>
     <div
@@ -84,11 +76,11 @@
   import type { IColumnItem, IKeyType } from '/@/model/types';
   import type { ISchemeItem } from '../QueryPopup/content/types';
 
-  import { defineComponent, onBeforeUnmount, ref, PropType, watch } from 'vue';
+  import { defineComponent, onBeforeUnmount, ref, PropType, watch, nextTick } from 'vue';
   import { isEmpty } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defaultTableOptions, getCompleteColumns, getDataSource } from './common';
+  import { defaultTableOptions, getCompleteColumns, getTableDataSource } from './common';
   import { useAppStore } from '/@/store/modules/app';
 
   import DxDataGrid, {
@@ -179,14 +171,22 @@
           props.tableKey.length > 0 &&
           props.tableKeyType.length > 0
         ) {
-          getDataSource(
+          const instance = dataGrid.value.instance;
+          if (instance) {
+            // 清空排序，处理相同字段desc失效
+            instance.clearSorting();
+            // 回到第一页
+            instance.pageIndex(0);
+          }
+          tableData.value = getTableDataSource(
             props.tableOptions,
             scheme,
             props.allColumns,
             props.tableKey,
             props.tableKeyType
-          ).then((res) => {
-            tableData.value = res;
+          );
+          tableColumns.value = [];
+          nextTick(() => {
             tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
           });
         }
@@ -200,15 +200,17 @@
         }
       };
 
-      const getKey = (expand, relationKey, key) => {
+      const getSorting = (allowSort, expand, relationKey) => {
         if (expand && relationKey) {
-          return expand + key;
+          return false;
+        } else if (allowSort !== undefined) {
+          return allowSort;
         } else {
-          return key;
+          return true;
         }
       };
 
-      const getTemplate = (expand, relationKey, template) => {
+      const getTemplate = (template, expand, relationKey) => {
         if (expand && relationKey) {
           return 'foundation';
         } else if (template) {
@@ -218,9 +220,23 @@
         }
       };
 
+      const getFoundationData = (rowInfo) => {
+        // 获取基础数据列的key，并以_分割
+        const keyArr = rowInfo.column.name.split('_');
+        // 获取关联的实体名称
+        const expand = keyArr[0];
+        // 获取实体中指定的属性名称
+        const expandKey = keyArr[1];
+        if (rowInfo.data[expand]) {
+          return rowInfo.data[expand][expandKey];
+        } else {
+          return '';
+        }
+      };
+
       onBeforeUnmount(() => {
-        if (!isEmpty(props.dataSource)) {
-          props.dataSource.dispose();
+        if (!isEmpty(tableData.value)) {
+          tableData.value.dispose();
         }
       });
 
@@ -269,7 +285,8 @@
         getGlobalEnumDataByCode,
         search,
         getSelectedRowsData,
-        getKey,
+        getFoundationData,
+        getSorting,
         getTemplate,
       };
     },
@@ -308,6 +325,10 @@
 
     // 分页器样式
     .dx-datagrid-pager {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-width: 800px;
       padding-top: 20px;
       padding-right: 150px;
       padding-bottom: 20px;

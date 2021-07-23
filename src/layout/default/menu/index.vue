@@ -6,7 +6,7 @@
         :key="item.name"
         :tabindex="-1"
         :class="[`${prefixCls}-item__container`, isActive(item)]"
-        @click.stop="handleMenuClick(item, index)"
+        @click="handleMenuClick(item, index)"
       >
         <div :class="`${prefixCls}-item-box`">
           <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
@@ -183,7 +183,7 @@
     &-popup__container {
       position: fixed;
       top: 50px;
-      z-index: @page-popup-z-index;
+      z-index: @page-menu-z-index;
       width: 500px;
       padding: 10px 15px;
       color: #fff;

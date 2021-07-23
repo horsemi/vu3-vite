@@ -13,16 +13,16 @@ export function checkStatus(status: number, msg: string): void {
     // Jump to the login page if not logged in, and carry the path of the current page
     // Return to the current page after successful login. This step needs to be operated on the login page.
     case 401:
-      error('用户没有权限（令牌、用户名、密码错误）!');
+      error('您的账号没有权限访问该系统');
       useAppStore().resumeAllState();
       router.push(PageEnum.BASE_LOGIN);
       break;
     case 403:
-      error('用户得到授权，但是访问是被禁止的!');
+      error('您的账号没有权限访问该页面');
       break;
     // 404请求不存在
     case 404:
-      error('网络请求错误,未找到该资源!');
+      error('您所访问的资源不存在');
       break;
     case 405:
       error('网络请求错误,请求方法未允许!');
@@ -31,7 +31,7 @@ export function checkStatus(status: number, msg: string): void {
       error('网络请求超时!');
       break;
     case 500:
-      error('服务器错误,请联系管理员!');
+      error('服务器错误,请联系系统管理员!');
       break;
     case 501:
       error('网络未实现!');

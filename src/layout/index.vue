@@ -96,12 +96,13 @@
                   requirement: [
                     {
                       requirement: '',
-                      operator: '=',
+                      operator: '',
                       operatorList: [],
                       value: undefined,
                       type: '',
                       datatypekeies: '',
-                      logic: '',
+                      relationKey: '',
+                      logic: 'and',
                     },
                   ],
                   orderBy: [],
@@ -119,7 +120,7 @@
                       caption: '单据状态',
                     },
                     {
-                      key: 'Name',
+                      key: 'DeliveryWarehouse_Name',
                       caption: '仓库',
                       expand: 'DeliveryWarehouse',
                       relationKey: 'DeliveryWarehouseCode',
@@ -129,12 +130,16 @@
                       caption: '买家昵称',
                     },
                     {
-                      key: 'DeliveryPointCode',
-                      caption: '提货点编码',
+                      key: 'DeliveryPoint_Name',
+                      caption: '提货点',
+                      expand: 'DeliveryPoint',
+                      relationKey: 'DeliveryPointCode',
                     },
                     {
-                      key: 'ThreeServicePointCode',
-                      caption: '三包点编码',
+                      key: 'ThreeServicePoint_Name',
+                      caption: '三包点',
+                      expand: 'ThreeServicePoint',
+                      relationKey: 'ThreeServicePointCode',
                     },
                     {
                       key: 'TotalVolume',
@@ -154,11 +159,12 @@
               fast: [
                 {
                   requirement: '',
-                  operator: '=',
+                  operator: '',
                   operatorList: [],
                   value: undefined,
                   type: '',
                   datatypekeies: '',
+                  relationKey: '',
                 },
               ],
               checkedIndex: 0,
@@ -171,12 +177,13 @@
                   requirement: [
                     {
                       requirement: '',
-                      operator: '=',
+                      operator: '',
                       operatorList: [],
                       value: undefined,
                       type: '',
                       datatypekeies: '',
-                      logic: '',
+                      relationKey: '',
+                      logic: 'and',
                     },
                   ],
                   orderBy: [],
@@ -194,7 +201,7 @@
                       caption: '单据状态',
                     },
                     {
-                      key: 'Name',
+                      key: 'DeliveryWarehouse_Name',
                       caption: '仓库',
                       expand: 'DeliveryWarehouse',
                       relationKey: 'DeliveryWarehouseCode',
@@ -204,12 +211,16 @@
                       caption: '买家昵称',
                     },
                     {
-                      key: 'DeliveryPointCode',
-                      caption: '提货点编码',
+                      key: 'DeliveryPoint_Name',
+                      caption: '提货点',
+                      expand: 'DeliveryPoint',
+                      relationKey: 'DeliveryPointCode',
                     },
                     {
-                      key: 'ThreeServicePointCode',
-                      caption: '三包点编码',
+                      key: 'ThreeServicePoint_Name',
+                      caption: '三包点',
+                      expand: 'ThreeServicePoint',
+                      relationKey: 'ThreeServicePointCode',
                     },
                     {
                       key: 'TotalVolume',
@@ -229,11 +240,12 @@
               fast: [
                 {
                   requirement: '',
-                  operator: '=',
+                  operator: '',
                   operatorList: [],
                   value: undefined,
                   type: '',
                   datatypekeies: '',
+                  relationKey: '',
                 },
               ],
               checkedIndex: 0,

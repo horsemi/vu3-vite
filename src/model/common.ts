@@ -11,10 +11,6 @@ const handleType = (val: string): string => {
   return val;
 };
 
-export const baseDataPre = 'foundation_';
-
-export const enumDataPre = 'enum_';
-
 export const getColumnList = async (
   code: string,
   customColumns: IColumnItem[]
@@ -27,7 +23,7 @@ export const getColumnList = async (
     const columnList: IColumnItem[] = [];
     fieldTypes.forEach((fieldType: IFieldType) => {
       customColumns.forEach((column) => {
-        if (fieldType.key === column.key) {
+        if (fieldType.key === column.key || (fieldType.expand === column.key && column.relationKey)) {
           columnList.push({
             type: handleType(fieldType.type),
             expand: fieldType.expand,

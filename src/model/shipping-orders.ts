@@ -1,6 +1,6 @@
 import type { IColumnItem } from './types';
 
-import { baseDataPre, enumDataPre, getColumnList } from './common';
+import { getColumnList } from './common';
 
 export const customColumns: IColumnItem[] = [
   {
@@ -17,40 +17,67 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'BillDate',
     caption: '单据日期',
+    type: 'date',
   },
   {
     key: 'DocumentStatus',
     caption: '单据状态',
-    datatypekeies: `${enumDataPre}documentstatuses`,
+  },
+  {
+    key: 'DeliveryWarehouse',
+    caption: '仓库',
+    relationKey: 'DeliveryWarehouseCode',
+    foundationList: [
+      {
+        key: 'DeliveryWarehouse_Name',
+        caption: '仓库'
+      },
+      {
+        key: 'DeliveryWarehouse_GroupName',
+        caption: '仓库分组'
+      }
+    ],
+    datatypekeies: 'stocks',
   },
   {
     key: 'DeliveryWarehouseCode',
     caption: '仓库编码',
-    foundationList: [
-      {
-        key: 'Name',
-        caption: '仓库'
-      },
-      {
-        key: 'GroupName',
-        caption: '仓库分组'
-      }
-    ],
-    datatypekeies: `${baseDataPre}stocks`,
   },
   {
     key: 'Nickname',
     caption: '买家昵称',
   },
   {
+    key: 'DeliveryPoint',
+    caption: '提货点',
+    relationKey: 'DeliveryPointCode',
+    foundationList: [
+      {
+        key: 'DeliveryPoint_Name',
+        caption: '提货点'
+      },
+    ],
+    datatypekeies: 'delivery-points',
+  },
+  {
     key: 'DeliveryPointCode',
     caption: '提货点编码',
-    datatypekeies: `${baseDataPre}delivery-points`,
+  },
+  {
+    key: 'ThreeServicePoint',
+    caption: '三包点',
+    relationKey: 'ThreeServicePointCode',
+    foundationList: [
+      {
+        key: 'ThreeServicePoint_Name',
+        caption: '三包点'
+      },
+    ],
+    datatypekeies: 'three-service-points',
   },
   {
     key: 'ThreeServicePointCode',
     caption: '三包点编码',
-    datatypekeies: `${baseDataPre}three-service-points`,
   },
   {
     key: 'TotalVolume',
@@ -59,17 +86,38 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'MarkStatus',
     caption: '标记状态',
-    datatypekeies: `${enumDataPre}markstatuses`,
+  },
+  {
+    key: 'BillType',
+    caption: '单据类型',
+    relationKey: 'BillTypeCode',
+    foundationList: [
+      {
+        key: 'BillType_Name',
+        caption: '单据类型'
+      },
+    ],
+    datatypekeies: 'bill-types',
   },
   {
     key: 'BillTypeCode',
-    caption: '单据类型',
-    datatypekeies: `${baseDataPre}bill-types`,
+    caption: '单据类型编码',
+  },
+  {
+    key: 'ServiceContent',
+    caption: '服务项目',
+    relationKey: 'ServiceItemCode',
+    foundationList: [
+      {
+        key: 'ServiceContent_Name',
+        caption: '服务项目'
+      },
+    ],
+    datatypekeies: 'service-contents',
   },
   {
     key: 'ServiceItemCode',
-    caption: '服务项目',
-    datatypekeies: `${baseDataPre}service-contents`,
+    caption: '服务项目编码',
   },
   {
     key: 'TotalPackage',
@@ -94,7 +142,6 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'OperationStatus',
     caption: '业务状态',
-    datatypekeies: `${enumDataPre}operationstatuses`,
   },
   {
     key: 'DetailRowsCount',
@@ -125,25 +172,72 @@ export const customColumns: IColumnItem[] = [
     caption: '回收备注',
   },
   {
-    key: 'ProvinceCode',
+    key: 'Province',
     caption: '省',
+    relationKey: 'ProvinceCode',
+    foundationList: [
+      {
+        key: 'Province_Name',
+        caption: '省'
+      },
+    ],
+    datatypekeies: 'provinces',
+  },
+  {
+    key: 'ProvinceCode',
+    caption: '省编码',
+  },
+  {
+    key: 'City',
+    caption: '市',
+    relationKey: 'CityCode',
+    foundationList: [
+      {
+        key: 'City_Name',
+        caption: '市'
+      },
+    ],
+    datatypekeies: 'cities',
   },
   {
     key: 'CityCode',
-    caption: '市',
+    caption: '市编码',
+  },
+  {
+    key: 'District',
+    caption: '区',
+    relationKey: 'DistrictCode',
+    foundationList: [
+      {
+        key: 'District_Name',
+        caption: '区'
+      },
+    ],
+    datatypekeies: 'districts',
   },
   {
     key: 'DistrictCode',
-    caption: '区',
+    caption: '区编码',
   },
   {
     key: 'StreetCode',
     caption: '街道',
   },
   {
-    key: 'AgencyCode',
+    key: 'Agency',
     caption: '经销商',
-    datatypekeies: `${baseDataPre}customers`,
+    relationKey: 'AgencyCode',
+    foundationList: [
+      {
+        key: 'Agency_Name',
+        caption: '经销商'
+      },
+    ],
+    datatypekeies: 'customers',
+  },
+  {
+    key: 'AgencyCode',
+    caption: '经销商编码',
   },
   {
     key: 'PromisedDeliveryDate',
@@ -166,29 +260,84 @@ export const customColumns: IColumnItem[] = [
     caption: '展厅提货地址',
   },
   {
-    key: 'GatheringPointCode',
+    key: 'GatheringPoint',
     caption: '集货点',
-    datatypekeies: `${baseDataPre}gathering-points`,
+    relationKey: 'GatheringPointCode',
+    foundationList: [
+      {
+        key: 'GatheringPoint_Name',
+        caption: '集货点'
+      },
+    ],
+    datatypekeies: 'gathering-points',
+  },
+  {
+    key: 'GatheringPointCode',
+    caption: '集货点编码',
+  },
+  {
+    key: 'Contractor',
+    caption: '中转承运商',
+    relationKey: 'ContractorCode',
+    foundationList: [
+      {
+        key: 'Contractor_Name',
+        caption: '中转承运商'
+      },
+    ],
+    datatypekeies: 'suppliers',
   },
   {
     key: 'ContractorCode',
-    caption: '中转承运商',
-    datatypekeies: `${baseDataPre}suppliers`,
+    caption: '中转承运商编码',
+  },
+  {
+    key: 'ThreeServiceCostType',
+    caption: '三包费用类型',
+    relationKey: 'ThreeServiceFeeTypeCode',
+    foundationList: [
+      {
+        key: 'ThreeServiceCostType_Name',
+        caption: '三包费用类型'
+      },
+    ],
+    datatypekeies: 'three-service-cost-types',
   },
   {
     key: 'ThreeServiceFeeTypeCode',
-    caption: '三包费用类型',
-    datatypekeies: `${baseDataPre}three-service-cost-types`,
+    caption: '三包费用类型编码',
+  },
+  {
+    key: 'LineArea',
+    caption: '线路区域',
+    relationKey: 'LineAreaCode',
+    foundationList: [
+      {
+        key: 'LineArea_Name',
+        caption: '线路区域'
+      },
+    ],
+    datatypekeies: 'line-areas',
   },
   {
     key: 'LineAreaCode',
-    caption: '线路区域',
-    datatypekeies: `${baseDataPre}line-areas`,
+    caption: '线路区域编码',
+  },
+  {
+    key: 'ThreeServiceSupplier',
+    caption: '三包服务商',
+    relationKey: 'ThreeServiceSupplier',
+    foundationList: [
+      {
+        key: 'ThreeServiceSupplier_Name',
+        caption: '三包服务商'
+      },
+    ],
+    datatypekeies: 'suppliers',
   },
   {
     key: 'ThreeServiceSupplierCode',
-    caption: '三包服务商',
-    datatypekeies: `${baseDataPre}suppliers`,
+    caption: '三包服务商编码',
   },
   {
     key: 'FreightTypeCode',
@@ -215,9 +364,20 @@ export const customColumns: IColumnItem[] = [
     caption: '创建人',
   },
   {
-    key: 'CustomerTypeCode',
+    key: 'CustomerType',
     caption: '客户类型',
-    datatypekeies: `${baseDataPre}customer-types`,
+    relationKey: 'CustomerTypeCode',
+    foundationList: [
+      {
+        key: 'CustomerType_Name',
+        caption: '客户类型'
+      },
+    ],
+    datatypekeies: 'customer-types',
+  },
+  {
+    key: 'CustomerTypeCode',
+    caption: '客户类型编码',
   },
   {
     key: 'AppliedTime',
@@ -228,9 +388,20 @@ export const customColumns: IColumnItem[] = [
     caption: '审核人',
   },
   {
-    key: 'CustomerCode',
+    key: 'Customer',
     caption: '客户',
-    datatypekeies: `${baseDataPre}customers`,
+    relationKey: 'CustomerCode',
+    foundationList: [
+      {
+        key: 'Customer_Name',
+        caption: '客户'
+      },
+    ],
+    datatypekeies: 'customers',
+  },
+  {
+    key: 'CustomerCode',
+    caption: '客户编码',
   },
   {
     key: 'OutSourceBillCode',

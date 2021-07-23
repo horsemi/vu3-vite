@@ -1,4 +1,4 @@
-import type { ITableOptions, ISortItem } from './types';
+import type { ITableOptions } from './types';
 import type {
   IOrderByItem,
   IRequirementItem,
@@ -6,13 +6,11 @@ import type {
   ISchemeItem,
 } from '../QueryPopup/content/types';
 import type { IColumnItem, IKeyType } from '/@/model/types';
+import type { ISortItem } from '/@/api/ods/types';
 
-import ODataStore from 'devextreme/data/odata/store';
-import DataSource from 'devextreme/data/data_source';
 import { isNil } from 'lodash-es';
 
-import { useUserStoreWidthOut } from '/@/store/modules/user';
-import { tokenHeaderKey } from '/@/utils/http/axios/const';
+import { getDataSource } from '/@/api/ods/common';
 
 // 基础表格默认配置
 export const defaultTableOptions: ITableOptions = {
@@ -20,12 +18,6 @@ export const defaultTableOptions: ITableOptions = {
     paginate: true,
     oDataOptions: {
       url: '',
-      beforeSend: (e) => {
-        e.headers = {
-          [tokenHeaderKey]: useUserStoreWidthOut().getToken,
-        };
-      },
-      version: 4,
     },
   },
   useScrolling: false,
@@ -47,7 +39,7 @@ export const defaultTableOptions: ITableOptions = {
 };
 
 // 过滤方案表格获取DataSource的通用方法
-export const getDataSource = async (
+export const getTableDataSource = (
   options: ITableOptions,
   scheme: ISchemeItem,
   allColumns: IColumnItem[],
@@ -58,25 +50,27 @@ export const getDataSource = async (
 
   const filter = getFilter(scheme.requirement);
   const sort = getSort(scheme.orderBy, options.dataSourceOptions.sort);
-  const data = new DataSource({
-    sort: options.dataSourceOptions.sort ? options.dataSourceOptions.sort.concat(sort) : sort,
-    filter: filter.length > 0 ? filter : '',
-    paginate: options.dataSourceOptions.paginate,
-    pageSize: options.page?.size,
-    store: new ODataStore({
+  const data = getDataSource(
+    {
+      sort: options.dataSourceOptions.sort ? options.dataSourceOptions.sort.concat(sort) : sort,
+      filter: filter.length > 0 ? filter : '',
+      paginate: options.dataSourceOptions.paginate,
+      pageSize: options.page?.size,
+      select: select,
+      expand: expand,
+    },
+    {
       key,
       keyType: handleKeyType(keyType),
       ...options.dataSourceOptions.oDataOptions,
-    }),
-    select: select,
-    expand: expand,
-  });
+    }
+  );
   return data;
 };
 
 // 处理KeyType的数据格式
 const handleKeyType = (keyType: IKeyType[]) => {
-  const type = {};
+  const type: { [key: string]: string } = {};
   if (keyType.length > 0) {
     keyType.forEach((item) => {
       type[item.key] = item.type;
@@ -90,14 +84,22 @@ export const getFilter = (requirements: IRequirementItem[]) => {
   const filter: any[] = [];
   requirements.forEach((item) => {
     if (item.requirement && !isNil(item.value)) {
-      filter.push([item.requirement, item.operator, item.value]);
+
+      if (item.relationKey) {
+        filter.push([item.relationKey, item.operator, item.value]);
+      } else {
+        filter.push([item.requirement, item.operator, item.value]);
+      }
+      
       if (item.logic) {
         filter.push(item.logic);
       } else {
         filter.push('and');
       }
+
     }
   });
+
   return filter.length > 0 ? filter : '';
 };
 
@@ -172,12 +174,13 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
       if (item.key === allCol[i].key) {
         // 判断是否为基础数据类型
         columnList.push({
-          ...item,
           ...allCol[i],
+          ...item,
         });
         break;
       }
     }
   });
+
   return columnList;
 };

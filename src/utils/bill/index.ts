@@ -19,10 +19,9 @@ const getEditorType = (type) => {
 
 const getFormItem = (info, arr, columnList) => {
   columnList.some((col) => {
-    if (info.dataField === col.key) {
+    if (info.key === col.key) {
       arr.push({
         ...info,
-        label: col.caption,
         expand: col.expand,
         editorType: getEditorType(col.type),
         type: col.type,

@@ -44,9 +44,7 @@
   import { cloneDeep } from 'lodash-es';
 
   import { getColumns } from '/@/model/shipping-advices';
-  import {
-    defaultTableOptions,
-  } from '/@/components/Table/common';
+  import { defaultTableOptions } from '/@/components/Table/common';
   import { Persistent } from '/@/utils/cache/persistent';
   import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
