@@ -64,7 +64,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, reactive , ref } from 'vue';
+  import { defineComponent, reactive, ref } from 'vue';
 
   import DxButton from 'devextreme-vue/button';
   import { DxRequiredRule } from 'devextreme-vue/validator';
@@ -75,7 +75,6 @@
   import SvgIcon from '/@/components/Icon/SvgIcon.vue';
   import PasswordModal from '/@/components/PasswordModal/index.vue';
   import { PasswordStateEnum } from '/@/enums/appEnum';
-  
 
   export default defineComponent({
     name: 'Login',
@@ -111,7 +110,7 @@
           result.warningType === PasswordStateEnum.EXPIRED ||
           result.warningType === PasswordStateEnum.WEAKPASSWORD
         ) {
-          this.loginData.password='';
+          this.loginData.password = '';
           this.popupVisable = true;
           this.passwordPattern = await this.userStore.getPasswordPolicy();
         } else {

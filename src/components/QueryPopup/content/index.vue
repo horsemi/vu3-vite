@@ -44,7 +44,13 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IMultiViewItem, IOrderByItem, IRequirementItem, ISchemeColumnsItem, ISchemeItem } from './types';
+  import type {
+    IMultiViewItem,
+    IOrderByItem,
+    IRequirementItem,
+    ISchemeColumnsItem,
+    ISchemeItem,
+  } from './types';
 
   import { computed, defineComponent, PropType, ref } from 'vue';
 

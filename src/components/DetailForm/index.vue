@@ -40,7 +40,7 @@
           @update:value="onChangeData($event, data.dataField)"
         />
         <FoundationText
-         v-else
+          v-else
           width="100%"
           :value="formData[data.dataField]"
           :foundation-data="formData[data.editorOptions.expand]"

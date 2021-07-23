@@ -36,7 +36,12 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IOrderByItem, IRequirementItem, ISchemeColumnsItem, ISchemeItem } from '../QueryPopup/content/types';
+  import type {
+    IOrderByItem,
+    IRequirementItem,
+    ISchemeColumnsItem,
+    ISchemeItem,
+  } from '../QueryPopup/content/types';
   import type { IQueryItem, ISchemeData } from './types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';

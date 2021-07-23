@@ -81,8 +81,8 @@
 </template>
 
 <script lang="ts">
-  import type { ISumbitPassword , IUpdatePassword  } from '/@/api/user';
-  import { defineComponent, reactive , ref  } from 'vue';
+  import type { ISumbitPassword, IUpdatePassword } from '/@/api/user';
+  import { defineComponent, reactive, ref } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
@@ -91,7 +91,6 @@
   import { DxRequiredRule, DxCompareRule, DxPatternRule } from 'devextreme-vue/validator';
   import { DxForm, DxItem, DxLabel } from 'devextreme-vue/form';
   import { successMessage } from '/@/hooks/web/useMessage';
-
 
   export default defineComponent({
     name: 'PasswordModal',
@@ -148,7 +147,7 @@
       const passwordComparison = () => changePasswordData.newPassword;
       const onChangePassword = async () => {
         const params: ISumbitPassword = {
-          userName: prop.loginUserName || userStore.getUserInfo.userName ,
+          userName: prop.loginUserName || userStore.getUserInfo.userName,
           oldPassword: changePasswordData.oldPassword,
           newPassword: changePasswordData.newPassword,
           newPasswordRe: changePasswordData.newPasswordRe,
@@ -162,7 +161,7 @@
         });
       };
       const onClose = () => {
-        context.emit('closePopup', false );
+        context.emit('closePopup', false);
       };
       return {
         prefixCls,
@@ -170,7 +169,7 @@
         onChangePassword,
         passwordComparison,
         onClose,
-        passwordForm
+        passwordForm,
       };
     },
   });

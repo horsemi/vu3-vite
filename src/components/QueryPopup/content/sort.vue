@@ -152,14 +152,14 @@
       const onRowClick = (e) => {
         e.data.checked = !e.data.checked;
         if (e.data.checked) {
-          const item = fieldList.value.filter(item => item.key === e.data.key)[0];
+          const item = fieldList.value.filter((item) => item.key === e.data.key)[0];
           dataSourceTemp.push({
             key: item.key,
             caption: item.caption,
             desc: false,
           });
         } else {
-          const index = dataSourceTemp.findIndex(item => item.key === e.data.key);
+          const index = dataSourceTemp.findIndex((item) => item.key === e.data.key);
           dataSourceTemp.splice(index, 1);
         }
       };
@@ -168,7 +168,7 @@
       const handleFieldShow = (data: IOrderByItem[]) => {
         const columns = [...props.columns];
         data.forEach((sort) => {
-          const index = columns.findIndex(item => item.key === sort.key);
+          const index = columns.findIndex((item) => item.key === sort.key);
           if (index === -1) {
             columns.push({
               key: sort.key,
@@ -211,7 +211,10 @@
           if (item.allowSort !== false) {
             fields.push({
               key: item.key,
-              caption: item.foundationList && item.foundationList.length > 0 ? item.caption  + '编码' : item.caption,
+              caption:
+                item.foundationList && item.foundationList.length > 0
+                  ? item.caption + '编码'
+                  : item.caption,
               checked: false,
             });
           }
