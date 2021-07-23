@@ -1,6 +1,6 @@
 import type { IColumnItem } from './types';
 
-import { baseDataPre, getColumnList } from './common';
+import { getColumnList } from './common';
 
 export const customColumns: IColumnItem[] = [
   {
@@ -21,7 +21,7 @@ export const customColumns: IColumnItem[] = [
         caption: '物料分组',
       },
     ],
-    datatypekeies: `${baseDataPre}material`,
+    datatypekeies: 'material',
   },
   // {
   //   key: '',
@@ -36,7 +36,7 @@ export const customColumns: IColumnItem[] = [
         caption: '单位',
       },
     ],
-    datatypekeies: `${baseDataPre}unit`,
+    datatypekeies: 'unit',
   },
   {
     key: 'Qty',
@@ -63,7 +63,7 @@ export const customColumns: IColumnItem[] = [
         caption: '仓库分组',
       },
     ],
-    datatypekeies: `${baseDataPre}stocks`,
+    datatypekeies: 'stocks',
   },
   {
     key: 'PackageQuantity',
