@@ -178,6 +178,12 @@
           props.tableKey.length > 0 &&
           props.tableKeyType.length > 0
         ) {
+          // 清空排序，处理相同字段desc失效
+          const instance = dataGrid.value.instance;
+          if (instance) {
+            instance.clearSorting();
+          }
+
           tableData.value = getTableDataSource(
             props.tableOptions,
             scheme,
@@ -321,6 +327,10 @@
 
     // 分页器样式
     .dx-datagrid-pager {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      min-width: 800px;
       padding-top: 20px;
       padding-right: 150px;
       padding-bottom: 20px;

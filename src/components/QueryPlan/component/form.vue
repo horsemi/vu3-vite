@@ -40,7 +40,7 @@
             :class="`${prefixCls}__icon`"
             size="16"
             name="subtract"
-            @click="onDelRequirement(index + 1)"
+            @click.stop="onDelRequirement(index + 1)"
           ></SvgIcon>
         </div>
         <div :class="`${prefixCls}__box`">
@@ -53,7 +53,7 @@
             :width="100"
             type="default"
             text="保存设置"
-            @click="onSaveFast"
+            @click.stop="onSaveFast"
           />
         </div>
       </div>

@@ -1,6 +1,7 @@
 <template>
   <div :class="`${prefixCls}`">
     <DxSelectBox
+      ref="foundationSelect"
       :value="value"
       :data-source="options"
       :width="width"
@@ -10,6 +11,7 @@
       display-expr="name"
       value-expr="code"
       @update:value="$emit('update:value', $event)"
+      @itemClick="handleItemClick"
     >
     </DxSelectBox>
   </div>
@@ -18,10 +20,10 @@
 <script lang="ts">
   import type { FoundationMap, FoundationDataType } from '/@/api/app/foundation';
 
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, watch } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  
+
   import DxSelectBox from 'devextreme-vue/select-box';
   // import DataSource from 'devextreme/data/data_source';
 
@@ -45,18 +47,37 @@
       },
     },
     emits: ['update:value'],
-    setup(prop) {
+    setup(props) {
       const { prefixCls } = useDesign('foundation-select');
       const options = ref<FoundationDataType[]>([]);
-      FoundationApi.getFoundationByCode(
-        prop.foundationCode.slice(prop.foundationCode.indexOf('_') + 1) as FoundationMap,
-        { isall: true }
-      ).then((resolve) => {
-        options.value = resolve;
-      });
+
+      function getFoundationByCode(foundationCode: string) {
+        FoundationApi.getFoundationByCode(
+          foundationCode.slice(foundationCode.indexOf('_') + 1) as FoundationMap,
+          { isall: true }
+        ).then((resolve) => {
+          options.value = resolve;
+        });
+      }
+
+      function handleItemClick(e) {
+        e.event.stopPropagation();
+      }
+
+      watch(
+        () => props.foundationCode,
+        (val) => {
+          getFoundationByCode(val);
+        },
+        {
+          immediate: true,
+        }
+      );
+
       return {
         prefixCls,
         options,
+        handleItemClick,
       };
     },
   });

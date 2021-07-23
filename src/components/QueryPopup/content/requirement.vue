@@ -75,16 +75,6 @@
     emits: ['on-change-requirement'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('content-requirement');
-      // 上加和下加需要用到的空条件元素
-      const requirementItem: IRequirementItem = {
-        requirement: '',
-        operator: '',
-        operatorList: [],
-        value: undefined,
-        type: '',
-        datatypekeies: '',
-        logic: 'and',
-      };
       // 逻辑下拉框配置项
       const logicOptions: ILogicOptions[] = [
         {
@@ -108,14 +98,30 @@
       // 点击上加触发
       const onUpAdd = (index) => {
         const temp = cloneDeep(dataSource.value);
-        temp.splice(index, 0, requirementItem);
+        temp.splice(index, 0, {
+          requirement: '',
+          operator: '',
+          operatorList: [],
+          value: undefined,
+          type: '',
+          datatypekeies: '',
+          logic: 'and',
+        });
         dataSource.value = temp;
         onChangeRequirement(dataSource.value);
       };
       // 点击下加触发
       const onDownAdd = (index) => {
         const temp = cloneDeep(dataSource.value);
-        temp.splice(index + 1, 0, requirementItem);
+        temp.splice(index + 1, 0, {
+          requirement: '',
+          operator: '',
+          operatorList: [],
+          value: undefined,
+          type: '',
+          datatypekeies: '',
+          logic: 'and',
+        });
         dataSource.value = temp;
         onChangeRequirement(dataSource.value);
       };
