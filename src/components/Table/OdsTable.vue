@@ -60,14 +60,7 @@
         >
       </template>
       <template #foundation="{ data: rowInfo }">
-        <div
-          v-if="
-            tableColumns[rowInfo.columnIndex - 1] &&
-            tableColumns[rowInfo.columnIndex - 1].expand &&
-            rowInfo.data[tableColumns[rowInfo.columnIndex - 1].expand]
-          "
-          >{{ getFoundationData(rowInfo, tableColumns) }}</div
-        >
+        <div>{{ getFoundationData(rowInfo) }}</div>
       </template>
     </DxDataGrid>
     <div
@@ -233,7 +226,11 @@
         const expand = keyArr[0];
         // 获取实体中指定的属性名称
         const expandKey = keyArr[1];
-        return rowInfo.data[expand][expandKey];
+        if (rowInfo.data[expand]) {
+          return rowInfo.data[expand][expandKey];
+        } else {
+          return '';
+        }
       };
 
       onBeforeUnmount(() => {
