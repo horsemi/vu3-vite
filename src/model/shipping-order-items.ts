@@ -56,7 +56,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'DeliveryWarehouse_Name',
-        caption: '仓库',
+        caption: '仓库名称',
       },
       {
         key: 'DeliveryWarehouse_GroupName',

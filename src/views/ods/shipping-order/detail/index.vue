@@ -259,7 +259,7 @@
         });
         getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]).then((res) => {
           if (res) {
-            columns.value = res.columnList;
+            columns.value = res.columns;
             dataSource.value = res.data;
           }
         });
