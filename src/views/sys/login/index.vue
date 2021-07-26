@@ -70,11 +70,13 @@
   import { DxRequiredRule } from 'devextreme-vue/validator';
   import { DxForm, DxItem, DxLabel } from 'devextreme-vue/form';
 
+  import { TOKEN_KEY } from '/@/enums/cacheEnum';
   import { useUserStore } from '/@/store/modules/user';
   import { useDesign } from '/@/hooks/web/useDesign';
   import SvgIcon from '/@/components/Icon/SvgIcon.vue';
   import PasswordModal from '/@/components/PasswordModal/index.vue';
   import { PasswordStateEnum } from '/@/enums/appEnum';
+  import { removeCookie } from '/@/utils/cache/cookies';
 
   export default defineComponent({
     name: 'Login',
@@ -112,6 +114,7 @@
         ) {
           this.loginData.password = '';
           this.popupVisable = true;
+          removeCookie(TOKEN_KEY);
           this.passwordPattern = await this.userStore.getPasswordPolicy();
         } else {
           this.$router.replace('/');
