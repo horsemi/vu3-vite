@@ -311,7 +311,7 @@
       width: 100%;
       height: calc(100vh - 56px);
       padding-right: 20px;
-      padding-bottom: 20px;
+      padding-bottom: 10px;
       overflow: hidden;
       background-color: @background-color-primary;
     }

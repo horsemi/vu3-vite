@@ -58,7 +58,7 @@ export default defineConfig(
             changeOrigin: true,
           },
           '/passport': {
-            target: 'http://test.api.otwb.linshimuye.com:30024',
+            target: 'http://10.20.4.214:30024',
             changeOrigin: true,
           },
         },

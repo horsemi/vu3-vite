@@ -19,7 +19,7 @@
           @click="onChangeCheckedIndex(index)"
         >
           <input
-            v-if="checkedIndex === index && (edit || item === '')"
+            v-if="checkedIndex === index && edit"
             ref="textBox"
             :value="item"
             placeholder="请输入方案名称"
@@ -80,18 +80,32 @@
       };
       // 点击保存触发
       const onSubmitScheme = () => {
-        ctx.emit('on-submit-scheme');
+        if (!edit.value) {
+          if (props.checkedIndex === 0) {
+            ctx.emit('on-save-scheme');
+          } else {
+            ctx.emit('on-submit-scheme');
+          }
+        }
       };
       // 点击另存触发
       const onSaveScheme = () => {
-        ctx.emit('on-save-scheme');
+        if (!edit.value) {
+          ctx.emit('on-save-scheme');
+        }
       };
+      // 点击重置触发
       const onResetScheme = () => {
-        ctx.emit('on-reset-scheme');
+        if (!edit.value) {
+          ctx.emit('on-reset-scheme');
+        }
       };
       // 点击删除触发
       const onDelScheme = () => {
-        ctx.emit('on-del-scheme');
+        if (props.checkedIndex !== 0) {
+          ctx.emit('on-del-scheme');
+          edit.value = false;
+        }
       };
       // 输入框获取焦点
       const onTextFocusInput = () => {
@@ -110,8 +124,8 @@
       const handleText = (title: string) => {
         if (title) {
           ctx.emit('on-title-change', title);
+          edit.value = false;
         }
-        edit.value = false;
       };
       // 失去焦点触发
       const onTextBlur = (e) => {

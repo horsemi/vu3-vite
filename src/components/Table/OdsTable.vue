@@ -3,14 +3,14 @@
     <DxDataGrid
       ref="dataGrid"
       :data-source="tableData"
-      :allow-column-resizing="tableOptions.allowColumnResizing"
-      :height="tableOptions.height"
-      :column-auto-width="tableOptions.columnAutoWidth"
-      :hover-state-enabled="tableOptions.hoverStateEnabled"
-      :show-column-lines="tableOptions.showColumnLines"
-      :show-row-lines="tableOptions.showRowLines"
-      :show-borders="tableOptions.showBorders"
-      :row-alternation-enabled="tableOptions.rowAlternationEnabled"
+      :allow-column-resizing="options.allowColumnResizing"
+      :height="height ? height : options.height"
+      :column-auto-width="options.columnAutoWidth"
+      :hover-state-enabled="options.hoverStateEnabled"
+      :show-column-lines="options.showColumnLines"
+      :show-row-lines="options.showRowLines"
+      :show-borders="options.showBorders"
+      :row-alternation-enabled="options.rowAlternationEnabled"
       @selection-changed="onSelectionChanged"
     >
       <template v-for="(item, index) in tableColumns" :key="index">
@@ -33,17 +33,17 @@
         </DxColumn>
       </template>
       <DxSelection
-        :select-all-mode="tableOptions.selection.allMode"
-        :show-check-boxes-mode="tableOptions.selection.checkBoxesMode"
+        :select-all-mode="options.selection.allMode"
+        :show-check-boxes-mode="options.selection.checkBoxesMode"
         mode="multiple"
       />
       <DxPaging
-        :enabled="tableOptions.dataSourceOptions.paginate"
-        :page-size="tableOptions.page.size"
+        :enabled="options.dataSourceOptions.paginate"
+        :page-size="options.page.size"
         :page-index="pageIndex"
       />
       <DxPager
-        :visible="tableOptions.dataSourceOptions.paginate && !tableOptions.useScrolling"
+        :visible="options.dataSourceOptions.paginate && !options.useScrolling"
         :show-info="true"
         :show-navigation-buttons="true"
         :show-page-size-selector="true"
@@ -51,7 +51,7 @@
         info-text="共{1}页，{2}条数据"
         display-mode="full"
       />
-      <DxScrolling v-if="tableOptions.useScrolling" mode="virtual" row-rendering-mode="virtual" />
+      <DxScrolling v-if="options.useScrolling" mode="virtual" row-rendering-mode="virtual" />
       <template #billCode="{ data }">
         <div
           :class="`${prefixCls}__table-billno-column__wrap`"
@@ -64,7 +64,7 @@
       </template>
     </DxDataGrid>
     <div
-      v-if="tableOptions.dataSourceOptions.paginate && !tableOptions.useScrolling && tableData"
+      v-if="options.dataSourceOptions.paginate && !options.useScrolling && tableData"
       :class="`${prefixCls}__jump`"
       >跳至<input type="number" @change="handleJump" />页</div
     >
@@ -76,12 +76,13 @@
   import type { IColumnItem, IKeyType } from '/@/model/types';
   import type { ISchemeItem } from '../QueryPopup/content/types';
 
-  import { defineComponent, onBeforeUnmount, ref, PropType, watch, nextTick } from 'vue';
-  import { isEmpty } from 'lodash-es';
+  import { defineComponent, onBeforeUnmount, ref, PropType, watch, nextTick, computed } from 'vue';
+  import { cloneDeep, isEmpty } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defaultTableOptions, getCompleteColumns, getTableDataSource } from './common';
   import { useAppStore } from '/@/store/modules/app';
+  import { deepMerge } from '/@/utils';
 
   import DxDataGrid, {
     DxSelection,
@@ -145,6 +146,10 @@
           return {};
         },
       },
+      height: {
+        type: String,
+        default: '',
+      },
     },
     emits: ['handleBillCodeClick', 'handleSelectionClick'],
     setup(props, ctx) {
@@ -154,6 +159,9 @@
       const pageIndex = ref(0);
       const tableData = ref();
       const tableColumns = ref<IColumnItem[]>([]);
+      const options = computed(() => {
+        return deepMerge(cloneDeep(defaultTableOptions), props.tableOptions);
+      });
 
       const onSelectionChanged = ({ selectedRowKeys, selectedRowsData }) => {
         ctx.emit('handleSelectionClick', selectedRowsData);
@@ -171,12 +179,11 @@
           props.tableKey.length > 0 &&
           props.tableKeyType.length > 0
         ) {
-          const instance = dataGrid.value.instance;
-          if (instance) {
+          if (dataGrid.value && dataGrid.value.instance) {
             // 清空排序，处理相同字段desc失效
-            instance.clearSorting();
+            dataGrid.value.instance.clearSorting();
             // 回到第一页
-            instance.pageIndex(0);
+            dataGrid.value.instance.pageIndex(0);
           }
           tableData.value = getTableDataSource(
             props.tableOptions,
@@ -244,6 +251,9 @@
         () => props.filterScheme,
         (val) => {
           handleFilterScheme(val);
+        },
+        {
+          immediate: true,
         }
       );
 
@@ -253,6 +263,9 @@
           if (!isEmpty(val)) {
             tableData.value = val;
           }
+        },
+        {
+          immediate: true,
         }
       );
 
@@ -276,6 +289,7 @@
 
       return {
         dataGrid,
+        options,
         tableData,
         tableColumns,
         prefixCls,

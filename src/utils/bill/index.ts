@@ -17,25 +17,23 @@ const getEditorType = (type) => {
   return editorType;
 };
 
-const getFormItem = (info, arr, columnList) => {
-  columnList.some((col) => {
-    if (info.key === col.key) {
-      arr.push({
-        ...info,
-        expand: col.expand,
-        editorType: getEditorType(col.type),
-        type: col.type,
-        datatypekeies: col.datatypekeies,
-      });
-      return;
-    }
-  });
-};
-
-export const getFormList = (list: IDetailItem[], columnList: IColumnItem[]) => {
-  const temp: IDetailItem[] = [];
-  list.forEach((item) => {
-    getFormItem(item, temp, columnList);
+export const getFormList = (columnList: IColumnItem[], list: IDetailItem[][]) => {
+  const temp: IDetailItem[][] = [];
+  list.forEach((el) => {
+    const newEl: IDetailItem[] = [];
+    el.forEach((item) => {
+      const col = columnList.find((col) => item.key === col.key);
+      if (col) {
+        newEl.push({
+          ...item,
+          expand: col.expand,
+          editorType: getEditorType(col.type),
+          type: col.type,
+          datatypekeies: col.datatypekeies,
+        });
+      }
+    });
+    temp.push(newEl);
   });
   return temp;
 };

@@ -43,11 +43,11 @@
               <DetailForm
                 :form-data="formData"
                 :form-list="
-                  data.title === '基本信息'
+                  data.key === 'base'
                     ? baseInformation
-                    : data.title === '收货人信息'
+                    : data.key === 'receiver'
                     ? receiverInformation
-                    : data.title === '物流信息'
+                    : data.key === 'logistics'
                     ? logisticsInformation
                     : otherInformation
                 "
@@ -77,9 +77,21 @@
         :swipe-enabled="true"
         :focus-state-enabled="false"
       >
-        <template #item>
+        <template #item="{ data }">
           <div class="tab">
-            <OdsTable :table-options="tableOptions" :data-source="dataSource" :columns="columns">
+            <OdsTable
+              :height="tableHeight"
+              :table-options="data.key === 'definite' ? definiteOptions : recordOptions"
+              :filter-scheme="data.key === 'definite' ? definiteScheme : recordScheme"
+              :all-columns="data.key === 'definite' ? definiteAllColumns : recordAllColumns"
+              :table-key="['Id']"
+              :table-key-type="[
+                {
+                  key: 'Id',
+                  type: 'string',
+                },
+              ]"
+            >
             </OdsTable>
           </div>
         </template>
@@ -92,15 +104,14 @@
   import type { ITableOptions } from '/@/components/Table/types';
   import type { IDetailItem } from '/@/utils/bill/types';
   import type { IColumnItem } from '/@/model/types';
+  import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 
   import { defineComponent, nextTick, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
-  import { cloneDeep } from 'lodash-es';
 
-  import { defaultTableOptions } from '/@/components/Table/common';
-  import { deepMerge } from '/@/utils';
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
-  import { getDetailData, getDefiniteData } from './index';
+  import { getDetailData, getDefiniteData, getRecordData } from './index';
+  import { getOdsListUrlByCode } from '/@/api/ods/common';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
@@ -120,24 +131,33 @@
       const multiViewItems = ref([
         {
           title: '基本信息',
+          key: 'base',
           height: '',
         },
         {
           title: '收货人信息',
+          key: 'receiver',
           height: '',
         },
         {
           title: '物流信息',
+          key: 'logistics',
           height: '',
         },
         {
           title: '其他信息',
+          key: 'other',
           height: '',
         },
       ]);
       const multiEntityItems = [
         {
           title: '明细信息',
+          key: 'definite',
+        },
+        {
+          title: '操作记录',
+          key: 'record',
         },
       ];
       const dropButtonItems = {
@@ -157,27 +177,60 @@
       const opened = ref(true);
       const selectedIndex = ref(0);
       const formBox = ref();
+      const tableHeight = ref('');
       let tableOpenedHeight = '';
-      const tableCloseHeight = 'calc(100vh - 28px - 322px)';
+      const tableCloseHeight = 'calc(100vh - 28px - 312px)';
 
       const route = useRoute();
       const Id = route.query.Id as string;
+      const BillCode = route.query.BillCode as string;
       const formData = ref();
       const baseInformation = ref<IDetailItem[]>([]);
       const receiverInformation = ref<IDetailItem[]>([]);
       const logisticsInformation = ref<IDetailItem[]>([]);
       const otherInformation = ref<IDetailItem[]>([]);
 
-      const options: Partial<ITableOptions> = {
-        height: 'calc(100vh - 28px - 322px)',
+      const definiteOptions = ref<Partial<ITableOptions>>({
+        height: 'calc(100vh - 28px - 312px)',
+        dataSourceOptions: {
+          oDataOptions: {
+            url: getOdsListUrlByCode('shipping-order-item'),
+          },
+        },
         useScrolling: true,
         page: {
           size: 20,
         },
-      };
-      const tableOptions = ref<ITableOptions>(deepMerge(cloneDeep(defaultTableOptions), options));
-      const dataSource = ref();
-      const columns = ref<IColumnItem[]>([]);
+      });
+      const definiteScheme = ref<ISchemeItem>({
+        uuid: '',
+        title: '',
+        requirement: [],
+        orderBy: [],
+        columns: [],
+      });
+      const definiteAllColumns = ref<IColumnItem[]>([]);
+
+      const recordOptions = ref<Partial<ITableOptions>>({
+        height: 'calc(100vh - 28px - 312px)',
+        dataSourceOptions: {
+          oDataOptions: {
+            url: getOdsListUrlByCode('operation-record'),
+          },
+        },
+        useScrolling: true,
+        page: {
+          size: 20,
+        },
+      });
+      const recordScheme = ref<ISchemeItem>({
+        uuid: '',
+        title: '',
+        requirement: [],
+        orderBy: [],
+        columns: [],
+      });
+      const recordAllColumns = ref<IColumnItem[]>([]);
 
       const onRefresh = () => {
         getData();
@@ -236,11 +289,11 @@
           if (!multiViewItems.value[index].height && opened.value) {
             multiViewItems.value[index].height = formBox.value.offsetHeight + 'px';
           }
-          tableOpenedHeight = `calc(100vh - ${multiViewItems.value[index].height} - 322px)`;
+          tableOpenedHeight = `calc(100vh - ${multiViewItems.value[index].height} - 312px)`;
           if (opened.value) {
-            tableOptions.value.height = tableOpenedHeight;
+            tableHeight.value = tableOpenedHeight;
           } else {
-            tableOptions.value.height = tableCloseHeight;
+            tableHeight.value = tableCloseHeight;
           }
         });
       };
@@ -257,10 +310,48 @@
             handleHeight(0);
           }
         });
-        getDefiniteData(tableOptions.value, ['ShippingOrderId', '=', Id]).then((res) => {
+        getDefiniteData().then((res) => {
           if (res) {
-            columns.value = res.columns;
-            dataSource.value = res.data;
+            definiteAllColumns.value = res.columnList;
+            definiteScheme.value = {
+              uuid: '',
+              title: '',
+              requirement: [
+                {
+                  requirement: 'ShippingOrderId',
+                  operator: '=',
+                  value: Id,
+                  operatorList: [],
+                  type: 'string',
+                  relationKey: '',
+                  datatypekeies: '',
+                },
+              ],
+              orderBy: [],
+              columns: res.definite,
+            };
+          }
+        });
+        getRecordData().then((res) => {
+          if (res) {
+            recordAllColumns.value = res.columnList;
+            recordScheme.value = {
+              uuid: '',
+              title: '',
+              requirement: [
+                {
+                  requirement: 'BillCode',
+                  operator: '=',
+                  value: BillCode,
+                  operatorList: [],
+                  type: 'string',
+                  relationKey: '',
+                  datatypekeies: '',
+                },
+              ],
+              orderBy: [],
+              columns: res.record,
+            };
           }
         });
       };
@@ -272,11 +363,17 @@
       getData();
 
       return {
+        tableHeight,
+        definiteOptions,
+        definiteScheme,
+        definiteAllColumns,
+        recordOptions,
+        recordScheme,
+        recordAllColumns,
         baseInformation,
         receiverInformation,
         logisticsInformation,
         otherInformation,
-        columns,
         selectedIndex,
         formBox,
         opened,
@@ -284,8 +381,6 @@
         multiEntityItems,
         dropButtonItems,
         formData,
-        dataSource,
-        tableOptions,
         tableOpenedHeight,
         tableCloseHeight,
         onSubmitClick,
@@ -341,10 +436,8 @@
       .icon {
         cursor: pointer;
         transform: rotate(0);
-        transition: transform 500ms;
         &--translate {
           transform: rotate(-180deg);
-          transition: transform 500ms;
         }
       }
     }

@@ -8,7 +8,7 @@
       :scheme-checked-index="schemeCheckedIndex"
       @on-change-scheme="onChangeScheme"
     />
-    <div class="example">
+    <div v-loading="loading" class="example">
       <div class="btn__wrap">
         <div class="btn__box">
           <DxButton :width="76" text="提交" type="default" @click="onSubmitClick" />
@@ -41,6 +41,7 @@
   import type { ISchemeData } from '/@/components/QueryPlan/types';
 
   import { defineComponent, ref } from 'vue';
+  import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
 
   import { getColumns } from '/@/model/shipping-advices';
@@ -63,6 +64,9 @@
       DxButton,
     },
     setup() {
+      const router = useRouter();
+      const dataGrid = ref();
+      const loading = ref(false);
       const ORDER_CODE = 'shipping-advice';
       const options: Partial<ITableOptions> = {
         height: 'calc(100vh - 287px)',
@@ -92,6 +96,58 @@
       });
       const schemeCheckedIndex = ref<number>(0);
 
+      const onRefresh = () => {
+        dataGrid.value.search();
+      };
+
+      const handleBillCodeClick = (data) => {
+        router.push({
+          name: 'OdsShippingAdviceDetail',
+          query: {
+            Id: data.data.Id,
+            BillCode: data.data.BillCode,
+          },
+        });
+      };
+
+      const onSubmitClick = () => {
+        const selectionData = dataGrid.value.getSelectedRowsData() as {
+          GatheringParentCode: string;
+        }[];
+        if (isArrayEmpty(selectionData)) {
+          loading.value = true;
+          ShippingAdviceApi.onShippingAdviceSubmit(
+            selectionData.map((item) => item.GatheringParentCode)
+          )
+            .then(() => {
+              loading.value = false;
+              onRefresh();
+            })
+            .catch(() => {
+              loading.value = false;
+            });
+        }
+      };
+
+      const onApplyClick = () => {
+        const selectionData = dataGrid.value.getSelectedRowsData() as {
+          GatheringParentCode: string;
+        }[];
+        if (isArrayEmpty(selectionData)) {
+          loading.value = true;
+          ShippingAdviceApi.onShippingAdviceApply(
+            selectionData.map((item) => item.GatheringParentCode)
+          )
+            .then(() => {
+              loading.value = false;
+              onRefresh();
+            })
+            .catch(() => {
+              loading.value = false;
+            });
+        }
+      };
+
       const onChangeScheme = (data: ISchemeItem) => {
         filterScheme.value = cloneDeep(data);
       };
@@ -120,6 +176,7 @@
 
       return {
         ORDER_CODE,
+        loading,
         tableOptions,
         tableKey,
         tableKeyType,
@@ -129,45 +186,12 @@
         schemeData,
         filterScheme,
         schemeCheckedIndex,
-        // handleBillCodeClick,
+        handleBillCodeClick,
         onChangeScheme,
+        onSubmitClick,
+        onApplyClick,
+        onRefresh,
       };
-    },
-    methods: {
-      handleBillCodeClick(data: any) {
-        this.$router.push({
-          name: 'OdsShippingAdviceDetail',
-          query: { Id: data.data.Id },
-        });
-      },
-
-      onSubmitClick() {
-        const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData() as {
-          GatheringParentCode: string;
-        }[];
-        if (isArrayEmpty(selectionData)) {
-          ShippingAdviceApi.onShippingAdviceSubmit(
-            selectionData.map((item) => item.GatheringParentCode)
-          ).then(() => {
-            this.onRefresh();
-          });
-        }
-      },
-      onApplyClick() {
-        const selectionData = (this.$refs as any).dataGrid.getSelectedRowsData() as {
-          GatheringParentCode: string;
-        }[];
-        if (isArrayEmpty(selectionData)) {
-          ShippingAdviceApi.onShippingAdviceApply(
-            selectionData.map((item) => item.GatheringParentCode)
-          ).then(() => {
-            this.onRefresh();
-          });
-        }
-      },
-      onRefresh() {
-        (this.$refs.dataGrid as any).search();
-      },
     },
   });
 </script>

@@ -39,10 +39,7 @@
         <DxColumn caption="操作" alignment="center" cell-template="handle" />
         <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
         <template #handle="{ data }">
-          <span
-            v-if="!data.data.mustKey"
-            :class="`${prefixCls}__table__del`"
-            @click="onDel(data)"
+          <span v-if="!data.data.mustKey" :class="`${prefixCls}__table__del`" @click="onDel(data)"
             >删除</span
           >
         </template>
@@ -147,9 +144,7 @@
       // 点击删除触发
       const onDel = (data) => {
         const index = dataSource.value.indexOf(data.data);
-        const orderIndex = props.orderBy.findIndex(
-          (item) => item.key === data.data.key
-        );
+        const orderIndex = props.orderBy.findIndex((item) => item.key === data.data.key);
         if (orderIndex >= 0) {
           const orderBy = [...props.orderBy];
           orderBy.splice(orderIndex, 1);
@@ -212,11 +207,10 @@
           }
         });
         columns.forEach((col) => {
-          data.forEach((pre) => {
-            if (col.key === pre.key) {
-              sortData.push(pre);
-            }
-          });
+          const pre = data.find((pre) => col.key === pre.key);
+          if (pre) {
+            sortData.push(pre);
+          }
         });
         fieldList.value = fieldListTemp;
         dataSource.value = sortData;

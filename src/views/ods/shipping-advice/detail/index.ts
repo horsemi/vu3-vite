@@ -1,9 +1,10 @@
-import type { ITableOptions } from '/@/components/Table/types';
 import type { IDetailItem } from '/@/utils/bill/types';
+import type { IColumnItem } from '/@/model/types';
 
-import { getDefiniteDataSource, getDetailDataSource } from '/@/api/ods/detail';
+import { getDetailDataSource } from '/@/api/ods/detail';
 import { getColumns } from '/@/model/shipping-advices';
 import { getDefiniteColumns } from '/@/model/shipping-advice-items';
+import { getRecordColumns } from '/@/model/operation-record';
 import { getFormList } from '/@/utils/bill';
 import { isFoundationType } from '/@/model/common';
 
@@ -438,55 +439,227 @@ export const other: IDetailItem[] = [
   },
 ];
 
+export const definite: IColumnItem[] = [
+  {
+    key: 'ShippingAdviceId',
+    caption: 'ShippingAdviceId',
+    hide: true,
+  },
+  {
+    key: 'MaterialCode',
+    caption: '物料编码',
+  },
+  {
+    key: 'Material_Name',
+    caption: '物料名称',
+    expand: 'Material',
+    relationKey: 'MaterialCode',
+  },
+  {
+    key: 'DefaultAreaCode',
+    caption: '默认区域',
+  },
+  {
+    key: 'Unit_Name',
+    caption: '单位名称',
+    expand: 'Unit',
+    relationKey: 'UnitCode',
+  },
+  {
+    key: 'Qty',
+    caption: '数量',
+  },
+  {
+    key: 'LotCode',
+    caption: '批号',
+  },
+  {
+    key: 'BomCode',
+    caption: 'BOM版本',
+  },
+  {
+    key: 'DeliveryWarehouse_Name',
+    caption: '仓库',
+    expand: 'DeliveryWarehouse',
+    relationKey: 'WarehouseCode',
+  },
+  {
+    key: 'PackageQuantity',
+    caption: '包件数',
+  },
+  {
+    key: 'PackageCount',
+    caption: '总包件数',
+  },
+  {
+    key: 'VolumeQuantity',
+    caption: '体积',
+  },
+  {
+    key: 'VolumeCount',
+    caption: '总体积',
+  },
+  {
+    key: 'CustomerMaterialName',
+    caption: '客户物料名称',
+  },
+  {
+    key: 'IsMarble',
+    caption: '大理石',
+  },
+  {
+    key: 'IsGaAllows',
+    caption: '打木架',
+  },
+  {
+    key: 'OutSourceBillCode',
+    caption: '外部原单编号',
+  },
+  {
+    key: 'ActualSalePrice',
+    caption: '实际售价',
+  },
+  {
+    key: 'Memo',
+    caption: '备注',
+  },
+  {
+    key: 'OutRowCode',
+    caption: '源单行号',
+  },
+  {
+    key: 'TaoBaoCode',
+    caption: '淘宝单号',
+  },
+  {
+    key: 'TaoBaoSubCode',
+    caption: '淘宝子单号',
+  },
+  {
+    key: 'IsVerification',
+    caption: '是否核销',
+  },
+  {
+    key: 'Channel',
+    caption: '渠道',
+  },
+  {
+    key: 'CategoryLCode',
+    caption: '产品大类',
+  },
+  {
+    key: 'CategoryMCode',
+    caption: '产品中类',
+  },
+  {
+    key: 'CategorySCode',
+    caption: '产品小类',
+  },
+  {
+    key: 'CategoryXSCode',
+    caption: '产品细类',
+  },
+  {
+    key: 'Shop',
+    caption: '店铺',
+  },
+  {
+    key: 'BuyShop',
+    caption: '收入店铺',
+  },
+  {
+    key: 'ProvideSalePrice',
+    caption: '供货售价',
+  },
+  {
+    key: 'InWarehouseCode',
+    caption: '进仓编号',
+  },
+  {
+    key: 'ProductName',
+    caption: '品名',
+  },
+  {
+    key: 'Sku',
+    caption: 'SKU',
+  },
+  {
+    key: 'SkuCode',
+    caption: 'SKUID',
+  },
+  {
+    key: 'Texture',
+    caption: '材质',
+  },
+  {
+    key: 'SourceMaterialCode',
+    caption: '来源商品编码',
+  },
+  {
+    key: 'SourceProductBomCode',
+    caption: '来源商品BOM',
+  },
+  {
+    key: 'SourceProductLotCode',
+    caption: '来源商品批号',
+  },
+];
+
+export const record: IColumnItem[] = [
+  {
+    key: 'BillId',
+    caption: '单据ID',
+  },
+  {
+    key: 'BillCode',
+    caption: '单据编码',
+  },
+  {
+    key: 'BillTypeCode',
+    caption: '单据类型',
+  },
+  {
+    key: 'DocumentStatus',
+    caption: '操作类型',
+  },
+  {
+    key: 'OperatedTime',
+    caption: '操作时间',
+  },
+  {
+    key: 'OperatorId',
+    caption: '操作人',
+  },
+  {
+    key: 'IpAddress',
+    caption: '操作IP',
+  },
+];
+
 export const getDetailData = async (filter: any[]) => {
   const columnsData = await getColumns();
   if (!columnsData) return;
   const { columnList } = columnsData;
-  const baseList = getFormList(base, columnList);
-  const receiverList = getFormList(receiver, columnList);
-  const logisticsList = getFormList(logistics, columnList);
-  const expressList = getFormList(express, columnList);
-  const taskList = getFormList(task, columnList);
-  const otherList = getFormList(other, columnList);
+
+  const [
+    baseList,
+    receiverList,
+    logisticsList,
+    expressList,
+    taskList,
+    otherList,
+  ] = getFormList(columnList, [base, receiver, logistics, express, task, other]);
 
   const select: string[] = [];
   const expand: string[] = [];
 
-  baseList.forEach((item) => {
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-    select.push(item.key);
-  });
-  receiverList.forEach((item) => {
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-    select.push(item.key);
-  });
-  logisticsList.forEach((item) => {
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-    select.push(item.key);
-  });
-  expressList.forEach((item) => {
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-    select.push(item.key);
-  });
-  taskList.forEach((item) => {
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-    select.push(item.key);
-  });
-  otherList.forEach((item) => {
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-    select.push(item.key);
+  [baseList, receiverList, logisticsList, expressList, taskList, otherList].forEach((list) => {
+    list.forEach((item) => {
+      if (isFoundationType(item)) {
+        expand.push(item.expand as string);
+      }
+      select.push(item.key);
+    });
   });
 
   const data = await getDetailDataSource('shipping-advices', select, expand, filter);
@@ -501,14 +674,24 @@ export const getDetailData = async (filter: any[]) => {
   };
 };
 
-export const getDefiniteData = async (options: ITableOptions, filter: any[]) => {
+export const getDefiniteData = async () => {
   const columnsData = await getDefiniteColumns();
   if (!columnsData) return;
   const { columnList } = columnsData;
-  const select = columnList.map((item) => item.key);
-  const data = await getDefiniteDataSource('shipping-advice-items', select, filter, options);
+
   return {
     columnList,
-    data,
+    definite,
+  };
+};
+
+export const getRecordData = async () => {
+  const columnsData = await getRecordColumns();
+  if (!columnsData) return;
+  const { columnList } = columnsData;
+
+  return {
+    columnList,
+    record,
   };
 };

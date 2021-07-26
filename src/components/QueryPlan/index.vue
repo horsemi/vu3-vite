@@ -127,9 +127,9 @@
       const onReset = () => {
         const { scheme, fast } = (Persistent.getLocal(SCHEME_DATA_KEY) as any)[props.orderCode];
         const popupUuid = schemeList.value[popupIndex.value].uuid;
-        const popupListTemp = scheme.filter((item) => item.uuid === popupUuid);
+        const popupListTemp = scheme.find((item) => item.uuid === popupUuid);
 
-        schemeList.value[popupIndex.value] = cloneDeep(popupListTemp[0]);
+        schemeList.value[popupIndex.value] = cloneDeep(popupListTemp);
         queryForm.value.changeQueryList(fast);
         onSearch();
       };
@@ -218,16 +218,16 @@
       };
       // 接收保存事件
       const onSubmitScheme = (fast: IQueryItem[] = []) => {
-        if (popupIndex.value !== 0) {
-          schemeListTemp.value[popupIndex.value] = cloneDeep(schemeList.value[popupIndex.value]);
-          handleSaveData('保存成功', schemeListTemp.value, fast);
-        } else {
-          onSaveScheme();
-        }
+        schemeListTemp.value[popupIndex.value] = cloneDeep(schemeList.value[popupIndex.value]);
+        handleSaveData('保存成功', schemeListTemp.value, fast);
       };
       // 接收另存事件
       const onSaveScheme = () => {
-        schemeList.value.push({ ...cloneDeep(schemeList.value[popupIndex.value]), title: '', uuid: getUuid() });
+        schemeList.value.push({
+          ...cloneDeep(schemeList.value[popupIndex.value]),
+          title: '',
+          uuid: getUuid(),
+        });
         popupIndex.value = schemeList.value.length - 1;
       };
       // 接收删除事件
@@ -268,7 +268,16 @@
       };
       // 接受快速过滤保存设置
       const onSaveFast = (fast: IQueryItem[]) => {
-        onSubmitScheme(fast);
+        if (popupIndex.value === 0) {
+          schemeList.value.push({
+            ...cloneDeep(schemeList.value[popupIndex.value]),
+            title: '缺省方案（个人）',
+            uuid: getUuid(),
+          });
+          popupIndex.value = schemeList.value.length - 1;
+        }
+        schemeListTemp.value[popupIndex.value] = cloneDeep(schemeList.value[popupIndex.value]);
+        handleSaveData('保存成功', schemeListTemp.value, fast);
       };
       // 处理组件数据
       const handleData = (val: ISchemeData) => {

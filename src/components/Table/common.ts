@@ -12,10 +12,14 @@ import { isNil } from 'lodash-es';
 
 import { getDataSource } from '/@/api/ods/common';
 
+const defaultPaginate = true;
+
+const defaultPageSize = 50;
+
 // 基础表格默认配置
 export const defaultTableOptions: ITableOptions = {
   dataSourceOptions: {
-    paginate: true,
+    paginate: defaultPaginate,
     oDataOptions: {
       url: '',
     },
@@ -34,7 +38,7 @@ export const defaultTableOptions: ITableOptions = {
     checkBoxesMode: 'always',
   },
   page: {
-    size: 50,
+    size: defaultPageSize,
   },
 };
 
@@ -54,8 +58,11 @@ export const getTableDataSource = (
     {
       sort: options.dataSourceOptions.sort ? options.dataSourceOptions.sort.concat(sort) : sort,
       filter: filter.length > 0 ? filter : '',
-      paginate: options.dataSourceOptions.paginate,
-      pageSize: options.page?.size,
+      paginate:
+        options.dataSourceOptions.paginate !== undefined
+          ? options.dataSourceOptions.paginate
+          : defaultPaginate,
+      pageSize: options.page.size ? options.page.size : defaultPageSize,
       select: select,
       expand: expand,
     },
@@ -84,19 +91,17 @@ export const getFilter = (requirements: IRequirementItem[]) => {
   const filter: any[] = [];
   requirements.forEach((item) => {
     if (item.requirement && !isNil(item.value)) {
-
       if (item.relationKey) {
         filter.push([item.relationKey, item.operator, item.value]);
       } else {
         filter.push([item.requirement, item.operator, item.value]);
       }
-      
+
       if (item.logic) {
         filter.push(item.logic);
       } else {
         filter.push('and');
       }
-
     }
   });
 
@@ -170,15 +175,12 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
   const columnList: IColumnItem[] = [];
   const allCol = handleAllCol(allColumns);
   columns.forEach((item) => {
-    for (let i = 0; i < allCol.length; i++) {
-      if (item.key === allCol[i].key) {
-        // 判断是否为基础数据类型
-        columnList.push({
-          ...allCol[i],
-          ...item,
-        });
-        break;
-      }
+    const col = allCol.find((col) => item.key === col.key);
+    if (col) {
+      columnList.push({
+        ...col,
+        ...item,
+      });
     }
   });
 

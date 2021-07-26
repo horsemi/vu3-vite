@@ -1,13 +1,12 @@
-import type { ITableOptions } from '/@/components/Table/types';
 import type { IDetailItem } from '/@/utils/bill/types';
 import type { IColumnItem } from '/@/model/types';
 
-import { getDefiniteDataSource, getDetailDataSource } from '/@/api/ods/detail';
+import { getDetailDataSource } from '/@/api/ods/detail';
 import { getColumns } from '/@/model/shipping-orders';
 import { getDefiniteColumns } from '/@/model/shipping-order-items';
+import { getRecordColumns } from '/@/model/operation-record';
 import { getFormList } from '/@/utils/bill';
 import { isFoundationType } from '/@/model/common';
-import { getCompleteColumns } from '/@/components/Table/common';
 
 export const base: IDetailItem[] = [
   {
@@ -268,7 +267,7 @@ export const other: IDetailItem[] = [
   },
 ];
 
-export const defaultItem: IColumnItem[] = [
+export const definite: IColumnItem[] = [
   {
     key: 'ShippingOrderId',
     caption: 'ShippingOrderId',
@@ -405,41 +404,58 @@ export const defaultItem: IColumnItem[] = [
   },
 ];
 
+export const record: IColumnItem[] = [
+  {
+    key: 'BillId',
+    caption: '单据ID',
+  },
+  {
+    key: 'BillCode',
+    caption: '单据编码',
+  },
+  {
+    key: 'BillTypeCode',
+    caption: '单据类型',
+  },
+  {
+    key: 'DocumentStatus',
+    caption: '操作类型',
+  },
+  {
+    key: 'OperatedTime',
+    caption: '操作时间',
+  },
+  {
+    key: 'OperatorId',
+    caption: '操作人',
+  },
+  {
+    key: 'IpAddress',
+    caption: '操作IP',
+  },
+];
+
 export const getDetailData = async (filter: any[]) => {
   const columnsData = await getColumns();
   if (!columnsData) return;
   const { columnList } = columnsData;
-  const baseList = getFormList(base, columnList);
-  const receiverList = getFormList(receiver, columnList);
-  const logisticsList = getFormList(logistics, columnList);
-  const otherList = getFormList(other, columnList);
+  const [baseList, receiverList, logisticsList, otherList] = getFormList(columnList, [
+    base,
+    receiver,
+    logistics,
+    other,
+  ]);
 
   const select: string[] = [];
   const expand: string[] = [];
 
-  baseList.forEach((item) => {
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-    select.push(item.key);
-  });
-  receiverList.forEach((item) => {
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-    select.push(item.key);
-  });
-  logisticsList.forEach((item) => {
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-    select.push(item.key);
-  });
-  otherList.forEach((item) => {
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-    select.push(item.key);
+  [baseList, receiverList, logisticsList, otherList].forEach((list) => {
+    list.forEach((item) => {
+      if (isFoundationType(item)) {
+        expand.push(item.expand as string);
+      }
+      select.push(item.key);
+    });
   });
 
   const data = await getDetailDataSource('shipping-orders', select, expand, filter);
@@ -453,27 +469,24 @@ export const getDetailData = async (filter: any[]) => {
   };
 };
 
-export const getDefiniteData = async (options: ITableOptions, filter: any[]) => {
+export const getDefiniteData = async () => {
   const columnsData = await getDefiniteColumns();
   if (!columnsData) return;
   const { columnList } = columnsData;
 
-  const select: string[] = [];
-  const expand: string[] = [];
-
-  columnList.forEach((item) => {
-    select.push(item.key);
-    if (isFoundationType(item)) {
-      expand.push(item.expand as string);
-    }
-  });
-
-  // 获取默认显示列 与所有列匹配，输出最终显示列
-  const columns = getCompleteColumns(columnList, defaultItem);
-
-  const data = getDefiniteDataSource('shipping-order-items', select, filter, options, expand);
   return {
-    columns,
-    data,
+    columnList,
+    definite,
+  };
+};
+
+export const getRecordData = async () => {
+  const columnsData = await getRecordColumns();
+  if (!columnsData) return;
+  const { columnList } = columnsData;
+
+  return {
+    columnList,
+    record,
   };
 };

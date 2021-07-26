@@ -11,6 +11,11 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'MaterialCode',
     caption: '物料编码',
+  },
+  {
+    key: 'Material',
+    caption: '物料编码',
+    relationKey: 'MaterialCode',
     foundationList: [
       {
         key: 'Material_Name',
@@ -30,6 +35,11 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'UnitCode',
     caption: '单位编码',
+  },
+  {
+    key: 'Unit',
+    caption: '单位',
+    relationKey: 'UnitCode',
     foundationList: [
       {
         key: 'Unit_Name',
@@ -53,6 +63,11 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'WarehouseCode',
     caption: '仓库编码',
+  },
+  {
+    key: 'DeliveryWarehouse',
+    caption: '仓库',
+    relationKey: 'WarehouseCode',
     foundationList: [
       {
         key: 'DeliveryWarehouse_Name',

@@ -21,16 +21,17 @@ export const getColumnList = async (
     const key = res.store.odata.key as string[];
     const keyType = res.store.odata.keyType as IKeyType[];
     const columnList: IColumnItem[] = [];
-    fieldTypes.forEach((fieldType: IFieldType) => {
-      customColumns.forEach((column) => {
-        if (fieldType.key === column.key || (fieldType.expand === column.key && column.relationKey)) {
-          columnList.push({
-            type: handleType(fieldType.type),
-            expand: fieldType.expand,
-            ...column,
-          });
-        }
-      });
+    customColumns.forEach((column) => {
+      const fieldType = fieldTypes.find(
+        (field) => field.key === column.key || (field.expand === column.key && column.relationKey)
+      );
+      if (fieldType) {
+        columnList.push({
+          type: handleType(fieldType.type),
+          expand: fieldType.expand,
+          ...column,
+        });
+      }
     });
     return {
       columnList,

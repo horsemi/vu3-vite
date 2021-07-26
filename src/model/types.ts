@@ -91,7 +91,7 @@ export interface IFieldType {
 }
 
 export interface IKeyType {
-  caption: string;
+  caption?: string;
   key: string;
   type: string;
 }

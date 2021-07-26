@@ -1,5 +1,3 @@
-import type { ITableOptions } from '/@/components/Table/types';
-
 import { getDataSource } from './common';
 
 const prefixUrls = '/ods/api/odata/';
@@ -27,36 +25,13 @@ export const getDetailDataSource = (
 
     data.load().then(
       (res) => {
-        reslove(res);
         data.dispose();
+        reslove(res);
       },
       (err) => {
-        reject(err);
         data.dispose();
+        reject(err);
       }
     );
   });
-};
-
-export const getDefiniteDataSource = (
-  code: string,
-  select: string[],
-  filter: unknown[],
-  options: ITableOptions,
-  expand?: string[]
-) => {
-  return getDataSource(
-    {
-      filter,
-      paginate: options.dataSourceOptions.paginate,
-      pageSize: options.page?.size,
-      select: [...select, 'Id'],
-      expand: expand,
-    },
-    {
-      url: `${prefixUrls}${code}`,
-      key: 'Id',
-      keyType: 'string',
-    }
-  );
 };

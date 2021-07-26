@@ -219,15 +219,14 @@
         });
 
         orderBy.forEach((item) => {
-          fields.forEach((field) => {
-            if (field.key === item.key) {
-              sorts.push({
-                key: field.key,
-                caption: field.caption,
-                desc: item.desc,
-              });
-            }
-          });
+          const field = fields.find((field) => field.key === item.key);
+          if (field) {
+            sorts.push({
+              key: field.key,
+              caption: field.caption,
+              desc: item.desc,
+            });
+          }
         });
         // 排序列表中有的字段，左侧选择框需要选中
         if (fields.length > 0 && sorts.length > 0) {
