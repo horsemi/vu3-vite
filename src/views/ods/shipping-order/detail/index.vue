@@ -6,8 +6,6 @@
           :items="dropButtonItems.submit"
           :split-button="true"
           :use-select-mode="false"
-          :width="56"
-          :height="26"
           text="提交"
           display-expr="name"
           key-expr="key"
@@ -18,16 +16,14 @@
           :items="dropButtonItems.apply"
           :split-button="true"
           :use-select-mode="false"
-          :width="56"
-          :height="26"
           text="审核"
           display-expr="name"
           key-expr="key"
           @button-click="onApplyClick"
           @item-click="onItemButtonClick"
         />
-        <DxButton :width="56" :height="26" text="下推" @click="onPushClick" />
-        <DxButton :width="56" :height="26" text="刷新" @click="onRefresh" />
+        <DxButton text="下推" @click="onPushClick" />
+        <DxButton text="刷新" @click="onRefresh" />
       </div>
       <DxTabPanel
         v-model:selected-index="selectedIndex"
@@ -39,7 +35,7 @@
       >
         <template #item="{ data }">
           <div class="tab">
-            <div ref="formBox" class="form-box" :style="{ height: opened ? '' : '28px' }">
+            <div class="form-box" :style="{ height: opened ? '' : getColseHeight(data.rowCount) }">
               <DetailForm
                 :form-data="formData"
                 :form-list="
@@ -53,10 +49,10 @@
                 "
               />
             </div>
-            <div class="icon-box">
+            <div v-if="data.rowCount > 3" class="icon-box">
               <SvgIcon
                 :class="['icon', opened && 'icon--translate']"
-                size="12"
+                size="14"
                 name="multi-arrow"
                 @click="onChangeOpened"
               ></SvgIcon>
@@ -66,11 +62,8 @@
       </DxTabPanel>
     </div>
     <div class="tab-panel">
-      <div class="btn-box">
-        <DxButton :width="56" :height="26" text="新增" type="default" />
-        <DxButton :width="56" :height="26" text="删除" />
-      </div>
       <DxTabPanel
+        v-model:selected-index="tableIndex"
         :data-source="multiEntityItems"
         :loop="true"
         :animation-enabled="true"
@@ -79,6 +72,10 @@
       >
         <template #item="{ data }">
           <div class="tab">
+            <div v-if="data.key === 'definite'" class="tab-btn">
+              <DxButton text="新增" type="default" />
+              <DxButton text="删除" />
+            </div>
             <OdsTable
               :height="tableHeight"
               :table-options="data.key === 'definite' ? definiteOptions : recordOptions"
@@ -106,7 +103,7 @@
   import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, nextTick, ref, watch } from 'vue';
+  import { defineComponent, ref, watch } from 'vue';
   import { useRoute } from 'vue-router';
 
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
@@ -132,22 +129,22 @@
         {
           title: '基本信息',
           key: 'base',
-          height: '',
+          rowCount: 0,
         },
         {
           title: '收货人信息',
           key: 'receiver',
-          height: '',
+          rowCount: 0,
         },
         {
           title: '物流信息',
           key: 'logistics',
-          height: '',
+          rowCount: 0,
         },
         {
           title: '其他信息',
           key: 'other',
-          height: '',
+          rowCount: 0,
         },
       ]);
       const multiEntityItems = [
@@ -174,12 +171,18 @@
           },
         ],
       };
-      const opened = ref(true);
+      const opened = ref(false);
       const selectedIndex = ref(0);
-      const formBox = ref();
+      const tableIndex = ref(0);
       const tableHeight = ref('');
-      let tableOpenedHeight = '';
-      const tableCloseHeight = 'calc(100vh - 28px - 312px)';
+      const rowSpan = 8;
+      const formRowHeight = 29;
+      const formRowPaddingTop = 8;
+      const overHeight = 304;
+      const tabBtnHeight = 44;
+      const arrowIconHeight = 22;
+      const defaultDefiniteHeight = `calc(100vh - ${tabBtnHeight + overHeight}px)`;
+      const defaultRecordHeight = `calc(100vh - ${overHeight}px)`;
 
       const route = useRoute();
       const Id = route.query.Id as string;
@@ -191,16 +194,13 @@
       const otherInformation = ref<IDetailItem[]>([]);
 
       const definiteOptions = ref<Partial<ITableOptions>>({
-        height: 'calc(100vh - 28px - 312px)',
+        height: defaultDefiniteHeight,
         dataSourceOptions: {
           oDataOptions: {
             url: getOdsListUrlByCode('shipping-order-item'),
           },
         },
         useScrolling: true,
-        page: {
-          size: 20,
-        },
       });
       const definiteScheme = ref<ISchemeItem>({
         uuid: '',
@@ -212,16 +212,13 @@
       const definiteAllColumns = ref<IColumnItem[]>([]);
 
       const recordOptions = ref<Partial<ITableOptions>>({
-        height: 'calc(100vh - 28px - 312px)',
+        height: defaultRecordHeight,
         dataSourceOptions: {
           oDataOptions: {
             url: getOdsListUrlByCode('operation-record'),
           },
         },
         useScrolling: true,
-        page: {
-          size: 20,
-        },
       });
       const recordScheme = ref<ISchemeItem>({
         uuid: '',
@@ -281,21 +278,51 @@
 
       const onChangeOpened = () => {
         opened.value = !opened.value;
-        handleHeight(selectedIndex.value);
+        handleHeight(selectedIndex.value, tableIndex.value);
       };
 
-      const handleHeight = (index: number) => {
-        nextTick(() => {
-          if (!multiViewItems.value[index].height && opened.value) {
-            multiViewItems.value[index].height = formBox.value.offsetHeight + 'px';
-          }
-          tableOpenedHeight = `calc(100vh - ${multiViewItems.value[index].height} - 312px)`;
-          if (opened.value) {
-            tableHeight.value = tableOpenedHeight;
-          } else {
-            tableHeight.value = tableCloseHeight;
+      const handleHeight = (sIndex: number, tIndex: number) => {
+        // 表单行数
+        const rowCount = multiViewItems.value[sIndex].rowCount;
+        // 展开按钮高度，超出3行才会出现展开按钮
+        const iconHeight = rowCount > 3 ? arrowIconHeight : 0;
+        // 按钮占用高度
+        const btnHeight = tIndex === 0 ? tabBtnHeight : 0;
+        // 表格高度
+        let formHeight = 0;
+        if (opened.value || rowCount < 3) {
+          // 表格高度
+          formHeight = formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1);
+        } else {
+          formHeight = formRowHeight * 3 + formRowPaddingTop * 2;
+        }
+        // 总裁剪高度
+        const cutHeight = formHeight + iconHeight + btnHeight + overHeight;
+        tableHeight.value = `calc(100vh - ${cutHeight}px)`;
+      };
+
+      const getColseHeight = (rowCount) => {
+        if (rowCount >= 3) {
+          return `${formRowHeight * 3 + formRowPaddingTop * 2}px`;
+        } else {
+          return `${formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1)}px`;
+        }
+      };
+
+      const getRowCount = (data: IDetailItem[]) => {
+        let len = 0;
+        data.forEach((item) => {
+          if (!item.hide) {
+            if (item.colSpan) {
+              len += item.colSpan;
+            } else if (item.editorType === 'dxSwitch') {
+              len += 1;
+            } else {
+              len += 2;
+            }
           }
         });
+        return Math.ceil(len / rowSpan);
       };
 
       const getData = () => {
@@ -307,7 +334,15 @@
             receiverInformation.value = receiverList;
             logisticsInformation.value = logisticsList;
             otherInformation.value = otherList;
-            handleHeight(0);
+            [
+              baseInformation.value,
+              receiverInformation.value,
+              logisticsInformation.value,
+              otherInformation.value,
+            ].forEach((data, index) => {
+              multiViewItems.value[index].rowCount = getRowCount(data);
+            });
+            handleHeight(0, 0);
           }
         });
         getDefiniteData().then((res) => {
@@ -356,14 +391,16 @@
         });
       };
 
-      watch(selectedIndex, (val) => {
-        handleHeight(val);
+      watch([selectedIndex, tableIndex], ([sIndex, tIndex]) => {
+        handleHeight(sIndex, tIndex);
       });
 
       getData();
 
       return {
         tableHeight,
+        formRowHeight,
+        formRowPaddingTop,
         definiteOptions,
         definiteScheme,
         definiteAllColumns,
@@ -375,20 +412,19 @@
         logisticsInformation,
         otherInformation,
         selectedIndex,
-        formBox,
+        tableIndex,
         opened,
         multiViewItems,
         multiEntityItems,
         dropButtonItems,
         formData,
-        tableOpenedHeight,
-        tableCloseHeight,
         onSubmitClick,
         onApplyClick,
         onPushClick,
         onItemButtonClick,
         onRefresh,
         onChangeOpened,
+        getColseHeight,
       };
     },
   });
@@ -398,6 +434,16 @@
   .detail {
     overflow: hidden;
 
+    .btn-box {
+      display: flex;
+      flex-wrap: wrap;
+      width: 100%;
+      padding: 8px 8px 0 8px;
+      & > * {
+        margin-left: 8px;
+      }
+    }
+
     .tab-panel {
       position: relative;
       display: flex;
@@ -405,26 +451,20 @@
       background-color: #fff;
       &:last-child {
         flex: 1;
-        margin-top: 10px;
+        margin-top: 16px;
       }
-    }
-
-    .tab {
-      padding: 8px 20px;
-      background-color: #fff;
-    }
-    .btn-box {
-      display: flex;
-      justify-content: flex-end;
-      flex-wrap: wrap;
-      width: 100%;
-      padding: 5px 5px 0;
-      & > * {
-        margin-left: 10px;
+      .tab {
+        padding: 8px 16px;
+        background-color: #fff;
+        .tab-btn {
+          padding-bottom: 8px;
+          & > * {
+            margin-right: 8px;
+          }
+        }
       }
     }
     .form-box {
-      padding: 0 20px;
       overflow: hidden;
     }
     .icon-box {
@@ -446,30 +486,9 @@
       padding-top: 8px;
     }
 
-    .dx-widget {
-      font-size: 12px;
-    }
-
-    .dx-box-item-content {
-      font-size: 12px;
-    }
-
     .dx-texteditor-input {
       min-height: 0;
-      padding: 5px 9px 5px;
-    }
-
-    .dx-button-has-text .dx-button-content {
-      padding: 0;
-    }
-
-    .dx-button-has-icon .dx-button-content {
-      padding: 0;
-    }
-
-    .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-checkbox,
-    .dx-layout-manager .dx-label-h-align .dx-field-item-content .dx-switch {
-      margin: 0;
+      padding: 4px 8px 4px;
     }
   }
 </style>

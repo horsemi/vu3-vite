@@ -20,9 +20,10 @@
           :data-field="item.key"
           :allow-sorting="getSorting(item.allowSort, item.expand, item.relationKey)"
           :caption="item.caption"
+          :customize-text="item.type === 'decimal' ? handleCustomizeDecimal : handleCustomizeText"
           :data-type="item.type"
           :cell-template="getTemplate(item.cellTemplate, item.expand, item.relationKey)"
-          :alignment="item.alignment ? item.alignment : 'center'"
+          :alignment="getAlignment(item)"
         >
           <DxLookup
             v-if="item.type === 'enum'"
@@ -163,9 +164,24 @@
         return deepMerge(cloneDeep(defaultTableOptions), props.tableOptions);
       });
 
+      const handleCustomizeDecimal = (cellInfo) => {
+        const { value } = cellInfo;
+        return value.toFixed(3);
+      };
+
+      const handleCustomizeText = (cellInfo) => {
+        const { valueText } = cellInfo;
+        if (valueText === '') {
+          return '—';
+        } else {
+          return valueText;
+        }
+      };
+
       const onSelectionChanged = ({ selectedRowKeys, selectedRowsData }) => {
         ctx.emit('handleSelectionClick', selectedRowsData);
       };
+
       const handleJump = (e) => {
         const index = parseInt(e.target.value) - 1;
         pageIndex.value = index >= 0 ? index : 0;
@@ -186,7 +202,7 @@
             dataGrid.value.instance.pageIndex(0);
           }
           tableData.value = getTableDataSource(
-            props.tableOptions,
+            options.value,
             scheme,
             props.allColumns,
             props.tableKey,
@@ -227,6 +243,16 @@
         }
       };
 
+      const getAlignment = (item) => {
+        if (item.type === 'int32' || item.type === 'int64' || item.type === 'decimal') {
+          return 'right';
+        } else if (item.type === 'boolean') {
+          return 'center';
+        } else {
+          return 'left';
+        }
+      };
+
       const getFoundationData = (rowInfo) => {
         // 获取基础数据列的key，并以_分割
         const keyArr = rowInfo.column.name.split('_');
@@ -237,7 +263,7 @@
         if (rowInfo.data[expand]) {
           return rowInfo.data[expand][expandKey];
         } else {
-          return '';
+          return '—';
         }
       };
 
@@ -302,6 +328,9 @@
         getFoundationData,
         getSorting,
         getTemplate,
+        getAlignment,
+        handleCustomizeDecimal,
+        handleCustomizeText,
       };
     },
   });
@@ -318,6 +347,19 @@
     // 表头字段加粗
     .dx-header-row .header-bold {
       font-weight: bold;
+    }
+
+    // 给表头单元格加上左右边框
+    .dx-datagrid .dx-datagrid-headers .dx-header-filter,
+    .dx-datagrid .dx-datagrid-headers .dx-header-row > td {
+      border-right: 1px solid #ddd;
+      border-left: 1px solid #ddd;
+    }
+
+    // 去掉单元格的左右边框
+    .dx-datagrid .dx-column-lines > td {
+      border-right: none;
+      border-left: none;
     }
 
     // 隔行换色
@@ -343,9 +385,9 @@
       justify-content: space-between;
       align-items: center;
       min-width: 800px;
-      padding-top: 20px;
+      padding-top: 16px;
       padding-right: 150px;
-      padding-bottom: 20px;
+      padding-bottom: 16px;
       border: none !important;
     }
 
@@ -415,7 +457,7 @@
       display: flex;
       align-items: center;
       width: 150px;
-      height: 73px;
+      height: 65px;
       color: #959595;
       input {
         width: 60px;

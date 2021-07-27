@@ -20,7 +20,7 @@
       </div>
       <OdsTable
         ref="dataGrid"
-        :table-options="tableOptions"
+        :table-options="options"
         :data-source="dataSource"
         :columns="columns"
         :all-columns="allColumns"
@@ -45,11 +45,9 @@
   import { cloneDeep } from 'lodash-es';
 
   import { getColumns } from '/@/model/shipping-advices';
-  import { defaultTableOptions } from '/@/components/Table/common';
   import { Persistent } from '/@/utils/cache/persistent';
   import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
-  import { deepMerge } from '/@/utils';
   import { isArrayEmpty } from '/@/utils/bill/index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
 
@@ -69,7 +67,7 @@
       const loading = ref(false);
       const ORDER_CODE = 'shipping-advice';
       const options: Partial<ITableOptions> = {
-        height: 'calc(100vh - 287px)',
+        height: 'calc(100vh - 276px)',
         dataSourceOptions: {
           oDataOptions: {
             url: getOdsListUrlByCode(ORDER_CODE),
@@ -83,7 +81,6 @@
         orderBy: [],
         columns: [],
       });
-      const tableOptions: ITableOptions = deepMerge(cloneDeep(defaultTableOptions), options);
       const tableKey = ref<string[]>([]);
       const tableKeyType = ref<IKeyType[]>([]);
       const dataSource = ref();
@@ -177,7 +174,7 @@
       return {
         ORDER_CODE,
         loading,
-        tableOptions,
+        options,
         tableKey,
         tableKeyType,
         dataSource,
@@ -203,14 +200,14 @@
 
   .example {
     width: 100%;
-    padding: 20px;
+    padding: 16px;
     padding-bottom: 0;
     background-color: #fff;
     .btn__wrap {
       display: flex;
       justify-content: space-between;
       width: 100%;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
       .btn__box {
         & > * {
           margin-right: 10px;
@@ -219,24 +216,6 @@
           margin-right: 0;
         }
       }
-    }
-  }
-
-  .summary {
-    display: flex;
-    width: 200px;
-    margin-bottom: 10px;
-    &:last-child {
-      margin-bottom: 0;
-    }
-    .summary__text,
-    .summary__num {
-      flex: 1;
-      text-align: right;
-    }
-    .summary__num {
-      margin-left: 14px;
-      text-align: left;
     }
   }
 </style>

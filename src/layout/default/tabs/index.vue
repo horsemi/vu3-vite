@@ -153,8 +153,8 @@
   .@{prefix-cls} {
     position: relative;
     width: 100%;
-    height: 50px;
-    padding-top: 10px;
+    height: 56px;
+    padding-top: 16px;
 
     &-tabs__container {
       display: inline-block;

@@ -39,24 +39,25 @@
     align-items: center;
     justify-content: flex-end;
     width: 48px;
-    height: 20px;
+    height: 24px;
     margin: 0;
-    font-size: 12px;
+    font-size: 14px;
+    line-height: 24px;
     color: #fff;
     text-align: right;
     cursor: pointer;
     background: #bfbfbf;
     border: 1px solid #bfbfbf;
-    border-radius: 10px;
+    border-radius: 12px;
     box-sizing: border-box;
     transition: border-color 0.3s, background-color 0.3s;
 
     &::after {
       position: absolute;
-      top: 1px;
+      top: 2px;
       left: 1px;
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       background-color: #fff;
       border-radius: 100%;
       content: '';
@@ -69,12 +70,12 @@
       border-color: @color-primary;
       &::after {
         left: 100%;
-        margin-left: -17px;
+        margin-left: -19px;
       }
     }
 
     span {
-      padding: 0 8px;
+      padding: 0 6px;
     }
   }
 </style>

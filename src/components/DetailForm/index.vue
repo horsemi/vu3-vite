@@ -23,7 +23,7 @@
       </template>
       <template #OdsSwitch="{ data }">
         <Switch
-          :style="{ opacity: !data.editorType.disabled ? 0.6 : 1, margin: '4px 0' }"
+          :style="{ opacity: !data.editorType.disabled ? 0.6 : 1, margin: '2.5px 0' }"
           :value="formData[data.dataField]"
           @update:value="onChangeData($event, data.dataField)"
         />
@@ -135,7 +135,7 @@
     .dx-state-disabled.dx-widget {
       opacity: 0.6;
       &.dx-texteditor.dx-editor-outlined {
-        background: #f5f7fa;
+        background: @disabled-color;
         opacity: 1;
       }
     }
