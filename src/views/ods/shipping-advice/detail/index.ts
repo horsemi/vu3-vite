@@ -34,8 +34,8 @@ export const base: IDetailItem[] = [
     caption: '单据日期',
   },
   {
-    key: 'BranchLineType',
-    caption: '支装类型',
+    key: 'BatchCode',
+    caption: '发货批次',
   },
   {
     key: 'TotalPack',
@@ -58,21 +58,23 @@ export const base: IDetailItem[] = [
     caption: '总体积数',
   },
   {
-    key: 'Memo',
-    caption: '备注',
-    colSpan: 4,
-  },
-  {
-    key: 'SentStatus',
-    caption: '发送状态',
-  },
-  {
     key: 'IsGatheringOrder',
     caption: '集货订单',
   },
   {
     key: 'IsMergeLockOrder',
     caption: '合并锁单',
+  },
+  {
+    key: 'IsAgencyOrder',
+    caption: '经销商订单',
+    colSpan: 2,
+  },
+  {
+    key: 'IsTally',
+    caption: '库内状态',
+    template: 'stepBar',
+    colSpan: 4,
   },
 ];
 
@@ -135,21 +137,14 @@ export const receiver: IDetailItem[] = [
     caption: '展厅提货地址',
     colSpan: 4,
   },
+  // {
+  //   key: 'IsRecycling',
+  //   caption: '回收服务',
+  // },
   {
-    key: 'IsAgencyOrder',
-    caption: '经销商订单',
-  },
-  {
-    key: 'IsInstall',
-    caption: '上门服务',
-  },
-  {
-    key: 'IsRecycling',
-    caption: '回收服务',
-  },
-  {
-    key: 'IsExistMarble',
-    caption: '大理石',
+    key: 'Memo',
+    caption: '备注',
+    colSpan: 4,
   },
 ];
 
@@ -208,7 +203,7 @@ export const logistics: IDetailItem[] = [
   },
   {
     key: 'ThreeServiceSupplierCode',
-    caption: '三包承运商',
+    caption: '三包服务商',
   },
   {
     key: 'SmallCarGroup',
@@ -219,9 +214,14 @@ export const logistics: IDetailItem[] = [
     caption: '发货模式',
   },
   {
-    key: 'ThreeServiceFeeTypeCode',
-    caption: '三包费用类型',
+    key: 'ServiceItemCode',
+    caption: '服务项目',
   },
+  {
+    key: 'LogisticCode',
+    caption: '物流单号',
+  },
+
   {
     key: 'LineAreaCode',
     caption: '线路区域',
@@ -231,20 +231,20 @@ export const logistics: IDetailItem[] = [
     caption: '物流成本',
   },
   {
-    key: 'LogisticCode',
-    caption: '物流单号',
+    key: 'ThreeServiceFeeTypeCode',
+    caption: '三包费用类型',
   },
   {
-    key: 'FreightTypeCode',
-    caption: '运费类型',
+    key: 'BranchLineType',
+    caption: '支装类型',
   },
   {
     key: 'LogisticsLine',
     caption: '物流专线',
   },
   {
-    key: 'ServiceItemCode',
-    caption: '服务项目',
+    key: 'FreightTypeCode',
+    caption: '运费类型',
   },
 ];
 
@@ -289,8 +289,8 @@ export const express: IDetailItem[] = [
 
 export const task: IDetailItem[] = [
   {
-    key: 'BatchCode',
-    caption: '发货批次',
+    key: 'LockBatchTime',
+    caption: '锁定批次时间',
   },
   {
     key: 'PromisedDeliveryDate',
@@ -305,8 +305,8 @@ export const task: IDetailItem[] = [
     caption: '退货状态',
   },
   {
-    key: 'LockBatchTime',
-    caption: '锁定批次时间',
+    key: 'LockBatchUserCode',
+    caption: '锁定批次人',
   },
   {
     key: 'SendGoodsTimeOut',
@@ -321,12 +321,12 @@ export const task: IDetailItem[] = [
     caption: '截货原因',
   },
   {
-    key: 'LockBatchUserCode',
-    caption: '锁定批次人',
+    key: 'DetailRowsCount',
+    caption: '明细行数',
   },
   {
-    key: 'SendGoodsTimeOut',
-    caption: '发货超时时间',
+    key: 'SendGoodsTime',
+    caption: '发货时间',
   },
   {
     key: 'CancellerId',
@@ -337,25 +337,27 @@ export const task: IDetailItem[] = [
     caption: '截货类型',
   },
   {
-    key: 'IsTally',
-    caption: '理货',
-    template: 'stepBar',
-    colSpan: 4,
+    key: 'AreaName',
+    caption: '区域',
   },
   {
     key: 'IsEntry',
     caption: '进场',
     hide: true,
   },
+  // {
+  //   key: 'IsTransfer',
+  //   caption: '交接',
+  //   hide: true,
+  // },
+  // {
+  //   key: 'IsClean',
+  //   caption: '清货',
+  //   hide: true,
+  // },
   {
-    key: 'IsTransfer',
-    caption: '交接',
-    hide: true,
-  },
-  {
-    key: 'IsClean',
-    caption: '清货',
-    hide: true,
+    key: 'IsInstall',
+    caption: '上门服务',
   },
   {
     key: 'IsCancelled',
@@ -369,8 +371,8 @@ export const other: IDetailItem[] = [
     caption: '创建时间',
   },
   {
-    key: 'UpdatedTime',
-    caption: '修改时间',
+    key: 'CreatorId',
+    caption: '创建人',
   },
   {
     key: 'CustomerCode',
@@ -381,8 +383,8 @@ export const other: IDetailItem[] = [
     caption: '父单号',
   },
   {
-    key: 'CreatorId',
-    caption: '创建人',
+    key: 'UpdatedTime',
+    caption: '修改时间',
   },
   {
     key: 'UpdaterId',
@@ -401,8 +403,8 @@ export const other: IDetailItem[] = [
     caption: '审核时间',
   },
   {
-    key: 'AreaName',
-    caption: '区域',
+    key: 'ApplierId',
+    caption: '审核人',
   },
   {
     key: 'CustomerSalesman',
@@ -413,8 +415,8 @@ export const other: IDetailItem[] = [
     caption: '外部销售单号',
   },
   {
-    key: 'ApplierId',
-    caption: '审核人',
+    key: 'SentStatus',
+    caption: '发送状态',
   },
   {
     key: 'TotalMarble',
@@ -422,7 +424,7 @@ export const other: IDetailItem[] = [
   },
   {
     key: 'TaoBaoCode',
-    caption: '淘宝单号',
+    caption: '线上平台单号',
   },
   {
     key: 'OutBillFormCode',
@@ -529,11 +531,11 @@ export const definite: IColumnItem[] = [
   },
   {
     key: 'TaoBaoCode',
-    caption: '淘宝单号',
+    caption: '线上平台单号',
   },
   {
     key: 'TaoBaoSubCode',
-    caption: '淘宝子单号',
+    caption: '线上平台子单号',
   },
   {
     key: 'IsVerification',

@@ -5,7 +5,7 @@ import { getColumnList } from './common';
 export const customColumns: IColumnItem[] = [
   {
     key: 'BillCode',
-    caption: '单据编码',
+    caption: '单据编号',
     cellTemplate: 'billCode',
     mustKey: true,
   },
@@ -30,12 +30,12 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'DeliveryWarehouse_Name',
-        caption: '仓库'
+        caption: '仓库',
       },
       {
         key: 'DeliveryWarehouse_GroupName',
-        caption: '仓库分组'
-      }
+        caption: '仓库分组',
+      },
     ],
     datatypekeies: 'stocks',
   },
@@ -54,7 +54,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'DeliveryPoint_Name',
-        caption: '提货点'
+        caption: '提货点',
       },
     ],
     datatypekeies: 'delivery-points',
@@ -70,7 +70,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'ThreeServicePoint_Name',
-        caption: '三包点'
+        caption: '三包点',
       },
     ],
     datatypekeies: 'three-service-points',
@@ -94,7 +94,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'BillType_Name',
-        caption: '单据类型'
+        caption: '单据类型',
       },
     ],
     datatypekeies: 'bill-types',
@@ -110,7 +110,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'ServiceContent_Name',
-        caption: '服务项目'
+        caption: '服务项目',
       },
     ],
     datatypekeies: 'service-contents',
@@ -178,7 +178,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'Province_Name',
-        caption: '省'
+        caption: '省',
       },
     ],
     datatypekeies: 'provinces',
@@ -194,7 +194,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'City_Name',
-        caption: '市'
+        caption: '市',
       },
     ],
     datatypekeies: 'cities',
@@ -210,7 +210,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'District_Name',
-        caption: '区'
+        caption: '区',
       },
     ],
     datatypekeies: 'districts',
@@ -230,7 +230,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'Agency_Name',
-        caption: '经销商'
+        caption: '经销商',
       },
     ],
     datatypekeies: 'customers',
@@ -266,7 +266,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'GatheringPoint_Name',
-        caption: '集货点'
+        caption: '集货点',
       },
     ],
     datatypekeies: 'gathering-points',
@@ -282,7 +282,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'Contractor_Name',
-        caption: '中转承运商'
+        caption: '中转承运商',
       },
     ],
     datatypekeies: 'suppliers',
@@ -298,7 +298,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'ThreeServiceCostType_Name',
-        caption: '三包费用类型'
+        caption: '三包费用类型',
       },
     ],
     datatypekeies: 'three-service-cost-types',
@@ -314,7 +314,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'LineArea_Name',
-        caption: '线路区域'
+        caption: '线路区域',
       },
     ],
     datatypekeies: 'line-areas',
@@ -330,7 +330,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'ThreeServiceSupplier_Name',
-        caption: '三包服务商'
+        caption: '三包服务商',
       },
     ],
     datatypekeies: 'suppliers',
@@ -370,7 +370,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'CustomerType_Name',
-        caption: '客户类型'
+        caption: '客户类型',
       },
     ],
     datatypekeies: 'customer-types',
@@ -394,7 +394,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'Customer_Name',
-        caption: '客户'
+        caption: '客户',
       },
     ],
     datatypekeies: 'customers',

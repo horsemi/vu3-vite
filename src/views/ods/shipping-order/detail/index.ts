@@ -11,76 +11,67 @@ import { isFoundationType } from '/@/model/common';
 export const base: IDetailItem[] = [
   {
     key: 'BillCode',
-    caption: '单据编码',
-  },
-  {
-    key: 'BillDate',
-    caption: '单据日期',
-  },
-  {
-    key: 'TotalPackage',
-    caption: '总包件数',
-  },
-  {
-    key: 'Group',
-    caption: '分组',
+    caption: '单据编号',
   },
   {
     key: 'BillTypeCode',
     caption: '单据类型',
   },
   {
-    key: 'ServiceItemCode',
-    caption: '服务项目',
-  },
-  {
-    key: 'TotalVolume',
-    caption: '总体积数',
-  },
-  {
-    key: 'CustomerSalesman',
-    caption: '客户业务员',
-  },
-  {
-    key: 'DocumentStatus',
-    caption: '单据状态',
-  },
-  {
-    key: 'OperationStatus',
-    caption: '业务状态',
-  },
-  {
-    key: 'TotalOrderCount',
-    caption: '订单总数',
-  },
-  {
-    key: 'DetailRowsCount',
-    caption: '明细行数',
+    key: 'BillDate',
+    caption: '单据日期',
   },
   {
     key: 'DeliveryWarehouseCode',
     caption: '仓库',
   },
   {
-    key: 'MarkStatus',
-    caption: '标记状态',
+    key: 'DocumentStatus',
+    caption: '单据状态',
   },
   {
-    key: 'Memo',
-    caption: '备注',
-    colSpan: 4,
+    key: 'Group',
+    caption: '分组',
+  },
+  {
+    key: 'TotalOrderCount',
+    caption: '订单总数',
+  },
+  {
+    key: 'TotalPackage',
+    caption: '总包件数',
+  },
+  {
+    key: 'OperationStatus',
+    caption: '业务状态',
+  },
+  {
+    key: 'CustomerSalesman',
+    caption: '客户业务员',
+  },
+  {
+    key: 'DetailRowsCount',
+    caption: '明细行数',
+  },
+  {
+    key: 'TotalVolume',
+    caption: '总体积数',
   },
   {
     key: 'IsGatheringOrder',
     caption: '集货订单',
   },
-  {
-    key: 'IsRecycling',
-    caption: '回收服务',
-  },
+  // {
+  //   key: 'IsRecycling',
+  //   caption: '回收服务',
+  // },
   {
     key: 'IsAgencyOrder',
     caption: '经销商订单',
+  },
+  {
+    key: 'PushDownStatus',
+    caption: '下推状态',
   },
 ];
 
@@ -98,8 +89,8 @@ export const receiver: IDetailItem[] = [
     caption: '电话',
   },
   {
-    key: 'RecyclingMemo',
-    caption: '回收备注',
+    key: 'Group',
+    caption: '分组',
   },
   {
     key: 'ProvinceCode',
@@ -159,8 +150,8 @@ export const logistics: IDetailItem[] = [
     caption: '三包成本',
   },
   {
-    key: 'ThreeServiceFeeTypeCode',
-    caption: '三包费用类型',
+    key: 'ServiceItemCode',
+    caption: '服务项目',
   },
   {
     key: 'DeliveryPointCode',
@@ -175,8 +166,8 @@ export const logistics: IDetailItem[] = [
     caption: '物流成本',
   },
   {
-    key: 'FreightTypeCode',
-    caption: '运费类型',
+    key: 'ThreeServiceFeeTypeCode',
+    caption: '三包费用类型',
   },
   {
     key: 'ThreeServicePointCode',
@@ -189,6 +180,10 @@ export const logistics: IDetailItem[] = [
   {
     key: 'LogisticCode',
     caption: '物流单号',
+  },
+  {
+    key: 'FreightTypeCode',
+    caption: '运费类型',
   },
 ];
 
@@ -258,12 +253,16 @@ export const other: IDetailItem[] = [
     caption: '外部原单类型',
   },
   {
-    key: 'IsCancelled',
-    caption: '作废状态',
+    key: 'RecyclingMemo',
+    caption: '回收备注',
   },
   {
-    key: 'PushDownStatus',
-    caption: '下推状态',
+    key: 'MarkStatus',
+    caption: '标记状态',
+  },
+  {
+    key: 'IsCancelled',
+    caption: '作废状态',
   },
 ];
 
@@ -352,11 +351,11 @@ export const definite: IColumnItem[] = [
   },
   {
     key: 'TaoBaoCode',
-    caption: '淘宝单号',
+    caption: '线上平台单号',
   },
   {
     key: 'TaoBaoSubCode',
-    caption: '淘宝子单号',
+    caption: '线上平台子单号',
   },
   {
     key: 'Shop',
