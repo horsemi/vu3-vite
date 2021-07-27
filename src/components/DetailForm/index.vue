@@ -4,7 +4,7 @@
       <template v-for="(item, index) in formList" :key="index">
         <DxItem
           v-if="!item.hide"
-          :label="{ text: item.caption, visible: !item.template }"
+          :label="{ text: item.caption }"
           :data-field="item.key"
           :editor-type="item.editorType"
           :disabled="!item.disabled"

@@ -609,7 +609,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'TaoBaoCode',
-    caption: '淘宝单号',
+    caption: '线上平台单号',
   },
   {
     key: 'CustomerSalesman',
@@ -630,6 +630,10 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'IsClean',
     caption: '清货',
+  },
+  {
+    key: 'DetailRowsCount',
+    caption: '明细行数',
   },
 ];
 

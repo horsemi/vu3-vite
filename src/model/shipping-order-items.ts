@@ -118,11 +118,11 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'TaoBaoCode',
-    caption: '淘宝单号',
+    caption: '线上平台单号',
   },
   {
     key: 'TaoBaoSubCode',
-    caption: '淘宝子单号',
+    caption: '线上平台子单号',
   },
   {
     key: 'Shop',
