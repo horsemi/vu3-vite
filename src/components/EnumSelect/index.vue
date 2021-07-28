@@ -5,6 +5,7 @@
       :data-source="options"
       :width="width"
       :search-enabled="true"
+      :read-only="readOnly"
       search-mode="contains"
       :search-expr="['description', 'key']"
       display-expr="description"
@@ -38,6 +39,10 @@
       expand: {
         type: String,
         default: '',
+      },
+      readOnly: {
+        type: Boolean,
+        default: false,
       },
     },
     emits: ['update:value'],

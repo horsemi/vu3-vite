@@ -173,6 +173,7 @@
 
       return {
         ORDER_CODE,
+        dataGrid,
         loading,
         options,
         tableKey,
@@ -210,7 +211,7 @@
       margin-bottom: 16px;
       .btn__box {
         & > * {
-          margin-right: 10px;
+          margin-right: 8px;
         }
         :nth-last-child(1) {
           margin-right: 0;

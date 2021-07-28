@@ -1,6 +1,6 @@
 <template>
   <div :class="`${prefixCls}`">
-    <DxTextBox :value="foundationName" :show-clear-button="true"> </DxTextBox>
+    <DxTextBox :value="foundationName" :read-only="readOnly" :show-clear-button="true"> </DxTextBox>
   </div>
 </template>
 
@@ -30,6 +30,10 @@
         default: () => {
           return {};
         },
+      },
+      readOnly: {
+        type: Boolean,
+        default: false,
       },
     },
     emits: ['update:value'],

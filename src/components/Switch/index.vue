@@ -12,13 +12,21 @@
   export default defineComponent({
     name: 'Switch',
     props: {
-      value: Boolean,
+      value: {
+        type: Boolean,
+        default: false,
+      },
+      readOnly: {
+        type: Boolean,
+        default: false,
+      },
     },
     emits: ['update:value'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('switch');
 
       function onChange() {
+        if (props.readOnly) return;
         ctx.emit('update:value', !props.value);
       }
 

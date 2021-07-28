@@ -362,6 +362,11 @@
       border-left: none;
     }
 
+    // 重置单元格内边距
+    .dx-datagrid .dx-row > td {
+      padding: 12px;
+    }
+
     // 隔行换色
     .dx-datagrid .dx-row-alt > td,
     .dx-datagrid .dx-row-alt > tr > td {
@@ -466,6 +471,12 @@
         border: 1px solid #d3d3d3;
         border-radius: 4px;
         outline: none;
+        &:hover {
+          border-color: rgba(81, 108, 133, 0.4);
+        }
+        &:focus {
+          border-color: #337ab7;
+        }
       }
       // 隐藏输入框箭头样式
       input[type='number'] {
