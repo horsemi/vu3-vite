@@ -158,11 +158,11 @@
 
     &-tabs__container {
       display: inline-block;
-      margin-right: 10px;
+      margin-right: 4px;
     }
 
     &-tabs__wrapper {
-      padding: 8px;
+      padding: 8px 16px;
       color: #adadad;
       cursor: pointer;
       background-color: #fff;
@@ -176,7 +176,8 @@
     .active {
       height: 40px;
       color: #1890ff;
-      border-radius: 10px 10px 0 0;
+      border-top: 3px solid #1890ff;
+      border-radius: 3px 3px 0 0;
     }
   }
 </style>
