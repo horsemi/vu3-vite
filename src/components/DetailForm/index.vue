@@ -1,13 +1,13 @@
 <template>
   <div :class="prefixCls">
-    <DxForm :form-data="formData" :col-count="8">
+    <DxForm :form-data="formData" :col-count="8" :read-only="true">
       <template v-for="(item, index) in formList" :key="index">
         <DxItem
           v-if="!item.hide"
-          :label="{ text: item.caption, visible: !item.template }"
+          :label="{ text: item.caption }"
           :data-field="item.key"
           :editor-type="item.editorType"
-          :disabled="!item.disabled"
+          :disabled="item.disabled"
           :editor-options="handleEditorOptions(item)"
           :col-span="item.colSpan ? item.colSpan : item.editorType === 'dxSwitch' ? 1 : 2"
           :template="
@@ -23,7 +23,8 @@
       </template>
       <template #OdsSwitch="{ data }">
         <Switch
-          :style="{ opacity: !data.editorType.disabled ? 0.6 : 1, margin: '4px 0' }"
+          :style="{ opacity: !data.editorType.disabled ? 0.6 : 1, margin: '2.5px 0' }"
+          :read-only="true"
           :value="formData[data.dataField]"
           @update:value="onChangeData($event, data.dataField)"
         />
@@ -35,6 +36,7 @@
         <EnumSelect
           v-if="data.editorOptions.type === 'enum'"
           :value="formData[data.dataField]"
+          :read-only="true"
           width="100%"
           :expand="data.editorOptions.expand"
           @update:value="onChangeData($event, data.dataField)"
@@ -43,6 +45,7 @@
           v-else
           width="100%"
           :value="formData[data.dataField]"
+          :read-only="true"
           :foundation-data="formData[data.editorOptions.expand]"
         />
       </template>
@@ -133,11 +136,15 @@
     // 禁用样式
     .dx-state-disabled .dx-widget,
     .dx-state-disabled.dx-widget {
-      opacity: 0.6;
       &.dx-texteditor.dx-editor-outlined {
-        background: #f5f7fa;
+        background: @disabled-color;
         opacity: 1;
       }
+    }
+
+    .dx-texteditor.dx-state-readonly {
+      background: @disabled-color;
+      border-style: solid;
     }
   }
 </style>

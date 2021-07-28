@@ -280,23 +280,23 @@
     &__menubtn {
       display: flex;
       align-items: center;
-      width: 20px;
+      width: 16px;
       height: calc(100vh - 56px);
       background: @background-color-primary;
     }
 
     &__icon__box {
-      width: 12px;
+      width: 8px;
       height: 80px;
       line-height: 80px;
       cursor: pointer;
       background: #fff;
-      border-radius: 0 20px 20px 0;
+      border-radius: 0 10px 10px 0;
     }
 
     &__icon {
       position: relative;
-      left: -3px;
+      left: -5px;
       margin: 0;
       vertical-align: middle;
       &__down {
@@ -310,8 +310,8 @@
       flex-direction: column;
       width: 100%;
       height: calc(100vh - 56px);
-      padding-right: 20px;
-      padding-bottom: 10px;
+      padding-right: 16px;
+      padding-bottom: 16px;
       overflow: hidden;
       background-color: @background-color-primary;
     }

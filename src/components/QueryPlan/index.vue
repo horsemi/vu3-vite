@@ -125,13 +125,13 @@
       };
       // 点击重置触发
       const onReset = () => {
-        const { scheme, fast } = (Persistent.getLocal(SCHEME_DATA_KEY) as any)[props.orderCode];
-        const popupUuid = schemeList.value[popupIndex.value].uuid;
-        const popupListTemp = scheme.find((item) => item.uuid === popupUuid);
-
-        schemeList.value[popupIndex.value] = cloneDeep(popupListTemp);
-        queryForm.value.changeQueryList(fast);
-        onSearch();
+        if (popupIndex.value < schemeListTemp.value.length) {
+          const popupListTemp = schemeListTemp.value[popupIndex.value];
+          schemeList.value[popupIndex.value] = cloneDeep(popupListTemp);
+          queryForm.value.changeQueryList(fast.value);
+          checkedIndex.value = popupIndex.value;
+          onSearch();
+        }
       };
       // 点击查询方案触发
       const onQueryPlan = () => {
@@ -159,7 +159,7 @@
         }
       };
       // 处理保存数据
-      const handleSaveData = (msg: string, scheme: ISchemeItem[], fast: IQueryItem[] = []) => {
+      const handleSaveData = (msg: string, scheme: ISchemeItem[], query: IQueryItem[] = []) => {
         let schemeListTemp = Persistent.getLocal(SCHEME_DATA_KEY) as any;
         let checkedIndex = 0;
 
@@ -167,11 +167,13 @@
           checkedIndex = schemeListTemp[props.orderCode].checkedIndex;
           schemeListTemp[props.orderCode] = {
             scheme,
-            fast: fast.length > 0 ? fast : props.schemeData.fast,
+            fast: query.length > 0 ? query : props.schemeData.fast,
             checkedIndex: checkedIndex,
           };
         }
-
+        if (query.length > 0) {
+          fast.value = query;
+        }
         Persistent.setLocal(SCHEME_DATA_KEY, schemeListTemp);
         handleOverLength();
         useMessage(msg, 'success');
@@ -248,10 +250,12 @@
       // 接收重置事件
       const onResetScheme = () => {
         const popupUuid = schemeList.value[popupIndex.value].uuid;
-        const popupListTemp = schemeListTemp.value.filter((item) => item.uuid === popupUuid);
+        const popupListTemp = schemeListTemp.value.find((item) => item.uuid === popupUuid);
 
-        schemeList.value[popupIndex.value] = cloneDeep(popupListTemp[0]);
-        onChangeScheme(schemeList.value[popupIndex.value]);
+        if (popupListTemp) {
+          schemeList.value[popupIndex.value] = cloneDeep(popupListTemp);
+          onChangeScheme(schemeList.value[popupIndex.value]);
+        }
       };
       // 接收确认事件
       const onSubmit = () => {
@@ -346,7 +350,7 @@
     align-items: center;
     width: 100%;
     height: 64px;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
     background-color: #fff;
     box-sizing: border-box;
   }

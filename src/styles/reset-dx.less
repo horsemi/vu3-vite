@@ -27,20 +27,35 @@
   background-color: #0486fe !important;
 }
 
-// 重置默认按钮背景色
+// 重置主题按钮背景色
 .dx-button-mode-contained.dx-button-default {
-  background-color: #1890ff !important;
+  background-color: @color-primary !important;
 }
 .dx-button-mode-contained.dx-button-default.dx-state-hover {
-  background-color: #188fffd3 !important;
+  background-color: #5eb2ff !important;
 }
 .dx-button-mode-contained.dx-button-default.dx-state-focused {
-  background-color: #188fffd3 !important;
+  color: #fff !important;
+  background-color: #1165b2 !important;
+}
+
+// 重置默认按钮样式
+.dx-button-mode-contained.dx-state-hover {
+  background-color: #fff !important;
+  border-color: #52b7ff !important;
+}
+.dx-button-mode-contained.dx-state-focused {
+  color: #0486fe !important;
+  background-color: #fff !important;
+  border-color: #0486fe !important;
+  .dx-icon {
+    color: #0486fe !important;
+  }
 }
 
 // 重置tab样式
 .dx-tab {
-  padding: 5px !important;
+  padding: 8px 16px !important;
   background-color: #fff !important;
 }
 .dx-tabpanel .dx-multiview-wrapper {
@@ -60,9 +75,8 @@
   &::before {
     position: absolute;
     bottom: 0;
-    left: 30%;
     display: inline-block;
-    width: 40%;
+    width: calc(100% - 32px);
     height: 2px;
     background: @color-primary;
     border-radius: 1px;
@@ -70,35 +84,9 @@
   }
 }
 .dx-tabpanel > .dx-tabpanel-tabs .dx-tab {
+  width: auto !important;
   box-shadow: none !important;
 }
 .dx-tabpanel > .dx-tabpanel-tabs .dx-tabs-expanded .dx-tab:not(.dx-tab-selected):first-of-type {
   box-shadow: none !important;
-}
-
-// 重置开关样式
-.dx-switch-container {
-  width: 48px !important;
-  height: 20px !important;
-  padding: 0 3px !important;
-  background-color: #1890ff !important;
-  border: none !important;
-  border-radius: 20px !important;
-}
-.dx-switch-off,
-.dx-switch-on {
-  font-weight: 500 !important;
-  line-height: 20px !important;
-  color: #fff !important;
-}
-.dx-switch-handle {
-  width: 18px !important;
-  height: 18px !important;
-  margin: 3px 0 !important;
-}
-.dx-switch-handle::before {
-  width: 14px !important;
-  height: 14px !important;
-  background-color: #fff !important;
-  border-radius: 100% !important;
 }

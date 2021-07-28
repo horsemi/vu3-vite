@@ -4,12 +4,6 @@ import type { IDetailItem } from '/@/utils/bill/types';
 import { getList } from '/@/api/ods/common';
 
 // columns的dataType 接受的类型有 'string' | 'number' | 'date' | 'boolean' | 'object' | 'datetime'
-const handleType = (val: string): string => {
-  if (val === 'decimal' || val === 'int32' || val === 'int64') {
-    val = 'number';
-  }
-  return val;
-};
 
 export const getColumnList = async (
   code: string,
@@ -27,7 +21,7 @@ export const getColumnList = async (
       );
       if (fieldType) {
         columnList.push({
-          type: handleType(fieldType.type),
+          type: fieldType.type,
           expand: fieldType.expand,
           ...column,
         });
