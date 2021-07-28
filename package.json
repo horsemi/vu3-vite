@@ -19,7 +19,7 @@
     "@types/qs": "^6.9.6",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
-    "@vueuse/core": "^4.8.2",
+    "@vueuse/core": "^5.2.0",
     "axios": "^0.21.1",
     "crypto-js": "^4.0.0",
     "devextreme": "^21.1.3",
