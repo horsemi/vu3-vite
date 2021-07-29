@@ -18,7 +18,7 @@
               <span :class="`${prefixCls}-tabs-title__wrapper`">{{ item.meta.title }}</span>
               <i
                 v-if="!isAffix(item)"
-                class="dx-icon dx-icon-close"
+                class="dx-icon dx-icon-clear"
                 @click.stop="handleItemClose(item)"
               />
             </div>
@@ -159,6 +159,7 @@
     &-tabs__container {
       display: inline-block;
       margin-right: 4px;
+      box-shadow: 0 2px 6px 0 rgb(0 0 0 / 4%);
     }
 
     &-tabs__wrapper {
