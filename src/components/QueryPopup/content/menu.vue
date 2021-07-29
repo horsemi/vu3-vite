@@ -170,8 +170,8 @@
       border-bottom: 1px solid @border-color-primary;
       span {
         flex: 1;
-        height: 35px;
-        line-height: 35px;
+        height: 41px;
+        line-height: 41px;
         text-align: center;
         cursor: pointer;
         &:hover {

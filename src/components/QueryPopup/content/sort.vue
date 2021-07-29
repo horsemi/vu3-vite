@@ -19,7 +19,7 @@
         </template>
       </DxDataGrid>
     </div>
-    <div :class="`${prefixCls}__next`" @click="onAddCol">
+    <div :tabindex="-1" :class="`${prefixCls}__next`" @click="onAddCol">
       <i class="dx-icon-chevronnext" />
     </div>
     <div :class="`${prefixCls}__table`">
@@ -151,12 +151,18 @@
       const onRowClick = (e) => {
         e.data.checked = !e.data.checked;
         if (e.data.checked) {
-          const item = fieldList.value.filter((item) => item.key === e.data.key)[0];
-          dataSourceTemp.push({
-            key: item.key,
-            caption: item.caption,
-            desc: false,
-          });
+          const item = fieldList.value.find((item) => item.key === e.data.key);
+          // 后端设置了最多只能5个排序字段，理论上前端不管有多少个
+          if (dataSourceTemp.length >= 5) {
+            return;
+          }
+          if (item) {
+            dataSourceTemp.push({
+              key: item.key,
+              caption: item.caption,
+              desc: false,
+            });
+          }
         } else {
           const index = dataSourceTemp.findIndex((item) => item.key === e.data.key);
           dataSourceTemp.splice(index, 1);
@@ -278,6 +284,7 @@
     &__field {
       width: 30%;
       height: 100%;
+      min-width: 200px;
     }
 
     &__next {
@@ -292,7 +299,10 @@
       background-color: #0486fe;
       border-radius: 2px;
       &:hover {
-        background: rgba(4, 134, 254, 0.7);
+        background: #5eb2ff;
+      }
+      &:focus {
+        background: #1165b2;
       }
     }
 

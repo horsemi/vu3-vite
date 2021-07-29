@@ -30,7 +30,6 @@
     <div>
       <DxNumberBox
         v-if="paramDataType === 'int32' || paramDataType === 'int64' || paramDataType === 'decimal'"
-        ref="valueBox"
         :value="value"
         :show-spin-buttons="true"
         format="###,##0.###"
@@ -40,7 +39,6 @@
       </DxNumberBox>
       <DxSelectBox
         v-else-if="paramDataType === 'boolean'"
-        ref="valueBox"
         :value="value"
         :data-source="booleanOptions"
         :show-clear-button="true"
@@ -52,7 +50,6 @@
       </DxSelectBox>
       <DxDateBox
         v-else-if="paramDataType === 'datetime' || paramDataType === 'date'"
-        ref="valueBox"
         :value="value"
         :type="paramDataType"
         apply-value-mode="useButtons"
@@ -65,7 +62,6 @@
       </DxDateBox>
       <DxSelectBox
         v-else-if="paramDataType === 'enum'"
-        ref="valueBox"
         :value="value"
         :data-source="options"
         :show-clear-button="true"
@@ -77,7 +73,6 @@
       </DxSelectBox>
       <FoundationSelect
         v-else-if="paramDatatypekeies"
-        ref="valueBox"
         width="180"
         :value="value"
         :foundation-code="paramDatatypekeies"
@@ -86,7 +81,6 @@
       </FoundationSelect>
       <DxTextBox
         v-else
-        ref="valueBox"
         :value="value"
         :show-clear-button="true"
         width="180"
@@ -101,7 +95,7 @@
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
 
-  import { defineComponent, watch, PropType, ref, nextTick } from 'vue';
+  import { defineComponent, watch, PropType, ref } from 'vue';
   import moment from 'moment';
 
   import { useAppStore } from '/@/store/modules/app';
@@ -164,7 +158,6 @@
     setup(props, context) {
       const appStore = useAppStore();
       const { prefixCls } = useDesign('dynamic-select');
-      const valueBox = ref();
       let options = ref<{ key: string; value: string }[]>([]);
       let operatorOptions = ref<{ key: string; value: string }[]>([]);
       let dataType = ref<string>('');
@@ -236,31 +229,17 @@
         context.emit('update:paramOperations', operatorOptions.value);
       }
 
-      function handleResetValue() {
-        if (valueBox.value.instance) {
-          valueBox.value.instance.reset();
-        } else if (
-          valueBox.value.$refs.foundationSelect &&
-          valueBox.value.$refs.foundationSelect.instance
-        ) {
-          valueBox.value.$refs.foundationSelect.instance.reset();
-        }
-      }
-
       function handleItemClick(e) {
-        handleResetValue();
-        nextTick(() => {
-          if (e.itemData.type === 'datetime' || e.itemData.type === 'date') {
-            context.emit(
-              'update:value',
-              moment([moment().year(), moment().month(), moment().date()])
-                .format('YYYY/MM/DD HH:mm:ss')
-                .toString()
-            );
-          } else {
-            handleResetValue();
-          }
-        });
+        if (e.itemData.type === 'datetime' || e.itemData.type === 'date') {
+          context.emit(
+            'update:value',
+            moment([moment().year(), moment().month(), moment().date()])
+              .format('YYYY/MM/DD HH:mm:ss')
+              .toString()
+          );
+        } else {
+          context.emit('update:value', undefined);
+        }
       }
 
       return {
@@ -269,7 +248,6 @@
         dataType,
         operatorOptions,
         booleanOptions,
-        valueBox,
         handleItemClick,
       };
     },

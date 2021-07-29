@@ -166,7 +166,11 @@
 
       const handleCustomizeDecimal = (cellInfo) => {
         const { value } = cellInfo;
-        return value.toFixed(3);
+        if (typeof value === 'number') {
+          return value.toFixed(3);
+        } else {
+          return '—';
+        }
       };
 
       const handleCustomizeText = (cellInfo) => {
@@ -201,16 +205,24 @@
             // 回到第一页
             dataGrid.value.instance.pageIndex(0);
           }
-          tableData.value = getTableDataSource(
-            options.value,
-            scheme,
-            props.allColumns,
-            props.tableKey,
-            props.tableKeyType
-          );
+          if (tableData.value) {
+            // 如果已经有datasource就销毁
+            tableData.value.dispose();
+          }
+          // 获取数据前，清空列数据，解决列数据引起的排序和显示隐藏列问题
           tableColumns.value = [];
+          // 重新获取列数据
+          tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
+          // 等列数据渲染完后再去获取表格数据，还是解决列数据引起的排序和显示隐藏列问题
           nextTick(() => {
-            tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
+            // 重新 new datasource
+            tableData.value = getTableDataSource(
+              options.value,
+              scheme,
+              props.allColumns,
+              props.tableKey,
+              props.tableKeyType
+            );
           });
         }
       };
