@@ -14,19 +14,19 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
     },
     children: [
       {
-        path: 'express-platform-test',
-        name: 'ExpressPlatformTest',
-        redirect: '/express-platform/express-platform-test/express-platform-test/list',
+        path: 'express-platform',
+        name: 'ExpressPlatform',
+        redirect: '/express-platform/express-platform/express-platform/list',
         meta: {
-          title: '快递平台测试',
+          title: '快递平台',
         },
         children: [
           {
-            path: 'express-platform-test/list',
-            name: 'ExpressPlatformTestList',
+            path: 'express-platform/list',
+            name: 'ExpressPlatformList',
             component: () => import('/@/views/home/index.vue'),
             meta: {
-              title: '快递平台测试',
+              title: '快递平台',
             },
           },
         ],

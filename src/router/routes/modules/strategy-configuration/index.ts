@@ -14,20 +14,19 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
     },
     children: [
       {
-        path: 'strategy-configuration-test',
-        name: 'StrategyConfigurationTest',
-        redirect:
-          '/strategy-configuration/strategy-configuration-test/strategy-configuration-test/list',
+        path: 'strategy-configuration',
+        name: 'StrategyConfiguration',
+        redirect: '/strategy-configuration/strategy-configuration/strategy-configuration/list',
         meta: {
-          title: '策略配置测试',
+          title: '策略配置',
         },
         children: [
           {
-            path: 'strategy-configuration-test/list',
-            name: 'StrategyConfigurationTestList',
+            path: 'strategy-configuration/list',
+            name: 'StrategyConfigurationList',
             component: () => import('/@/views/home/index.vue'),
             meta: {
-              title: '策略配置测试',
+              title: '策略配置',
             },
           },
         ],
