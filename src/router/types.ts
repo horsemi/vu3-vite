@@ -51,6 +51,9 @@ export interface RouteMeta {
   isLink?: boolean;
 
   showSub?: boolean;
+
+  // Sort menu
+  order?: number;
 }
 
 // @ts-ignore
