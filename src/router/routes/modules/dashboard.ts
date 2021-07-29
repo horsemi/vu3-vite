@@ -30,8 +30,9 @@ const dashboard: Array<AppRouteRecordRaw> = [
     redirect: '/home/demo/index',
     component: LAYOUT,
     meta: {
-      title: '首页',
+      title: '系统首页',
       icon: 'home',
+      order: 1,
     },
     children: [
       {

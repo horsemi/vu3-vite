@@ -10,6 +10,7 @@ const orderManagement: Array<AppRouteRecordRaw> = [
     meta: {
       title: '订单管理',
       icon: 'order',
+      order: 2,
     },
     children: [
       {

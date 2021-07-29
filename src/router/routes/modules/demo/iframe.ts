@@ -11,6 +11,7 @@ const iframe: Array<AppRouteRecordRaw> = [
     meta: {
       title: '外部链接',
       icon: 'setting',
+      order: 8,
     },
     children: [
       {

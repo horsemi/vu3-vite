@@ -54,8 +54,8 @@
       const { prefixCls } = useDesign('layout-menu');
       const router = useRouter();
       const activeIndex = ref<number>(0);
-      const activeName = computed(() => {
-        return router.currentRoute.value.name;
+      const activePath = computed(() => {
+        return `/${router.currentRoute.value.path.split('/').slice(1)[0]}`;
       });
 
       const scrollTop = ref<number>(0);
@@ -63,14 +63,8 @@
       const menuList = ref(permissionStore.getMenuList);
 
       function isActive(route): string | undefined {
-        if (route.name === unref(activeName)) {
+        if (route.path === unref(activePath)) {
           return `${prefixCls}-item__container--active`;
-        } else if (route.children) {
-          for (let item of route.children) {
-            if (isActive(item)) {
-              return isActive(item);
-            }
-          }
         } else {
           return '';
         }
@@ -116,7 +110,7 @@
         handleMenuClose,
         prefixCls,
         activeIndex,
-        activeName,
+        activePath,
         isActive,
         menuList,
       };
@@ -157,9 +151,9 @@
       &--active {
         color: @color-primary !important;
         background: #e6f7ff;
-        &::before {
+        &::after {
           position: absolute;
-          left: 0;
+          right: 0;
           display: inline-block;
           width: 6px;
           height: 50px;
@@ -177,6 +171,7 @@
     &-item-title__inner {
       margin-left: 15px;
       font-size: 16px;
+      font-weight: 400;
       letter-spacing: 1px;
     }
 
@@ -184,7 +179,7 @@
       position: fixed;
       top: 50px;
       z-index: @page-menu-z-index;
-      width: 500px;
+      width: 392px;
       padding: 10px 15px;
       color: #fff;
       background: #fff;
