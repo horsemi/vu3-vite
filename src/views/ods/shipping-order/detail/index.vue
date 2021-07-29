@@ -177,10 +177,10 @@
       const tableHeight = ref('');
       const rowSpan = 8;
       const formRowHeight = 29;
-      const formRowPaddingTop = 8;
-      const overHeight = 304;
-      const tabBtnHeight = 44;
-      const arrowIconHeight = 22;
+      const formRowPaddingTop = 12;
+      const overHeight = 330;
+      const tabBtnHeight = 48;
+      const arrowIconHeight = 26;
       const defaultDefiniteHeight = `calc(100vh - ${tabBtnHeight + overHeight}px)`;
       const defaultRecordHeight = `calc(100vh - ${overHeight}px)`;
 
@@ -438,7 +438,7 @@
       display: flex;
       flex-wrap: wrap;
       width: 100%;
-      padding: 8px 8px 0 8px;
+      padding: 12px 8px 4px 8px;
       & > * {
         margin-left: 8px;
       }
@@ -454,10 +454,10 @@
         margin-top: 16px;
       }
       .tab {
-        padding: 8px 16px;
+        padding: 12px 16px;
         background-color: #fff;
         .tab-btn {
-          padding-bottom: 8px;
+          padding-bottom: 12px;
           & > * {
             margin-right: 8px;
           }
@@ -472,7 +472,7 @@
       justify-content: center;
       align-items: center;
       width: 100%;
-      padding-top: 8px;
+      padding-top: 12px;
       .icon {
         cursor: pointer;
         transform: rotate(0);
@@ -483,7 +483,7 @@
     }
 
     .dx-layout-manager .dx-field-item:not(.dx-first-row) {
-      padding-top: 8px;
+      padding-top: 12px;
     }
 
     .dx-texteditor-input {

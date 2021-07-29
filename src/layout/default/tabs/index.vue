@@ -18,7 +18,7 @@
               <span :class="`${prefixCls}-tabs-title__wrapper`">{{ item.meta.title }}</span>
               <i
                 v-if="!isAffix(item)"
-                class="dx-icon dx-icon-close"
+                class="dx-icon dx-icon-clear"
                 @click.stop="handleItemClose(item)"
               />
             </div>
@@ -158,11 +158,12 @@
 
     &-tabs__container {
       display: inline-block;
-      margin-right: 10px;
+      margin-right: 4px;
+      box-shadow: 0 2px 6px 0 rgb(0 0 0 / 4%);
     }
 
     &-tabs__wrapper {
-      padding: 8px;
+      padding: 8px 16px;
       color: #adadad;
       cursor: pointer;
       background-color: #fff;
@@ -176,7 +177,8 @@
     .active {
       height: 40px;
       color: #1890ff;
-      border-radius: 10px 10px 0 0;
+      border-top: 3px solid #1890ff;
+      border-radius: 3px 3px 0 0;
     }
   }
 </style>

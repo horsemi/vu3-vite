@@ -843,20 +843,20 @@
   resolved "https://registry.nlark.com/@vue/shared/download/@vue/shared-3.1.2.tgz#1069c0bc7d6f4bd15ccf3a5f3be29450aca368f9"
   integrity sha1-EGnAvH1vS9FczzpfO+KUUKyjaPk=
 
-"@vueuse/core@^4.8.2":
-  version "4.8.2"
-  resolved "https://registry.npm.taobao.org/@vueuse/core/download/@vueuse/core-4.8.2.tgz#b14e43ae640c38f59591db146d6e15c551368414"
-  integrity sha1-sU5DrmQMOPWVkdsUbW4VxVE2hBQ=
+"@vueuse/core@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.nlark.com/@vueuse/core/download/@vueuse/core-5.2.0.tgz#c2c0b89d9506fdfca41cd3056e38478226bc5e31"
+  integrity sha1-wsC4nZUG/fykHNMFbjhHgia8XjE=
   dependencies:
-    "@vueuse/shared" "4.8.2"
-    vue-demi latest
+    "@vueuse/shared" "5.2.0"
+    vue-demi "*"
 
-"@vueuse/shared@4.8.2":
-  version "4.8.2"
-  resolved "https://registry.npm.taobao.org/@vueuse/shared/download/@vueuse/shared-4.8.2.tgz#7c9a738ddba9b60b3eb2e6702d657c2b4c94651c"
-  integrity sha1-fJpzjduptgs+suZwLWV8K0yUZRw=
+"@vueuse/shared@5.2.0":
+  version "5.2.0"
+  resolved "https://registry.nlark.com/@vueuse/shared/download/@vueuse/shared-5.2.0.tgz#894921cf5e5fc7f9afa7d7870800b0c9cd265e0c"
+  integrity sha1-iUkhz15fx/mvp9eHCACwyc0mXgw=
   dependencies:
-    vue-demi latest
+    vue-demi "*"
 
 acorn-jsx@^5.2.0, acorn-jsx@^5.3.1:
   version "5.3.1"
@@ -6229,10 +6229,10 @@ vscode-vue-languageservice@^0.25.22:
     vscode-pug-languageservice "^0.25.22"
     vscode-typescript-languageservice "^0.25.22"
 
-vue-demi@latest:
-  version "0.7.5"
-  resolved "https://registry.npm.taobao.org/vue-demi/download/vue-demi-0.7.5.tgz#88dee7492fc99a0f911ff03fc02c658fa2a79af8"
-  integrity sha1-iN7nSS/Jmg+RH/A/wCxlj6Knmvg=
+vue-demi@*:
+  version "0.11.2"
+  resolved "https://registry.nlark.com/vue-demi/download/vue-demi-0.11.2.tgz#faa06da53887c493a695b997f4fcb4784a667990"
+  integrity sha1-+qBtpTiHxJOmlbmX9Py0eEpmeZA=
 
 vue-eslint-parser@^7.6.0:
   version "7.6.0"

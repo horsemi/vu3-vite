@@ -29,7 +29,7 @@
     </div>
     <div>
       <DxNumberBox
-        v-if="paramDataType === 'number'"
+        v-if="paramDataType === 'int32' || paramDataType === 'int64' || paramDataType === 'decimal'"
         ref="valueBox"
         :value="value"
         :show-spin-buttons="true"
@@ -192,9 +192,13 @@
       function initData(paramKey: string) {
         if (paramKey) {
           if (props.paramList.length === 0) return;
-          let { type, operations, datatypekeies, relationKey, expand } = (props.paramList as IColumnItem[]).filter(
-            (item) => paramKey === item.key
-          )[0];
+          let {
+            type,
+            operations,
+            datatypekeies,
+            relationKey,
+            expand,
+          } = (props.paramList as IColumnItem[]).filter((item) => paramKey === item.key)[0];
 
           if (operations && operations.length > 0) {
             operatorOptions.value = initOperatorMap(operations);
@@ -222,7 +226,7 @@
       function initOption(type: string, datatypekeies: string, expand: string) {
         options.value.splice(0, options.value.length);
         dataType.value = type;
-        if (type ==='enum' && expand) {
+        if (type === 'enum' && expand) {
           options.value.push(...appStore.getGlobalEnumDataByCode(expand));
         } else if (datatypekeies && datatypekeies.startsWith('foundation_')) {
           //
@@ -247,8 +251,12 @@
         handleResetValue();
         nextTick(() => {
           if (e.itemData.type === 'datetime' || e.itemData.type === 'date') {
-            
-            context.emit('update:value', moment([moment().year(), moment().month(), moment().date()]).format('YYYY/MM/DD HH:mm:ss').toString());
+            context.emit(
+              'update:value',
+              moment([moment().year(), moment().month(), moment().date()])
+                .format('YYYY/MM/DD HH:mm:ss')
+                .toString()
+            );
           } else {
             handleResetValue();
           }
