@@ -9,7 +9,7 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '策略配置',
-      icon: 'order',
+      icon: 'menu-aftersale',
       order: 6,
     },
     children: [

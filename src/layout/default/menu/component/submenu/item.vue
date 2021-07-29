@@ -15,7 +15,7 @@
       :class="[`${prefixCls}-item-text__wrapper`, isActive(subChild)]"
       @click="handleItemClick(subChild)"
     >
-      <span>
+      <span :title="subChild.meta.title.length > 6 ? subChild.meta.title : ''">
         {{ subChild.meta.title }}
       </span>
     </div>
@@ -135,7 +135,10 @@
       width: 102px;
       padding: 6px;
       margin: 0 6px;
+      overflow: hidden;
       color: #8d8d8d;
+      text-overflow: ellipsis;
+      white-space: nowrap;
       cursor: pointer;
       &:hover {
         color: #1890ff;

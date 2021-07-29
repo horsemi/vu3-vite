@@ -9,7 +9,7 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '快递平台',
-      icon: 'order',
+      icon: 'menu-express',
       order: 5,
     },
     children: [

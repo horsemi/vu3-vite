@@ -9,7 +9,7 @@ const stockCenter: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '库存中心',
-      icon: 'order',
+      icon: 'menu-stock',
       order: 4,
     },
     children: [

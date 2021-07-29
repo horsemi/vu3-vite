@@ -9,7 +9,7 @@ const dispatchPlan: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '调度计划',
-      icon: 'order',
+      icon: 'menu-task',
       order: 3,
     },
     children: [

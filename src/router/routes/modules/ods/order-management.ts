@@ -9,7 +9,7 @@ const orderManagement: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '订单管理',
-      icon: 'order',
+      icon: 'menu-order',
       order: 2,
     },
     children: [

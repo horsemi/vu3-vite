@@ -10,7 +10,7 @@ const iframe: Array<AppRouteRecordRaw> = [
     redirect: '/frame/doc/vben',
     meta: {
       title: '外部链接',
-      icon: 'setting',
+      icon: 'menu-map',
       order: 8,
     },
     children: [

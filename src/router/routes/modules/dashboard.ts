@@ -31,7 +31,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '系统首页',
-      icon: 'home',
+      icon: 'menu-home',
       order: 1,
     },
     children: [

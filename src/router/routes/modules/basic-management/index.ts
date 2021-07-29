@@ -9,7 +9,7 @@ const basicManagement: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '基础配置',
-      icon: 'order',
+      icon: 'menu-setting',
       order: 7,
     },
     children: [
