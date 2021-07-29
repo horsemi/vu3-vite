@@ -16,7 +16,7 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
       {
         path: 'express-platform-test',
         name: 'ExpressPlatformTest',
-        redirect: '/order-management/shipping-management/shipping-order/list',
+        redirect: '/express-platform/express-platform-test/express-platform-test/list',
         meta: {
           title: '快递平台测试',
         },
@@ -24,7 +24,7 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
           {
             path: 'express-platform-test/list',
             name: 'ExpressPlatformTestList',
-            component: () => import('/@/views/ods/shipping-order/list/index.vue'),
+            component: () => import('/@/views/home/index.vue'),
             meta: {
               title: '快递平台测试',
             },

@@ -14,19 +14,79 @@ const dispatchPlan: Array<AppRouteRecordRaw> = [
     },
     children: [
       {
-        path: 'dispatch-plan-test',
-        name: 'DispatchPlanTest',
-        redirect: '/order-management/shipping-management/shipping-order/list',
+        path: 'wave-time-plan',
+        name: 'WaveTimePlan',
+        redirect: '/dispatch-plan/wave-time-plan/wave-delivery-time/list',
         meta: {
-          title: '调度计划测试',
+          title: '波次计划',
         },
         children: [
           {
-            path: 'dispatch-plan-test/list',
-            name: 'DispatchPlanTestList',
-            component: () => import('/@/views/ods/shipping-order/list/index.vue'),
+            path: 'wave-delivery-time/list',
+            name: 'WaveDeliveryTimeList',
+            component: () => import('/@/views/home/index.vue'),
             meta: {
-              title: '调度计划测试',
+              title: '发货波次',
+            },
+          },
+          {
+            path: 'wave-time-kanban/list',
+            name: 'WaveTimeKanbanList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '波次看板',
+            },
+          },
+        ],
+      },
+      {
+        path: 'scheduling-plan',
+        name: 'SchedulingPlan',
+        redirect: '/dispatch-plan/scheduling-plan/scheduling-record/list',
+        meta: {
+          title: '排班计划',
+        },
+        children: [
+          {
+            path: 'scheduling-record/list',
+            name: 'SchedulingRecordList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '排班记录',
+            },
+          },
+          {
+            path: 'scheduling-kanban/list',
+            name: 'SchedulingKanbanList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '排班看板',
+            },
+          },
+        ],
+      },
+      {
+        path: 'about-car-plan',
+        name: 'AboutCarPlan',
+        redirect: '/dispatch-plan/about-car-plan/about-car-record/list',
+        meta: {
+          title: '约车计划',
+        },
+        children: [
+          {
+            path: 'about-car-record/list',
+            name: 'AboutCarRecordList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '约车记录',
+            },
+          },
+          {
+            path: 'about-car-kanban/list',
+            name: 'AboutCarKanbanList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '约车看板',
             },
           },
         ],

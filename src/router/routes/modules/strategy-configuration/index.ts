@@ -16,7 +16,8 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
       {
         path: 'strategy-configuration-test',
         name: 'StrategyConfigurationTest',
-        redirect: '/order-management/shipping-management/shipping-order/list',
+        redirect:
+          '/strategy-configuration/strategy-configuration-test/strategy-configuration-test/list',
         meta: {
           title: '策略配置测试',
         },
@@ -24,7 +25,7 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
           {
             path: 'strategy-configuration-test/list',
             name: 'StrategyConfigurationTestList',
-            component: () => import('/@/views/ods/shipping-order/list/index.vue'),
+            component: () => import('/@/views/home/index.vue'),
             meta: {
               title: '策略配置测试',
             },

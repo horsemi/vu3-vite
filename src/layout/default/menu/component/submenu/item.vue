@@ -10,12 +10,12 @@
       >{{ subMenuData.meta.title }}</div
     >
     <div
-      v-for="(subChild, indexChild) in subMenuData.children"
+      v-for="(subChild, indexChild) in MenuData"
       :key="indexChild"
       :class="[`${prefixCls}-item-text__wrapper`, isActive(subChild)]"
       @click="handleItemClick(subChild)"
     >
-      <span v-if="!subChild.meta.hideMenu">
+      <span>
         {{ subChild.meta.title }}
       </span>
     </div>
@@ -42,18 +42,28 @@
         },
       },
     },
-    setup() {
+    setup(props) {
       const go = useGo();
       const router = useRouter();
       const { prefixCls } = useDesign('layout-submenu');
 
       const isHover = ref<boolean>(false);
+
       const activeName = computed(() => {
         return router.currentRoute.value.name;
       });
 
       const activePath = computed(() => {
         return router.currentRoute.value.path.split('/').slice(1)[1];
+      });
+
+      const MenuData = computed(() => {
+        return (
+          props.subMenuData.children &&
+          props.subMenuData.children.filter((menuItem) => {
+            return !menuItem.meta.hideMenu;
+          })
+        );
       });
 
       function handleItemClick(item: RouteLocationRawEx) {
@@ -86,6 +96,7 @@
       return {
         prefixCls,
         isHover,
+        MenuData,
         handleItemClick,
         isActive,
         isSubActive,
