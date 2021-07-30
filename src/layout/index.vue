@@ -39,6 +39,12 @@
         <LayoutMenu :open-state="openState" :menu-size="menuSize" @toggle-menu="toggleMenu" />
       </template>
     </DxDrawer>
+    <Toast
+      v-model:visible="isVisible"
+      :message="visibleData.message"
+      :description="visibleData.description"
+      :type="visibleData.type"
+    />
   </div>
 </template>
 
@@ -53,7 +59,9 @@
   import DxDrawer from 'devextreme-vue/drawer';
   import DxScrollView from 'devextreme-vue/scroll-view';
 
+  import Toast from '/@/components/Toast/index.vue';
   import { useViewStore } from '/@/store/modules/view';
+  import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { initGlobalEnumData } from '/@/logics/initAppConfig';
 
@@ -69,6 +77,7 @@
       MultipleTabs,
       DxDrawer,
       DxScrollView,
+      Toast,
     },
     setup() {
       const menuSize = {
@@ -77,6 +86,12 @@
       };
       initGlobalEnumData();
       const viewStore = useViewStore();
+      const appStore = useAppStore();
+      const isVisible = computed({
+        get: () => appStore.toastVisible,
+        set: () => appStore.closeToast(),
+      });
+      const visibleData = computed(() => appStore.toastData);
       const { prefixCls } = useDesign('layout');
       const viewState = computed(() => viewStore.getViewList);
       const openState = ref(true);
@@ -258,10 +273,13 @@
 
       return {
         viewState,
+        appStore,
         openState,
         prefixCls,
         toggleMenu,
         menuSize,
+        isVisible,
+        visibleData,
       };
     },
   });

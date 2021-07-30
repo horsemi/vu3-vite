@@ -18,6 +18,8 @@ let timeId: TimeoutHandle;
 
 interface AppState {
   pageLoading: boolean;
+  toastVisible: boolean;
+  toastData: Record<string, unknown>;
   systemConfig: Nullable<SystemConfig>;
   globalEnumData: GlobalEnumType[];
 }
@@ -26,12 +28,24 @@ export const useAppStore = defineStore({
   id: 'app',
   state: (): AppState => ({
     pageLoading: false,
+    toastVisible: false,
+    toastData: {
+      type: 'success',
+      message: 'success',
+      description: '',
+    },
     systemConfig: Persistent.getLocal(SYSTEM_CFG_KEY),
     globalEnumData: [],
   }),
   getters: {
     getPageLoading() {
       return this.pageLoading;
+    },
+    getToastVisible() {
+      return this.toastVisible;
+    },
+    getToastData() {
+      return this.toastData;
     },
     getSystemConfig() {
       return this.systemConfig || ({} as SystemConfig);
@@ -52,6 +66,22 @@ export const useAppStore = defineStore({
         this.pageLoading = loading;
         clearTimeout(timeId);
       }
+    },
+    showToast(type: string, message: string, description = '') {
+      this.toastVisible = true;
+      this.toastData = {
+        type,
+        message,
+        description,
+      };
+    },
+    closeToast() {
+      this.toastVisible = false;
+      this.toastData = {
+        type: '',
+        message: '',
+        description: '',
+      };
     },
     async resumeAllState() {
       usePermissionStore().resetState();

@@ -1,8 +1,8 @@
 <template>
   <div :class="prefixCls">
     <div
-      v-for="(itemSub, indxeSub) in menuItemData"
-      :key="indxeSub"
+      v-for="(itemSub, indexSub) in menuItemData"
+      :key="indexSub"
       :class="`${prefixCls}-col__wrapper`"
     >
       <div v-if="!itemSub.meta.hideMenu">
@@ -55,10 +55,9 @@
     flex-wrap: wrap;
 
     &-col__wrapper {
-      width: 33.33%;
-      padding: 10px 15px;
+      width: 100%;
+      padding: 10px 0;
       overflow: hidden;
-      white-space: nowrap;
       box-sizing: border-box;
     }
   }

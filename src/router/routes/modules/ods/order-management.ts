@@ -9,7 +9,8 @@ const orderManagement: Array<AppRouteRecordRaw> = [
     component: LAYOUT,
     meta: {
       title: '订单管理',
-      icon: 'order',
+      icon: 'menu-order',
+      order: 2,
     },
     children: [
       {
@@ -54,6 +55,84 @@ const orderManagement: Array<AppRouteRecordRaw> = [
             meta: {
               title: '发货通知单详情',
               hideMenu: true,
+            },
+          },
+        ],
+      },
+      {
+        path: 'outbound-management',
+        name: 'OdsOutboundOrder',
+        redirect: '/order-management/outbound-management/outbound-order/list',
+        meta: {
+          title: '出库管理',
+        },
+        children: [
+          {
+            path: 'outbound-order/list',
+            name: 'OdsOutboundOrderList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '出库单',
+            },
+          },
+          {
+            path: 'outbound-advice/list',
+            name: 'OdsOutboundAdviceList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '出库通知单',
+            },
+          },
+        ],
+      },
+      {
+        path: 'inbound-management',
+        name: 'OdsInboundOrder',
+        redirect: '/order-management/inbound-management/inbound-order/list',
+        meta: {
+          title: '入库管理',
+        },
+        children: [
+          {
+            path: 'inbound-order/list',
+            name: 'OdsInboundOrderList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '入库单',
+            },
+          },
+          {
+            path: 'inbound-advice/list',
+            name: 'OdsInboundAdviceList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '入库通知单',
+            },
+          },
+        ],
+      },
+      {
+        path: 'library-management',
+        name: 'OdslLibrary',
+        redirect: '/order-management/library-management/direct-transfers-order/list',
+        meta: {
+          title: '库内管理',
+        },
+        children: [
+          {
+            path: 'direct-transfers-order/list',
+            name: 'OdsDirectTransfersOrderList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '直接调拨单',
+            },
+          },
+          {
+            path: 'assembly-disassembly/list',
+            name: 'OdsAssemblyDisassemblyList',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '组装拆卸单',
             },
           },
         ],

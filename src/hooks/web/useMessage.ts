@@ -1,21 +1,17 @@
 import notify from 'devextreme/ui/notify';
 
+import { useAppStoreWidthOut } from '/@/store/modules/app';
+
 type MessageType = 'success' | 'warning' | 'error' | 'info';
 
 export function errorMessage(msg: string | Error) {
-  notify(
-    { message: msg, width: 300, position: { at: 'top center', my: 'top center', offset: '0 50' } },
-    'error',
-    5000
-  );
+  const appStore = useAppStoreWidthOut();
+  appStore.showToast('error', '系统错误', msg as string);
 }
 
 export function successMessage(msg: string) {
-  notify(
-    { message: msg, width: 300, position: { at: 'top center', my: 'top center', offset: '0 50' } },
-    'success',
-    5000
-  );
+  const appStore = useAppStoreWidthOut();
+  appStore.showToast('success', '操作成功', msg as string);
 }
 
 export function warningMessage(msg: string) {
