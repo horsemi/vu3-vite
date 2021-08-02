@@ -187,7 +187,7 @@
       cursor: pointer;
       &--active,
       &:hover {
-        background-color: #e6f7ff;
+        background-color: #e8f7ff;
       }
       &::before {
         display: inline-block;

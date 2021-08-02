@@ -386,7 +386,7 @@
     }
 
     &__table-billno-column__wrap {
-      color: #1890ff;
+      color: #3694fd;
       text-decoration: underline;
       cursor: pointer;
     }

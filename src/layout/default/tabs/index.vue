@@ -176,8 +176,8 @@
 
     .active {
       height: 40px;
-      color: #1890ff;
-      border-top: 3px solid #1890ff;
+      color: #3694fd;
+      border-top: 3px solid #3694fd;
       border-radius: 3px 3px 0 0;
     }
   }

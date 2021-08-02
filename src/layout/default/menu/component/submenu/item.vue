@@ -122,12 +122,12 @@
       color: @color-primary;
       cursor: pointer;
       &--active {
-        color: #1890ff;
-        background-color: #e6f7ff;
+        color: #3694fd;
+        background-color: #e8f7ff;
       }
       &--hover {
-        color: #1890ff;
-        background-color: #e6f7ff;
+        color: #3694fd;
+        background-color: #e8f7ff;
       }
     }
     &-item-text__wrapper {
@@ -141,12 +141,12 @@
       white-space: nowrap;
       cursor: pointer;
       &:hover {
-        color: #1890ff;
-        background-color: #e6f7ff;
+        color: #3694fd;
+        background-color: #e8f7ff;
       }
       &--active {
-        color: #1890ff;
-        background-color: #e6f7ff;
+        color: #3694fd;
+        background-color: #e8f7ff;
       }
     }
   }

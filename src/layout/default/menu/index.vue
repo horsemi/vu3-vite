@@ -7,15 +7,9 @@
         :tabindex="-1"
         :class="[`${prefixCls}-item__container`, isActive(item)]"
         @click="handleMenuClick(item, index)"
-        @mouseenter="addColor(item.name)"
-        @mouseleave="removeColor(item.name)"
       >
         <div :class="`${prefixCls}-item-box`">
-          <SvgIcon
-            :color="hasColor[item.name] || item.path === activePath ? '#1890FF' : '#5C5C5C'"
-            size="23"
-            :name="item.meta.icon"
-          ></SvgIcon>
+          <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
           <span :class="`${prefixCls}-item-title__inner`">{{ item.meta.title }}</span>
         </div>
         <transition name="zoom-in-left">
@@ -33,7 +27,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, unref, computed, reactive } from 'vue';
+  import { defineComponent, ref, unref, computed } from 'vue';
   import { RouteLocationRawEx, useGo } from '/@/hooks/web/usePage';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { usePermissionStore } from '/@/store/modules/permission';
@@ -59,8 +53,8 @@
       const go = useGo();
       const { prefixCls } = useDesign('layout-menu');
       const router = useRouter();
+
       const activeIndex = ref<number>(0);
-      const hasColor = reactive<Record<string, boolean>>({});
 
       const activePath = computed(() => {
         return `/${router.currentRoute.value.path.split('/').slice(1)[0]}`;
@@ -110,13 +104,6 @@
         menuList.value[activeIndex.value].meta.showSub = false;
       };
 
-      function addColor(name: string) {
-        hasColor[name] = true;
-      }
-      function removeColor(name: string) {
-        hasColor[name] = false;
-      }
-
       return {
         onScroll,
         getSubTop,
@@ -128,9 +115,6 @@
         activePath,
         isActive,
         menuList,
-        hasColor,
-        addColor,
-        removeColor,
       };
     },
   });
@@ -158,17 +142,17 @@
       .zoom-animation(left, scale(0.45, 0.45), scale(1, 1), top left);
 
       &:hover {
-        color: #69c0ff !important;
+        color: @color-primary !important;
       }
 
       &:focus {
-        color: #69c0ff !important;
-        background: #e6f7ff;
+        color: @color-primary !important;
+        background: #e8f7ff;
       }
 
       &--active {
         color: @color-primary !important;
-        background: #e6f7ff;
+        background: #e8f7ff;
         &::after {
           position: absolute;
           right: 0;
@@ -184,6 +168,9 @@
     &-item-box {
       width: 100%;
       cursor: pointer;
+      &_svg {
+        color: #5c5c5c;
+      }
     }
 
     &-item-title__inner {

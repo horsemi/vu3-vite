@@ -122,10 +122,10 @@
       cursor: pointer;
       border-radius: 4px;
       &--active {
-        background: #e6f7ff;
+        background: #e8f7ff;
       }
       &:hover {
-        background: #e6f7ff;
+        background: #e8f7ff;
       }
     }
 
