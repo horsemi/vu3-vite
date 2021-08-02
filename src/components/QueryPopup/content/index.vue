@@ -15,7 +15,8 @@
     </div>
     <div :class="`${prefixCls}__right`">
       <DxTabPanel
-        height="calc(100% - 48px)"
+        style="display: flex; flex-direction: column"
+        height="100%"
         :data-source="multiViewItems"
         :loop="true"
         :animation-enabled="true"
@@ -187,7 +188,7 @@
   });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
   @prefix-cls: ~'@{namespace}-popup-content';
 
   .@{prefix-cls} {
@@ -211,6 +212,10 @@
 
     &__right__item {
       padding: 10px 0;
+    }
+
+    .dx-tabpanel-container {
+      overflow: hidden;
     }
   }
 </style>

@@ -4,6 +4,16 @@ type logicType = 'and' | 'or';
 
 export interface IRequirementItem extends IQueryItem {
   /**
+   * @description 左括号数量
+   */
+  leftParenthesisCount?: number | undefined;
+
+  /**
+   * @description 右括号数量
+   */
+  rightParenthesisCount?: number | undefined;
+
+  /**
    * @description 逻辑
    */
   logic?: string;

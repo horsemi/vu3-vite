@@ -32,7 +32,7 @@
 <script lang="ts">
   import type { RouteLocationNormalized } from 'vue-router';
 
-  import { computed, defineComponent, unref, watchEffect } from 'vue';
+  import { computed, defineComponent, unref } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
 
   import { useDesign } from '/@/hooks/web/useDesign';

@@ -341,7 +341,19 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'FreightTypeCode',
+    caption: '运费类型编码',
+  },
+  {
+    key: 'FreightType',
     caption: '运费类型',
+    relationKey: 'FreightTypeCode',
+    foundationList: [
+      {
+        key: 'FreightType_Name',
+        caption: '运费类型',
+      },
+    ],
+    datatypekeies: 'freight-types',
   },
   {
     key: 'LogisticsCostPrice',

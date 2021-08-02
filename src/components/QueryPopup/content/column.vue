@@ -18,8 +18,11 @@
           <DxCheckBox :value="data.data.checked" :disabled="data.data.mustKey" />
         </template>
       </DxDataGrid>
+      <div :class="`${prefixCls}__field__checkall`">
+        <DxCheckBox @valueChanged="onChangeCheckAll" />
+      </div>
     </div>
-    <div :class="`${prefixCls}__next`" @click="onAddCol">
+    <div :tabindex="-1" :class="`${prefixCls}__next`" @click="onAddCol">
       <i class="dx-icon-chevronnext" />
     </div>
     <div :class="`${prefixCls}__table`">
@@ -37,7 +40,7 @@
         <DxColumn caption="序号" cell-template="index" alignment="center" />
         <DxColumn data-field="caption" caption="显示字段" alignment="center" />
         <DxColumn caption="操作" alignment="center" cell-template="handle" />
-        <template #index="{ data }"> {{ data.rowIndex + 1 }} </template>
+        <template #index="{ data }">{{ getRowIndex(data) }}</template>
         <template #handle="{ data }">
           <span v-if="!data.data.mustKey" :class="`${prefixCls}__table__del`" @click="onDel(data)"
             >删除</span
@@ -115,22 +118,60 @@
         ctx.emit('on-change-sort', data);
       };
 
+      const getRowIndex = (data) => {
+        const curIndex = dataSource.value.indexOf(data.data);
+        if (curIndex !== -1) {
+          return curIndex + 1;
+        } else {
+          return data.rowIndex + 1;
+        }
+      };
+
       // 点击全部字段行
       const onRowClick = (e) => {
         if (e.data.mustKey) return;
         e.data.checked = !e.data.checked;
         if (e.data.checked) {
-          const item = fieldList.value.filter((item) => item.key === e.data.key)[0];
-          dataSourceTemp.push({
-            key: item.key,
-            caption: item.caption,
-            expand: item.expand,
-            relationKey: item.relationKey,
-            mustKey: item.mustKey,
-          });
+          const item = fieldList.value.find((item) => item.key === e.data.key);
+          if (item) {
+            dataSourceTemp.push({
+              key: item.key,
+              caption: item.caption,
+              expand: item.expand,
+              relationKey: item.relationKey,
+              mustKey: item.mustKey,
+            });
+          }
         } else {
           const index = dataSourceTemp.findIndex((item) => item.key === e.data.key);
           dataSourceTemp.splice(index, 1);
+        }
+      };
+
+      // 全选字段
+      const onChangeCheckAll = (e) => {
+        const { value } = e;
+        if (value) {
+          fieldList.value.forEach((item) => {
+            if (!item.checked) {
+              item.checked = true;
+              dataSourceTemp.push({
+                key: item.key,
+                caption: item.caption,
+                expand: item.expand,
+                relationKey: item.relationKey,
+                mustKey: item.mustKey,
+              });
+            }
+          });
+        } else {
+          fieldList.value.forEach((item) => {
+            if (item.checked && !item.mustKey) {
+              item.checked = false;
+              const index = dataSourceTemp.findIndex((el) => item.key === el.key);
+              dataSourceTemp.splice(index, 1);
+            }
+          });
         }
       };
 
@@ -232,10 +273,12 @@
         dataSource,
         prefixCls,
         fieldList,
+        getRowIndex,
         onAddCol,
         onDel,
         onRowClick,
         onReorder,
+        onChangeCheckAll,
       };
     },
   });
@@ -250,9 +293,16 @@
     height: 100%;
 
     &__field {
+      position: relative;
       width: 30%;
       height: 100%;
       min-width: 200px;
+    }
+
+    &__field__checkall {
+      position: absolute;
+      top: 40px;
+      left: 30px;
     }
 
     &__next {
@@ -267,7 +317,10 @@
       background-color: #0486fe;
       border-radius: 2px;
       &:hover {
-        background: rgba(4, 134, 254, 0.7);
+        background: #5eb2ff;
+      }
+      &:focus {
+        background: #1165b2;
       }
     }
 
