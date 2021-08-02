@@ -3,8 +3,8 @@
     <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
     <title>首页icon</title>
     <desc>Created with Sketch.</desc>
-    <g id="发货单" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round">
-        <g id="弹出菜单" transform="translate(-30.000000, -86.000000)" stroke="#1890FF" stroke-width="2">
+    <g id="发货单"  stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" >
+        <g id="弹出菜单" transform="translate(-30.000000, -86.000000)"  stroke-width="2">
             <g id="编组-7" transform="translate(27.000000, 86.000000)">
                 <g id="首页icon" transform="translate(4.000000, 0.000000)">
                     <path d="M21.761,7.526 L21.761,17.986 C21.761,19.912 20.052,21.472 17.945,21.472 L7.259,21.472 C5.151,21.472 3.442,19.912 3.442,17.986 L3.442,7.526" id="路径"></path>

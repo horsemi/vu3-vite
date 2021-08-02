@@ -7,9 +7,15 @@
         :tabindex="-1"
         :class="[`${prefixCls}-item__container`, isActive(item)]"
         @click="handleMenuClick(item, index)"
+        @mouseenter="addColor(item.name)"
+        @mouseleave="removeColor(item.name)"
       >
         <div :class="`${prefixCls}-item-box`">
-          <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
+          <SvgIcon
+            :color="hasColor[item.name] || item.path === activePath ? '#1890FF' : '#5C5C5C'"
+            size="23"
+            :name="item.meta.icon"
+          ></SvgIcon>
           <span :class="`${prefixCls}-item-title__inner`">{{ item.meta.title }}</span>
         </div>
         <transition name="zoom-in-left">
@@ -27,7 +33,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, unref, computed } from 'vue';
+  import { defineComponent, ref, unref, computed, reactive } from 'vue';
   import { RouteLocationRawEx, useGo } from '/@/hooks/web/usePage';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { usePermissionStore } from '/@/store/modules/permission';
@@ -54,6 +60,8 @@
       const { prefixCls } = useDesign('layout-menu');
       const router = useRouter();
       const activeIndex = ref<number>(0);
+      const hasColor = reactive<Record<string, boolean>>({});
+
       const activePath = computed(() => {
         return `/${router.currentRoute.value.path.split('/').slice(1)[0]}`;
       });
@@ -102,6 +110,13 @@
         menuList.value[activeIndex.value].meta.showSub = false;
       };
 
+      function addColor(name: string) {
+        hasColor[name] = true;
+      }
+      function removeColor(name: string) {
+        hasColor[name] = false;
+      }
+
       return {
         onScroll,
         getSubTop,
@@ -113,6 +128,9 @@
         activePath,
         isActive,
         menuList,
+        hasColor,
+        addColor,
+        removeColor,
       };
     },
   });
