@@ -88,24 +88,32 @@ const handleKeyType = (keyType: IKeyType[]) => {
 
 // 获取格式化后的过滤条件
 export const getFilter = (requirements: IRequirementItem[]) => {
-  const filter: any[] = [];
-  requirements.forEach((item) => {
-    if (item.requirement && !isNil(item.value)) {
-      if (item.relationKey) {
-        filter.push([item.relationKey, item.operator, item.value]);
-      } else {
-        filter.push([item.requirement, item.operator, item.value]);
-      }
+  let result = '';
 
-      if (item.logic) {
-        filter.push(item.logic);
-      } else {
-        filter.push('and');
+  for (let i = 0; i < requirements.length; i++) {
+    if (requirements[i].requirement && !isNil(requirements[i].value)) {
+      const requirement = requirements[i].relationKey
+        ? requirements[i].relationKey
+        : requirements[i].requirement;
+
+      if (requirements[i].leftParenthesisCount && requirements[i].leftParenthesisCount! > 0) {
+        for (let j = 0; j < requirements[i].leftParenthesisCount!; j++) {
+          result += '[';
+        }
+      }
+      result += initValueData(requirements[i], requirement);
+      if (requirements[i].rightParenthesisCount && requirements[i].rightParenthesisCount! > 0) {
+        for (let j = 0; j < requirements[i].rightParenthesisCount!; j++) {
+          result += ']';
+        }
+      }
+      if (i !== requirements.length - 1) {
+        result += `,"${requirements[i].logic}",`;
       }
     }
-  });
-
-  return filter.length > 0 ? filter : '';
+  }
+  const filter = JSON.parse(`[${result}]`);
+  return filter;
 };
 
 // 获取格式化后的排序
@@ -185,4 +193,24 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
   });
 
   return columnList;
+};
+
+const initValueData = (item: IRequirementItem, requirement) => {
+  let result = '';
+  result += `["${requirement}","${item.operator}"`;
+
+  switch (item.type) {
+    case 'number': {
+      result += `,${item.value}]`;
+      break;
+    }
+    case 'boolean': {
+      result += `,${item.value}]`;
+      break;
+    }
+    default: {
+      result += `,"${item.value}"]`;
+    }
+  }
+  return result;
 };

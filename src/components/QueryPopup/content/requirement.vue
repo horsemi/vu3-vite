@@ -1,11 +1,11 @@
 <template>
   <div :class="prefixCls">
     <div :class="`${prefixCls}__header`">
-      <span style="width: 100px">（</span>
+      <span style="width: 100px">(</span>
       <span style="width: 180px">字段</span>
       <span style="width: 110px">比较</span>
       <span style="width: 180px">值</span>
-      <span style="width: 100px">）</span>
+      <span style="width: 100px">)</span>
       <span style="width: 130px">逻辑</span>
       <span style="width: 120px">操作</span>
     </div>
@@ -18,6 +18,7 @@
             display-expr="name"
             value-expr="value"
             width="100"
+            :show-clear-button="true"
             style="margin-right: 10px"
           ></DxSelectBox>
           <DynamicSelect
@@ -36,6 +37,7 @@
             display-expr="name"
             value-expr="value"
             width="100"
+            :show-clear-button="true"
             style="margin-left: 10px"
           ></DxSelectBox>
           <DxSelectBox
@@ -107,22 +109,22 @@
 
       const leftParenthesisOptions = [
         {
-          name: '（',
+          name: '(',
           value: 1,
         },
         {
-          name: '（（',
+          name: '((',
           value: 2,
         },
       ];
 
       const rightParenthesisOptions = [
         {
-          name: '）',
+          name: ')',
           value: 1,
         },
         {
-          name: '））',
+          name: '))',
           value: 2,
         },
       ];

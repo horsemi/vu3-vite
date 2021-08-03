@@ -33,6 +33,10 @@ export const customColumns: IColumnItem[] = [
     key: 'IpAddress',
     caption: '操作IP',
   },
+  {
+    key: 'Description',
+    caption: '操作描述',
+  },
 ];
 
 export const getRecordColumns = async () => {
