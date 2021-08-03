@@ -76,7 +76,7 @@
               break;
             }
             case 'info': {
-              svgColor.value = '#1890ff';
+              svgColor.value = '#3694fd';
               svgName.value = 'system-infoCircleFill';
               displayTime.value = 3000;
               break;
@@ -125,7 +125,7 @@
     }
 
     .info {
-      background-color: #e6f7ff;
+      background-color: #e8f7ff;
       border: 1px solid #91d5ff;
     }
 

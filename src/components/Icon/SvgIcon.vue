@@ -4,7 +4,7 @@
     :style="getStyle"
     aria-hidden="true"
   >
-    <use :xlink:href="symbolId" :fill="color" />
+    <use :xlink:href="symbolId" />
   </svg>
 </template>
 <script lang="ts">
@@ -20,10 +20,6 @@
       prefix: {
         type: String,
         default: 'icon',
-      },
-      color: {
-        type: String,
-        default: '#333333',
       },
       name: {
         type: String,

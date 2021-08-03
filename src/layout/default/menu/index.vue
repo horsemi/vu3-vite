@@ -53,7 +53,9 @@
       const go = useGo();
       const { prefixCls } = useDesign('layout-menu');
       const router = useRouter();
+
       const activeIndex = ref<number>(0);
+
       const activePath = computed(() => {
         return `/${router.currentRoute.value.path.split('/').slice(1)[0]}`;
       });
@@ -140,17 +142,17 @@
       .zoom-animation(left, scale(0.45, 0.45), scale(1, 1), top left);
 
       &:hover {
-        color: #69c0ff !important;
+        color: @color-primary !important;
       }
 
       &:focus {
-        color: #69c0ff !important;
-        background: #e6f7ff;
+        color: @color-primary !important;
+        background: #e8f7ff;
       }
 
       &--active {
         color: @color-primary !important;
-        background: #e6f7ff;
+        background: #e8f7ff;
         &::after {
           position: absolute;
           right: 0;
@@ -166,6 +168,9 @@
     &-item-box {
       width: 100%;
       cursor: pointer;
+      &_svg {
+        color: #5c5c5c;
+      }
     }
 
     &-item-title__inner {
