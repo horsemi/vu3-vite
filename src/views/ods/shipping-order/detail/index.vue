@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-    <div class="tab-panel">
+    <div v-loading="loading" class="tab-panel">
       <div class="btn-box">
         <DxDropDownButton
           :items="dropButtonItems.submit"
@@ -187,6 +187,7 @@
       const route = useRoute();
       const Id = route.query.Id as string;
       const BillCode = route.query.BillCode as string;
+      const loading = ref(false);
       const formData = ref();
       const baseInformation = ref<IDetailItem[]>([]);
       const receiverInformation = ref<IDetailItem[]>([]);
@@ -230,7 +231,7 @@
       const recordAllColumns = ref<IColumnItem[]>([]);
 
       const onRefresh = () => {
-        getData();
+        getDetail();
       };
 
       const onSubmitClick = () => {
@@ -325,26 +326,36 @@
         return Math.ceil(len / rowSpan);
       };
 
+      const getDetail = () => {
+        loading.value = true;
+        getDetailData(['Id', '=', Id])
+          .then((res) => {
+            if (res) {
+              const { baseList, receiverList, logisticsList, otherList, data } = res;
+              formData.value = data;
+              baseInformation.value = baseList;
+              receiverInformation.value = receiverList;
+              logisticsInformation.value = logisticsList;
+              otherInformation.value = otherList;
+              [
+                baseInformation.value,
+                receiverInformation.value,
+                logisticsInformation.value,
+                otherInformation.value,
+              ].forEach((data, index) => {
+                multiViewItems.value[index].rowCount = getRowCount(data);
+              });
+              handleHeight(0, 0);
+            }
+            loading.value = false;
+          })
+          .catch(() => {
+            loading.value = false;
+          });
+      };
+
       const getData = () => {
-        getDetailData(['Id', '=', Id]).then((res) => {
-          if (res) {
-            const { baseList, receiverList, logisticsList, otherList, data } = res;
-            formData.value = data;
-            baseInformation.value = baseList;
-            receiverInformation.value = receiverList;
-            logisticsInformation.value = logisticsList;
-            otherInformation.value = otherList;
-            [
-              baseInformation.value,
-              receiverInformation.value,
-              logisticsInformation.value,
-              otherInformation.value,
-            ].forEach((data, index) => {
-              multiViewItems.value[index].rowCount = getRowCount(data);
-            });
-            handleHeight(0, 0);
-          }
-        });
+        getDetail();
         getDefiniteData().then((res) => {
           if (res) {
             definiteAllColumns.value = res.columnList;
@@ -398,6 +409,7 @@
       getData();
 
       return {
+        loading,
         tableHeight,
         formRowHeight,
         formRowPaddingTop,

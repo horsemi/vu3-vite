@@ -204,6 +204,8 @@
             dataGrid.value.instance.clearSorting();
             // 回到第一页
             dataGrid.value.instance.pageIndex(0);
+            // 刷新表格，解决 tableColumns.value = [] 的时候 表头显示key
+            dataGrid.value.instance.refresh();
           }
           if (tableData.value) {
             // 如果已经有datasource就销毁
@@ -211,10 +213,10 @@
           }
           // 获取数据前，清空列数据，解决列数据引起的排序和显示隐藏列问题
           tableColumns.value = [];
-          // 重新获取列数据
-          tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
           // 等列数据渲染完后再去获取表格数据，还是解决列数据引起的排序和显示隐藏列问题
           nextTick(() => {
+            // 重新 获取列数据
+            tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
             // 重新 new datasource
             tableData.value = getTableDataSource(
               options.value,
