@@ -70,12 +70,6 @@ export const base: IDetailItem[] = [
     caption: '经销商订单',
     colSpan: 2,
   },
-  {
-    key: 'IsTally',
-    caption: '库内状态',
-    template: 'stepBar',
-    colSpan: 4,
-  },
 ];
 
 export const receiver: IDetailItem[] = [

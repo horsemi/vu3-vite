@@ -145,7 +145,7 @@ export const customColumns: IColumnItem[] = [
         caption: '省',
       },
     ],
-    datatypekeies: 'province',
+    datatypekeies: 'provinces',
   },
   {
     key: 'ProvinceCode',
@@ -161,7 +161,7 @@ export const customColumns: IColumnItem[] = [
         caption: '市',
       },
     ],
-    datatypekeies: 'city',
+    datatypekeies: 'cities',
   },
   {
     key: 'CityCode',
@@ -177,7 +177,7 @@ export const customColumns: IColumnItem[] = [
         caption: '区',
       },
     ],
-    datatypekeies: 'district',
+    datatypekeies: 'districts',
   },
   {
     key: 'DistrictCode',

@@ -72,10 +72,6 @@
       >
         <template #item="{ data }">
           <div class="tab">
-            <div v-if="data.key === 'definite'" class="tab-btn">
-              <DxButton text="新增" type="default" />
-              <DxButton text="删除" />
-            </div>
             <OdsTable
               :height="tableHeight"
               :table-options="data.key === 'definite' ? definiteOptions : recordOptions"
@@ -179,9 +175,8 @@
       const formRowHeight = 29;
       const formRowPaddingTop = 12;
       const overHeight = 330;
-      const tabBtnHeight = 48;
       const arrowIconHeight = 26;
-      const defaultDefiniteHeight = `calc(100vh - ${tabBtnHeight + overHeight}px)`;
+      const defaultDefiniteHeight = `calc(100vh - ${overHeight}px)`;
       const defaultRecordHeight = `calc(100vh - ${overHeight}px)`;
 
       const route = useRoute();
@@ -287,8 +282,6 @@
         const rowCount = multiViewItems.value[sIndex].rowCount;
         // 展开按钮高度，超出3行才会出现展开按钮
         const iconHeight = rowCount > 3 ? arrowIconHeight : 0;
-        // 按钮占用高度
-        const btnHeight = tIndex === 0 ? tabBtnHeight : 0;
         // 表格高度
         let formHeight = 0;
         if (opened.value || rowCount < 3) {
@@ -298,7 +291,7 @@
           formHeight = formRowHeight * 3 + formRowPaddingTop * 2;
         }
         // 总裁剪高度
-        const cutHeight = formHeight + iconHeight + btnHeight + overHeight;
+        const cutHeight = formHeight + iconHeight + overHeight;
         tableHeight.value = `calc(100vh - ${cutHeight}px)`;
       };
 
