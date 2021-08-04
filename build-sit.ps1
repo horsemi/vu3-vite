@@ -1,8 +1,6 @@
 param(
   # 分支名称
   [string]$Branch=$(throw "Parameter missing: -Branch name"),
-  # 构建模式(详情见项目自身脚本)
-  [string]$BuildMode="p",
   # 构建后文件需覆盖路径
   [string]$OutPath=$(throw "Parameter missing: -OutPath")
 )
@@ -33,7 +31,7 @@ yarn install
 $_progress = 60;
 Write-Progress -Activity "ODS vu3-vite 构建脚本" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "构建应用";
 # 构建项目
-yarn run build:$BuildMode
+yarn run build
 Write-Output "------构建成功------"
 
 $_progress = 90;
@@ -56,8 +54,6 @@ Write-Progress -Activity "ODS vu3-vite 构建脚本" -Status "$_progress% Complete:"
 # param(
 #     # 分支名称
 #     [string]$Branch=$(throw "Parameter missing: -Branch name"),
-#     # 构建模式
-#     [string]$BuildMode="p"
 # )
 
 # # 输出路径
@@ -71,7 +67,7 @@ Write-Progress -Activity "ODS vu3-vite 构建脚本" -Status "$_progress% Complete:"
 
 # Set-Location $_srcPath
 
-# .\build-sit.ps1 -Branch $Branch -OutPath $_outPath -SrcPath $_srcPath -BuildMode $BuildMode
+# .\build-sit.ps1 -Branch $Branch -OutPath $_outPath -SrcPath $_srcPath
 
 # Set-Location $_originalPath
 
