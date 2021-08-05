@@ -46,7 +46,7 @@ export default defineConfig(
         open: true,
         proxy: {
           '/api/foundation': {
-            target: 'http://10.10.14.207:30034',
+            target: 'http://10.10.14.245:30034',
             changeOrigin: true,
           },
           '/api/accounts': {

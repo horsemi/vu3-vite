@@ -40,7 +40,7 @@
       </template>
     </DxDrawer>
     <Toast
-      v-model:visible="isVisible"
+      ref="toast"
       :message="visibleData.message"
       :description="visibleData.description"
       :type="visibleData.type"
@@ -87,10 +87,6 @@
       initGlobalEnumData();
       const viewStore = useViewStore();
       const appStore = useAppStore();
-      const isVisible = computed({
-        get: () => appStore.toastVisible,
-        set: () => appStore.closeToast(),
-      });
       const visibleData = computed(() => appStore.toastData);
       const { prefixCls } = useDesign('layout');
       const viewState = computed(() => viewStore.getViewList);
@@ -98,6 +94,13 @@
       const toggleMenu = () => {
         openState.value = !openState.value;
       };
+      const toast = ref();
+
+      const showToast = () => {
+        toast.value.showToast();
+      };
+
+      appStore.initToast(showToast);
 
       const getQueryPlan = () => {
         const oldSchemeData = Persistent.getLocal(SCHEME_DATA_KEY);
@@ -278,7 +281,7 @@
         prefixCls,
         toggleMenu,
         menuSize,
-        isVisible,
+        toast,
         visibleData,
       };
     },

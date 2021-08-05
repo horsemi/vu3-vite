@@ -1,5 +1,3 @@
-import notify from 'devextreme/ui/notify';
-
 import { useAppStoreWidthOut } from '/@/store/modules/app';
 
 type MessageType = 'success' | 'warning' | 'error' | 'info';
@@ -15,19 +13,13 @@ export function successMessage(msg: string) {
 }
 
 export function warningMessage(msg: string) {
-  notify(
-    { message: msg, width: 300, position: { at: 'top center', my: 'top center', offset: '0 50' } },
-    'warning',
-    5000
-  );
+  const appStore = useAppStoreWidthOut();
+  appStore.showToast('warning', '系统警告', msg as string);
 }
 
 export function infoMessage(msg: string) {
-  notify(
-    { message: msg, width: 300, position: { at: 'top center', my: 'top center', offset: '0 50' } },
-    'info',
-    5000
-  );
+  const appStore = useAppStoreWidthOut();
+  appStore.showToast('info', '系统提示', msg as string);
 }
 
 export function useMessage(message: string | Error, type: MessageType) {

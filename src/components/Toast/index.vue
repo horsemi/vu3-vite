@@ -1,12 +1,11 @@
 <template>
   <DxToast
-    :visible="visible"
     type="custom"
     :position="{ at: 'top center', my: 'top center', offset: '0 50' }"
     content-template="contentTemplate"
     :display-time="displayTime"
     width="500"
-    @update:visible="$emit('update:visible', $event)"
+    @initialized="onInitialized"
     @hidden="hiddenHandle"
   >
     <template #contentTemplate>
@@ -40,10 +39,6 @@
       SvgIcon,
     },
     props: {
-      visible: {
-        type: Boolean,
-        default: false,
-      },
       type: {
         type: String,
         default: 'success',
@@ -57,18 +52,19 @@
         default: '',
       },
     },
-    emits: ['update:visible'],
+    emits: ['update:description'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('toast');
 
+      const toast = ref();
       const svgName = ref('');
       const svgColor = ref('');
       const displayTime = ref(3000);
 
       watch(
-        () => props.visible,
+        () => props.type,
         (value) => {
-          switch (props.type) {
+          switch (value) {
             case 'success': {
               svgColor.value = '#52c41a';
               svgName.value = 'system-checkCircleFill';
@@ -100,8 +96,17 @@
         }
       );
 
+      function showToast() {
+        toast.value.hide();
+        toast.value.show();
+      }
+
+      function onInitialized(e) {
+        toast.value = e.component;
+      }
+
       function hiddenHandle() {
-        ctx.emit('update:visible', false);
+        ctx.emit('update:description', null);
       }
 
       return {
@@ -110,6 +115,8 @@
         svgColor,
         displayTime,
         hiddenHandle,
+        onInitialized,
+        showToast,
       };
     },
   });

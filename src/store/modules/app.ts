@@ -18,7 +18,7 @@ let timeId: TimeoutHandle;
 
 interface AppState {
   pageLoading: boolean;
-  toastVisible: boolean;
+  showToastFn: () => void;
   toastData: Record<string, unknown>;
   systemConfig: Nullable<SystemConfig>;
   globalEnumData: GlobalEnumType[];
@@ -28,7 +28,7 @@ export const useAppStore = defineStore({
   id: 'app',
   state: (): AppState => ({
     pageLoading: false,
-    toastVisible: false,
+    showToastFn: () => undefined,
     toastData: {
       type: 'success',
       message: 'success',
@@ -41,8 +41,8 @@ export const useAppStore = defineStore({
     getPageLoading() {
       return this.pageLoading;
     },
-    getToastVisible() {
-      return this.toastVisible;
+    getshowToastFn() {
+      return this.showToastFn;
     },
     getToastData() {
       return this.toastData;
@@ -67,20 +67,15 @@ export const useAppStore = defineStore({
         clearTimeout(timeId);
       }
     },
+    initToast(fn: () => void) {
+      this.showToastFn = fn;
+    },
     showToast(type: string, message: string, description = '') {
-      this.toastVisible = true;
+      this.showToastFn();
       this.toastData = {
         type,
         message,
         description,
-      };
-    },
-    closeToast() {
-      this.toastVisible = false;
-      this.toastData = {
-        type: '',
-        message: '',
-        description: '',
       };
     },
     async resumeAllState() {
