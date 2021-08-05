@@ -55,8 +55,10 @@
       <DxScrolling v-if="options.useScrolling" mode="virtual" row-rendering-mode="virtual" />
       <template #billCode="{ data }">
         <div
+          id="billcode"
           :class="`${prefixCls}__table-billno-column__wrap`"
           @click="$emit('handleBillCodeClick', data)"
+          @mouseenter="getRowData(data)"
           >{{ data.value }}</div
         >
       </template>
@@ -64,6 +66,13 @@
         <div>{{ getFoundationData(rowInfo) }}</div>
       </template>
     </DxDataGrid>
+    <DxContextMenu :data-source="items" :width="200" target="#billcode">
+      <template #item="{ data: e }">
+        <div class="elementId" :data-clipboard-text="clipValue">
+          {{ e.text }}
+        </div>
+      </template>
+    </DxContextMenu>
     <div
       v-if="options.dataSourceOptions.paginate && !options.useScrolling && tableData"
       :class="`${prefixCls}__jump`"
@@ -77,14 +86,23 @@
   import type { IColumnItem, IKeyType } from '/@/model/types';
   import type { ISchemeItem } from '../QueryPopup/content/types';
 
-  import { defineComponent, onBeforeUnmount, ref, PropType, watch, nextTick, computed } from 'vue';
+  import {
+    defineComponent,
+    onBeforeUnmount,
+    ref,
+    PropType,
+    watch,
+    nextTick,
+    computed,
+    onMounted,
+  } from 'vue';
   import { cloneDeep, isEmpty } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defaultTableOptions, getCompleteColumns, getTableDataSource } from './common';
   import { useAppStore } from '/@/store/modules/app';
   import { deepMerge } from '/@/utils';
-
+  import DxContextMenu from 'devextreme-vue/context-menu';
   import DxDataGrid, {
     DxSelection,
     DxPaging,
@@ -93,6 +111,8 @@
     DxLookup,
     DxScrolling,
   } from 'devextreme-vue/data-grid';
+  import Clipboard from 'clipboard';
+  import { useMessage } from '/@/hooks/web/useMessage';
 
   export default defineComponent({
     components: {
@@ -103,6 +123,7 @@
       DxLookup,
       DxColumn,
       DxScrolling,
+      DxContextMenu,
     },
     props: {
       tableOptions: {
@@ -160,8 +181,20 @@
       const pageIndex = ref(0);
       const tableData = ref();
       const tableColumns = ref<IColumnItem[]>([]);
+      const clipValue = ref('');
       const options = computed(() => {
         return deepMerge(cloneDeep(defaultTableOptions), props.tableOptions);
+      });
+
+      onMounted(() => {
+        const clipboard = new Clipboard('.elementId');
+        clipboard.on('success', function (e) {
+          useMessage('复制成功', 'success');
+          e.clearSelection();
+        });
+        clipboard.on('error', function () {
+          useMessage('复制失败', 'error');
+        });
       });
 
       const handleCustomizeDecimal = (cellInfo) => {
@@ -319,6 +352,9 @@
         }
       );
 
+      function getRowData(e) {
+        clipValue.value = e.value;
+      }
       function getGlobalEnumDataByCode(code: string | undefined) {
         return code && appStore.getGlobalEnumDataByCode(code);
       }
@@ -345,6 +381,13 @@
         getAlignment,
         handleCustomizeDecimal,
         handleCustomizeText,
+        getRowData,
+        clipValue,
+        items: [
+          {
+            text: '复制内容',
+          },
+        ],
       };
     },
   });
