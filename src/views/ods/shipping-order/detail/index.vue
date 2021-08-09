@@ -157,7 +157,7 @@
         apply: [
           {
             key: 'redraft',
-            name: '反审核',
+            name: '反审',
           },
         ],
         submit: [

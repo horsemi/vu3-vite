@@ -108,10 +108,6 @@ export const customColumns: IColumnItem[] = [
     key: 'CustomerMaterialName',
     caption: '客户物料名称',
   },
-  // {
-  //   key: '',
-  //   caption: '父项物业编码',
-  // },
   {
     key: 'IsMarble',
     caption: '大理石',
@@ -121,24 +117,12 @@ export const customColumns: IColumnItem[] = [
     caption: '打木架',
   },
   {
-    key: 'OutSourceBillCode',
-    caption: '外部原单编号',
-  },
-  {
     key: 'ActualSalePrice',
     caption: '实际售价',
   },
   {
     key: 'Memo',
     caption: '备注',
-  },
-  // {
-  //   key: '',
-  //   caption: '源单编号',
-  // },
-  {
-    key: 'OutRowCode',
-    caption: '源单行号',
   },
   {
     key: 'TaoBaoCode',

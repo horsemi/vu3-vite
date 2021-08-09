@@ -105,10 +105,6 @@ export const customColumns: IColumnItem[] = [
     caption: '父项物料编码',
   },
   {
-    key: 'OutSourceBillCode',
-    caption: '外部原单编号',
-  },
-  {
     key: 'ActualSalePrice',
     caption: '实际售价',
   },

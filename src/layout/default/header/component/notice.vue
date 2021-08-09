@@ -25,7 +25,6 @@
 
   .@{prefix-cls} {
     position: relative;
-    margin: 0 25px;
     cursor: pointer;
 
     &-notice-num__wrapper {

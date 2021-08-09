@@ -1,6 +1,5 @@
 <template>
   <div :class="[prefixCls]">
-    <SvgIcon size="22" name="user"></SvgIcon>
     <div style="min-width: 100px">
       <DxDropDownButton
         width="100%"

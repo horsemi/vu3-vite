@@ -184,7 +184,7 @@
         apply: [
           {
             key: 'redraft',
-            name: '反审核',
+            name: '反审',
           },
         ],
         submit: [
@@ -196,7 +196,7 @@
         send: [
           {
             key: 'recall',
-            name: '撤回发送',
+            name: '撤回',
           },
         ],
       };
