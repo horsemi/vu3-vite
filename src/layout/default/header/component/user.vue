@@ -17,6 +17,7 @@
       v-if="popupVisable"
       v-model:popup-visable="popupVisable"
       :show-close-button="true"
+      :password-message="passwordMessage"
       :password-pattern="passwordPattern"
       @closePopup="ClosePopup"
     />
@@ -43,11 +44,14 @@
       const { userName } = userStore.getUserInfo;
       const popupVisable = ref<boolean>(false);
       let passwordPattern = ref<string>('');
+      let passwordMessage = ref<string>('');
       const items = [
         {
           name: '修改密码',
           onClick: async () => {
-            passwordPattern.value = await userStore.getPasswordPolicy();
+            const { regexp, regexpTips } = await userStore.getPasswordPolicy();
+            passwordPattern.value = regexp;
+            passwordMessage.value = regexpTips;
             popupVisable.value = true;
           },
           template: () => {
@@ -86,6 +90,7 @@
         popupVisable,
         ClosePopup,
         passwordPattern,
+        passwordMessage,
       };
     },
   });

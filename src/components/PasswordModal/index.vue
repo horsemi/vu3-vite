@@ -39,7 +39,7 @@
         >
           <DxLabel text="新密码"></DxLabel>
           <DxRequiredRule message="请输入新密码" />
-          <DxPatternRule :pattern="passwordPattern" message="密码至少包含字母和数字，不少于6位" />
+          <DxPatternRule :pattern="passwordPattern" :message="passwordMessage" />
         </DxItem>
         <DxItem
           data-field="newPasswordRe"
@@ -51,7 +51,7 @@
         >
           <DxLabel text="确认密码"></DxLabel>
           <DxRequiredRule message="请再次输入密码" />
-          <DxPatternRule :pattern="passwordPattern" message="密码至少包含字母和数字，不少于6位" />
+          <DxPatternRule :pattern="passwordPattern" :message="passwordMessage" />
           <DxCompareRule :comparison-target="passwordComparison" message="两次输入密码不一致!" />
         </DxItem>
       </DxForm>
@@ -130,6 +130,10 @@
         default: '',
       },
       passwordPattern: {
+        type: String,
+        default: '',
+      },
+      passwordMessage: {
         type: String,
         default: '',
       },

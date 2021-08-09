@@ -76,11 +76,11 @@ export const useUserStore = defineStore({
           });
       });
     },
-    getPasswordPolicy(): Promise<string> {
+    getPasswordPolicy(): Promise<{ regexp: string; regexpTips: string }> {
       return new Promise((resolve, reject) => {
         UserApi.queryPasswordPolicy()
           .then((res) => {
-            resolve(res[0].regexp);
+            resolve({ regexp: res[0].regexp, regexpTips: res[0].regexpTips });
           })
           .catch((error) => {
             reject(error);

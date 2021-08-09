@@ -3,6 +3,7 @@
     <div v-loading="loading" class="tab-panel">
       <div class="btn-box">
         <DxDropDownButton
+          :element-attr="dropDownButtonAttributes"
           :items="dropButtonItems.submit"
           :split-button="true"
           :use-select-mode="false"
@@ -431,12 +432,28 @@
         onRefresh,
         onChangeOpened,
         getColseHeight,
+        dropDownButtonAttributes: {
+          class: 'first-dropButton',
+        },
       };
     },
   });
 </script>
 
 <style lang="less">
+  .first-dropButton {
+    background-color: @color-primary;
+    border-radius: 4px;
+    .dx-buttongroup .dx-buttongroup-wrapper {
+      border: none;
+      .dx-buttongroup-item .dx-button-content .dx-button-text {
+        color: #fff !important;
+      }
+      .dx-icon {
+        color: #fff !important;
+      }
+    }
+  }
   .detail {
     overflow: hidden;
 

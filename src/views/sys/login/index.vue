@@ -56,6 +56,7 @@
         :show-close-button="true"
         :show-text-close="false"
         :login-user-name="loginData.userName"
+        :password-message="passwordMessage"
         :password-pattern="passwordPattern"
         @closePopup="ClosePopup"
       />
@@ -94,6 +95,7 @@
       const { prefixCls } = useDesign('login');
       const popupVisable = ref<boolean>(false);
       const passwordPattern = ref<string>('');
+      const passwordMessage = ref<string>('');
       const loginData = reactive({ userName: '', password: '' });
 
       return {
@@ -102,6 +104,7 @@
         loginData,
         passwordPattern,
         popupVisable,
+        passwordMessage,
       };
     },
     methods: {
@@ -115,7 +118,9 @@
           this.loginData.password = '';
           this.popupVisable = true;
           removeCookie(TOKEN_KEY);
-          this.passwordPattern = await this.userStore.getPasswordPolicy();
+          const { regexp, regexpTips } = await this.userStore.getPasswordPolicy();
+          this.passwordMessage = regexpTips;
+          this.passwordPattern = regexp;
         } else {
           this.$router.replace('/');
         }

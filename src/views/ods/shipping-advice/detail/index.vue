@@ -3,15 +3,18 @@
     <div v-loading="loading" class="tab-panel">
       <div class="btn-box">
         <DxDropDownButton
+          :element-attr="dropDownButtonAttributes"
           :items="dropButtonItems.submit"
           :split-button="true"
           :use-select-mode="false"
           text="提交"
+          item-template="item"
           display-expr="name"
           key-expr="key"
           @button-click="onSubmitClick"
           @item-click="onItemButtonClick"
-        />
+        >
+        </DxDropDownButton>
         <DxDropDownButton
           :items="dropButtonItems.apply"
           :split-button="true"
@@ -505,12 +508,30 @@
         onRefresh,
         onChangeOpened,
         getColseHeight,
+        dropDownButtonAttributes: {
+          class: 'first-dropButton',
+        },
       };
     },
   });
 </script>
 
 <style lang="less">
+  .first-dropButton {
+    background-color: @color-primary;
+    border-radius: 4px;
+    .dx-buttongroup .dx-buttongroup-wrapper {
+      .dx-button {
+        border: none;
+      }
+      .dx-buttongroup-item .dx-button-content .dx-button-text {
+        color: #fff !important;
+      }
+      .dx-icon {
+        color: #fff !important;
+      }
+    }
+  }
   .detail {
     overflow: hidden;
 
