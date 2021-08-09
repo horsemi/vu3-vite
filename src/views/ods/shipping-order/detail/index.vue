@@ -227,6 +227,7 @@
 
       const onRefresh = () => {
         getDetail();
+        getData();
       };
 
       const onSubmitClick = () => {
