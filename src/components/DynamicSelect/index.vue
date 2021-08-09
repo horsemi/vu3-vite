@@ -96,7 +96,6 @@
   import type { IColumnItem } from '/@/model/types';
 
   import { defineComponent, watch, PropType, ref } from 'vue';
-  import moment from 'moment';
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -229,17 +228,8 @@
         context.emit('update:paramOperations', operatorOptions.value);
       }
 
-      function handleItemClick(e) {
-        if (e.itemData.type === 'datetime' || e.itemData.type === 'date') {
-          context.emit(
-            'update:value',
-            moment([moment().year(), moment().month(), moment().date()])
-              .format('YYYY/MM/DD HH:mm:ss')
-              .toString()
-          );
-        } else {
-          context.emit('update:value', undefined);
-        }
+      function handleItemClick() {
+        context.emit('update:value', undefined);
       }
 
       return {

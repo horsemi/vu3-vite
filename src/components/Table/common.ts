@@ -11,6 +11,7 @@ import type { ISortItem } from '/@/api/ods/types';
 import { isNil } from 'lodash-es';
 
 import { getDataSource } from '/@/api/ods/common';
+import { formatToDate, formatToDateTime, getBeginTime, getEndTime } from '/@/utils/date';
 
 const defaultPaginate = true;
 
@@ -197,19 +198,39 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
 
 const initValueData = (item: IRequirementItem, requirement) => {
   let result = '';
-  result += `["${requirement}","${item.operator}"`;
+  result += `["${requirement}"`;
 
   switch (item.type) {
     case 'number': {
-      result += `,${item.value}]`;
+      result += `,"${item.operator}",${item.value}]`;
       break;
     }
     case 'boolean': {
-      result += `,${item.value}]`;
+      result += `,"${item.operator}",${item.value}]`;
+      break;
+    }
+    case 'date': {
+      if (item.operator === '=') {
+        result += `,">=","${getBeginTime(
+          item.value as Date
+        )}"],"and",["${requirement}","<=","${getEndTime(item.value as Date)}"]`;
+      } else {
+        result += `,"${item.operator}","${formatToDate(item.value as Date)}"]`;
+      }
+      break;
+    }
+    case 'datetime': {
+      if (item.operator === '=') {
+        result += `,">=","${getBeginTime(
+          item.value as Date
+        )}"],"and",["${requirement}","<=","${getEndTime(item.value as Date)}"]`;
+      } else {
+        result += `,"${item.operator}","${formatToDateTime(item.value as Date)}"]`;
+      }
       break;
     }
     default: {
-      result += `,"${item.value}"]`;
+      result += `,"${item.operator}","${item.value}"]`;
     }
   }
   return result;
