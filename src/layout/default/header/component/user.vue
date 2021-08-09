@@ -28,6 +28,7 @@
   import { defineComponent, ref } from 'vue';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
+  import { useAppStore } from '/@/store/modules/app';
   import PasswordModal from '/@/components/PasswordModal/index.vue';
 
   export default defineComponent({
@@ -38,19 +39,11 @@
     setup() {
       const { prefixCls } = useDesign('header-user');
       const userStore = useUserStore();
+      const appStore = useAppStore();
       const { userName } = userStore.getUserInfo;
       const popupVisable = ref<boolean>(false);
       let passwordPattern = ref<string>('');
       const items = [
-        {
-          name: '登录记录',
-          onClick: () => {
-            //
-          },
-          template: () => {
-            return '<div style="text-align: center;">登录记录</div>';
-          },
-        },
         {
           name: '修改密码',
           onClick: async () => {
@@ -59,6 +52,16 @@
           },
           template: () => {
             return '<div style="text-align: center;">修改密码</div>';
+          },
+        },
+        {
+          name: '清除缓存',
+          onClick: () => {
+            appStore.resumeAllState();
+            window.location.reload();
+          },
+          template: () => {
+            return '<div style="text-align: center;">清除缓存</div>';
           },
         },
         {

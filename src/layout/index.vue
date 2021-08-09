@@ -39,12 +39,6 @@
         <LayoutMenu :open-state="openState" :menu-size="menuSize" @toggle-menu="toggleMenu" />
       </template>
     </DxDrawer>
-    <Toast
-      ref="toast"
-      :message="visibleData.message"
-      :description="visibleData.description"
-      :type="visibleData.type"
-    />
   </div>
 </template>
 
@@ -59,9 +53,7 @@
   import DxDrawer from 'devextreme-vue/drawer';
   import DxScrollView from 'devextreme-vue/scroll-view';
 
-  import Toast from '/@/components/Toast/index.vue';
   import { useViewStore } from '/@/store/modules/view';
-  import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { initGlobalEnumData } from '/@/logics/initAppConfig';
 
@@ -77,7 +69,6 @@
       MultipleTabs,
       DxDrawer,
       DxScrollView,
-      Toast,
     },
     setup() {
       const menuSize = {
@@ -86,21 +77,13 @@
       };
       initGlobalEnumData();
       const viewStore = useViewStore();
-      const appStore = useAppStore();
-      const visibleData = computed(() => appStore.toastData);
+
       const { prefixCls } = useDesign('layout');
       const viewState = computed(() => viewStore.getViewList);
       const openState = ref(true);
       const toggleMenu = () => {
         openState.value = !openState.value;
       };
-      const toast = ref();
-
-      const showToast = () => {
-        toast.value.showToast();
-      };
-
-      appStore.initToast(showToast);
 
       const getQueryPlan = () => {
         const oldSchemeData = Persistent.getLocal(SCHEME_DATA_KEY);
@@ -276,13 +259,10 @@
 
       return {
         viewState,
-        appStore,
         openState,
         prefixCls,
         toggleMenu,
         menuSize,
-        toast,
-        visibleData,
       };
     },
   });
