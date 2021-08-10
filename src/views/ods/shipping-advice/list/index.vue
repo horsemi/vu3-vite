@@ -80,6 +80,7 @@
         requirement: [],
         orderBy: [],
         columns: [],
+        fast: [],
       });
       const tableKey = ref<string[]>([]);
       const tableKeyType = ref<IKeyType[]>([]);
@@ -88,7 +89,6 @@
       const allColumns = ref<IColumnItem[]>([]);
       const schemeData = ref<ISchemeData>({
         scheme: [],
-        fast: [],
         checkedIndex: 0,
       });
       const schemeCheckedIndex = ref<number>(0);
@@ -154,7 +154,7 @@
 
         schemeCheckedIndex.value = schemeData.value.checkedIndex;
         const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
-        const fast = schemeData.value.fast;
+        const fast = scheme.fast || [];
         if (fast.length > 0) {
           scheme.requirement.push(...fast);
         }

@@ -15,7 +15,7 @@
     />
     <QueryPopup
       ref="popup"
-      :checked-index="popupIndex"
+      :checked-index="checkedIndex"
       :all-columns="allColumns"
       :scheme-list="schemeList"
       @on-change-checked-index="onChangeCheckedIndex"
@@ -29,7 +29,6 @@
       @on-reset-scheme="onResetScheme"
       @on-submit="onSubmit"
       @on-change-checked-default="onChangeCheckedDefault"
-      @on-change-popup-index="onChangePopupIndex"
     />
   </div>
 </template>
@@ -111,13 +110,13 @@
       // 快捷过滤用的选中下标
       const checkedIndex = ref(0);
       // 方案弹窗用的选中下标
-      const popupIndex = ref(0);
+      // const checkedIndex = ref(0);
       // 过滤方案数据，用于交互
       const schemeList = ref<ISchemeItem[]>([]);
       // 过滤方案数据副本，用于保存
       const schemeListTemp = ref<ISchemeItem[]>([]);
       // 快速过滤数据
-      const fast = ref<IQueryItem[]>([]);
+      const fast = ref<IRequirementItem[]>([]);
 
       // 外派列表过滤方案更新事件
       const onChangeScheme = (data: ISchemeItem) => {
@@ -125,11 +124,11 @@
       };
       // 点击重置触发
       const onReset = () => {
-        if (popupIndex.value < schemeListTemp.value.length) {
-          const popupListTemp = schemeListTemp.value[popupIndex.value];
-          schemeList.value[popupIndex.value] = cloneDeep(popupListTemp);
+        if (checkedIndex.value < schemeListTemp.value.length) {
+          const popupListTemp = schemeListTemp.value[checkedIndex.value];
+          schemeList.value[checkedIndex.value] = cloneDeep(popupListTemp);
+          fast.value = popupListTemp.fast || [];
           queryForm.value.changeQueryList(fast.value);
-          checkedIndex.value = popupIndex.value;
           onSearch();
         }
       };
@@ -140,7 +139,7 @@
       // 点击查询触发
       const onSearch = () => {
         const queryList = queryForm.value.queryList;
-        const scheme = cloneDeep(schemeList.value[popupIndex.value]);
+        const scheme = cloneDeep(schemeList.value[checkedIndex.value]);
         queryList.forEach((item) => {
           if (item.requirement) {
             scheme.requirement.push(item);
@@ -167,7 +166,6 @@
           checkedIndex = schemeListTemp[props.orderCode].checkedIndex;
           schemeListTemp[props.orderCode] = {
             scheme,
-            fast: query.length > 0 ? query : props.schemeData.fast,
             checkedIndex: checkedIndex,
           };
         }
@@ -189,57 +187,61 @@
         Persistent.setLocal(SCHEME_DATA_KEY, schemeListTemp);
       };
       // 接收选中下标更新
-      const onChangeCheckedIndex = (index: number) => {
+      const onChangeCheckedIndex = (index: number, isSearch = true) => {
         checkedIndex.value = index;
         const scheme = cloneDeep(schemeListTemp.value[checkedIndex.value]);
-        const queryList = queryForm.value.queryList;
-        queryList.forEach((item) => {
-          if (item.requirement) {
-            scheme.requirement.push(item);
-          }
-        });
-        onChangeScheme(scheme);
+        queryForm.value.queryList = scheme.fast || [];
+        scheme.fast &&
+          scheme.fast.forEach((item) => {
+            if (item.requirement) {
+              scheme.requirement.push(item);
+            }
+          });
+
+        if (isSearch) {
+          onChangeScheme(scheme);
+        }
       };
       // 接收条件数据更新
       const onChangeRequirement = (data: IRequirementItem[]) => {
-        schemeList.value[popupIndex.value].requirement = data;
+        schemeList.value[checkedIndex.value].requirement = data;
       };
       // 接收排序数据更新
       const onChangeSort = (data: IOrderByItem[]) => {
-        schemeList.value[popupIndex.value].orderBy = data;
+        schemeList.value[checkedIndex.value].orderBy = data;
       };
       // 接收显示隐藏列更新
       const onChangeColumn = (data: ISchemeColumnsItem[]) => {
-        schemeList.value[popupIndex.value].columns = data;
+        schemeList.value[checkedIndex.value].columns = data;
       };
       // 接收标题更新
       const onTitleChange = (title: string) => {
-        schemeList.value[popupIndex.value].title = title;
+        schemeList.value[checkedIndex.value].title = title;
         // 改完标题自动保存
         onSubmitScheme();
       };
       // 接收保存事件
       const onSubmitScheme = (fast: IQueryItem[] = []) => {
-        schemeListTemp.value[popupIndex.value] = cloneDeep(schemeList.value[popupIndex.value]);
+        schemeListTemp.value[checkedIndex.value] = cloneDeep(schemeList.value[checkedIndex.value]);
         handleSaveData('保存成功', schemeListTemp.value, fast);
       };
       // 接收另存事件
       const onSaveScheme = () => {
         schemeList.value.push({
-          ...cloneDeep(schemeList.value[popupIndex.value]),
+          ...cloneDeep(schemeList.value[checkedIndex.value]),
           title: '',
           uuid: getUuid(),
         });
-        popupIndex.value = schemeList.value.length - 1;
+        checkedIndex.value = schemeList.value.length - 1;
       };
       // 接收删除事件
       const onDelScheme = () => {
         // 两个数据都需要删除
-        const index = popupIndex.value;
+        const index = checkedIndex.value;
         const temp = [...schemeList.value];
         temp.splice(index, 1);
         schemeList.value = temp;
-        popupIndex.value = index - 1;
+        checkedIndex.value = index - 1;
         if (index < schemeListTemp.value.length) {
           const data = [...schemeListTemp.value];
           data.splice(index, 1);
@@ -249,45 +251,44 @@
       };
       // 接收重置事件
       const onResetScheme = () => {
-        const popupUuid = schemeList.value[popupIndex.value].uuid;
+        const popupUuid = schemeList.value[checkedIndex.value].uuid;
         const popupListTemp = schemeListTemp.value.find((item) => item.uuid === popupUuid);
 
         if (popupListTemp) {
-          schemeList.value[popupIndex.value] = cloneDeep(popupListTemp);
-          onChangeScheme(schemeList.value[popupIndex.value]);
+          schemeList.value[checkedIndex.value] = cloneDeep(popupListTemp);
+          onChangeScheme(schemeList.value[checkedIndex.value]);
         }
       };
       // 接收确认事件
       const onSubmit = () => {
-        checkedIndex.value = popupIndex.value;
         onSearch();
       };
       // 接受默认方案更新事件
       const onChangeCheckedDefault = () => {
-        handleChangeCheckedDefault(popupIndex.value);
-      };
-      // 接受弹窗选中下标更新事件
-      const onChangePopupIndex = (index: number) => {
-        popupIndex.value = index;
+        handleChangeCheckedDefault(checkedIndex.value);
       };
       // 接受快速过滤保存设置
       const onSaveFast = (fast: IQueryItem[]) => {
-        if (popupIndex.value === 0) {
+        if (checkedIndex.value === 0) {
           schemeList.value.push({
-            ...cloneDeep(schemeList.value[popupIndex.value]),
+            ...cloneDeep(schemeList.value[checkedIndex.value]),
             title: '缺省方案（个人）',
             uuid: getUuid(),
+            fast: fast,
           });
-          popupIndex.value = schemeList.value.length - 1;
+          checkedIndex.value = schemeList.value.length - 1;
         }
-        schemeListTemp.value[popupIndex.value] = cloneDeep(schemeList.value[popupIndex.value]);
+        let scheme = cloneDeep(schemeList.value[checkedIndex.value]);
+        scheme.fast = fast;
+        schemeListTemp.value[checkedIndex.value] = scheme;
         handleSaveData('保存成功', schemeListTemp.value, fast);
       };
+
       // 处理组件数据
       const handleData = (val: ISchemeData) => {
         schemeList.value = cloneDeep(val.scheme);
         schemeListTemp.value = cloneDeep(val.scheme);
-        fast.value = cloneDeep(val.fast);
+        fast.value = [];
       };
 
       watch(
@@ -304,7 +305,6 @@
         () => props.schemeCheckedIndex,
         (val) => {
           checkedIndex.value = val;
-          popupIndex.value = val;
         },
         {
           immediate: true,
@@ -319,7 +319,6 @@
         schemeList,
         schemeListTemp,
         fast,
-        popupIndex,
         onSearch,
         onReset,
         onQueryPlan,
@@ -334,7 +333,6 @@
         onResetScheme,
         onSubmit,
         onChangeCheckedDefault,
-        onChangePopupIndex,
         onSaveFast,
       };
     },

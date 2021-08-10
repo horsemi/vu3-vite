@@ -65,7 +65,7 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IQueryItem } from '../types';
+  import type { IRequirementItem } from '../../QueryPopup/content/types';
 
   import { defineComponent, PropType, ref, watch } from 'vue';
   import { cloneDeep } from 'lodash-es';
@@ -88,7 +88,7 @@
         },
       },
       fast: {
-        type: Array as PropType<IQueryItem[]>,
+        type: Array as PropType<IRequirementItem[]>,
         default: () => {
           return [];
         },
@@ -98,7 +98,7 @@
     setup(props, ctx) {
       const { prefixCls } = useDesign('query-form');
       const opened = ref<boolean>(false);
-      const queryList = ref<IQueryItem[]>([
+      const queryList = ref<IRequirementItem[]>([
         {
           requirement: '',
           operator: '=',
@@ -107,6 +107,7 @@
           type: '',
           datatypekeies: '',
           relationKey: '',
+          logic: 'and',
         },
       ]);
 
@@ -119,6 +120,7 @@
           type: '',
           datatypekeies: '',
           relationKey: '',
+          logic: 'and',
         });
       };
 
@@ -127,7 +129,7 @@
       };
 
       const onSaveFast = () => {
-        const temp: IQueryItem[] = [];
+        const temp: IRequirementItem[] = [];
         queryList.value.forEach((item) => {
           if (item.requirement) {
             temp.push(item);
@@ -142,6 +144,7 @@
             type: '',
             datatypekeies: '',
             relationKey: '',
+            logic: 'and',
           });
         }
         ctx.emit('on-save-fast', temp);
@@ -151,7 +154,7 @@
         opened.value = false;
       };
 
-      const changeQueryList = (data: IQueryItem[]) => {
+      const changeQueryList = (data: IRequirementItem[]) => {
         queryList.value = cloneDeep(data);
       };
 

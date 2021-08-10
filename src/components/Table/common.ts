@@ -114,6 +114,8 @@ export const getFilter = (requirements: IRequirementItem[]) => {
     }
   }
   const filter = JSON.parse(`[${result}]`);
+  // 获取解析后的搜索条件
+  // console.log(filter);
   return filter;
 };
 

@@ -12,6 +12,5 @@ export interface IQueryItem {
 
 export interface ISchemeData {
   scheme: ISchemeItem[];
-  fast: IQueryItem[];
   checkedIndex: number;
 }

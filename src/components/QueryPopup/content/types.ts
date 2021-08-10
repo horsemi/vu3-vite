@@ -95,6 +95,11 @@ export interface ISchemeItem {
    * @description 显示隐藏列
    */
   columns: ISchemeColumnsItem[];
+
+  /**
+   * @description 快速过滤
+   */
+  fast?: IQueryItem[];
 }
 
 export interface ISortOptions {

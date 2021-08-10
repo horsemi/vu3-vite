@@ -71,7 +71,7 @@
       'on-reset-scheme',
       'on-submit',
       'on-change-checked-default',
-      'on-change-popup-index',
+      'on-change-checked-index',
     ],
     setup(props, ctx) {
       const { prefixCls } = useDesign('query-popup');
@@ -90,7 +90,7 @@
       };
       // 接受选中下标更新
       const onChangeCheckedIndex = (index: number) => {
-        ctx.emit('on-change-popup-index', index);
+        ctx.emit('on-change-checked-index', index, false);
       };
       // 外派条件数据更新
       const onChangeRequirement = (data: IRequirementItem[]) => {
