@@ -45,6 +45,7 @@
           v-else
           width="100%"
           :value="formData[data.dataField]"
+          :show-property="data.editorOptions.showProperty"
           :read-only="true"
           :foundation-data="formData[data.editorOptions.expand]"
         />

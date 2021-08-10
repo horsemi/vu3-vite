@@ -352,8 +352,20 @@ export const customColumns: IColumnItem[] = [
     caption: '中转承运商编码',
   },
   {
-    key: 'HandCarGroup',
+    key: 'HandCarsGroup',
     caption: '挂车组合',
+    relationKey: 'HandCarGroup',
+    foundationList: [
+      {
+        key: 'HandCarsGroup_GroupName',
+        caption: '挂车组合分组',
+      },
+    ],
+    datatypekeies: 'line-areas',
+  },
+  {
+    key: 'HandCarGroup',
+    caption: '挂车组合编码',
   },
   {
     key: 'LoadType',
@@ -392,8 +404,20 @@ export const customColumns: IColumnItem[] = [
     caption: '三包服务商编码',
   },
   {
-    key: 'SmallCarGroup',
+    key: 'SmallCarsGroup',
     caption: '小挂组合',
+    relationKey: 'SmallCarGroup',
+    foundationList: [
+      {
+        key: 'SmallCarsGroup_GroupName',
+        caption: '小挂组合分组',
+      },
+    ],
+    datatypekeies: 'line-areas',
+  },
+  {
+    key: 'SmallCarGroup',
+    caption: '小挂组合编码',
   },
   {
     key: 'DeliveryCos',

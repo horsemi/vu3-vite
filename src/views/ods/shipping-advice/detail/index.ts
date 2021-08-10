@@ -183,6 +183,7 @@ export const logistics: IDetailItem[] = [
   {
     key: 'HandCarGroup',
     caption: '挂车组合',
+    showProperty: 'GroupName',
   },
   {
     key: 'LoadType',
@@ -199,6 +200,7 @@ export const logistics: IDetailItem[] = [
   {
     key: 'SmallCarGroup',
     caption: '小挂组合',
+    showProperty: 'GroupName',
   },
   {
     key: 'SendGoodsMode',

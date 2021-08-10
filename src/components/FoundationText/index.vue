@@ -31,6 +31,10 @@
           return {};
         },
       },
+      showProperty: {
+        type: String,
+        default: 'Name',
+      },
       readOnly: {
         type: Boolean,
         default: false,
@@ -44,8 +48,8 @@
 
       onMounted(() => {
         if (prop.foundationData) {
-          foundationName.value = prop.foundationData.Name;
-          content.emit('update:value', prop.foundationData.Name);
+          foundationName.value = prop.foundationData[prop.showProperty];
+          content.emit('update:value', prop.foundationData[prop.showProperty]);
         }
       });
 
