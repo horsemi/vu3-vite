@@ -100,9 +100,12 @@
   import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch } from 'vue';
+  import { defineComponent, ref, watch, reactive } from 'vue';
   import { useRoute } from 'vue-router';
 
+  import { getColumns } from '/@/model/shipping-advices';
+  import { getDefiniteColumns } from '/@/model/shipping-order-items';
+  import { getRecordColumns } from '/@/model/operation-record';
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
   import { getDetailData, getDefiniteData, getRecordData } from './index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
@@ -208,7 +211,9 @@
         columns: [],
       });
       const definiteAllColumns = ref<IColumnItem[]>([]);
-
+      let columnsData: any = reactive({});
+      let recordColumnsData: any = reactive({});
+      let definiteColumnsData: any = reactive({});
       const recordOptions = ref<Partial<ITableOptions>>({
         height: defaultRecordHeight,
         dataSourceOptions: {
@@ -228,7 +233,6 @@
       const recordAllColumns = ref<IColumnItem[]>([]);
 
       const onRefresh = () => {
-        getDetail();
         getData();
       };
 
@@ -323,9 +327,9 @@
         return Math.ceil(len / rowSpan);
       };
 
-      const getDetail = () => {
+      const getDetail = (columnsData: any) => {
         loading.value = true;
-        getDetailData(['Id', '=', Id])
+        getDetailData(['Id', '=', Id], columnsData)
           .then((res) => {
             if (res) {
               const { baseList, receiverList, logisticsList, otherList, data } = res;
@@ -351,9 +355,18 @@
           });
       };
 
-      const getData = () => {
-        getDetail();
-        getDefiniteData().then((res) => {
+      const getData = async () => {
+        if (JSON.stringify(columnsData) === '{}') {
+          columnsData = await getColumns();
+        }
+        if (JSON.stringify(recordColumnsData) === '{}') {
+          recordColumnsData = await getRecordColumns();
+        }
+        if (JSON.stringify(definiteColumnsData) === '{}') {
+          definiteColumnsData = await getDefiniteColumns();
+        }
+        getDetail(columnsData);
+        getDefiniteData(definiteColumnsData).then((res) => {
           if (res) {
             definiteAllColumns.value = res.columnList;
             definiteScheme.value = {
@@ -375,7 +388,7 @@
             };
           }
         });
-        getRecordData().then((res) => {
+        getRecordData(recordColumnsData).then((res) => {
           if (res) {
             recordAllColumns.value = res.columnList;
             recordScheme.value = {
