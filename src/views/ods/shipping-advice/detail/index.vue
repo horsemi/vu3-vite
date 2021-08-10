@@ -1,17 +1,20 @@
 <template>
   <div class="detail">
-    <div v-loading="loading" class="tab-panel">
+    <div v-loading="loading" :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
       <div class="btn-box">
         <DxDropDownButton
+          :element-attr="dropDownButtonAttributes"
           :items="dropButtonItems.submit"
           :split-button="true"
           :use-select-mode="false"
           text="提交"
+          item-template="item"
           display-expr="name"
           key-expr="key"
           @button-click="onSubmitClick"
           @item-click="onItemButtonClick"
-        />
+        >
+        </DxDropDownButton>
         <DxDropDownButton
           :items="dropButtonItems.apply"
           :split-button="true"
@@ -227,6 +230,7 @@
       const expressListInformation = ref<IDetailItem[]>([]);
       const taskInformation = ref<IDetailItem[]>([]);
       const otherInformation = ref<IDetailItem[]>([]);
+      const isFixHeight = ref<boolean>(true);
 
       const definiteOptions = ref<Partial<ITableOptions>>({
         height: defaultDefiniteHeight,
@@ -266,6 +270,7 @@
 
       const onRefresh = () => {
         getDetail();
+        getData();
       };
 
       const onSubmitClick = () => {
@@ -322,6 +327,7 @@
       };
 
       const onChangeOpened = () => {
+        isFixHeight.value = !isFixHeight.value;
         opened.value = !opened.value;
         handleHeight(selectedIndex.value, tableIndex.value);
       };
@@ -497,6 +503,7 @@
         formData,
         stepData,
         stepActiveIndex,
+        isFixHeight,
         onSubmitClick,
         onApplyClick,
         onSendClick,
@@ -504,12 +511,30 @@
         onRefresh,
         onChangeOpened,
         getColseHeight,
+        dropDownButtonAttributes: {
+          class: 'first-dropButton',
+        },
       };
     },
   });
 </script>
 
 <style lang="less">
+  .first-dropButton {
+    background-color: @color-primary;
+    border-radius: 4px;
+    .dx-buttongroup .dx-buttongroup-wrapper {
+      .dx-button {
+        border: none;
+      }
+      .dx-buttongroup-item .dx-button-content .dx-button-text {
+        color: #fff !important;
+      }
+      .dx-icon {
+        color: #fff !important;
+      }
+    }
+  }
   .detail {
     overflow: hidden;
 
@@ -523,6 +548,9 @@
       }
     }
 
+    .fixHeight {
+      height: 255px;
+    }
     .tab-panel {
       position: relative;
       display: flex;
