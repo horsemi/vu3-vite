@@ -2,9 +2,6 @@ import type { IDetailItem } from '/@/utils/bill/types';
 import type { IColumnItem } from '/@/model/types';
 
 import { getDetailDataSource } from '/@/api/ods/detail';
-import { getColumns } from '/@/model/shipping-advices';
-import { getDefiniteColumns } from '/@/model/shipping-advice-items';
-import { getRecordColumns } from '/@/model/operation-record';
 import { getFormList } from '/@/utils/bill';
 import { isFoundationType } from '/@/model/common';
 
@@ -636,8 +633,7 @@ export const record: IColumnItem[] = [
   },
 ];
 
-export const getDetailData = async (filter: any[]) => {
-  const columnsData = await getColumns();
+export const getDetailData = async (filter: any[], columnsData: any) => {
   if (!columnsData) return;
   const { columnList } = columnsData;
 
@@ -674,8 +670,7 @@ export const getDetailData = async (filter: any[]) => {
   };
 };
 
-export const getDefiniteData = async () => {
-  const columnsData = await getDefiniteColumns();
+export const getDefiniteData = async (columnsData: any) => {
   if (!columnsData) return;
   const { columnList } = columnsData;
 
@@ -685,11 +680,9 @@ export const getDefiniteData = async () => {
   };
 };
 
-export const getRecordData = async () => {
-  const columnsData = await getRecordColumns();
+export const getRecordData = async (columnsData: any) => {
   if (!columnsData) return;
   const { columnList } = columnsData;
-
   return {
     columnList,
     record,
