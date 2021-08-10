@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-    <div v-loading="loading" class="tab-panel">
+    <div v-loading="loading" :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
       <div class="btn-box">
         <DxDropDownButton
           :element-attr="dropDownButtonAttributes"
@@ -230,6 +230,7 @@
       const expressListInformation = ref<IDetailItem[]>([]);
       const taskInformation = ref<IDetailItem[]>([]);
       const otherInformation = ref<IDetailItem[]>([]);
+      const isFixHeight = ref<boolean>(true);
 
       const definiteOptions = ref<Partial<ITableOptions>>({
         height: defaultDefiniteHeight,
@@ -326,6 +327,7 @@
       };
 
       const onChangeOpened = () => {
+        isFixHeight.value = !isFixHeight.value;
         opened.value = !opened.value;
         handleHeight(selectedIndex.value, tableIndex.value);
       };
@@ -501,6 +503,7 @@
         formData,
         stepData,
         stepActiveIndex,
+        isFixHeight,
         onSubmitClick,
         onApplyClick,
         onSendClick,
@@ -545,6 +548,9 @@
       }
     }
 
+    .fixHeight {
+      height: 255px;
+    }
     .tab-panel {
       position: relative;
       display: flex;
