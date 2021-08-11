@@ -121,7 +121,7 @@ export const getFilter = (requirements: IRequirementItem[]) => {
     useMessage('请检查是否格式有误，如左右括号是否对等', 'error', '搜索条件无法解析');
   }
   // 获取解析后的搜索条件
-  // console.info(filter);
+  // console.info(requirements, filter);
   return filter;
 };
 
@@ -207,7 +207,7 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
 const initValueData = (item: IRequirementItem, requirement) => {
   let result = '';
   result += `["${requirement}"`;
-  console.log(item.type);
+
   switch (item.type) {
     case 'int32': {
       result += `,"${item.operator}",${item.value}]`;
