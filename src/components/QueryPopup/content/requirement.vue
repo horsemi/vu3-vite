@@ -1,15 +1,15 @@
 <template>
-  <div :class="prefixCls">
-    <div :class="`${prefixCls}__header`">
-      <span style="width: 100px">(</span>
-      <span style="width: 180px">字段</span>
-      <span style="width: 110px">比较</span>
-      <span style="width: 180px">值</span>
-      <span style="width: 100px">)</span>
-      <span style="width: 130px">逻辑</span>
-      <span style="width: 120px">操作</span>
-    </div>
-    <DxScrollView height="calc(100% - 33px)">
+  <DxScrollView direction="both">
+    <div :class="prefixCls">
+      <div :class="`${prefixCls}__header`">
+        <span style="width: 100px">(</span>
+        <span style="width: 180px">字段</span>
+        <span style="width: 110px">比较</span>
+        <span style="width: 180px">值</span>
+        <span style="width: 100px">)</span>
+        <span style="width: 130px">逻辑</span>
+        <span style="width: 120px">操作</span>
+      </div>
       <div>
         <div v-for="(item, index) in dataSource" :key="index" :class="`${prefixCls}__item`">
           <DxSelectBox
@@ -55,8 +55,8 @@
           </div>
         </div>
       </div>
-    </DxScrollView>
-  </div>
+    </div>
+  </DxScrollView>
 </template>
 
 <script lang="ts">
