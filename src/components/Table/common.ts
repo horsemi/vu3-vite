@@ -12,6 +12,7 @@ import { isNil } from 'lodash-es';
 
 import { getDataSource } from '/@/api/ods/common';
 import { formatToDate, formatToDateTime, getBeginTime, getEndTime } from '/@/utils/date';
+import { useMessage } from '/@/hooks/web/useMessage';
 
 const defaultPaginate = true;
 
@@ -113,9 +114,14 @@ export const getFilter = (requirements: IRequirementItem[]) => {
       }
     }
   }
-  const filter = JSON.parse(`[${result}]`);
+  let filter = [];
+  try {
+    filter = JSON.parse(`[${result}]`);
+  } catch (e) {
+    useMessage('请检查是否格式有误，如左右括号是否对等', 'error', '搜索条件无法解析');
+  }
   // 获取解析后的搜索条件
-  // console.log(filter);
+  // console.info(filter);
   return filter;
 };
 
@@ -201,9 +207,9 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
 const initValueData = (item: IRequirementItem, requirement) => {
   let result = '';
   result += `["${requirement}"`;
-
+  console.log(item.type);
   switch (item.type) {
-    case 'number': {
+    case 'int32': {
       result += `,"${item.operator}",${item.value}]`;
       break;
     }

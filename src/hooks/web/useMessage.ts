@@ -2,42 +2,42 @@ import { useAppStoreWidthOut } from '/@/store/modules/app';
 
 type MessageType = 'success' | 'warning' | 'error' | 'info';
 
-export function errorMessage(msg: string | Error) {
+export function errorMessage(msg: string | Error, title?: string) {
   const appStore = useAppStoreWidthOut();
-  appStore.showToast('error', '系统错误', msg as string);
+  appStore.showToast('error', title || '系统错误', msg as string);
 }
 
-export function successMessage(msg: string) {
+export function successMessage(msg: string, title?: string) {
   const appStore = useAppStoreWidthOut();
-  appStore.showToast('success', '操作成功', msg as string);
+  appStore.showToast('success', title || '操作成功', msg as string);
 }
 
-export function warningMessage(msg: string) {
+export function warningMessage(msg: string, title?: string) {
   const appStore = useAppStoreWidthOut();
-  appStore.showToast('warning', '系统警告', msg as string);
+  appStore.showToast('warning', title || '系统警告', msg as string);
 }
 
-export function infoMessage(msg: string) {
+export function infoMessage(msg: string, title?: string) {
   const appStore = useAppStoreWidthOut();
-  appStore.showToast('info', '系统提示', msg as string);
+  appStore.showToast('info', title || '系统提示', msg as string);
 }
 
-export function useMessage(message: string | Error, type: MessageType) {
+export function useMessage(message: string | Error, type: MessageType, title?: string) {
   switch (type) {
     case 'error': {
-      errorMessage(message);
+      errorMessage(message, title);
       break;
     }
     case 'warning': {
-      warningMessage(message as string);
+      warningMessage(message as string, title);
       break;
     }
     case 'success': {
-      successMessage(message as string);
+      successMessage(message as string, title);
       break;
     }
     case 'info': {
-      infoMessage(message as string);
+      infoMessage(message as string, title);
       break;
     }
   }
