@@ -206,7 +206,7 @@
     }
 
     &__right {
-      flex: 1;
+      width: calc(80% - 20px);
       padding-left: 20px;
     }
 
