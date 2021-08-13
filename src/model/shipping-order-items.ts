@@ -52,14 +52,14 @@ export const customColumns: IColumnItem[] = [
     key: 'Qty',
     caption: '数量',
   },
-  {
-    key: 'LotCode',
-    caption: '批号',
-  },
-  {
-    key: 'BomCode',
-    caption: 'BOM版本',
-  },
+  // {
+  //   key: 'LotCode',
+  //   caption: '批号',
+  // },
+  // {
+  //   key: 'BomCode',
+  //   caption: 'BOM版本',
+  // },
   {
     key: 'WarehouseCode',
     caption: '仓库编码',
@@ -96,14 +96,14 @@ export const customColumns: IColumnItem[] = [
     key: 'VolumeCount',
     caption: '总体积',
   },
-  {
-    key: 'CustomerMaterialName',
-    caption: '客户物料名称',
-  },
-  {
-    key: 'ParentMaterialCode',
-    caption: '父项物料编码',
-  },
+  // {
+  //   key: 'CustomerMaterialName',
+  //   caption: '客户物料名称',
+  // },
+  // {
+  //   key: 'ParentMaterialCode',
+  //   caption: '父项物料编码',
+  // },
   {
     key: 'ActualSalePrice',
     caption: '实际售价',
@@ -152,18 +152,18 @@ export const customColumns: IColumnItem[] = [
     key: 'Texture',
     caption: '材质',
   },
-  {
-    key: 'SourceMaterialCode',
-    caption: '来源商品编码',
-  },
-  {
-    key: 'SourceProductBomCode',
-    caption: '来源商品BOM',
-  },
-  {
-    key: 'SourceProductLotCode',
-    caption: '来源商品批号',
-  },
+  // {
+  //   key: 'SourceMaterialCode',
+  //   caption: '来源商品编码',
+  // },
+  // {
+  //   key: 'SourceProductBomCode',
+  //   caption: '来源商品BOM',
+  // },
+  // {
+  //   key: 'SourceProductLotCode',
+  //   caption: '来源商品批号',
+  // },
 ];
 
 export const getDefiniteColumns = async () => {

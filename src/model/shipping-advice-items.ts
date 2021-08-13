@@ -60,14 +60,14 @@ export const customColumns: IColumnItem[] = [
     key: 'Qty',
     caption: '数量',
   },
-  {
-    key: 'LotCode',
-    caption: '批号',
-  },
-  {
-    key: 'BomCode',
-    caption: 'BOM版本',
-  },
+  // {
+  //   key: 'LotCode',
+  //   caption: '批号',
+  // },
+  // {
+  //   key: 'BomCode',
+  //   caption: 'BOM版本',
+  // },
   {
     key: 'WarehouseCode',
     caption: '仓库编码',
@@ -104,14 +104,14 @@ export const customColumns: IColumnItem[] = [
     key: 'VolumeCount',
     caption: '总体积',
   },
-  {
-    key: 'CustomerMaterialName',
-    caption: '客户物料名称',
-  },
-  {
-    key: 'IsMarble',
-    caption: '大理石',
-  },
+  // {
+  //   key: 'CustomerMaterialName',
+  //   caption: '客户物料名称',
+  // },
+  // {
+  //   key: 'IsMarble',
+  //   caption: '大理石',
+  // },
   {
     key: 'IsGaAllows',
     caption: '打木架',
@@ -132,30 +132,30 @@ export const customColumns: IColumnItem[] = [
     key: 'TaoBaoSubCode',
     caption: '线上平台子单号',
   },
-  {
-    key: 'IsVerification',
-    caption: '是否核销',
-  },
+  // {
+  //   key: 'IsVerification',
+  //   caption: '是否核销',
+  // },
   {
     key: 'Channel',
     caption: '渠道',
   },
-  {
-    key: 'CategoryLCode',
-    caption: '产品大类',
-  },
-  {
-    key: 'CategoryMCode',
-    caption: '产品中类',
-  },
-  {
-    key: 'CategorySCode',
-    caption: '产品小类',
-  },
-  {
-    key: 'CategoryXSCode',
-    caption: '产品细类',
-  },
+  // {
+  //   key: 'CategoryLCode',
+  //   caption: '产品大类',
+  // },
+  // {
+  //   key: 'CategoryMCode',
+  //   caption: '产品中类',
+  // },
+  // {
+  //   key: 'CategorySCode',
+  //   caption: '产品小类',
+  // },
+  // {
+  //   key: 'CategoryXSCode',
+  //   caption: '产品细类',
+  // },
   {
     key: 'Shop',
     caption: '店铺',
@@ -188,18 +188,18 @@ export const customColumns: IColumnItem[] = [
     key: 'Texture',
     caption: '材质',
   },
-  {
-    key: 'SourceMaterialCode',
-    caption: '来源商品编码',
-  },
-  {
-    key: 'SourceProductBomCode',
-    caption: '来源商品BOM',
-  },
-  {
-    key: 'SourceProductLotCode',
-    caption: '来源商品批号',
-  },
+  // {
+  //   key: 'SourceMaterialCode',
+  //   caption: '来源商品编码',
+  // },
+  // {
+  //   key: 'SourceProductBomCode',
+  //   caption: '来源商品BOM',
+  // },
+  // {
+  //   key: 'SourceProductLotCode',
+  //   caption: '来源商品批号',
+  // },
 ];
 
 export const getDefiniteColumns = async () => {
