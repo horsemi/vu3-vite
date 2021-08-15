@@ -76,6 +76,7 @@
         width="180"
         :value="value"
         :foundation-code="paramDatatypekeies"
+        :filter="paramFilter"
         @update:value="$emit('update:value', $event)"
       >
       </FoundationSelect>
@@ -160,6 +161,7 @@
       let options = ref<{ key: string; value: string }[]>([]);
       let operatorOptions = ref<{ key: string; value: string }[]>([]);
       let dataType = ref<string>('');
+      let paramFilter = ref();
 
       let booleanOptions = [
         {
@@ -190,7 +192,10 @@
             datatypekeies,
             relationKey,
             expand,
+            filter,
           } = (props.paramList as IColumnItem[]).filter((item) => paramKey === item.key)[0];
+
+          paramFilter.value = filter;
 
           if (operations && operations.length > 0) {
             operatorOptions.value = initOperatorMap(operations);
@@ -220,8 +225,6 @@
         dataType.value = type;
         if (type === 'enum' && expand) {
           options.value.push(...appStore.getGlobalEnumDataByCode(expand));
-        } else if (datatypekeies && datatypekeies.startsWith('foundation_')) {
-          //
         }
 
         operatorOptions.value = getOperatorByType(datatypekeies || type);
@@ -236,6 +239,7 @@
         prefixCls,
         options,
         dataType,
+        paramFilter,
         operatorOptions,
         booleanOptions,
         handleItemClick,

@@ -82,6 +82,11 @@ export interface IColumnItem {
    * @description 过滤
    */
   operations?: Array<string>;
+
+  /**
+   * @description 用于基础资料字段默认筛选条件
+   */
+  filter?: Array<Record<string, unknown>>;
 }
 
 export interface IFieldType {

@@ -30,6 +30,7 @@ export type FoundationDataType = {
 
 export interface IFoundationConfig {
   isall?: boolean;
+  isPrecised?: boolean;
   ids?: string[];
   codes?: string[];
   names?: string[];

@@ -91,6 +91,11 @@ export const customColumns: IColumnItem[] = [
     key: 'BillType',
     caption: '单据类型',
     relationKey: 'BillTypeCode',
+    filter: [
+      {
+        groupCodes: ['ZD_OMS_DeliveryOrder'],
+      },
+    ],
     foundationList: [
       {
         key: 'BillType_Name',
