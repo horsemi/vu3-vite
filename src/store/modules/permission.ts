@@ -49,7 +49,15 @@ export const usePermissionStore = defineStore({
       this.isDynamicAddedRoute = added;
     },
     setMenuList(menuList: AppRouteRecordRaw[]): void {
-      this.menuList = menuList.filter((item) => !item.meta.hideMenu);
+      const menuFilter = (menu: AppRouteRecordRaw, index: number) => {
+        const { meta, children } = menu;
+        const { hideMenu } = meta || {};
+        if ((!hideMenu && children && children.length > 0) || (index === 2 && !hideMenu))
+          return true;
+        return false;
+      };
+
+      this.menuList = filter(menuList, menuFilter);
     },
     setPermissionRoutes(permissionRoutes: AppRouteRecordRaw[]): void {
       this.permissionRoutes = permissionRoutes;
@@ -109,9 +117,9 @@ export const usePermissionStore = defineStore({
             }
           );
       });
-      
+
       this.setPermissionRoutes(routes);
-      
+
       return routes;
     },
   },
