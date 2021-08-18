@@ -24,8 +24,8 @@
           :on-initialized="onInitialized"
           @row-click="onDataGridRowClick"
         >
-          <DxColumn caption="编码" data-field="code"> </DxColumn>
           <DxColumn caption="名称" data-field="name"> </DxColumn>
+          <DxColumn caption="编码" data-field="code"> </DxColumn>
           <DxSelection mode="single" />
           <DxScrolling mode="virtual" row-rendering-mode="virtual" />
         </DxDataGrid>
@@ -35,9 +35,9 @@
 </template>
 
 <script lang="ts">
-  import type { FoundationMap, FoundationDataType } from '/@/api/app/foundation';
+  import type { FoundationMap, FoundationDataType, IFoundationConfig } from '/@/api/app/foundation';
 
-  import { defineComponent, computed, PropType, ref, unref } from 'vue';
+  import { defineComponent, computed, PropType, ref, unref, watch } from 'vue';
   import { useDebounceFn } from '@vueuse/core';
   import DxDropDownBox from 'devextreme-vue/drop-down-box';
   import { DxDataGrid, DxColumn, DxSelection, DxScrolling } from 'devextreme-vue/data-grid';
@@ -73,7 +73,7 @@
 
       const dropDownBox = ref();
       const dropDownOptions = {
-        width: 250,
+        width: 270,
         maxHeight: 400,
       };
 
@@ -109,17 +109,57 @@
           // 列表选中一列后更改下拉框文本框内容，并同步 value 值
           if (gridValue.value && gridValue.value.name && gridValue.value.code) {
             dropDownValueComputed.value = gridValue.value.name;
-            ctx.emit('update:value', gridValue.value.code);
-          } else {
-            ctx.emit('update:value', '');
+
+            if (unref(gridValue).code !== props.value) {
+              ctx.emit('update:value', gridValue.value.code);
+            }
           }
         },
       });
       const isGridBoxOpened = ref(false);
-      const gridColumns = ['code', 'name'];
 
       const options = ref<FoundationDataType[]>([]);
-      const debounceFn = useDebounceFn(searchData, 800);
+      const debounceFn = useDebounceFn(searchFn, 800);
+
+      watch(
+        () => props.value,
+        (value) => {
+          if (value) {
+            getFoundationByCode(
+              {
+                codes: [value as string],
+              },
+              props.foundationCode,
+              true
+            );
+          } else {
+            dropDownValueComputed.value = '';
+          }
+        },
+        {
+          immediate: true,
+        }
+      );
+
+      watch(
+        () => props.foundationCode,
+        (value) => {
+          if (value) {
+            getFoundationByCode(
+              {
+                isall: true,
+                top: 10,
+              },
+              value
+            );
+          } else {
+            options.value = [];
+          }
+        },
+        {
+          immediate: true,
+        }
+      );
 
       function onInitialized(e) {
         dataGrid.value = e.component;
@@ -129,24 +169,35 @@
         dropDownBox.value = e.component;
       }
 
-      function getFoundationByCode(value: string, foundationCode: string) {
-        if (value.trim()) {
-          let filter = {};
-          if (props.filter && props.filter.length > 0) {
-            for (let item of props.filter) {
-              filter = Object.assign(filter, item);
-            }
+      function getFoundationByCode(
+        searchData: IFoundationConfig,
+        foundationCode: string,
+        isSelectFirstRow = false
+      ) {
+        let filter = {};
+        if (props.filter && props.filter.length > 0) {
+          for (let item of props.filter) {
+            filter = Object.assign(filter, item);
           }
-
-          FoundationApi.getFoundationByCode(foundationCode as FoundationMap, {
-            ...filter,
-            names: [value],
-            isPrecised: false,
-          }).then((resolve) => {
-            options.value = resolve;
-            dataGrid.value.clearSelection();
-          });
         }
+
+        dataGrid.value && dataGrid.value.beginCustomLoading();
+        FoundationApi.getFoundationByCode(foundationCode as FoundationMap, {
+          ...searchData,
+          ...filter,
+        })
+          .then((resolve) => {
+            options.value = resolve;
+
+            if (isSelectFirstRow) {
+              gridValueComputed.value = resolve;
+            } else {
+              dataGrid.value.clearSelection();
+            }
+          })
+          .finally(() => {
+            dataGrid.value && dataGrid.value.endCustomLoading();
+          });
       }
 
       function onFocusIn() {
@@ -170,18 +221,29 @@
         }
       }
 
-      function searchData(value: string) {
-        if (typeof value === 'string') {
-          getFoundationByCode(value, props.foundationCode);
+      function searchFn(value: unknown) {
+        if (typeof value === 'string' && value.trim()) {
+          getFoundationByCode(
+            {
+              names: [value],
+              isPrecised: false,
+            },
+            props.foundationCode
+          );
         } else if (!value) {
-          options.value = [];
+          getFoundationByCode(
+            {
+              top: 10,
+              isall: true,
+            },
+            props.foundationCode
+          );
         }
       }
 
       return {
         prefixCls,
         options,
-        gridColumns,
         dropDownBox,
         isGridBoxOpened,
         dropDownValue,

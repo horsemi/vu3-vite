@@ -50,7 +50,7 @@ export default defineConfig(
             changeOrigin: true,
           },
           '/api/accounts': {
-            target: 'http://10.10.14.207:30035',
+            target: 'http://10.10.14.245:30035',
             changeOrigin: true,
           },
           '/ods/api': {

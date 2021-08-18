@@ -36,6 +36,7 @@ export interface IFoundationConfig {
   names?: string[];
   groupCodes?: string[];
   groupIds?: string[];
+  top?: number;
 }
 
 enum apiUrl {

@@ -80,7 +80,6 @@
         default: () => {
           return {
             scheme: [],
-            fast: [],
           };
         },
       },
@@ -288,7 +287,7 @@
       const handleData = (val: ISchemeData) => {
         schemeList.value = cloneDeep(val.scheme);
         schemeListTemp.value = cloneDeep(val.scheme);
-        fast.value = [];
+        fast.value = cloneDeep(props.schemeData.scheme[props.schemeCheckedIndex].fast) || [];
       };
 
       watch(

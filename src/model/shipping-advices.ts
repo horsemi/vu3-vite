@@ -31,6 +31,11 @@ export const customColumns: IColumnItem[] = [
     key: 'BillType',
     caption: '单据类型',
     relationKey: 'BillTypeCode',
+    filter: [
+      {
+        groupCodes: ['ZD_WMS_SendNotice'],
+      },
+    ],
     foundationList: [
       {
         key: 'BillType_Name',

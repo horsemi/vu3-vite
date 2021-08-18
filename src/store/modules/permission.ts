@@ -52,6 +52,8 @@ export const usePermissionStore = defineStore({
       const menuFilter = (menu: AppRouteRecordRaw, index: number) => {
         const { meta, children } = menu;
         const { hideMenu } = meta || {};
+
+        // 判断只会对一、二级菜单项生效 第三级菜单只校验是否为隐藏项
         if ((!hideMenu && children && children.length > 0) || (index === 2 && !hideMenu))
           return true;
         return false;
