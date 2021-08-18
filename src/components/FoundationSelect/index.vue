@@ -147,7 +147,6 @@
           if (value) {
             getFoundationByCode(
               {
-                isall: true,
                 top: 10,
               },
               value

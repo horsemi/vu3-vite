@@ -103,7 +103,7 @@
   import { defineComponent, ref, watch, reactive } from 'vue';
   import { useRoute } from 'vue-router';
 
-  import { getColumns } from '/@/model/shipping-advices';
+  import { getColumns } from '/@/model/shipping-orders';
   import { getDefiniteColumns } from '/@/model/shipping-order-items';
   import { getRecordColumns } from '/@/model/operation-record';
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
