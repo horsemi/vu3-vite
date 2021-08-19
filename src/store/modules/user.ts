@@ -67,7 +67,14 @@ export const useUserStore = defineStore({
         UserApi.getPermission()
           .then((res) => {
             const permissionStore = usePermissionStore();
-            this.setUserInfo({ userName: res.userName, roles: [], permissions: res.behaviors });
+            this.setUserInfo({
+              accountId: res.accountId,
+              accountName: res.accountName,
+              applicationId: res.applicationId,
+              userName: res.userName,
+              roles: [],
+              permissions: res.behaviors,
+            });
             permissionStore.changePermissionCode();
             resolve(res);
           })
