@@ -192,6 +192,7 @@ export const other: IDetailItem[] = [
   {
     key: 'CreatorId',
     caption: '创建人',
+    showProperty: 'AccountName',
   },
   {
     key: 'CustomerTypeCode',
@@ -208,6 +209,7 @@ export const other: IDetailItem[] = [
   {
     key: 'ApplierId',
     caption: '审核人',
+    showProperty: 'AccountName',
   },
   {
     key: 'CustomerCode',
@@ -224,6 +226,7 @@ export const other: IDetailItem[] = [
   {
     key: 'UpdaterId',
     caption: '修改人',
+    showProperty: 'AccountName',
   },
   {
     key: 'OutBillFormCode',
@@ -240,6 +243,7 @@ export const other: IDetailItem[] = [
   {
     key: 'CancellerId',
     caption: '作废人',
+    showProperty: 'AccountName',
   },
   {
     key: 'PushDownTime',

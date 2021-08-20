@@ -147,6 +147,7 @@
 
       const onChangeScheme = (data: ISchemeItem) => {
         filterScheme.value = cloneDeep(data);
+        onRefresh();
       };
 
       const getTableData = () => {
