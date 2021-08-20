@@ -1,5 +1,5 @@
 export interface UserInfo {
-  accountId: string | number;
+  accountId: string;
   accountName: string;
   applicationId: string;
   userName: string;
