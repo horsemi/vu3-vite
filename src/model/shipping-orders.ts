@@ -378,7 +378,20 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'CreatorId',
+    caption: '创建人ID',
+    allowQuery: false,
+  },
+  {
+    key: 'Creator',
     caption: '创建人',
+    relationKey: 'CreatorId',
+    allowQuery: false,
+    foundationList: [
+      {
+        key: 'Creator_AccountName',
+        caption: '创建人',
+      },
+    ],
   },
   {
     key: 'CustomerType',
@@ -402,7 +415,20 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'ApplierId',
+    caption: '审核人ID',
+    allowQuery: false,
+  },
+  {
+    key: 'Applier',
     caption: '审核人',
+    relationKey: 'ApplierId',
+    allowQuery: false,
+    foundationList: [
+      {
+        key: 'Applier_AccountName',
+        caption: '审核人',
+      },
+    ],
   },
   {
     key: 'Customer',
@@ -430,7 +456,20 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'UpdaterId',
+    caption: '修改人ID',
+    allowQuery: false,
+  },
+  {
+    key: 'Updater',
     caption: '修改人',
+    relationKey: 'UpdaterId',
+    allowQuery: false,
+    foundationList: [
+      {
+        key: 'Updater_AccountName',
+        caption: '修改人',
+      },
+    ],
   },
   {
     key: 'OutBillFormCode',
@@ -446,7 +485,20 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'CancellerId',
+    caption: '作废人ID',
+    allowQuery: false,
+  },
+  {
+    key: 'Canceller',
     caption: '作废人',
+    relationKey: 'CancellerId',
+    allowQuery: false,
+    foundationList: [
+      {
+        key: 'Canceller_AccountName',
+        caption: '作废人',
+      },
+    ],
   },
   {
     key: 'IsCancelled',

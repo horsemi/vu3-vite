@@ -324,6 +324,7 @@ export const task: IDetailItem[] = [
   {
     key: 'CancellerId',
     caption: '作废人',
+    showProperty: 'AccountName',
   },
   {
     key: 'InterceptTypeCode',
@@ -366,6 +367,7 @@ export const other: IDetailItem[] = [
   {
     key: 'CreatorId',
     caption: '创建人',
+    showProperty: 'AccountName',
   },
   {
     key: 'CustomerCode',
@@ -382,6 +384,7 @@ export const other: IDetailItem[] = [
   {
     key: 'UpdaterId',
     caption: '修改人',
+    showProperty: 'AccountName',
   },
   {
     key: 'Group',
@@ -398,6 +401,7 @@ export const other: IDetailItem[] = [
   {
     key: 'ApplierId',
     caption: '审核人',
+    showProperty: 'AccountName',
   },
   {
     key: 'CustomerSalesman',
@@ -503,10 +507,6 @@ export const definite: IColumnItem[] = [
     caption: '大理石',
   },
   {
-    key: 'IsGaAllows',
-    caption: '打木架',
-  },
-  {
     key: 'OutSourceBillCode',
     caption: '外部原单编号',
   },
@@ -535,10 +535,6 @@ export const definite: IColumnItem[] = [
     caption: '是否核销',
   },
   {
-    key: 'Channel',
-    caption: '渠道',
-  },
-  {
     key: 'CategoryLCode',
     caption: '产品大类',
   },
@@ -561,10 +557,6 @@ export const definite: IColumnItem[] = [
   {
     key: 'BuyShop',
     caption: '收入店铺',
-  },
-  {
-    key: 'ProvideSalePrice',
-    caption: '供货售价',
   },
   {
     key: 'InWarehouseCode',
