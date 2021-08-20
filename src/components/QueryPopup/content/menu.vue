@@ -24,7 +24,6 @@
             :value="item"
             placeholder="请输入方案名称"
             @blur="onTextBlur"
-            @change="onTextChange"
           />
           <span v-else>{{ item }}</span>
         </div>
@@ -131,10 +130,6 @@
       const onTextBlur = (e) => {
         handleText(e.target.value as string);
       };
-      // 输入框回车触发
-      const onTextChange = (e) => {
-        handleText(e.target.value as string);
-      };
 
       return {
         prefixCls,
@@ -147,7 +142,6 @@
         onTextBlur,
         onDelScheme,
         onChangeCheckedIndex,
-        onTextChange,
         onTextFocusInput,
       };
     },

@@ -1,7 +1,7 @@
 <template>
   <div class="list">
     <QueryPlan
-      ref="QueryPlan"
+      ref="queryPlan"
       :order-code="ORDER_CODE"
       :all-columns="allColumns"
       :scheme-data="schemeData"
@@ -40,16 +40,15 @@
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
 
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
 
   import { getColumns } from '/@/model/shipping-advices';
-  import { Persistent } from '/@/utils/cache/persistent';
-  import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
-  import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { isArrayEmpty } from '/@/utils/bill/index';
+  import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
+  import { getSchemesData } from '/@/utils/scheme/index';
 
   import DxButton from 'devextreme-vue/button';
 
@@ -64,7 +63,9 @@
     setup() {
       const router = useRouter();
       const dataGrid = ref();
+      const queryPlan = ref();
       const loading = ref(false);
+
       const ORDER_CODE = 'shipping-advice';
       const options: Partial<ITableOptions> = {
         height: 'calc(100vh - 276px)',
@@ -74,14 +75,7 @@
           },
         },
       };
-      const filterScheme = ref<ISchemeItem>({
-        uuid: '',
-        title: '',
-        requirement: [],
-        orderBy: [],
-        columns: [],
-        fast: [],
-      });
+      const filterScheme = ref<ISchemeItem>();
       const tableKey = ref<string[]>([]);
       const tableKeyType = ref<IKeyType[]>([]);
       const dataSource = ref();
@@ -149,11 +143,14 @@
         filterScheme.value = cloneDeep(data);
       };
 
-      const getTableData = () => {
-        schemeData.value = (Persistent.getLocal(SCHEME_DATA_KEY) as any)[ORDER_CODE];
+      const getTableData = async () => {
+        const schemeResult = await getSchemesData(ORDER_CODE);
 
+        schemeData.value.checkedIndex = schemeResult.checkedIndex;
+        schemeData.value.scheme = schemeResult.scheme;
         schemeCheckedIndex.value = schemeData.value.checkedIndex;
         const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
+
         const fast = scheme.fast || [];
         if (fast.length > 0) {
           scheme.requirement.push(...fast);
@@ -167,14 +164,18 @@
             tableKeyType.value = keyType;
           }
         });
+        queryPlan.value.handleData();
       };
 
-      getTableData();
+      onMounted(() => {
+        getTableData();
+      });
 
       return {
         ORDER_CODE,
-        dataGrid,
         loading,
+        dataGrid,
+        queryPlan,
         options,
         tableKey,
         tableKeyType,

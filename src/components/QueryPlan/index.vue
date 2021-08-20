@@ -49,8 +49,8 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
   import { Persistent } from '/@/utils/cache/persistent';
-  import { getUuid } from '/@/utils/uuid';
   import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
+  import { saveSchemesData, deleteSchemes } from '/@/utils/scheme/index';
 
   import QueryFrom from './component/form.vue';
   import QueryButton from './component/button.vue';
@@ -158,20 +158,12 @@
       };
       // 处理保存数据
       const handleSaveData = (msg: string, scheme: ISchemeItem[], query: IQueryItem[] = []) => {
-        let schemeListTemp = Persistent.getLocal(SCHEME_DATA_KEY) as any;
-        let checkedIndex = 0;
+        saveSchemesData(scheme[checkedIndex.value]);
 
-        if (schemeListTemp) {
-          checkedIndex = schemeListTemp[props.orderCode].checkedIndex;
-          schemeListTemp[props.orderCode] = {
-            scheme,
-            checkedIndex: checkedIndex,
-          };
-        }
         if (query.length > 0) {
           fast.value = query;
         }
-        Persistent.setLocal(SCHEME_DATA_KEY, schemeListTemp);
+
         handleOverLength();
         useMessage(msg, 'success');
       };
@@ -222,6 +214,7 @@
       // 接收保存事件
       const onSubmitScheme = (fast: IQueryItem[] = []) => {
         schemeListTemp.value[checkedIndex.value] = cloneDeep(schemeList.value[checkedIndex.value]);
+
         handleSaveData('保存成功', schemeListTemp.value, fast);
       };
       // 接收另存事件
@@ -229,29 +222,30 @@
         schemeList.value.push({
           ...cloneDeep(schemeList.value[checkedIndex.value]),
           title: '',
-          uuid: getUuid(),
+          id: '0',
         });
         checkedIndex.value = schemeList.value.length - 1;
       };
       // 接收删除事件
       const onDelScheme = () => {
+        deleteSchemes(schemeList.value[checkedIndex.value].id);
         // 两个数据都需要删除
         const index = checkedIndex.value;
         const temp = [...schemeList.value];
         temp.splice(index, 1);
         schemeList.value = temp;
         checkedIndex.value = index - 1;
+
         if (index < schemeListTemp.value.length) {
           const data = [...schemeListTemp.value];
           data.splice(index, 1);
           schemeListTemp.value = data;
-          handleSaveData('删除成功', schemeListTemp.value);
         }
       };
       // 接收重置事件
       const onResetScheme = () => {
-        const popupUuid = schemeList.value[checkedIndex.value].uuid;
-        const popupListTemp = schemeListTemp.value.find((item) => item.uuid === popupUuid);
+        const popupUuid = schemeList.value[checkedIndex.value].id;
+        const popupListTemp = schemeListTemp.value.find((item) => item.id === popupUuid);
 
         if (popupListTemp) {
           schemeList.value[checkedIndex.value] = cloneDeep(popupListTemp);
@@ -272,7 +266,7 @@
           schemeList.value.push({
             ...cloneDeep(schemeList.value[checkedIndex.value]),
             title: '缺省方案（个人）',
-            uuid: getUuid(),
+            id: '0',
             fast: fast,
           });
           checkedIndex.value = schemeList.value.length - 1;
@@ -280,23 +274,23 @@
         let scheme = cloneDeep(schemeList.value[checkedIndex.value]);
         scheme.fast = fast;
         schemeListTemp.value[checkedIndex.value] = scheme;
+
         handleSaveData('保存成功', schemeListTemp.value, fast);
       };
 
       // 处理组件数据
-      const handleData = (val: ISchemeData) => {
-        schemeList.value = cloneDeep(val.scheme);
-        schemeListTemp.value = cloneDeep(val.scheme);
-        fast.value = cloneDeep(props.schemeData.scheme[props.schemeCheckedIndex].fast) || [];
+      const handleData = (val = props.schemeData) => {
+        if (val.scheme && val.scheme.length > 0) {
+          schemeList.value = cloneDeep(val.scheme);
+          schemeListTemp.value = cloneDeep(val.scheme);
+          fast.value = cloneDeep(props.schemeData.scheme[props.schemeCheckedIndex].fast) || [];
+        }
       };
 
       watch(
         () => props.schemeData,
         (val) => {
           handleData(val);
-        },
-        {
-          immediate: true,
         }
       );
 
@@ -318,6 +312,7 @@
         schemeList,
         schemeListTemp,
         fast,
+        handleData,
         onSearch,
         onReset,
         onQueryPlan,

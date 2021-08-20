@@ -74,12 +74,27 @@ export interface ISchemeItem {
   /**
    * @description 唯一id
    */
-  uuid: string;
+  id: string;
+
+  /**
+   * @description 个人方案关联ID
+   */
+  businessQuerySchemeId?: string;
 
   /**
    * @description 标题
    */
   title: string;
+
+  /**
+   * @description 所属单据编码
+   */
+  businessCode?: string;
+
+  /**
+   * @description 创建人ID
+   */
+  creatorId?: string;
 
   /**
    * @description 条件

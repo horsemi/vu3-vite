@@ -92,7 +92,7 @@
             'shipping-order': {
               scheme: [
                 {
-                  uuid: '0',
+                  id: '0',
                   title: '缺省方案',
                   requirement: [
                     {
@@ -174,7 +174,7 @@
             'shipping-advice': {
               scheme: [
                 {
-                  uuid: '0',
+                  id: '0',
                   title: '缺省方案',
                   requirement: [
                     {

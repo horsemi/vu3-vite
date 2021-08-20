@@ -203,13 +203,7 @@
         },
         useScrolling: true,
       });
-      const definiteScheme = ref<ISchemeItem>({
-        uuid: '',
-        title: '',
-        requirement: [],
-        orderBy: [],
-        columns: [],
-      });
+      const definiteScheme = ref<ISchemeItem>();
       const definiteAllColumns = ref<IColumnItem[]>([]);
       let columnsData: any = reactive({});
       let recordColumnsData: any = reactive({});
@@ -223,13 +217,7 @@
         },
         useScrolling: true,
       });
-      const recordScheme = ref<ISchemeItem>({
-        uuid: '',
-        title: '',
-        requirement: [],
-        orderBy: [],
-        columns: [],
-      });
+      const recordScheme = ref<ISchemeItem>();
       const recordAllColumns = ref<IColumnItem[]>([]);
 
       const onRefresh = () => {
@@ -370,7 +358,7 @@
           if (res) {
             definiteAllColumns.value = res.columnList;
             definiteScheme.value = {
-              uuid: '',
+              id: '',
               title: '',
               requirement: [
                 {
@@ -392,7 +380,7 @@
           if (res) {
             recordAllColumns.value = res.columnList;
             recordScheme.value = {
-              uuid: '',
+              id: '',
               title: '',
               requirement: [
                 {
