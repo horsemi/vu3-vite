@@ -16,7 +16,13 @@
         @on-del-scheme="onDelScheme"
         @on-reset-scheme="onResetScheme"
       />
-      <Footer ref="footer" @on-submit="onSubmit" @on-close-popup="closePopup" />
+      <Footer
+        ref="footer"
+        :is-default="isDefault"
+        @on-submit-checked-default="onSubmitCheckedDefault"
+        @on-submit="onSubmit"
+        @on-close-popup="closePopup"
+      />
     </div>
   </DxPopup>
 </template>
@@ -25,7 +31,7 @@
   import type { IColumnItem } from '/@/model/types';
   import type { IOrderByItem, IRequirementItem, ISchemeItem } from './content/types';
 
-  import { defineComponent, PropType, ref } from 'vue';
+  import { defineComponent, PropType, ref, computed } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -70,11 +76,17 @@
       'on-del-scheme',
       'on-reset-scheme',
       'on-submit',
-      'on-change-checked-default',
+      'on-submit-checked-default',
       'on-change-checked-index',
     ],
     setup(props, ctx) {
       const { prefixCls } = useDesign('query-popup');
+
+      const isDefault = computed(() => {
+        return props.schemeList.length > 0
+          ? props.schemeList[props.checkedIndex].isUseScheme
+          : false;
+      });
       // 弹窗是否打开
       const popupVisible = ref(false);
       // 底部dom
@@ -124,22 +136,24 @@
       const onResetScheme = () => {
         ctx.emit('on-reset-scheme');
       };
+      // 外派更新默认方案事件
+      const onSubmitCheckedDefault = (checkedState: boolean) => {
+        ctx.emit('on-submit-checked-default', checkedState);
+      };
       // 外派确认事件
       const onSubmit = () => {
         // 把选中下标外派出去
         ctx.emit('on-submit');
-        // 如果选中下次以此方案进入，外派更新默认方案事件
-        if (footer.value.checkDefault) {
-          ctx.emit('on-change-checked-default');
-        }
         closePopup();
       };
 
       return {
         prefixCls,
         popupVisible,
+        isDefault,
         footer,
         onSubmit,
+        onSubmitCheckedDefault,
         openPopup,
         closePopup,
         onChangeCheckedIndex,

@@ -97,6 +97,11 @@ export interface ISchemeItem {
   creatorId?: string;
 
   /**
+   * @description 是否为用户设定默认过滤方案
+   */
+  isUseScheme?: boolean;
+
+  /**
    * @description 条件
    */
   requirement: IRequirementItem[];

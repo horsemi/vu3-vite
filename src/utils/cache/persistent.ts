@@ -1,5 +1,4 @@
 import type { SystemConfig } from '/#/config';
-import type { ISchemeData } from '/@/components/QueryPlan/types';
 
 import { createLocalStorage, createSessionStorage } from '/@/utils/cache';
 import { Memory } from './memory';
@@ -9,7 +8,6 @@ import {
   USER_INFO_KEY,
   APP_LOCAL_CACHE_KEY,
   APP_SESSION_CACHE_KEY,
-  SCHEME_DATA_KEY,
   SCHEME_CHECKED_INDE_KEY,
 } from '/@/enums/cacheEnum';
 import { DEFAULT_CACHE_TIME } from '/@/settings/encryptionSetting';
@@ -20,7 +18,6 @@ interface BasicStore {
   [TOKEN_KEY]: string | number | null | undefined;
   [USER_INFO_KEY]: UserInfo;
   [SYSTEM_CFG_KEY]: SystemConfig;
-  [SCHEME_DATA_KEY]: any;
   [SCHEME_CHECKED_INDE_KEY]: number;
 }
 
