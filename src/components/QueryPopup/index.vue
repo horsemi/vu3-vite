@@ -18,7 +18,6 @@
       />
       <Footer
         ref="footer"
-        :is-default="isDefault"
         @on-submit-checked-default="onSubmitCheckedDefault"
         @on-submit="onSubmit"
         @on-close-popup="closePopup"
@@ -31,7 +30,7 @@
   import type { IColumnItem } from '/@/model/types';
   import type { IOrderByItem, IRequirementItem, ISchemeItem } from './content/types';
 
-  import { defineComponent, PropType, ref, computed } from 'vue';
+  import { defineComponent, PropType, ref } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -82,11 +81,6 @@
     setup(props, ctx) {
       const { prefixCls } = useDesign('query-popup');
 
-      const isDefault = computed(() => {
-        return props.schemeList.length > 0
-          ? props.schemeList[props.checkedIndex].isUseScheme
-          : false;
-      });
       // 弹窗是否打开
       const popupVisible = ref(false);
       // 底部dom
@@ -150,7 +144,6 @@
       return {
         prefixCls,
         popupVisible,
-        isDefault,
         footer,
         onSubmit,
         onSubmitCheckedDefault,

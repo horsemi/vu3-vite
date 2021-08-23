@@ -19,6 +19,8 @@ enum apiUrl {
   schemeSave = '/api/schemes/save',
   schemeUpdate = '/api/schemes/update',
   schemeDelete = '/api/schemes/delete',
+
+  defaultSchemeSave = '/api/schemes/user/save',
 }
 
 export class SchemeApi {
@@ -47,6 +49,19 @@ export class SchemeApi {
     return defHttp.post<ISchemeData[]>({
       url: apiUrl.schemeDelete,
       params: { id },
+    });
+  }
+
+  static saveDefaultSchemes(data: {
+    id: string;
+    applicationId: string;
+    businessCode: string;
+    creatorId: string;
+    isUseScheme: boolean;
+  }) {
+    return defHttp.post({
+      url: apiUrl.defaultSchemeSave,
+      params: data,
     });
   }
 }

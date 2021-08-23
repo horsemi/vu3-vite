@@ -1,8 +1,8 @@
 <template>
   <div :class="prefixCls">
     <div :class="`${prefixCls}__default`">
-      <DxCheckBox v-model:value="checkDefault" />
-      <span @click="checkDefault = !checkDefault">下次以此方案自动进入</span>
+      <DxCheckBox v-model:value="schemeDefaultIndexComputed" />
+      <span>下次以此方案自动进入</span>
     </div>
     <div :class="`${prefixCls}__btn`">
       <DxButton :width="76" text="确认" type="default" @click="onSubmit" />
@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, inject, computed, Ref } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -24,11 +24,26 @@
       DxCheckBox,
       DxButton,
     },
-    emits: ['on-close-popup', 'on-submit'],
+    emits: ['on-close-popup', 'on-submit', 'on-submit-checked-default'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('popup-footer');
       const checkDefault = ref(false);
 
+      const schemeDefaultIndex = inject<Ref<number>>('schemeDefaultIndex');
+      const checkedIndex = inject<Ref<number>>('checkedIndex');
+
+      const schemeDefaultIndexComputed = computed({
+        get: () => {
+          return schemeDefaultIndex!.value === checkedIndex!.value;
+        },
+        set: (value: boolean) => {
+          onSubmitCheckedDefault(value);
+        },
+      });
+
+      const onSubmitCheckedDefault = (value: boolean) => {
+        ctx.emit('on-submit-checked-default', value);
+      };
       const onSubmit = () => {
         ctx.emit('on-submit');
       };
@@ -39,6 +54,9 @@
       return {
         prefixCls,
         checkDefault,
+        schemeDefaultIndex,
+        schemeDefaultIndexComputed,
+        onSubmitCheckedDefault,
         onSubmit,
         onClosePopup,
       };
@@ -57,7 +75,6 @@
 
     &__default {
       display: flex;
-      cursor: pointer;
       span {
         margin-left: 10px;
       }

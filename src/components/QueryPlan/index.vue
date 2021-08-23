@@ -28,7 +28,7 @@
       @on-del-scheme="onDelScheme"
       @on-reset-scheme="onResetScheme"
       @on-submit="onSubmit"
-      @on-change-checked-default="onChangeCheckedDefault"
+      @on-submit-checked-default="handleChangeCheckedDefault"
     />
   </div>
 </template>
@@ -43,14 +43,13 @@
   } from '../QueryPopup/content/types';
   import type { IQueryItem, ISchemeData } from './types';
 
-  import { defineComponent, PropType, ref, watch } from 'vue';
+  import { defineComponent, PropType, ref, watch, Ref, provide } from 'vue';
   import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { Persistent } from '/@/utils/cache/persistent';
-  import { SCHEME_DATA_KEY } from '/@/enums/cacheEnum';
-  import { saveSchemesData, deleteSchemes } from '/@/utils/scheme/index';
+
+  import { saveSchemesData, deleteSchemes, saveDefaultScheme } from '/@/utils/scheme/index';
 
   import QueryFrom from './component/form.vue';
   import QueryButton from './component/button.vue';
@@ -110,6 +109,10 @@
       const checkedIndex = ref(0);
       // 方案弹窗用的选中下标
       // const checkedIndex = ref(0);
+      const schemeDefaultIndex = ref<number>(0);
+      provide('schemeDefaultIndex', schemeDefaultIndex);
+      provide('checkedIndex', checkedIndex);
+
       // 过滤方案数据，用于交互
       const schemeList = ref<ISchemeItem[]>([]);
       // 过滤方案数据副本，用于保存
@@ -152,9 +155,9 @@
         if (checkedIndex.value >= index) {
           checkedIndex.value = index - 1;
         }
-        if (props.schemeCheckedIndex >= index) {
-          handleChangeCheckedDefault(index - 1);
-        }
+        // if (props.schemeCheckedIndex >= index) {
+        //   handleChangeCheckedDefault(index - 1);
+        // }
       };
       // 处理保存数据
       const handleSaveData = (msg: string, scheme: ISchemeItem[], query: IQueryItem[] = []) => {
@@ -168,15 +171,19 @@
         useMessage(msg, 'success');
       };
       // 处理默认方案更新
-      const handleChangeCheckedDefault = (index: number) => {
-        let schemeListTemp = Persistent.getLocal(SCHEME_DATA_KEY) as any;
-
-        if (schemeListTemp) {
-          schemeListTemp[props.orderCode].checkedIndex = index;
-        }
-
-        Persistent.setLocal(SCHEME_DATA_KEY, schemeListTemp);
+      const handleChangeCheckedDefault = (checkedState: boolean) => {
+        updateSchemeDefaultIndex(checkedState);
+        saveDefaultScheme(schemeList.value[checkedIndex.value], checkedState);
       };
+
+      const updateSchemeDefaultIndex = (schemeDefault: boolean) => {
+        if (schemeDefault) {
+          schemeDefaultIndex.value = checkedIndex.value;
+        } else {
+          schemeDefaultIndex.value = 0;
+        }
+      };
+
       // 接收选中下标更新
       const onChangeCheckedIndex = (index: number, isSearch = true) => {
         checkedIndex.value = index;
@@ -256,10 +263,6 @@
       const onSubmit = () => {
         onSearch();
       };
-      // 接受默认方案更新事件
-      const onChangeCheckedDefault = () => {
-        handleChangeCheckedDefault(checkedIndex.value);
-      };
       // 接受快速过滤保存设置
       const onSaveFast = (fast: IQueryItem[]) => {
         if (checkedIndex.value === 0) {
@@ -284,6 +287,7 @@
           schemeList.value = cloneDeep(val.scheme);
           schemeListTemp.value = cloneDeep(val.scheme);
           fast.value = cloneDeep(props.schemeData.scheme[props.schemeCheckedIndex].fast) || [];
+          schemeDefaultIndex.value = props.schemeCheckedIndex;
         }
       };
 
@@ -326,7 +330,7 @@
         onDelScheme,
         onResetScheme,
         onSubmit,
-        onChangeCheckedDefault,
+        handleChangeCheckedDefault,
         onSaveFast,
       };
     },

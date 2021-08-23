@@ -74,3 +74,18 @@ export async function saveSchemesData(scheme: ISchemeItem) {
 export async function deleteSchemes(id: string) {
   return await SchemeApi.deleteSchemes(id);
 }
+
+export async function saveDefaultScheme(schemeData: ISchemeItem, checkedStatue: boolean) {
+  const userStore = useUserStore();
+  const userInfo = userStore.getUserInfo;
+
+  const data = {
+    id: schemeData.id || '0',
+    applicationId: userInfo.applicationId,
+    businessCode: schemeData.businessCode || '',
+    creatorId: userInfo.accountId,
+    isUseScheme: checkedStatue,
+  };
+
+  SchemeApi.saveDefaultSchemes(data);
+}
