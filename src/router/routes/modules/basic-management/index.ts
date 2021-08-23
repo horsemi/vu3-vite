@@ -63,6 +63,15 @@ const basicManagement: Array<AppRouteRecordRaw> = [
               title: '清除缓存',
             },
           },
+          {
+            path: 'filter-plan/list',
+            name: 'FilterPlan',
+            component: () => import('/@/views/system-configuration/filter-plan/index.vue'),
+            meta: {
+              title: '过滤方案配置',
+              permissions: ['FilterPlan'],
+            },
+          },
         ],
       },
     ],
