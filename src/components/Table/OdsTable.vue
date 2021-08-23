@@ -48,7 +48,7 @@
         :show-info="true"
         :show-navigation-buttons="true"
         :show-page-size-selector="true"
-        :allowed-page-sizes="[50, 100, 200]"
+        :allowed-page-sizes="[50, 100, 200, 500, 1000]"
         info-text="共{1}页，{2}条数据"
         display-mode="full"
       />
