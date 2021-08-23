@@ -146,10 +146,12 @@
   .dx-scrollable-simulated .dx-scrollable-content {
     display: flex;
     flex-direction: column;
+    height: 100%;
   }
   .dx-scrollview-content {
     flex: 1;
     display: flex;
     flex-direction: column;
+    height: 100%;
   }
 </style>

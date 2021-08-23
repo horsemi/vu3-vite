@@ -31,7 +31,7 @@
   .@{prefix-cls} {
     position: relative;
     flex: 1;
-    display: flex;
+    height: 100%;
 
     &-loading {
       position: absolute;
