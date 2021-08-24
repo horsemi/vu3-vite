@@ -144,101 +144,101 @@ export const logistics: IDetailItem[] = [
     key: 'GatheringPointCode',
     caption: '集货点',
   },
-  // {
-  //   key: 'NonstopContractorCode',
-  //   caption: '直达承运商',
-  // },
-  // {
-  //   key: 'HandCarLine',
-  //   caption: '挂车路线',
-  // },
-  // {
-  //   key: 'TrainCode',
-  //   caption: '车次',
-  // },
-  // {
-  //   key: 'DeliveryPointCode',
-  //   caption: '提货点',
-  // },
-  // {
-  //   key: 'TransitContractorCode',
-  //   caption: '转运承运商',
-  // },
-  // {
-  //   key: 'SmallCarLine',
-  //   caption: '小挂路线',
-  // },
-  // {
-  //   key: 'CarModeCode',
-  //   caption: '车型',
-  // },
-  // {
-  //   key: 'ThreeServicePointCode',
-  //   caption: '三包点',
-  // },
-  // {
-  //   key: 'ContractorCode',
-  //   caption: '中转承运商',
-  // },
-  // {
-  //   key: 'HandCarGroup',
-  //   caption: '挂车组合',
-  //   showProperty: 'GroupName',
-  // },
-  // {
-  //   key: 'LoadType',
-  //   caption: '配载方式',
-  // },
-  // {
-  //   key: 'ThreeServiceCostPrice',
-  //   caption: '三包成本',
-  // },
-  // {
-  //   key: 'ThreeServiceSupplierCode',
-  //   caption: '三包服务商',
-  // },
-  // {
-  //   key: 'SmallCarGroup',
-  //   caption: '小挂组合',
-  //   showProperty: 'GroupName',
-  // },
-  // {
-  //   key: 'SendGoodsMode',
-  //   caption: '发货模式',
-  // },
-  // {
-  //   key: 'ServiceItemCode',
-  //   caption: '服务项目',
-  // },
-  // {
-  //   key: 'LogisticCode',
-  //   caption: '物流单号',
-  // },
+  {
+    key: 'NonstopContractorCode',
+    caption: '直达承运商',
+  },
+  {
+    key: 'HandCarLine',
+    caption: '挂车路线',
+  },
+  {
+    key: 'TrainCode',
+    caption: '车次',
+  },
+  {
+    key: 'DeliveryPointCode',
+    caption: '提货点',
+  },
+  {
+    key: 'TransitContractorCode',
+    caption: '转运承运商',
+  },
+  {
+    key: 'SmallCarLine',
+    caption: '小挂路线',
+  },
+  {
+    key: 'CarModeCode',
+    caption: '车型',
+  },
+  {
+    key: 'ThreeServicePointCode',
+    caption: '三包点',
+  },
+  {
+    key: 'ContractorCode',
+    caption: '中转承运商',
+  },
+  {
+    key: 'HandCarGroup',
+    caption: '挂车组合',
+    showProperty: 'GroupName',
+  },
+  {
+    key: 'LoadType',
+    caption: '配载方式',
+  },
+  {
+    key: 'ThreeServiceCostPrice',
+    caption: '三包成本',
+  },
+  {
+    key: 'ThreeServiceSupplierCode',
+    caption: '三包服务商',
+  },
+  {
+    key: 'SmallCarGroup',
+    caption: '小挂组合',
+    showProperty: 'GroupName',
+  },
+  {
+    key: 'SendGoodsMode',
+    caption: '发货模式',
+  },
+  {
+    key: 'ServiceItemCode',
+    caption: '服务项目',
+  },
+  {
+    key: 'LogisticCode',
+    caption: '物流单号',
+  },
 
-  // {
-  //   key: 'LineAreaCode',
-  //   caption: '线路区域',
-  // },
-  // {
-  //   key: 'LogisticsCostPrice',
-  //   caption: '物流成本',
-  // },
-  // {
-  //   key: 'ThreeServiceFeeTypeCode',
-  //   caption: '三包费用类型',
-  // },
-  // {
-  //   key: 'BranchLineType',
-  //   caption: '支装类型',
-  // },
-  // {
-  //   key: 'LogisticsLine',
-  //   caption: '物流专线',
-  // },
-  // {
-  //   key: 'FreightTypeCode',
-  //   caption: '运费类型',
-  // },
+  {
+    key: 'LineAreaCode',
+    caption: '线路区域',
+  },
+  {
+    key: 'LogisticsCostPrice',
+    caption: '物流成本',
+  },
+  {
+    key: 'ThreeServiceFeeTypeCode',
+    caption: '三包费用类型',
+  },
+  {
+    key: 'BranchLineType',
+    caption: '支装类型',
+  },
+  {
+    key: 'LogisticsLine',
+    caption: '物流专线',
+  },
+  {
+    key: 'FreightTypeCode',
+    caption: '运费类型',
+  },
 ];
 
 export const express: IDetailItem[] = [

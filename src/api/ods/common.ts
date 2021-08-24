@@ -26,6 +26,10 @@ export const getDataSource = (dataSource: IDataSource, oDataStore: IODataStore) 
     store: new ODataStore({
       version: 4,
       beforeSend: (e) => {
+        e.url = `${e.url}/$query`;
+        e.method = 'post';
+        e.payload = e.params;
+        e.params = null;
         e.headers = {
           [tokenHeaderKey]: useUserStoreWidthOut().getToken,
         };
