@@ -23,6 +23,7 @@
     },
     setup() {
       const loading = ref(false);
+      // debugger
       const topRef = ref(50);
       const heightRef = ref(window.innerHeight);
       const frameRef = ref<HTMLFrameElement | null>(null);
@@ -43,7 +44,7 @@
         if (!iframe) {
           return;
         }
-        let { top } = getViewportOffset(iframe as Element);
+        let top = 112;
         top += 20;
         topRef.value = top;
         heightRef.value = window.innerHeight - top;
@@ -101,7 +102,7 @@
 
     &__main {
       width: 100%;
-      height: 100%;
+      // height: 100%;
       overflow: hidden;
       background-color: #fff;
       border: 0;
