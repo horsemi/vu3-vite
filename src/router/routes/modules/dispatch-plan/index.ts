@@ -8,7 +8,7 @@ const dispatchPlan: Array<AppRouteRecordRaw> = [
     name: 'DispatchPlan',
     component: LAYOUT,
     meta: {
-      title: '调度计划',
+      title: '发货计划',
       icon: 'menu-task',
       order: 3,
     },
