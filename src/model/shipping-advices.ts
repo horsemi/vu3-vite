@@ -134,7 +134,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'Telephone',
-    caption: '电话:',
+    caption: '电话',
   },
   {
     key: 'TotalActualPrice',

@@ -29,7 +29,6 @@
           :items="dropButtonItems.send"
           :split-button="true"
           :use-select-mode="false"
-          :width="80"
           text="发送"
           display-expr="name"
           key-expr="key"
