@@ -245,7 +245,7 @@
   .@{prefix-cls} {
     display: flex;
     width: 100%;
-    height: 100%;
+    height: calc(100vh - 136px);
     background-color: #fff;
     &__left {
       flex: 1;
