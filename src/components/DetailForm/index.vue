@@ -1,6 +1,6 @@
 <template>
   <div :class="prefixCls">
-    <DxForm :form-data="formData" :col-count="8" :read-only="true">
+    <DxForm :form-data="formData" :col-count="8" :show-colon-after-label="false" :read-only="true">
       <template v-for="(item, index) in formList" :key="index">
         <DxItem
           v-if="!item.hide"

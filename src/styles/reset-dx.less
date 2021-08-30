@@ -95,3 +95,23 @@
 .dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-state-focused {
   background-color: @color-primary !important;
 }
+
+// form样式 调整label宽度与文本框的宽度
+.dx-layout-manager .dx-label-h-align .dx-field-item-label .dx-field-item-label-content {
+  display: block;
+  width: 85px !important;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dx-layout-manager .dx-field-item:not(.dx-first-col) {
+  padding: 0 8px;
+  padding-left: 8px !important;
+}
+
+.dx-layout-manager .dx-field-item:not(.dx-last-col) {
+  padding: 0 8px;
+  padding-right: 8px !important;
+}
