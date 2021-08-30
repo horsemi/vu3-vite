@@ -37,7 +37,7 @@
 <script lang="ts">
   import type { FoundationMap, FoundationDataType, IFoundationConfig } from '/@/api/app/foundation';
 
-  import { defineComponent, computed, PropType, ref, unref, watch } from 'vue';
+  import { defineComponent, computed, PropType, ref, unref, watch, onBeforeUnmount } from 'vue';
   import { useDebounceFn } from '@vueuse/core';
   import DxDropDownBox from 'devextreme-vue/drop-down-box';
   import { DxDataGrid, DxColumn, DxSelection, DxScrolling } from 'devextreme-vue/data-grid';
@@ -148,6 +148,7 @@
             getFoundationByCode(
               {
                 top: 10,
+                isall: props.filter && props.filter.length > 0 ? false : true,
               },
               value
             );
@@ -239,6 +240,16 @@
           );
         }
       }
+
+      onBeforeUnmount(() => {
+        if (dropDownBox.value) {
+          dropDownBox.value.dispose();
+        }
+
+        if (dataGrid.value) {
+          dataGrid.value.dispose();
+        }
+      });
 
       return {
         prefixCls,

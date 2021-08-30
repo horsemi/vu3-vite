@@ -44,6 +44,7 @@ export default defineConfig(
       server: {
         port: 8080,
         open: true,
+        host: 'test.ods.otwb.linshimuye.com',
         proxy: {
           '/api/foundation': {
             target: 'http://10.10.14.245:30034',

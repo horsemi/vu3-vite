@@ -48,7 +48,7 @@
         :show-info="true"
         :show-navigation-buttons="true"
         :show-page-size-selector="true"
-        :allowed-page-sizes="[50, 100, 200, 500, 1000]"
+        :allowed-page-sizes="pageSizes"
         info-text="共{1}页，{2}条数据"
         display-mode="full"
       />
@@ -179,6 +179,7 @@
       const appStore = useAppStore();
       const dataGrid = ref();
       const pageIndex = ref(0);
+      const pageSizes = [50, 100, 200, 500, 1000];
       const tableData = ref();
       const tableColumns = ref<IColumnItem[]>([]);
       const clipValue = ref('');
@@ -370,6 +371,7 @@
         tableColumns,
         prefixCls,
         pageIndex,
+        pageSizes,
         onSelectionChanged,
         handleJump,
         getGlobalEnumDataByCode,
