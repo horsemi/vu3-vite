@@ -43,7 +43,7 @@
   } from '../QueryPopup/content/types';
   import type { IQueryItem, ISchemeData } from './types';
 
-  import { defineComponent, PropType, ref, watch, Ref, provide } from 'vue';
+  import { defineComponent, PropType, ref, watch, provide } from 'vue';
   import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -107,8 +107,7 @@
       const queryForm = ref();
       // 快捷过滤用的选中下标
       const checkedIndex = ref(0);
-      // 方案弹窗用的选中下标
-      // const checkedIndex = ref(0);
+      // 过滤方案默认坐标
       const schemeDefaultIndex = ref<number>(0);
       provide('schemeDefaultIndex', schemeDefaultIndex);
       provide('checkedIndex', checkedIndex);
@@ -287,7 +286,6 @@
           schemeList.value = cloneDeep(val.scheme);
           schemeListTemp.value = cloneDeep(val.scheme);
           fast.value = cloneDeep(props.schemeData.scheme[props.schemeCheckedIndex].fast) || [];
-          schemeDefaultIndex.value = props.schemeCheckedIndex;
         }
       };
 
@@ -302,6 +300,7 @@
         () => props.schemeCheckedIndex,
         (val) => {
           checkedIndex.value = val;
+          schemeDefaultIndex.value = val;
         },
         {
           immediate: true,

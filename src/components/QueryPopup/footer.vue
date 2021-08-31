@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <div :class="`${prefixCls}__default`">
-      <DxCheckBox v-model:value="schemeDefaultIndexComputed" />
+      <DxCheckBox v-model:value="schemeDefaultIndexComputed" :disabled="isDisabledComputer" />
       <span>下次以此方案自动进入</span>
     </div>
     <div :class="`${prefixCls}__btn`">
@@ -41,6 +41,10 @@
         },
       });
 
+      const isDisabledComputer = computed(() => {
+        return checkedIndex?.value === 0 && schemeDefaultIndexComputed.value;
+      });
+
       const onSubmitCheckedDefault = (value: boolean) => {
         ctx.emit('on-submit-checked-default', value);
       };
@@ -56,6 +60,7 @@
         checkDefault,
         schemeDefaultIndex,
         schemeDefaultIndexComputed,
+        isDisabledComputer,
         onSubmitCheckedDefault,
         onSubmit,
         onClosePopup,
