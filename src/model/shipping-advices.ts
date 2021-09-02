@@ -433,8 +433,20 @@ export const customColumns: IColumnItem[] = [
     caption: '物流单号',
   },
   {
-    key: 'LogisticsLine',
+    key: 'LogisticsLines',
     caption: '物流专线',
+    relationKey: 'LogisticsLine',
+    foundationList: [
+      {
+        key: 'LogisticsLines_Name',
+        caption: '物流专线',
+      },
+    ],
+    datatypekeies: 'line-areas',
+  },
+  {
+    key: 'LogisticsLine',
+    caption: '物流专线编码',
   },
   {
     key: 'ThreeServiceCostPrice',

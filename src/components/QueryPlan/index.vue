@@ -160,7 +160,11 @@
       };
       // 处理保存数据
       const handleSaveData = (msg: string, scheme: ISchemeItem[], query: IQueryItem[] = []) => {
-        saveSchemesData(scheme[checkedIndex.value]);
+        saveSchemesData(scheme[checkedIndex.value]).then((resolve) => {
+          if (resolve) {
+            schemeList.value[checkedIndex.value] = resolve;
+          }
+        });
 
         if (query.length > 0) {
           fast.value = query;

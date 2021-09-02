@@ -32,7 +32,7 @@ export class SchemeApi {
   }
 
   static saveSchemes(data: ISchemeData) {
-    return defHttp.post<ISchemeData[]>({
+    return defHttp.post<ISchemeData>({
       url: apiUrl.schemeSave,
       params: data,
     });

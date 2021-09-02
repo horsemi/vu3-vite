@@ -66,7 +66,7 @@
         <div>{{ getFoundationData(rowInfo) }}</div>
       </template>
     </DxDataGrid>
-    <DxContextMenu :data-source="items" :width="200" target="#billcode">
+    <DxContextMenu :data-source="contentMenuTitle" :width="200" target="#billcode">
       <template #item="{ data: e }">
         <div class="elementId" :data-clipboard-text="clipValue">
           {{ e.text }}
@@ -178,8 +178,15 @@
       const { prefixCls } = useDesign('ods-table');
       const appStore = useAppStore();
       const dataGrid = ref();
+      const pageTitle = '共{1}页，{2}条数据';
       const pageIndex = ref(0);
       const pageSizes = [50, 100, 200, 500, 1000];
+      const contentMenuTitle = [
+        {
+          text: '复制内容',
+        },
+      ];
+
       const tableData = ref();
       const tableColumns = ref<IColumnItem[]>([]);
       const clipValue = ref('');
@@ -385,11 +392,8 @@
         handleCustomizeText,
         getRowData,
         clipValue,
-        items: [
-          {
-            text: '复制内容',
-          },
-        ],
+        contentMenuTitle,
+        pageTitle,
       };
     },
   });

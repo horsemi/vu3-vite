@@ -42,13 +42,17 @@ export async function getSchemesData(orderCode: string) {
   };
 }
 
-export async function saveSchemesData(scheme: ISchemeItem) {
+export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem | undefined> {
   const userStore = useUserStore();
   const userInfo = userStore.getUserInfo;
 
   if (scheme) {
-    const { requirement, orderBy, columns, fast } = scheme;
-    const queryData = JSON.stringify({ requirement, orderBy, columns, fast });
+    const queryData = JSON.stringify({
+      requirement: scheme.requirement,
+      orderBy: scheme.orderBy,
+      columns: scheme.columns,
+      fast: scheme.fast,
+    });
 
     const schemeData = {
       id: scheme.id,
@@ -60,14 +64,29 @@ export async function saveSchemesData(scheme: ISchemeItem) {
       queryData: queryData,
     };
 
-    let result;
+    let responseData;
     if (scheme.id === '0') {
-      result = await SchemeApi.saveSchemes(schemeData);
+      responseData = await SchemeApi.saveSchemes(schemeData);
     } else if (scheme.id && scheme.id !== '0') {
-      result = await SchemeApi.updateSchemes(schemeData);
+      responseData = await SchemeApi.updateSchemes(schemeData);
     }
 
-    return result;
+    Object.assign(responseData, JSON.parse(responseData.queryData));
+
+    const result: ISchemeItem = {
+      id: responseData.id,
+      title: responseData.title,
+      businessCode: responseData.businessCode,
+      creatorId: responseData.creatorId,
+      isUseScheme: responseData.isUseScheme,
+      requirement: responseData.requirement,
+      orderBy: responseData.orderBy,
+      columns: responseData.columns,
+      fast: responseData.fast,
+    };
+
+    // 更新查询方案则不覆盖
+    return scheme.id === '0' ? result : undefined;
   }
 }
 

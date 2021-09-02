@@ -50,6 +50,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
             meta: {
               title: '主页',
               affix: true,
+              ignoreKeepAlive: true,
             },
           },
         ],
