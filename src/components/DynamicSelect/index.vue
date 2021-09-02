@@ -227,7 +227,7 @@
           options.value.push(...appStore.getGlobalEnumDataByCode(expand));
         }
 
-        operatorOptions.value = getOperatorByType(datatypekeies || type);
+        operatorOptions.value = getOperatorByType(datatypekeies ? 'foundation' : type);
         context.emit('update:paramOperations', operatorOptions.value);
       }
 
