@@ -442,7 +442,7 @@ export const customColumns: IColumnItem[] = [
         caption: '物流专线',
       },
     ],
-    datatypekeies: 'line-areas',
+    datatypekeies: 'logistics-lines',
   },
   {
     key: 'LogisticsLine',

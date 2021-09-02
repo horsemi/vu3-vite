@@ -29,7 +29,7 @@ const transform: AxiosTransform = {
     }
     // 错误的时候返回
 
-    const { data: resData, status } = res;
+    const { data: resData } = res;
     if (!resData) {
       // return '[HTTP] Request has no return value';
       return errorResult;
@@ -64,14 +64,6 @@ const transform: AxiosTransform = {
       }
       return errorResult;
     }
-    // 登录超时
-    if (status === ResultEnum.NOT_PERMISSION) {
-      const timeoutMsg = '登录超时, 请重新登录';
-      errorMessage('401');
-      Promise.reject(new Error(timeoutMsg));
-      return errorResult;
-    }
-    return errorResult;
   },
 
   // 请求之前处理config

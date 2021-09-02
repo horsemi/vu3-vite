@@ -6,6 +6,7 @@ import ODataStore from 'devextreme/data/odata/store';
 import DataSource from 'devextreme/data/data_source';
 
 import { tokenHeaderKey } from '/@/utils/http/axios/const';
+import { checkStatus } from '/@/utils/http/axios/checkStatues';
 import { useUserStoreWidthOut } from '/@/store/modules/user';
 
 export const getOdsListUrlByCode = (code: string): string => {
@@ -33,6 +34,9 @@ export const getDataSource = (dataSource: IDataSource, oDataStore: IODataStore) 
         e.headers = {
           [tokenHeaderKey]: useUserStoreWidthOut().getToken,
         };
+      },
+      errorHandler: (e) => {
+        checkStatus(e.httpStatus || 400, e.errorDetails);
       },
       ...oDataStore,
     }),
