@@ -3,7 +3,10 @@
     <DxDataGrid
       ref="dataGrid"
       :data-source="tableData"
+      width="100%"
       :allow-column-resizing="options.allowColumnResizing"
+      column-resizing-mode="widget"
+      :column-min-width="50"
       :height="height ? height : options.height"
       :column-auto-width="options.columnAutoWidth"
       :hover-state-enabled="options.hoverStateEnabled"
