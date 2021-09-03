@@ -234,7 +234,7 @@
           getFoundationByCode(
             {
               top: 10,
-              isall: true,
+              isall: props.filter && props.filter.length > 0 ? false : true,
             },
             props.foundationCode
           );
