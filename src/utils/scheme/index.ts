@@ -42,7 +42,7 @@ export async function getSchemesData(orderCode: string) {
   };
 }
 
-export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem | undefined> {
+export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem | void> {
   const userStore = useUserStore();
   const userInfo = userStore.getUserInfo;
 
@@ -64,29 +64,28 @@ export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem 
       queryData: queryData,
     };
 
-    let responseData;
     if (scheme.id === '0') {
-      responseData = await SchemeApi.saveSchemes(schemeData);
+      const response = await SchemeApi.saveSchemes(schemeData);
+
+      const queryData = JSON.parse(response.queryData);
+
+      const result: ISchemeItem = {
+        id: response.id,
+        title: response.title,
+        businessCode: response.businessCode,
+        creatorId: response.creatorId,
+        isUseScheme: response.isUseScheme,
+        requirement: queryData.requirement,
+        orderBy: queryData.orderBy,
+        columns: queryData.columns,
+        fast: queryData.fast,
+      };
+
+      return result;
     } else if (scheme.id && scheme.id !== '0') {
-      responseData = await SchemeApi.updateSchemes(schemeData);
+      SchemeApi.updateSchemes(schemeData);
+      return;
     }
-
-    Object.assign(responseData, JSON.parse(responseData.queryData));
-
-    const result: ISchemeItem = {
-      id: responseData.id,
-      title: responseData.title,
-      businessCode: responseData.businessCode,
-      creatorId: responseData.creatorId,
-      isUseScheme: responseData.isUseScheme,
-      requirement: responseData.requirement,
-      orderBy: responseData.orderBy,
-      columns: responseData.columns,
-      fast: responseData.fast,
-    };
-
-    // 更新查询方案则不覆盖
-    return scheme.id === '0' ? result : undefined;
   }
 }
 
