@@ -7,8 +7,6 @@
   import type { CSSProperties } from 'vue';
   import { defineComponent, ref, unref, onMounted, nextTick, computed } from 'vue';
 
-  import { getViewportOffset } from '/@/utils/dom';
-
   import { useWindowSizeFn } from '/@/hooks/event/useWindowSizeFn';
 
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -23,7 +21,6 @@
     },
     setup() {
       const loading = ref(false);
-      // debugger
       const topRef = ref(50);
       const heightRef = ref(window.innerHeight);
       const frameRef = ref<HTMLFrameElement | null>(null);
