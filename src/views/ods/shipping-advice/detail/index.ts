@@ -405,7 +405,7 @@ export const other: IDetailItem[] = [
   },
   {
     key: 'CustomerSalesman',
-    caption: '客户业务员',
+    caption: '业务员',
   },
   {
     key: 'OutSaleBillCode',
