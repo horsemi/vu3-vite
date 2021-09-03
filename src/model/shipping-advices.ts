@@ -506,7 +506,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'PaintMarkerStatus',
-    caption: '大头笔接口状态',
+    caption: '大头笔状态',
   },
   {
     key: 'ReturnGoodsStatus',
@@ -522,7 +522,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'PaintMarkerMsg',
-    caption: '大头笔接口信息',
+    caption: '大头笔信息',
   },
   {
     key: 'IsCancelled',
@@ -538,7 +538,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'LogisticNoStatus',
-    caption: '快递号接口状态',
+    caption: '快递号状态',
   },
   {
     key: 'CancelledTime',
@@ -554,7 +554,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'LogisticNoMsg',
-    caption: '快递号接口信息',
+    caption: '快递号信息',
   },
   {
     key: 'CancellerId',
@@ -608,7 +608,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'OutSourceBillType',
-    caption: '外部原单类型',
+    caption: '原单类型',
   },
   {
     key: 'AppliedTime',
@@ -633,11 +633,11 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'OutBillFormCode',
-    caption: '外部原单标识',
+    caption: '原单标识',
   },
   {
     key: 'OutSourceBillCode',
-    caption: '外部原单编号',
+    caption: '原单编号',
   },
   {
     key: 'UpdatedTime',
@@ -678,7 +678,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'OutSaleBillCode',
-    caption: '外部销售单号',
+    caption: '销售单号',
   },
   {
     key: 'TotalWeight',
@@ -702,7 +702,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'TaoBaoCode',
-    caption: '线上平台单号',
+    caption: '平台单号',
   },
   {
     key: 'CustomerSalesman',

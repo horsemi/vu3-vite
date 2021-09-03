@@ -448,7 +448,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'OutSourceBillCode',
-    caption: '外部原单编号',
+    caption: '原单编号',
   },
   {
     key: 'UpdatedTime',
@@ -473,11 +473,11 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'OutBillFormCode',
-    caption: '外部原单标识',
+    caption: '原单标识',
   },
   {
     key: 'OutSaleBillCode',
-    caption: '外部销售单号',
+    caption: '销售单号',
   },
   {
     key: 'CancelledTime',
@@ -506,7 +506,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'OutSourceBillType',
-    caption: '外部原单类型',
+    caption: '原单类型',
   },
   {
     key: 'PushDownStatus',

@@ -27,8 +27,8 @@ export const base: IDetailItem[] = [
     caption: '单据状态',
   },
   {
-    key: 'Group',
-    caption: '分组',
+    key: 'CustomerCode',
+    caption: '客户',
   },
   {
     key: 'TotalOrderCount',
@@ -44,7 +44,7 @@ export const base: IDetailItem[] = [
   },
   {
     key: 'CustomerSalesman',
-    caption: '客户业务员',
+    caption: '业务员',
   },
   {
     key: 'DetailRowsCount',
@@ -212,12 +212,12 @@ export const other: IDetailItem[] = [
     showProperty: 'AccountName',
   },
   {
-    key: 'CustomerCode',
-    caption: '客户',
+    key: 'OutBillFormCode',
+    caption: '原单标识',
   },
   {
     key: 'OutSourceBillCode',
-    caption: '外部原单编号',
+    caption: '原单编号',
   },
   {
     key: 'UpdatedTime',
@@ -229,12 +229,12 @@ export const other: IDetailItem[] = [
     showProperty: 'AccountName',
   },
   {
-    key: 'OutBillFormCode',
-    caption: '外部原单标识',
+    key: 'PushDownTime',
+    caption: '下推时间',
   },
   {
     key: 'OutSaleBillCode',
-    caption: '外部销售单号',
+    caption: '销售单号',
   },
   {
     key: 'CancelledTime',
@@ -246,20 +246,12 @@ export const other: IDetailItem[] = [
     showProperty: 'AccountName',
   },
   {
-    key: 'PushDownTime',
-    caption: '下推时间',
+    key: 'MarkStatus',
+    caption: '标记状态',
   },
   {
     key: 'OutSourceBillType',
-    caption: '外部原单类型',
-  },
-  {
-    key: 'RecyclingMemo',
-    caption: '回收备注',
-  },
-  {
-    key: 'MarkStatus',
-    caption: '标记状态',
+    caption: '原单类型',
   },
   {
     key: 'IsCancelled',
@@ -340,7 +332,7 @@ export const definite: IColumnItem[] = [
   },
   {
     key: 'OutSourceBillCode',
-    caption: '外部原单编号',
+    caption: '原单编号',
   },
   {
     key: 'ActualSalePrice',
@@ -352,11 +344,11 @@ export const definite: IColumnItem[] = [
   },
   {
     key: 'TaoBaoCode',
-    caption: '线上平台单号',
+    caption: '平台单号',
   },
   {
     key: 'TaoBaoSubCode',
-    caption: '线上平台子单号',
+    caption: '平台子单号',
   },
   {
     key: 'Shop',

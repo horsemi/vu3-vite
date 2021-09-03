@@ -252,11 +252,11 @@ export const express: IDetailItem[] = [
   },
   {
     key: 'LogisticNoMsg',
-    caption: '快递号接口信息',
+    caption: '快递号信息',
   },
   {
     key: 'LogisticNoStatus',
-    caption: '快递号接口状态',
+    caption: '快递号状态',
   },
   {
     key: 'PaintMarker',
@@ -268,11 +268,11 @@ export const express: IDetailItem[] = [
   },
   {
     key: 'PaintMarkerMsg',
-    caption: '大头笔接口信息',
+    caption: '大头笔信息',
   },
   {
     key: 'PaintMarkerStatus',
-    caption: '大头笔接口状态',
+    caption: '大头笔状态',
   },
   {
     key: 'TotalWeight',
@@ -392,7 +392,7 @@ export const other: IDetailItem[] = [
   },
   {
     key: 'OutSourceBillCode',
-    caption: '外部原单编号',
+    caption: '原单编号',
   },
   {
     key: 'AppliedTime',
@@ -409,7 +409,7 @@ export const other: IDetailItem[] = [
   },
   {
     key: 'OutSaleBillCode',
-    caption: '外部销售单号',
+    caption: '销售单号',
   },
   {
     key: 'SentStatus',
@@ -421,11 +421,11 @@ export const other: IDetailItem[] = [
   },
   {
     key: 'TaoBaoCode',
-    caption: '线上平台单号',
+    caption: '平台单号',
   },
   {
     key: 'OutBillFormCode',
-    caption: '外部原单标识',
+    caption: '原单标识',
   },
   {
     key: 'SentMemo',
@@ -434,7 +434,7 @@ export const other: IDetailItem[] = [
   },
   {
     key: 'OutSourceBillType',
-    caption: '外部原单类型',
+    caption: '原单类型',
   },
 ];
 
@@ -508,7 +508,7 @@ export const definite: IColumnItem[] = [
   },
   {
     key: 'OutSourceBillCode',
-    caption: '外部原单编号',
+    caption: '原单编号',
   },
   {
     key: 'ActualSalePrice',
@@ -524,11 +524,11 @@ export const definite: IColumnItem[] = [
   },
   {
     key: 'TaoBaoCode',
-    caption: '线上平台单号',
+    caption: '平台单号',
   },
   {
     key: 'TaoBaoSubCode',
-    caption: '线上平台子单号',
+    caption: '平台子单号',
   },
   {
     key: 'IsVerification',
