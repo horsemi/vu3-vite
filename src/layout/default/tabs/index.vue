@@ -178,7 +178,7 @@
       height: 40px;
       color: #3694fd;
       border-top: 3px solid #3694fd;
-      border-radius: 3px 3px 0 0;
+      border-radius: 4px 4px 0 0;
     }
   }
 </style>
