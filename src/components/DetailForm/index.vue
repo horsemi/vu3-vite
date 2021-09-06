@@ -110,6 +110,11 @@
           editorOptions = {
             showSpinButtons: true,
           };
+        } else if (item.editorType === 'dxDateBox') {
+          editorOptions = {
+            displayFormat: 'yyyy-MM-dd HH:mm:ss',
+            ...item,
+          };
         } else {
           editorOptions = { ...item };
         }
