@@ -27,7 +27,19 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'OperatorId',
-    caption: '操作人',
+    caption: '操作人ID',
+  },
+  {
+    key: 'Operator',
+    caption: '操作人ID',
+    relationKey: 'OperatorId',
+    allowQuery: false,
+    foundationList: [
+      {
+        key: 'Operator_AccountName',
+        caption: '操作人',
+      },
+    ],
   },
   {
     key: 'IpAddress',

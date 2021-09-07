@@ -615,8 +615,10 @@ export const record: IColumnItem[] = [
     caption: '操作时间',
   },
   {
-    key: 'OperatorId',
+    key: 'Operator_AccountName',
     caption: '操作人',
+    expand: 'Operator',
+    relationKey: 'OperatorId',
   },
   {
     key: 'IpAddress',
