@@ -300,6 +300,7 @@ export const task: IDetailItem[] = [
   {
     key: 'LockBatchUserCode',
     caption: '锁定批次人',
+    showProperty: 'AccountName',
   },
   {
     key: 'SendGoodsTimeOut',

@@ -498,7 +498,20 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'LockBatchUserCode',
+    caption: '锁定批次人ID',
+    allowQuery: false,
+  },
+  {
+    key: 'LockBatchUser',
     caption: '锁定批次人',
+    relationKey: 'LockBatchUserCode',
+    allowQuery: false,
+    foundationList: [
+      {
+        key: 'LockBatchUser_AccountName',
+        caption: '锁定批次人',
+      },
+    ],
   },
   {
     key: 'ExpressSiteName',
