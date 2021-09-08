@@ -14,11 +14,11 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
     },
     children: [
       {
-        path: 'express-platform',
-        name: 'ExpressPlatforms',
-        redirect: '/express-platform/express-platform/express-platform/list',
+        path: 'order-management',
+        name: 'ExpressOrderManagement',
+        redirect: '/express-platform/order-management/expressbill/list',
         meta: {
-          title: '快递平台',
+          title: '订单管理',
         },
         children: [
           {
@@ -26,9 +26,49 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             name: 'ExpressBillList',
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
-              title: '快递单列表',
+              title: '快递订单',
               frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/expressbill/list',
               permissions: ['ExpressBillList'],
+            },
+          },
+        ],
+      },
+      {
+        path: 'billing-reconciliation',
+        name: 'BillingReconciliation',
+        redirect: '/express-platform/billing-reconciliation/freightbill/list',
+        meta: {
+          title: '计费对账',
+        },
+        children: [
+          {
+            path: 'freightbill/list',
+            name: 'FreightBillList',
+            component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
+            meta: {
+              title: '运费账单',
+              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/expressbill/list',
+              permissions: ['FreightBillList'],
+            },
+          },
+        ],
+      },
+      {
+        path: 'statistical-analysis',
+        name: 'StatisticalAnalysis',
+        redirect: '/express-platform/express-platform/express-platform/list',
+        meta: {
+          title: '统计分析',
+        },
+        children: [
+          {
+            path: 'report/timelimit/list',
+            name: 'ExpressReportTimeLimitList',
+            component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
+            meta: {
+              title: '时效监控',
+              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/report/timelimit/list',
+              permissions: ['ExpressReportTimeLimitList'],
             },
           },
           {
@@ -36,37 +76,88 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             name: 'ExpressSearchList',
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
-              title: '快递查询',
+              title: '订单轨迹',
               frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/search/list',
               permissions: ['ExpressSearchList'],
             },
           },
           {
-            path: 'report/timelimit/list',
-            name: 'ExpressReportTimeLimitList',
+            path: 'report/shipping-advice-express/list',
+            name: 'ExpressPlatformReportShippingAdviceExpress',
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
-              title: '快递时效监控报表',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/report/timelimit/list',
-              permissions: ['ExpressReportTimeLimitList'],
+              title: '发货明细',
+              frameSrc:
+                'http://test.tms.4pl.linshimuye.com:8095/#/report/shipping-advice-express/list',
+              permissions: ['ExpressPlatformReportShippingAdviceExpress'],
             },
           },
+        ],
+      },
+      {
+        path: 'basic-configuration',
+        name: 'BasicConfiguration',
+        redirect: '/express-platform/basic-configuration/expresscompany/list',
+        meta: {
+          title: '基础配置',
+        },
+        children: [
           {
             path: 'expresscompany/list',
             name: 'ExpressCompanyList',
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
-              title: '快递公司列表',
+              title: '快递公司',
               frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/expresscompany/list',
               permissions: ['ExpressCompanyList'],
             },
           },
           {
+            path: 'expressaccount/list',
+            name: 'ExpressAccountList',
+            component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
+            meta: {
+              title: '账户配置',
+              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/expressaccount/list',
+              permissions: ['ExpressAccountList'],
+            },
+          },
+          {
+            path: 'regiontransformation/list',
+            name: 'RegionTransformationList',
+            component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
+            meta: {
+              title: '地址映射',
+              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/regiontransformation/list',
+              permissions: ['RegionTransformationList'],
+            },
+          },
+          {
+            path: 'estimated-feeprice/list',
+            name: 'ExpressPlatformEstimatedFeepriceList',
+            component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
+            meta: {
+              title: '运费价目',
+              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/estimated-feeprice/list',
+              permissions: ['ExpressPlatformEstimatedFeepriceList'],
+            },
+          },
+        ],
+      },
+      {
+        path: 'express-strategy',
+        name: 'ExpressStrategy',
+        redirect: '/express-platform/express-strategy/recommendrule/list',
+        meta: {
+          title: '快递策略',
+        },
+        children: [
+          {
             path: 'recommendrule/list',
             name: 'RecommendRuleList',
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
-              title: '推荐规则列表',
+              title: '快递策略',
               frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/recommendrule/list',
               permissions: ['RecommendRuleList'],
             },
@@ -76,50 +167,19 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             name: 'RestrictiveRuleList',
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
-              title: '限制规则列表',
+              title: '限制策略',
               frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/restrictive-rule/list',
               permissions: ['RestrictiveRuleList'],
             },
           },
           {
-            path: 'regiontransformation/list',
-            name: 'RegionTransformationList',
+            path: 'operational-rule/list',
+            name: 'OperationalRuleList',
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
-              title: '区域转换列表',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/regiontransformation/list',
-              permissions: ['RegionTransformationList'],
-            },
-          },
-          {
-            path: 'expressaccount/list',
-            name: 'ExpressAccountList',
-            component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
-            meta: {
-              title: '快递账号列表',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/expressaccount/list',
-              permissions: ['ExpressAccountList'],
-            },
-          },
-          {
-            path: 'estimated-feeprice/list',
-            name: 'ExpressPlatformEstimatedFeepriceList',
-            component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
-            meta: {
-              title: '预估运费价目表',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/estimated-feeprice/list',
-              permissions: ['ExpressPlatformEstimatedFeepriceList'],
-            },
-          },
-          {
-            path: 'report/shipping-advice-express/list',
-            name: 'ExpressPlatformReportShippingAdviceExpress',
-            component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
-            meta: {
-              title: '快递订单明细报表',
-              frameSrc:
-                'http://test.tms.4pl.linshimuye.com:8095/#/report/shipping-advice-express/list',
-              permissions: ['ExpressPlatformReportShippingAdviceExpress'],
+              title: '运营策略',
+              // frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/restrictive-rule/list',
+              permissions: ['OperationalRuleList'],
             },
           },
         ],
