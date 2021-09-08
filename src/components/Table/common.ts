@@ -92,26 +92,28 @@ const handleKeyType = (keyType: IKeyType[]) => {
 export const getFilter = (requirements: IRequirementItem[]) => {
   let result = '';
 
-  for (let i = 0; i < requirements.length; i++) {
-    if (requirements[i].requirement && !isNil(requirements[i].value)) {
-      const requirement = requirements[i].relationKey
-        ? requirements[i].relationKey
-        : requirements[i].requirement;
+  const requireData = requirements.filter((item) => {
+    return item.requirement && !isNil(item.value);
+  });
 
-      if (requirements[i].leftParenthesisCount && requirements[i].leftParenthesisCount! > 0) {
-        for (let j = 0; j < requirements[i].leftParenthesisCount!; j++) {
-          result += '[';
-        }
+  for (let i = 0; i < requireData.length; i++) {
+    const requirement = requireData[i].relationKey
+      ? requireData[i].relationKey
+      : requireData[i].requirement;
+
+    if (requireData[i].leftParenthesisCount && requireData[i].leftParenthesisCount! > 0) {
+      for (let j = 0; j < requireData[i].leftParenthesisCount!; j++) {
+        result += '[';
       }
-      result += initValueData(requirements[i], requirement);
-      if (requirements[i].rightParenthesisCount && requirements[i].rightParenthesisCount! > 0) {
-        for (let j = 0; j < requirements[i].rightParenthesisCount!; j++) {
-          result += ']';
-        }
+    }
+    result += initValueData(requireData[i], requirement);
+    if (requireData[i].rightParenthesisCount && requireData[i].rightParenthesisCount! > 0) {
+      for (let j = 0; j < requireData[i].rightParenthesisCount!; j++) {
+        result += ']';
       }
-      if (i !== requirements.length - 1) {
-        result += `,"${requirements[i].logic}",`;
-      }
+    }
+    if (i !== requireData.length - 1) {
+      result += `,"${requireData[i].logic}",`;
     }
   }
   let filter = [];
@@ -121,7 +123,14 @@ export const getFilter = (requirements: IRequirementItem[]) => {
     useMessage('请检查是否格式有误，如左右括号是否对等', 'error', '搜索条件无法解析');
   }
   // 获取解析后的搜索条件
-  // console.info(requirements, filter);
+  console.info(
+    '转换为字符串的结果:',
+    result,
+    '原数据:',
+    requireData,
+    '转为为数组后的结果:',
+    filter
+  );
   return filter;
 };
 
