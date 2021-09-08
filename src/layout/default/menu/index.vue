@@ -1,5 +1,5 @@
 <template>
-  <div v-click-outside="handleMenuClose" :class="[prefixCls]">
+  <div :class="[prefixCls]" @mouseleave="handleMenuClose">
     <DxScrollView show-scrollbar="onHover" direction="vertical" :width="200" :on-scroll="onScroll">
       <div
         v-for="(item, index) in menuList"
@@ -147,12 +147,12 @@
 
       &:focus {
         color: @color-primary !important;
-        background: #e8f7ff;
+        background-image: linear-gradient(to right, #fff, #e8f7ff);
       }
 
       &--active {
         color: @color-primary !important;
-        background: #e8f7ff;
+        background-image: linear-gradient(to right, #fff, #e8f7ff);
         &::after {
           position: absolute;
           right: 0;

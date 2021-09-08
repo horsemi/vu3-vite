@@ -6,7 +6,6 @@
         isSubActive(subMenuData.path),
         isHover ? `${prefixCls}-title__wrapper--hover` : '',
       ]"
-      @click="handleItemClick(subMenuData)"
       >{{ subMenuData.meta.title }}</div
     >
     <div
@@ -114,6 +113,7 @@
     font-size: 14px;
     font-weight: 400;
     line-height: 22px;
+    border-bottom: 0.5px solid #f5f4f5;
     &-title__wrapper {
       width: 102px;
       padding: 6px;
@@ -123,11 +123,13 @@
       cursor: pointer;
       &--active {
         color: #3694fd;
-        background-color: #e8f7ff;
+        background-image: linear-gradient(to right, #fff, #e8f7ff);
+        // border-bottom: 1px solid @color-primary;
       }
       &--hover {
         color: #3694fd;
-        background-color: #e8f7ff;
+        background-image: linear-gradient(to right, #fff, #e8f7ff);
+        // border-bottom: 1px solid @color-primary;
       }
     }
     &-item-text__wrapper {
@@ -142,11 +144,13 @@
       cursor: pointer;
       &:hover {
         color: #3694fd;
-        background-color: #e8f7ff;
+        background-image: linear-gradient(to right, #fff, #e8f7ff);
+        // border-bottom: 1px solid @color-primary;
       }
       &--active {
         color: #3694fd;
-        background-color: #e8f7ff;
+        background-image: linear-gradient(to right, #fff, #e8f7ff);
+        // border-bottom: 1px solid @color-primary;
       }
     }
   }

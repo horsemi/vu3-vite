@@ -43,7 +43,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed, ref } from 'vue';
+  import { defineComponent, computed, ref, onMounted, onUnmounted } from 'vue';
 
   import LayoutContent from './default/content/index.vue';
   import LayoutHeader from './default/header/index.vue';
@@ -53,6 +53,7 @@
   import DxDrawer from 'devextreme-vue/drawer';
   import DxScrollView from 'devextreme-vue/scroll-view';
 
+  import { useRouter } from 'vue-router';
   import { useViewStore } from '/@/store/modules/view';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { initGlobalEnumData } from '/@/logics/initAppConfig';
@@ -74,7 +75,7 @@
       };
       initGlobalEnumData();
       const viewStore = useViewStore();
-
+      const router = useRouter();
       const { prefixCls } = useDesign('layout');
       const viewState = computed(() => viewStore.getViewList);
       const openState = ref(true);
@@ -82,12 +83,26 @@
         openState.value = !openState.value;
       };
 
+      function reciveMessage(e) {
+        if (e.data.status === 401) {
+          router.push({ path: '/login' });
+        }
+      }
+      onMounted(() => {
+        window.addEventListener('message', reciveMessage);
+      });
+
+      onUnmounted(() => {
+        window.removeEventListener('message', reciveMessage);
+      });
+
       return {
         viewState,
         openState,
         prefixCls,
         toggleMenu,
         menuSize,
+        reciveMessage,
       };
     },
   });

@@ -5,11 +5,14 @@ import type { AppRouteRecordRaw } from '/@/router/types';
 export const isUuidRoute = async (routes: Array<AppRouteRecordRaw>) => {
   const result: string[] = [];
   const targetRoutes = cloneDeep(routes);
-  const middlePath = targetRoutes[0].children && targetRoutes[0].children[0].path;
-  const basicPath = targetRoutes[0].path + '/' + middlePath;
-  targetRoutes[0].children &&
-    targetRoutes[0].children[0].children?.forEach((routeItem) => {
-      result.push(basicPath + '/' + routeItem.path);
-    });
+  const targetChildren = targetRoutes[0].children as Array<AppRouteRecordRaw>;
+  for (let i = 0; i < targetChildren.length; i++) {
+    const middlePath = targetChildren[i].path;
+    const basicPath = targetRoutes[0].path + '/' + middlePath;
+    targetChildren &&
+      targetChildren[i].children?.forEach((routeItem) => {
+        result.push(basicPath + '/' + routeItem.path);
+      });
+  }
   return result;
 };
