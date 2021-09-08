@@ -246,7 +246,11 @@ const initValueData = (item: IRequirementItem, requirement) => {
       break;
     }
     default: {
-      result += `,"${item.operator}",${value}]`;
+      if (value === null) {
+        result += `,"${item.operator}",${value}]`;
+      } else {
+        result += `,"${item.operator}","${value}"]`;
+      }
     }
   }
   return result;
