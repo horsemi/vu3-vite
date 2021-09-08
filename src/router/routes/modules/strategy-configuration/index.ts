@@ -47,7 +47,7 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
             // component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             component: () => import('/@/views/home/index.vue'),
             meta: {
-              title: '运营策略',
+              title: '运费策略',
               // frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/restrictive-rule/list',
               permissions: ['OperationalRuleList'],
             },

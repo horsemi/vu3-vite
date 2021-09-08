@@ -32,7 +32,6 @@
   import { useDesign } from '/@/hooks/web/useDesign';
   import { usePermissionStore } from '/@/store/modules/permission';
   import { useRouter } from 'vue-router';
-
   import DxScrollView from 'devextreme-vue/scroll-view';
 
   import MenuPopup from './component/submenu/index.vue';
@@ -94,9 +93,7 @@
         }
       };
       const getSubLeft = (): string => {
-        const left = props.openState
-          ? props.menuSize.max + 3 + 'px'
-          : props.menuSize.min + 3 + 'px';
+        const left = props.openState ? props.menuSize.max + 'px' : props.menuSize.min + 3 + 'px';
         return left;
       };
 
@@ -188,7 +185,7 @@
       padding: 10px 15px;
       color: #fff;
       background: #fff;
-      border: 1px solid #ebeef5;
+      border: 3px solid #ebeef5;
       border-radius: 4px;
       box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
     }

@@ -47,7 +47,7 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '运费账单',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/expressbill/list',
+              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/freightbill/list',
               permissions: ['FreightBillList'],
             },
           },
