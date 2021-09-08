@@ -26,7 +26,7 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
             name: 'RecommendRuleList',
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
-              title: '快递策略',
+              title: '推荐策略',
               frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/recommendrule/list',
               permissions: ['RecommendRuleList'],
             },
@@ -48,7 +48,7 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/home/index.vue'),
             meta: {
               title: '运营策略',
-              // frameSrc: 'http://test.tms.4pl.linshimuye.com:8081/#/restrictive-rule/list',
+              // frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/restrictive-rule/list',
               permissions: ['OperationalRuleList'],
             },
           },

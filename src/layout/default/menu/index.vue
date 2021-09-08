@@ -147,12 +147,12 @@
 
       &:focus {
         color: @color-primary !important;
-        background: #e8f7ff;
+        background-image: linear-gradient(to right, #fff, #e8f7ff);
       }
 
       &--active {
         color: @color-primary !important;
-        background: #e8f7ff;
+        background-image: linear-gradient(to right, #fff, #e8f7ff);
         &::after {
           position: absolute;
           right: 0;

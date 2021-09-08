@@ -71,6 +71,7 @@
           }
         });
       }
+
       onMounted(() => {
         loading.value = true;
         init();
