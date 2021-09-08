@@ -124,7 +124,20 @@
       const allColumns = ref<IColumnItem[]>([]);
       const advicesColumns = ref<IColumnItem[]>([]);
       const ordersColumns = ref<IColumnItem[]>([]);
-      let filterData: FilterData = reactive({});
+      let filterData: FilterData = reactive({
+        requirement: [
+          {
+            requirement: '',
+            operator: '',
+            operatorList: [],
+            type: '',
+            datatypekeies: '',
+            relationKey: '',
+            logic: 'and',
+            value: '',
+          },
+        ],
+      });
       let filterDataTextString = Object.keys(filterData).length
         ? ref<string>(JSON.stringify(filterData))
         : ref<string>('');
@@ -198,7 +211,18 @@
       }
       function resetFilterValue() {
         filterDataTextString.value = '';
-        filterData.requirement = [];
+        filterData.requirement = [
+          {
+            requirement: '',
+            operator: '',
+            operatorList: [],
+            type: '',
+            datatypekeies: '',
+            relationKey: '',
+            logic: 'and',
+            value: '',
+          },
+        ];
         filterData.orderBy = [];
         filterData.columns = [];
         filterData.fast = [];

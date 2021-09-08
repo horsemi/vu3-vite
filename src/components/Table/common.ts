@@ -93,7 +93,7 @@ export const getFilter = (requirements: IRequirementItem[]) => {
   let result = '';
 
   const requireData = requirements.filter((item) => {
-    return item.requirement && !isNil(item.value);
+    return item.requirement;
   });
 
   for (let i = 0; i < requireData.length; i++) {
@@ -208,29 +208,35 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
 
 const initValueData = (item: IRequirementItem, requirement) => {
   let result = '';
+
+  const value = item.value ? item.value : null;
   result += `["${requirement}"`;
 
   switch (item.type) {
     case 'int32': {
-      result += `,"${item.operator}",${item.value}]`;
+      result += `,"${item.operator}",${value}]`;
       break;
     }
     case 'boolean': {
-      result += `,"${item.operator}",${item.value}]`;
+      result += `,"${item.operator}",${value}]`;
       break;
     }
     case 'date': {
-      if (item.operator === '=') {
+      if (value === null) {
+        result += `,"${item.operator}", ${value}]`;
+      } else if (item.operator === '=') {
         result += `,">=","${getBeginTime(
           item.value as Date
-        )}"],"and",["${requirement}","<=","${getEndTime(item.value as Date)}"]`;
+        )}"],"and",["${requirement}","<=","${getEndTime(value as Date)}"]`;
       } else {
-        result += `,"${item.operator}","${formatToDate(item.value as Date)}"]`;
+        result += `,"${item.operator}","${formatToDate(value as Date)}"]`;
       }
       break;
     }
     case 'datetime': {
-      if (item.operator === '=') {
+      if (value === null) {
+        result += `,"${item.operator}", ${value}]`;
+      } else if (item.operator === '=') {
         result += `,">=","${getBeginTime(
           item.value as Date
         )}"],"and",["${requirement}","<=","${getEndTime(item.value as Date)}"]`;
@@ -240,7 +246,7 @@ const initValueData = (item: IRequirementItem, requirement) => {
       break;
     }
     default: {
-      result += `,"${item.operator}","${item.value}"]`;
+      result += `,"${item.operator}",${value}]`;
     }
   }
   return result;
