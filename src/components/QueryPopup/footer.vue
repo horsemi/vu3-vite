@@ -3,6 +3,12 @@
     <div :class="`${prefixCls}__default`">
       <DxCheckBox v-model:value="schemeDefaultIndexComputed" :disabled="isDisabledComputer" />
       <span>下次以此方案自动进入</span>
+      <DxCheckBox
+        v-model:value="schemeShareComputed"
+        :disabled="isDisabledComputer"
+        style="margin-left: 10px"
+      />
+      <span>共享方案</span>
     </div>
     <div :class="`${prefixCls}__btn`">
       <DxButton :width="76" text="确认" type="default" @click="onSubmit" />
@@ -31,6 +37,11 @@
 
       const schemeDefaultIndex = inject<Ref<number>>('schemeDefaultIndex');
       const checkedIndex = inject<Ref<number>>('checkedIndex');
+      const schemeShare = inject<Ref<boolean>>('schemeShare');
+
+      const updateSchemeIsShareState = inject<(isShareState: boolean) => void>(
+        'updateSchemeIsShareState'
+      );
 
       const schemeDefaultIndexComputed = computed({
         get: () => {
@@ -38,6 +49,15 @@
         },
         set: (value: boolean) => {
           onSubmitCheckedDefault(value);
+        },
+      });
+
+      const schemeShareComputed = computed({
+        get: () => {
+          return schemeShare!.value;
+        },
+        set: (value: boolean) => {
+          updateSchemeIsShareState && updateSchemeIsShareState(value);
         },
       });
 
@@ -60,6 +80,7 @@
         checkDefault,
         schemeDefaultIndex,
         schemeDefaultIndexComputed,
+        schemeShareComputed,
         isDisabledComputer,
         onSubmitCheckedDefault,
         onSubmit,

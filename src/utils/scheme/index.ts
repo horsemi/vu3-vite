@@ -60,7 +60,7 @@ export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem 
       businessCode: scheme.businessCode as string,
       applicationId: userInfo.applicationId,
       creatorId: userInfo.accountId,
-      isShare: false,
+      isShare: scheme.isShare || false,
       queryData: queryData,
     };
 
@@ -75,6 +75,7 @@ export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem 
         businessCode: response.businessCode,
         creatorId: response.creatorId,
         isUseScheme: response.isUseScheme,
+        isShare: response.isShare,
         requirement: queryData.requirement,
         orderBy: queryData.orderBy,
         columns: queryData.columns,

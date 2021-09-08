@@ -112,12 +112,23 @@
       provide('schemeDefaultIndex', schemeDefaultIndex);
       provide('checkedIndex', checkedIndex);
 
+      const isShare = ref(false);
+      provide('schemeShare', isShare);
+
       // 过滤方案数据，用于交互
       const schemeList = ref<ISchemeItem[]>([]);
       // 过滤方案数据副本，用于保存
       const schemeListTemp = ref<ISchemeItem[]>([]);
       // 快速过滤数据
       const fast = ref<IRequirementItem[]>([]);
+
+      const updateSchemeIsShareState = (isShareState: boolean) => {
+        isShare.value = isShareState;
+        schemeListTemp.value[checkedIndex.value].isShare = isShareState;
+        handleSaveData('保存成功', schemeListTemp.value);
+      };
+
+      provide('updateSchemeIsShareState', updateSchemeIsShareState);
 
       // 外派列表过滤方案更新事件
       const onChangeScheme = (data: ISchemeItem) => {
@@ -190,6 +201,9 @@
       // 接收选中下标更新
       const onChangeCheckedIndex = (index: number, isSearch = true) => {
         checkedIndex.value = index;
+
+        // 共享方案状态更新
+        isShare.value = schemeListTemp.value[checkedIndex.value].isShare || false;
         const scheme = cloneDeep(schemeListTemp.value[checkedIndex.value]);
         queryForm.value.queryList = scheme.fast || [];
         scheme.fast &&
@@ -290,6 +304,7 @@
           schemeList.value = cloneDeep(val.scheme);
           schemeListTemp.value = cloneDeep(val.scheme);
           fast.value = cloneDeep(props.schemeData.scheme[props.schemeCheckedIndex].fast) || [];
+          isShare.value = schemeListTemp.value[checkedIndex.value].isShare || false;
         }
       };
 

@@ -120,6 +120,11 @@ export interface ISchemeItem {
    * @description 快速过滤
    */
   fast?: IQueryItem[];
+
+  /**
+   * @description 是否共享
+   */
+  isShare?: boolean;
 }
 
 export interface ISortOptions {
