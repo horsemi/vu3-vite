@@ -1,5 +1,5 @@
 <template>
-  <div v-click-outside="handleMenuClose" :class="[prefixCls]">
+  <div :class="[prefixCls]" @mouseleave="handleMenuClose">
     <DxScrollView show-scrollbar="onHover" direction="vertical" :width="200" :on-scroll="onScroll">
       <div
         v-for="(item, index) in menuList"
