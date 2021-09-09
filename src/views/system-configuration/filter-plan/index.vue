@@ -5,7 +5,7 @@
         <DxSelectBox
           :items="billType"
           placeholder="单据类型"
-          value="发货单"
+          value=""
           @ValueChanged="changeSelectValue"
         />
         <DxTextArea
@@ -122,22 +122,7 @@
 
       const queryForm = ref();
       const allColumns = ref<IColumnItem[]>([]);
-      const advicesColumns = ref<IColumnItem[]>([]);
-      const ordersColumns = ref<IColumnItem[]>([]);
-      let filterData: FilterData = reactive({
-        requirement: [
-          {
-            requirement: '',
-            operator: '',
-            operatorList: [],
-            type: '',
-            datatypekeies: '',
-            relationKey: '',
-            logic: 'and',
-            value: '',
-          },
-        ],
-      });
+      let filterData: FilterData = reactive({});
       let filterDataTextString = Object.keys(filterData).length
         ? ref<string>(JSON.stringify(filterData))
         : ref<string>('');
@@ -198,14 +183,22 @@
       function changeSelectValue(e) {
         switch (e.event.target.innerText) {
           case SHIPPINGORDER:
-            allColumns.value = ordersColumns.value;
-            resetFilterValue();
+            getOrdersColumns().then((res) => {
+              if (res) {
+                const { columnList } = res;
+                allColumns.value = columnList;
+              }
+              resetFilterValue();
+            });
             break;
           case SHIPPINGADVICE:
-            allColumns.value = advicesColumns.value;
-            resetFilterValue();
-            break;
-          default:
+            getAdvicesColumns().then((res) => {
+              if (res) {
+                const { columnList } = res;
+                allColumns.value = columnList;
+              }
+              resetFilterValue();
+            });
             break;
         }
       }
@@ -224,22 +217,9 @@
           },
         ];
         filterData.orderBy = [];
-        filterData.columns = [];
+        filterData.columns = allColumns.value.filter((item) => item.mustKey);
         filterData.fast = [];
       }
-      getAdvicesColumns().then((res) => {
-        if (res) {
-          const { columnList } = res;
-          advicesColumns.value = columnList;
-        }
-      });
-      getOrdersColumns().then((res) => {
-        if (res) {
-          const { columnList } = res;
-          ordersColumns.value = columnList;
-          allColumns.value = columnList;
-        }
-      });
 
       return {
         queryForm,

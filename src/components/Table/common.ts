@@ -61,7 +61,7 @@ export const getTableDataSource = (
   const { select, expand } = getSelectAndExpand(allColumns, scheme.columns, key);
 
   const filter = getFilter(scheme.requirement);
-  const sort = getSort(scheme.orderBy, options.dataSourceOptions.sort);
+  const sort = scheme.orderBy ? getSort(scheme.orderBy, options.dataSourceOptions.sort) : [];
   const data = getDataSource(
     {
       sort: options.dataSourceOptions.sort ? options.dataSourceOptions.sort.concat(sort) : sort,
