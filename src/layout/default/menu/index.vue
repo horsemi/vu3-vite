@@ -6,7 +6,7 @@
         :key="item.name"
         :tabindex="-1"
         :class="[`${prefixCls}-item__container`, isActive(item)]"
-        @click="handleMenuClick(item, index)"
+        @mouseenter="handleMenuClick(item, index)"
       >
         <div :class="`${prefixCls}-item-box`">
           <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
@@ -122,7 +122,7 @@
 
   .@{prefix-cls} {
     width: 200px;
-    height: 100%;
+    height: calc(100vh - 56px) !important;
     padding-top: 10px;
     overflow: auto;
 
@@ -140,6 +140,7 @@
 
       &:hover {
         color: @color-primary !important;
+        background-image: linear-gradient(to right, #fff, #e8f7ff);
       }
 
       &:focus {
