@@ -11,7 +11,13 @@ import type { ISortItem } from '/@/api/ods/types';
 import { isNil } from 'lodash-es';
 
 import { getDataSource } from '/@/api/ods/common';
-import { formatToDate, formatToDateTime, getBeginTime, getEndTime } from '/@/utils/date';
+import {
+  formatToDate,
+  formatToDateTime,
+  getBeginTime,
+  getEndTime,
+  getCurrentDate,
+} from '/@/utils/date';
 import { useMessage } from '/@/hooks/web/useMessage';
 
 const defaultPaginate = true;
@@ -123,16 +129,24 @@ export const getFilter = (requirements: IRequirementItem[]) => {
     useMessage(`请检查是否格式有误，如左右括号是否对等 \n ${result}`, 'error', '搜索条件无法解析');
   }
   // 获取解析后的搜索条件
-  // console.info('转换为字符串的结果:',result, '原数据:',requireData, '转为为数组后的结果:', filter);
+  // console.info(
+  //   '转换为字符串的结果:',
+  //   result,
+  //   '原数据:',
+  //   requireData,
+  //   '转为为数组后的结果:',
+  //   filter
+  // );
   return filter;
 };
 
 // 获取格式化后的排序
 export const getSort = (orderBy: IOrderByItem[], tableSort: ISortItem[] = []) => {
   const sort: ISortItem[] = [];
-  orderBy.forEach((item) => {
-    sort.push({ selector: item.key, desc: item.desc });
-  });
+  orderBy &&
+    orderBy.forEach((item) => {
+      sort.push({ selector: item.key, desc: item.desc });
+    });
   return sort.concat(tableSort);
 };
 
@@ -222,26 +236,54 @@ const initValueData = (item: IRequirementItem, requirement) => {
       break;
     }
     case 'date': {
-      if (value === null) {
+      if (item.operator === 'today') {
+        result += rangeFormat(
+          getBeginTime(getCurrentDate()),
+          requirement,
+          getEndTime(getCurrentDate())
+        );
+      } else if (item.operator === 'thisMonth') {
+        result += rangeFormat(
+          getBeginTime(getCurrentDate(), 'month'),
+          requirement,
+          getEndTime(getCurrentDate(), 'month')
+        );
+      } else if (value === null) {
         result += `,"${item.operator}", ${value}]`;
       } else if (item.operator === '=') {
-        result += `,">=","${getBeginTime(
-          item.value as Date
-        )}"],"and",["${requirement}","<=","${getEndTime(value as Date)}"]`;
+        result += rangeFormat(getBeginTime(value as Date), requirement, getEndTime(value as Date));
+      } else if (item.operator === '<>') {
+        result += `,"<","${getBeginTime(value as Date)}"],"or",["${requirement}",">=","${getEndTime(
+          value as Date
+        )}"]`;
       } else {
         result += `,"${item.operator}","${formatToDate(value as Date)}"]`;
       }
       break;
     }
     case 'datetime': {
-      if (value === null) {
+      if (item.operator === 'today') {
+        result += rangeFormat(
+          getBeginTime(getCurrentDate()),
+          requirement,
+          getEndTime(getCurrentDate())
+        );
+      } else if (item.operator === 'thisMonth') {
+        result += rangeFormat(
+          getBeginTime(getCurrentDate(), 'month'),
+          requirement,
+          getEndTime(getCurrentDate(), 'month')
+        );
+      } else if (value === null) {
         result += `,"${item.operator}", ${value}]`;
       } else if (item.operator === '=') {
-        result += `,">=","${getBeginTime(
-          item.value as Date
-        )}"],"and",["${requirement}","<=","${getEndTime(item.value as Date)}"]`;
+        result += rangeFormat(getBeginTime(value as Date), requirement, getEndTime(value as Date));
+      } else if (item.operator === '<>') {
+        result += `,"<","${getBeginTime(
+          value as Date
+        )}"],"and",["${requirement}",">=","${getEndTime(value as Date)}"]`;
       } else {
-        result += `,"${item.operator}","${formatToDateTime(item.value as Date)}"]`;
+        result += `,"${item.operator}","${formatToDateTime(value as Date)}"]`;
       }
       break;
     }
@@ -254,4 +296,8 @@ const initValueData = (item: IRequirementItem, requirement) => {
     }
   }
   return result;
+};
+
+const rangeFormat = (startTime: string, requirement, endTime: string): string => {
+  return `,">=","${startTime}"],"and",["${requirement}","<=","${endTime}"]`;
 };

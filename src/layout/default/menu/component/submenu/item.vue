@@ -123,12 +123,12 @@
       cursor: pointer;
       &--active {
         color: #3694fd;
-        background-image: linear-gradient(to right, #fff, #e8f7ff);
+        // background-image: linear-gradient(to right, #fff, #e8f7ff);
         // border-bottom: 1px solid @color-primary;
       }
       &--hover {
         color: #3694fd;
-        background-image: linear-gradient(to right, #fff, #e8f7ff);
+        // background-image: linear-gradient(to right, #fff, #e8f7ff);
         // border-bottom: 1px solid @color-primary;
       }
     }
@@ -143,12 +143,12 @@
       white-space: nowrap;
       cursor: pointer;
       &:hover {
-        color: #3694fd;
+        color: #6baffc;
         background-image: linear-gradient(to right, #fff, #e8f7ff);
         // border-bottom: 1px solid @color-primary;
       }
       &--active {
-        color: #3694fd;
+        color: #6baffc;
         background-image: linear-gradient(to right, #fff, #e8f7ff);
         // border-bottom: 1px solid @color-primary;
       }

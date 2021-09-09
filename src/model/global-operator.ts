@@ -41,13 +41,30 @@ export const operatorMap = {
     key: 'endswith',
     value: '结束于',
   },
+  today: {
+    key: 'today',
+    value: '今天',
+  },
+  thisMonth: {
+    key: 'thisMonth',
+    value: '本月',
+  },
 };
 
 export const globalOperator = {
   stringOperators: ['equal', 'notEqual', 'contains', 'notcontains', 'startswith', 'endswith'],
   numberOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
   datetimeOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
-  dateOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
+  dateOperators: [
+    'equal',
+    'notEqual',
+    'greater',
+    'greaterEqual',
+    'less',
+    'lessEqual',
+    'today',
+    'thisMonth',
+  ],
   booleanOperators: ['equal', 'notEqual'],
   enumOperators: ['equal', 'notEqual'],
   foundationOperators: ['equal', 'notEqual'],
