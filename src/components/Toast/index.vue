@@ -4,6 +4,7 @@
     :position="{ at: 'top center', my: 'top center', offset: '0 50' }"
     content-template="contentTemplate"
     :display-time="displayTime"
+    :close-on-click="true"
     width="500"
     @initialized="onInitialized"
     @hidden="hiddenHandle"
