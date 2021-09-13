@@ -225,33 +225,53 @@
       };
 
       const onSubmitClick = () => {
-        ShippingOrderApi.onShippingOrderSubmit([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingOrderApi.onShippingOrderSubmit([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onApplyClick = () => {
-        ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onPushClick = () => {
-        ShippingOrderApi.onShippingOrderPush([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingOrderApi.onShippingOrderPush([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onRedraftClick = () => {
-        ShippingOrderApi.onShippingOrderRedraft([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingOrderApi.onShippingOrderRedraft([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onRevokeClick = () => {
-        ShippingOrderApi.onShippingOrderRevoke([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingOrderApi.onShippingOrderRevoke([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onItemButtonClick = (e) => {

@@ -17,7 +17,6 @@ import { usePermissionStore } from '/@/store/modules/permission';
 let timeId: TimeoutHandle;
 
 interface AppState {
-  pageLoading: boolean;
   showToastFn: () => void;
   toastData: Record<string, unknown>;
   systemConfig: Nullable<SystemConfig>;
@@ -27,7 +26,6 @@ interface AppState {
 export const useAppStore = defineStore({
   id: 'app',
   state: (): AppState => ({
-    pageLoading: false,
     showToastFn: () => undefined,
     toastData: {
       type: 'success',
@@ -38,9 +36,6 @@ export const useAppStore = defineStore({
     globalEnumData: [],
   }),
   getters: {
-    getPageLoading() {
-      return this.pageLoading;
-    },
     getshowToastFn() {
       return this.showToastFn;
     },
@@ -55,18 +50,6 @@ export const useAppStore = defineStore({
     },
   },
   actions: {
-    setPageLoading(loading: boolean): void {
-      if (loading) {
-        clearTimeout(timeId);
-        // 防止加载图标出现闪烁
-        timeId = setTimeout(() => {
-          this.pageLoading = loading;
-        }, 50);
-      } else {
-        this.pageLoading = loading;
-        clearTimeout(timeId);
-      }
-    },
     initToast(fn: () => void) {
       this.showToastFn = fn;
     },

@@ -98,17 +98,49 @@ export function createLoadingComponent({
     },
     render(): VNode {
       const spinner = h(
-        'svg',
+        'div',
         {
-          class: 'circular',
-          viewBox: '25 25 50 50',
+          class: 'dx-loadingContainer',
         },
-        [h('circle', { class: 'path', cx: '50', cy: '50', r: '20', fill: 'none' })]
+        [
+          h(
+            'div',
+            {
+              class: 'dx-loadindicator-content',
+            },
+            [
+              h('div', { class: 'dx-loadindicator-icon' }, [
+                h('div', {
+                  class: ['dx-loadindicator-segment', 'dx-loadindicator-segment7'],
+                }),
+                h('div', {
+                  class: ['dx-loadindicator-segment', 'dx-loadindicator-segment6'],
+                }),
+                h('div', {
+                  class: ['dx-loadindicator-segment', 'dx-loadindicator-segment5'],
+                }),
+                h('div', {
+                  class: ['dx-loadindicator-segment', 'dx-loadindicator-segment4'],
+                }),
+                h('div', {
+                  class: ['dx-loadindicator-segment', 'dx-loadindicator-segment3'],
+                }),
+                h('div', {
+                  class: ['dx-loadindicator-segment', 'dx-loadindicator-segment2'],
+                }),
+                h('div', {
+                  class: ['dx-loadindicator-segment', 'dx-loadindicator-segment1'],
+                }),
+                h('div', {
+                  class: ['dx-loadindicator-segment', 'dx-loadindicator-segment0'],
+                }),
+              ]),
+            ]
+          ),
+        ]
       );
 
-      const noSpinner = h('i', { class: data.spinner });
-      const spinnerText = h('p', { class: 'v-loading-text' }, [data.text]);
-
+      const spinnerText = h('div', { class: 'dx-loadpanel-message' }, [data.text]);
       return h(
         Transition,
         {
@@ -122,7 +154,7 @@ export function createLoadingComponent({
                 'div',
                 {
                   style: {
-                    backgroundColor: data.background || '',
+                    backgroundColor: data.background || null,
                   },
                   class: [
                     'v-loading-mask',
@@ -136,7 +168,7 @@ export function createLoadingComponent({
                     {
                       class: 'v-loading-spinner',
                     },
-                    [!data.spinner ? spinner : noSpinner, data.text ? spinnerText : null]
+                    [spinner, spinnerText]
                   ),
                 ]
               ),

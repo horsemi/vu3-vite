@@ -7,7 +7,7 @@ import { isFunction } from '/@/utils/is';
 import { AxiosCanceler } from './axiosCancel';
 import qs from 'qs';
 import { cloneDeep } from 'lodash-es';
-
+import { useViewStore } from '/@/store/modules/view';
 import { ContentTypeEnum, RequestEnum } from '/@/enums/httpEnum';
 import { errorResult } from './const';
 
@@ -37,6 +37,7 @@ export class Request {
 
     // 请求拦截器配置
     this.axiosInstance.interceptors.request.use((config: AxiosRequestConfig) => {
+      useViewStore().setLoading(true);
       // 如果开启重复请求功能, 重复请求就会被禁止
       const {
         headers: { ignoreCancelToken },
@@ -61,6 +62,7 @@ export class Request {
 
     // 处理响应结果拦截器
     this.axiosInstance.interceptors.response.use((res: AxiosResponse<any>) => {
+      useViewStore().setLoading(false);
       res && axiosCanceler.removePending(res.config);
       if (responseInterceptors && isFunction(responseInterceptors)) {
         res = responseInterceptors(res);
