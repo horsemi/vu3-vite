@@ -24,9 +24,11 @@ const stockCenter: Array<AppRouteRecordRaw> = [
           {
             path: 'stock-search/list',
             name: 'StockSearchList',
-            component: () => import('/@/views/home/index.vue'),
+            component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '库存查询',
+              frameSrc: 'http://test.tms.4pl.linshimuye.com:8094/#/querystock',
+              permissions: ['StockSearchList'],
             },
           },
           {
@@ -35,6 +37,7 @@ const stockCenter: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/home/index.vue'),
             meta: {
               title: '库存收发明细',
+              permissions: ['StockReceivingReceivingDetailsList'],
             },
           },
         ],
@@ -49,10 +52,12 @@ const stockCenter: Array<AppRouteRecordRaw> = [
         children: [
           {
             path: 'querying-occupied-logs/list',
-            name: 'QueryingOccupiedLogsList',
-            component: () => import('/@/views/home/index.vue'),
+            name: 'QueryAcquireLog',
+            component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '占用日志查询',
+              frameSrc: 'http://test.tms.4pl.linshimuye.com:8094/#/queryacquirelog',
+              permissions: ['QueryAcquireLog'],
             },
           },
         ],
@@ -71,6 +76,7 @@ const stockCenter: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/home/index.vue'),
             meta: {
               title: '仓库分配优先级',
+              permissions: ['WarehouseAssignsPriorityList'],
             },
           },
         ],
