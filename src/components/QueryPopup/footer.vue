@@ -1,11 +1,11 @@
 <template>
   <div :class="prefixCls">
     <div :class="`${prefixCls}__default`">
-      <DxCheckBox v-model:value="schemeDefaultIndexComputed" :disabled="isDisabledComputer" />
+      <DxCheckBox v-model:value="schemeDefaultIndexComputed" :disabled="isDisabledDefaultIndex" />
       <span>下次以此方案自动进入</span>
       <DxCheckBox
         v-model:value="schemeShareComputed"
-        :disabled="isDisabledComputer"
+        :disabled="!isDisabledComputer"
         style="margin-left: 10px"
       />
       <span>共享方案</span>
@@ -21,7 +21,7 @@
   import { defineComponent, ref, inject, computed, Ref } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-
+  import { useUserStore } from '/@/store/modules/user';
   import { DxCheckBox } from 'devextreme-vue/check-box';
   import DxButton from 'devextreme-vue/button';
 
@@ -33,16 +33,17 @@
     emits: ['on-close-popup', 'on-submit', 'on-submit-checked-default'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('popup-footer');
+      const userStore = useUserStore();
       const checkDefault = ref(false);
 
       const schemeDefaultIndex = inject<Ref<number>>('schemeDefaultIndex');
       const checkedIndex = inject<Ref<number>>('checkedIndex');
-      const schemeShare = inject<Ref<boolean>>('schemeShare');
-
+      const currentSchemeItem = inject<{ creatorId: string; isShare: boolean }>(
+        'currentSchemeItem'
+      );
       const updateSchemeIsShareState = inject<(isShareState: boolean) => void>(
         'updateSchemeIsShareState'
       );
-
       const schemeDefaultIndexComputed = computed({
         get: () => {
           return schemeDefaultIndex!.value === checkedIndex!.value;
@@ -54,14 +55,17 @@
 
       const schemeShareComputed = computed({
         get: () => {
-          return schemeShare!.value;
+          return currentSchemeItem!.isShare;
         },
         set: (value: boolean) => {
           updateSchemeIsShareState && updateSchemeIsShareState(value);
         },
       });
-
       const isDisabledComputer = computed(() => {
+        return currentSchemeItem?.creatorId === userStore.getUserInfo.accountId;
+      });
+
+      const isDisabledDefaultIndex = computed(() => {
         return checkedIndex?.value === 0 && schemeDefaultIndexComputed.value;
       });
 
@@ -82,6 +86,7 @@
         schemeDefaultIndexComputed,
         schemeShareComputed,
         isDisabledComputer,
+        isDisabledDefaultIndex,
         onSubmitCheckedDefault,
         onSubmit,
         onClosePopup,

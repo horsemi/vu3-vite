@@ -43,12 +43,12 @@
   } from '../QueryPopup/content/types';
   import type { IQueryItem, ISchemeData } from './types';
 
-  import { defineComponent, PropType, ref, watch, provide } from 'vue';
+  import { defineComponent, PropType, ref, watch, provide, reactive } from 'vue';
   import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useMessage } from '/@/hooks/web/useMessage';
-
+  import { useUserStore } from '/@/store/modules/user';
   import { saveSchemesData, deleteSchemes, saveDefaultScheme } from '/@/utils/scheme/index';
 
   import QueryFrom from './component/form.vue';
@@ -101,6 +101,7 @@
     ],
     setup(props, ctx) {
       const { prefixCls } = useDesign('query-plan');
+      const userStore = useUserStore();
       // 弹窗的dom
       const popup = ref();
       // 左侧搜索组件
@@ -112,18 +113,19 @@
       provide('schemeDefaultIndex', schemeDefaultIndex);
       provide('checkedIndex', checkedIndex);
 
-      const isShare = ref(false);
-      provide('schemeShare', isShare);
-
       // 过滤方案数据，用于交互
       const schemeList = ref<ISchemeItem[]>([]);
       // 过滤方案数据副本，用于保存
       const schemeListTemp = ref<ISchemeItem[]>([]);
       // 快速过滤数据
       const fast = ref<IRequirementItem[]>([]);
-
+      const currentSchemeItem = reactive<{ creatorId: string; isShare: boolean }>({
+        creatorId: '',
+        isShare: false,
+      });
       const updateSchemeIsShareState = (isShareState: boolean) => {
-        isShare.value = isShareState;
+        currentSchemeItem.isShare = isShareState;
+        schemeList.value[checkedIndex.value].isShare = isShareState;
         schemeListTemp.value[checkedIndex.value].isShare = isShareState;
         handleSaveData('保存成功', schemeListTemp.value);
       };
@@ -203,7 +205,6 @@
         checkedIndex.value = index;
 
         // 共享方案状态更新
-        isShare.value = schemeListTemp.value[checkedIndex.value].isShare || false;
         const scheme = cloneDeep(schemeListTemp.value[checkedIndex.value]);
         queryForm.value.queryList = scheme.fast || [];
         scheme.fast &&
@@ -252,7 +253,7 @@
       };
       // 接收删除事件
       const onDelScheme = () => {
-        deleteSchemes(schemeList.value[checkedIndex.value].id);
+        deleteSchemes(schemeList.value[checkedIndex.value].id, userStore.getUserInfo.accountId);
         // 两个数据都需要删除
         const index = checkedIndex.value;
         const temp = [...schemeList.value];
@@ -301,13 +302,13 @@
       // 处理组件数据
       const handleData = (val = props.schemeData) => {
         if (val.scheme && val.scheme.length > 0) {
+          currentSchemeItem.creatorId = val.scheme[checkedIndex.value].creatorId || '';
+          currentSchemeItem.isShare = val.scheme[checkedIndex.value].isShare || false;
           schemeList.value = cloneDeep(val.scheme);
           schemeListTemp.value = cloneDeep(val.scheme);
           fast.value = cloneDeep(props.schemeData.scheme[props.schemeCheckedIndex].fast) || [];
-          isShare.value = schemeListTemp.value[checkedIndex.value].isShare || false;
         }
       };
-
       watch(
         () => props.schemeData,
         (val) => {
@@ -326,6 +327,14 @@
         }
       );
 
+      watch(
+        () => checkedIndex.value,
+        (v) => {
+          currentSchemeItem.creatorId = schemeList.value[v].creatorId || '';
+          currentSchemeItem.isShare = schemeList.value[v].isShare || false;
+        }
+      );
+      provide('currentSchemeItem', currentSchemeItem);
       return {
         prefixCls,
         popup,
