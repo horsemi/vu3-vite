@@ -1,11 +1,11 @@
 <template>
   <div :class="prefixCls">
     <div :class="`${prefixCls}__btn`">
-      <span @click="onSubmitScheme">保存</span>
+      <span :class="{ notClick: !isDisabledComputed }" @click="onSubmitScheme">保存</span>
       <span @click="onSaveScheme">另存</span>
       <span @click="onResetScheme">重置</span>
-      <span @click="onEditScheme">修改</span>
-      <span @click="onDelScheme">删除</span>
+      <span :class="{ notClick: !isDisabledComputed }" @click="onEditScheme">修改</span>
+      <span :class="{ notClick: !isDisabledComputed }" @click="onDelScheme">删除</span>
     </div>
     <DxScrollView>
       <div>
@@ -33,10 +33,10 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, nextTick, PropType } from 'vue';
+  import { defineComponent, ref, nextTick, PropType, inject, computed } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-
+  import { useUserStore } from '/@/store/modules/user';
   import { DxScrollView } from 'devextreme-vue/scroll-view';
 
   export default defineComponent({
@@ -65,11 +65,17 @@
     ],
     setup(props, ctx) {
       const { prefixCls } = useDesign('content-menu');
+      const userStore = useUserStore();
       // 是否是修改状态
       const edit = ref(false);
       // 输入框dom
       const textBox = ref();
-
+      const currentSchemeItem = inject<{ creatorId: string; isShare: boolean }>(
+        'currentSchemeItem'
+      );
+      const isDisabledComputed = computed(() => {
+        return currentSchemeItem?.creatorId === userStore.getUserInfo.accountId;
+      });
       // 点击标题触发
       const onChangeCheckedIndex = (index: number) => {
         // 标题不为空才切换下标
@@ -143,6 +149,7 @@
         onDelScheme,
         onChangeCheckedIndex,
         onTextFocusInput,
+        isDisabledComputed,
       };
     },
   });
@@ -171,6 +178,11 @@
         &:hover {
           background-color: rgba(0, 0, 0, 0.1);
         }
+      }
+      .notClick {
+        color: #aca899;
+        pointer-events: none;
+        background-color: #f5f5f5;
       }
     }
 

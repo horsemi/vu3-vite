@@ -18,9 +18,7 @@ export function createPageUuidGuard(router: Router) {
     const expressWhite = await isUuidRoute(expressPlatform);
     const strategyWhite = await isUuidRoute(strategyConfiguration);
     const stockWhite = await isUuidRoute(stockCenter);
-    unIdPageList.push(...expressWhite);
-    unIdPageList.push(...strategyWhite);
-    unIdPageList.push(...stockWhite);
+    unIdPageList.push(...expressWhite, ...strategyWhite, ...stockWhite);
     if (tabRouterMode === TabRouterModeEnum.MULTIPLE) {
       if (to.query && to.query.uuid) {
         next();
