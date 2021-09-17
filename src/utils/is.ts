@@ -1,3 +1,5 @@
+import { toRawType } from '@vue/shared';
+
 export function is(val: unknown, type: string): boolean {
   return toString.call(val) === `[object ${type}]`;
 }
@@ -30,3 +32,5 @@ export function isNull(val: unknown): val is null {
 export function isNullOrUnDef(val: unknown): val is null | undefined {
   return isUnDef(val) || isNull(val);
 }
+
+export const isHTMLElement = (val: unknown) => toRawType(val).startsWith('HTML');

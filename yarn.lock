@@ -803,6 +803,11 @@
     "@nodelib/fs.scandir" "2.1.4"
     fastq "^1.6.0"
 
+"@popperjs/core@^2.10.1":
+  version "2.10.1"
+  resolved "https://registry.nlark.com/@popperjs/core/download/@popperjs/core-2.10.1.tgz#728ecd95ab207aab8a9a4e421f0422db329232be"
+  integrity sha1-co7NlasgequKmk5CHwQi2zKSMr4=
+
 "@sindresorhus/is@^0.14.0":
   version "0.14.0"
   resolved "https://registry.nlark.com/@sindresorhus/is/download/@sindresorhus/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"

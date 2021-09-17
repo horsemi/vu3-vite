@@ -3,24 +3,36 @@
     <DxScrollView show-scrollbar="onHover" direction="vertical" :width="200" :on-scroll="onScroll">
       <div
         v-for="(item, index) in menuList"
+        :ref="
+          (el) => {
+            if (el) menuListRef[index] = el;
+          }
+        "
         :key="item.name"
         :tabindex="-1"
-        :class="[`${prefixCls}-item__container`, isActive(item)]"
-        @mouseenter="handleMenuClick(item, index)"
       >
-        <div :class="`${prefixCls}-item-box`">
-          <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
-          <span :class="`${prefixCls}-item-title__inner`">{{ item.meta.title }}</span>
-        </div>
-        <transition name="zoom-in-left">
-          <div
-            v-show="item.meta.showSub"
-            :class="`${prefixCls}-popup__container`"
-            :style="{ top: getSubTop(index), left: getSubLeft() }"
-          >
-            <MenuPopup :menu-item-data="item.children" />
-          </div>
-        </transition>
+        <Popper :is-show-popper="item.meta.showSub">
+          <template #popper>
+            <div
+              :class="`${prefixCls}-popup__container`"
+              @mouseenter="handleMenuClick(item, index)"
+              @mouseleave="handleMenuClose"
+            >
+              <MenuPopup :menu-item-data="item.children" />
+            </div>
+          </template>
+          <template #trigger>
+            <div
+              :class="[`${prefixCls}-item__container`, isActive(item)]"
+              @mouseenter="handleMenuClick(item, index)"
+            >
+              <div :class="`${prefixCls}-item-box`">
+                <SvgIcon size="23" :name="item.meta.icon"></SvgIcon>
+                <span :class="`${prefixCls}-item-title__inner`">{{ item.meta.title }}</span>
+              </div>
+            </div>
+          </template>
+        </Popper>
       </div>
     </DxScrollView>
   </div>
@@ -28,17 +40,24 @@
 
 <script lang="ts">
   import { defineComponent, ref, unref, computed } from 'vue';
+
   import { RouteLocationRawEx, useGo } from '/@/hooks/web/usePage';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { usePermissionStore } from '/@/store/modules/permission';
   import { useRouter } from 'vue-router';
   import DxScrollView from 'devextreme-vue/scroll-view';
 
+  import Popper from './component/use-popper/index.vue';
+
   import MenuPopup from './component/submenu/index.vue';
 
   export default defineComponent({
     name: 'LayoutMenu',
-    components: { MenuPopup, DxScrollView },
+    components: {
+      MenuPopup,
+      Popper,
+      DxScrollView,
+    },
     props: {
       openState: Boolean,
       menuSize: {
@@ -54,6 +73,7 @@
       const router = useRouter();
 
       const activeIndex = ref<number>(0);
+      const timeout = ref<any>(null);
 
       const activePath = computed(() => {
         return `/${router.currentRoute.value.path.split('/').slice(1)[0]}`;
@@ -62,6 +82,7 @@
       const scrollTop = ref<number>(0);
       const permissionStore = usePermissionStore();
       const menuList = ref(permissionStore.getMenuList);
+      const menuListRef = ref([]);
 
       function isActive(route): string | undefined {
         if (route.path === unref(activePath)) {
@@ -72,15 +93,20 @@
       }
 
       function handleMenuClick(item, index) {
-        menuList.value[activeIndex.value].meta.showSub = false;
-        activeIndex.value = index;
-        if (item.children) {
-          const menu = item.children.filter((item) => !item.meta!.hideMenu);
-          menu.length === 1 && !menu[0].children
-            ? go(item.children[0] as RouteLocationRawEx)
-            : (item.meta!.showSub = true);
-        }
+        // 延时展开菜单
+        clearTimeout(unref(timeout));
+        timeout.value = setTimeout(() => {
+          menuList.value[activeIndex.value].meta.showSub = false;
+          activeIndex.value = index;
+          if (item.children) {
+            const menu = item.children.filter((item) => !item.meta!.hideMenu);
+            menu.length === 1 && !menu[0].children
+              ? go(item.children[0] as RouteLocationRawEx)
+              : (item.meta!.showSub = true);
+          }
+        }, 300);
       }
+
       const onScroll = (e): void => {
         scrollTop.value = e.scrollOffset.top;
       };
@@ -98,7 +124,11 @@
       };
 
       const handleMenuClose = () => {
-        menuList.value[activeIndex.value].meta.showSub = false;
+        // 延时关闭菜单
+        clearTimeout(unref(timeout));
+        timeout.value = setTimeout(() => {
+          menuList.value[activeIndex.value].meta.showSub = false;
+        }, 300);
       };
 
       return {
@@ -112,6 +142,7 @@
         activePath,
         isActive,
         menuList,
+        menuListRef,
       };
     },
   });
@@ -122,7 +153,7 @@
 
   .@{prefix-cls} {
     width: 200px;
-    height: calc(100vh - 56px) !important;
+    // height: calc(100vh - 56px) !important; // 在一定比例下会出现滚动条
     padding-top: 10px;
     overflow: auto;
 
@@ -179,14 +210,15 @@
     }
 
     &-popup__container {
-      position: fixed;
-      top: 50px;
-      z-index: @page-menu-z-index;
+      // position: fixed;
+      // z-index: @page-menu-z-index;
       width: 392px;
-      padding: 10px 15px;
+      max-height: 100vh;
+      overflow-y: auto;
+      // padding: 10px 15px;
       color: #fff;
       background: #fff;
-      border: 3px solid #ebeef5;
+      // border: 3px solid #ebeef5;
       border-radius: 4px;
       box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
     }
