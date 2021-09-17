@@ -42,7 +42,7 @@ export default defineConfig(
         },
       },
       server: {
-        port: 8080,
+        port: 8096,
         open: true,
         host: 'test.ods.otwb.linshimuye.com',
         proxy: {

@@ -265,39 +265,63 @@
       };
 
       const onSubmitClick = () => {
-        ShippingAdviceApi.onShippingAdviceSubmit([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingAdviceApi.onShippingAdviceSubmit([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onApplyClick = () => {
-        ShippingAdviceApi.onShippingAdviceApply([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingAdviceApi.onShippingAdviceApply([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onSendClick = () => {
-        ShippingAdviceApi.onShippingAdviceSend([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingAdviceApi.onShippingAdviceSend([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onRecallClick = () => {
-        ShippingAdviceApi.onShippingAdviceRecall([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingAdviceApi.onShippingAdviceRecall([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onRedraftClick = () => {
-        ShippingAdviceApi.onShippingAdviceRedraft([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingAdviceApi.onShippingAdviceRedraft([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onRevokeClick = () => {
-        ShippingAdviceApi.onShippingAdviceRevoke([formData.value.GatheringParentCode]).then(() => {
-          onRefresh();
-        });
+        ShippingAdviceApi.onShippingAdviceRevoke([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
       };
 
       const onItemButtonClick = (e) => {

@@ -11,11 +11,14 @@ import { getRawRoute } from '/@/utils';
 import { PageEnum } from '/@/enums/pageEnum';
 import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE, LOGIN_ROUTE } from '/@/router/routes/basic';
 
+let timeId: TimeoutHandle;
+
 export interface ViewState {
   cacheList: Set<string>;
   viewList: RouteLocationNormalized[];
   lastDragEndIndexState: number;
   loadingZindex: number;
+  loadingTimes: number;
 }
 
 export const useViewStore = defineStore({
@@ -25,6 +28,7 @@ export const useViewStore = defineStore({
     viewList: [],
     lastDragEndIndexState: 0,
     loadingZindex: 2000,
+    loadingTimes: 0,
   }),
   getters: {
     getViewList() {
@@ -45,6 +49,9 @@ export const useViewStore = defineStore({
     getLoadingZindex() {
       return this.loadingZindex;
     },
+    getLoadingTimes(): number {
+      return this.loadingTimes;
+    },
   },
   actions: {
     goToPage() {
@@ -63,6 +70,17 @@ export const useViewStore = defineStore({
 
       // Jump to the current page and report an error
       path !== toPath && go(toPath as PageEnum, true);
+    },
+    setLoading(value: boolean) {
+      let count = this.loadingTimes;
+      if (value) {
+        count += 1;
+        this.loadingTimes = count;
+      } else {
+        count = count - 1;
+        count = count < 0 ? 0 : count;
+        this.loadingTimes = count;
+      }
     },
     updateCacheList(): void {
       const cacheMap: Set<string> = new Set();

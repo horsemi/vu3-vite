@@ -45,10 +45,10 @@ export class SchemeApi {
     });
   }
 
-  static deleteSchemes(id: string) {
+  static deleteSchemes(id: string, creatorId: string) {
     return defHttp.post<ISchemeData[]>({
       url: apiUrl.schemeDelete,
-      params: { id },
+      params: { id, creatorId },
     });
   }
 

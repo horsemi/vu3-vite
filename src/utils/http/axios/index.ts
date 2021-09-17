@@ -9,6 +9,7 @@ import { isString } from '/@/utils/is';
 import { setObjToUrlParams, deepMerge } from '/@/utils';
 import { errorResult, tokenHeaderKey } from './const';
 import { useUserStoreWidthOut } from '/@/store/modules/user';
+import { useViewWithOutStore } from '/@/store/modules/view';
 import { useErrorLogStoreWithOut } from '/@/store/modules/error';
 import { errorMessage, successMessage } from '/@/hooks/web/useMessage';
 import { checkStatus } from './checkStatues';
@@ -116,6 +117,7 @@ const transform: AxiosTransform = {
    * @description 响应错误处理
    */
   responseInterceptorsCatch: (error: any) => {
+    useViewWithOutStore().setLoading(false);
     const errorLogStore = useErrorLogStoreWithOut();
     errorLogStore.addAjaxErrorInfo(error);
     const { response, code, message } = error || {};

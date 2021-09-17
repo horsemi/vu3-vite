@@ -1,25 +1,24 @@
 <template>
-  <div v-loading="getPageLoading" :class="prefixCls">
+  <!-- <div id="layout_content" v-loading="getPageLoading" :class="prefixCls">  -->
+  <div id="layout_content" :class="prefixCls">
     <PageLayout />
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed } from 'vue';
+  import { defineComponent } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import PageLayout from './page.vue';
-  import { useAppStore } from '/@/store/modules/app';
 
   export default defineComponent({
     name: 'LayoutContent',
-    components: { PageLayout },
+    components: {
+      PageLayout,
+    },
     setup() {
-      const appStore = useAppStore();
-      const getPageLoading = computed(() => appStore.getPageLoading);
       const { prefixCls } = useDesign('layout-content');
       return {
-        getPageLoading,
         prefixCls,
       };
     },
@@ -36,7 +35,7 @@
     &-loading {
       position: absolute;
       top: 200px;
-      z-index: @page-loading-z-index;
+      // z-index: @page-loading-z-index;
     }
   }
 </style>

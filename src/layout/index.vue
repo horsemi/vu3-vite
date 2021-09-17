@@ -1,5 +1,5 @@
 <template>
-  <div :class="prefixCls">
+  <div id="layout_content" :class="prefixCls">
     <div>
       <LayoutHeader />
     </div>
@@ -40,6 +40,15 @@
       </template>
     </DxDrawer>
   </div>
+  <DxLoadPanel
+    v-model:visible="getPageLoading"
+    :position="position"
+    :show-indicator="true"
+    :show-pane="true"
+    :shading="true"
+    message="正在加载"
+    shading-color="transparent"
+  />
 </template>
 
 <script lang="ts">
@@ -52,6 +61,7 @@
 
   import DxDrawer from 'devextreme-vue/drawer';
   import DxScrollView from 'devextreme-vue/scroll-view';
+  import { DxLoadPanel } from 'devextreme-vue/load-panel';
 
   import { useRouter } from 'vue-router';
   import { useViewStore } from '/@/store/modules/view';
@@ -67,6 +77,7 @@
       MultipleTabs,
       DxDrawer,
       DxScrollView,
+      DxLoadPanel,
     },
     setup() {
       const menuSize = {
@@ -82,6 +93,7 @@
       const toggleMenu = () => {
         openState.value = !openState.value;
       };
+      const getPageLoading = computed(() => viewStore.getLoadingTimes > 0);
 
       function reciveMessage(e) {
         if (e.data.status === 401) {
@@ -103,6 +115,8 @@
         toggleMenu,
         menuSize,
         reciveMessage,
+        getPageLoading,
+        position: { of: '#layout_content' },
       };
     },
   });

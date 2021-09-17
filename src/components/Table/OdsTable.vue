@@ -418,14 +418,21 @@
     // 给表头单元格加上左右边框
     .dx-datagrid .dx-datagrid-headers .dx-header-filter,
     .dx-datagrid .dx-datagrid-headers .dx-header-row > td {
-      border-right: 1px solid #ddd;
-      border-left: 1px solid #ddd;
+      border-right: 1px solid #ebeef5;
+      border-left: 1px solid #ebeef5;
+    }
+    // 表头底部框
+    .dx-datagrid-headers .dx-datagrid-table .dx-row > td {
+      border-bottom: 1px solid #ebeef5;
     }
 
     // 去掉单元格的左右边框
     .dx-datagrid .dx-column-lines > td {
       border-right: none;
       border-left: none;
+    }
+    .dx-datagrid .dx-row-lines > td {
+      border-bottom: 1px solid #ebeef5;
     }
 
     // 重置单元格内边距

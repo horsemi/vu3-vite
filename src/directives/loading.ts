@@ -8,7 +8,7 @@ const createInstance = (el, binding) => {
   const customClassExr = el.getAttribute('element-loading-custom-class');
   const vm = binding.instance;
   el.instance = Loading({
-    text: (vm && vm[textExr]) || textExr,
+    text: (vm && vm[textExr]) || textExr || '正在加载',
     spinner: (vm && vm[spinnerExr]) || spinnerExr,
     background: (vm && vm[backgroundExr]) || backgroundExr,
     customClass: (vm && vm[customClassExr]) || customClassExr,

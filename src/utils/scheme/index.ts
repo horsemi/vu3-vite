@@ -90,8 +90,8 @@ export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem 
   }
 }
 
-export async function deleteSchemes(id: string) {
-  return await SchemeApi.deleteSchemes(id);
+export async function deleteSchemes(id: string, creatorId: string) {
+  return await SchemeApi.deleteSchemes(id, creatorId);
 }
 
 export async function saveDefaultScheme(schemeData: ISchemeItem, checkedStatue: boolean) {

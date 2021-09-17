@@ -54,7 +54,16 @@ export const operatorMap = {
 export const globalOperator = {
   stringOperators: ['equal', 'notEqual', 'contains', 'notcontains', 'startswith', 'endswith'],
   numberOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
-  datetimeOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
+  datetimeOperators: [
+    'equal',
+    'notEqual',
+    'greater',
+    'greaterEqual',
+    'less',
+    'lessEqual',
+    'today',
+    'thisMonth',
+  ],
   dateOperators: [
     'equal',
     'notEqual',
