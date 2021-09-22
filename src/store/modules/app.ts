@@ -14,11 +14,10 @@ import { useViewStore } from '/@/store/modules/view';
 import { useUserStore } from '/@/store/modules/user';
 import { usePermissionStore } from '/@/store/modules/permission';
 
-let timeId: TimeoutHandle;
-
 interface AppState {
   showToastFn: () => void;
   toastData: Record<string, unknown>;
+  menuOpenState: boolean;
   systemConfig: Nullable<SystemConfig>;
   globalEnumData: GlobalEnumType[];
 }
@@ -32,6 +31,8 @@ export const useAppStore = defineStore({
       message: 'success',
       description: '',
     },
+    // layout菜单展开状态
+    menuOpenState: false,
     systemConfig: Persistent.getLocal(SYSTEM_CFG_KEY),
     globalEnumData: [],
   }),
@@ -41,6 +42,9 @@ export const useAppStore = defineStore({
     },
     getToastData() {
       return this.toastData;
+    },
+    getMenuOpenState() {
+      return this.menuOpenState;
     },
     getSystemConfig() {
       return this.systemConfig || ({} as SystemConfig);
@@ -60,6 +64,9 @@ export const useAppStore = defineStore({
         message,
         description,
       };
+    },
+    setMenuOpenState(state: boolean) {
+      this.menuOpenState = state;
     },
     async resumeAllState() {
       usePermissionStore().resetState();

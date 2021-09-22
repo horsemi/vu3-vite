@@ -4,6 +4,7 @@
   import { defineComponent, ref, unref, h, onMounted, onUnmounted, watch } from 'vue';
   import { createPopper, Instance } from '@popperjs/core';
 
+  import { useAppStore } from '/@/store/modules/app';
   import renderPopper from '../renderers/popper';
 
   export default defineComponent({
@@ -16,6 +17,8 @@
     },
     emits: [],
     setup(props, ctx) {
+      const appStore = useAppStore();
+
       let popperInstance: Instance | null = null;
       const triggerRef = ref<ComponentPublicInstance | HTMLElement | null>(null);
       const popperRef = ref<HTMLElement | null>(null);
@@ -46,7 +49,9 @@
               {
                 name: 'offset',
                 options: {
-                  // offset: [-35, 20],
+                  offset: () => {
+                    return [0, appStore.getMenuOpenState ? 0 : -146];
+                  },
                 },
               },
             ],

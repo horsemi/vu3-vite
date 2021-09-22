@@ -65,6 +65,7 @@
 
   import { useRouter } from 'vue-router';
   import { useViewStore } from '/@/store/modules/view';
+  import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { initGlobalEnumData } from '/@/logics/initAppConfig';
 
@@ -86,15 +87,24 @@
       };
       initGlobalEnumData();
       const viewStore = useViewStore();
+      const appStore = useAppStore();
       const router = useRouter();
       const { prefixCls } = useDesign('layout');
+
       const viewState = computed(() => viewStore.getViewList);
-      const openState = ref(true);
+      const openState = computed({
+        get: () => appStore.getMenuOpenState,
+        set: (value: boolean) => {
+          appStore.setMenuOpenState(value);
+        },
+      });
+
       const toggleMenu = () => {
         openState.value = !openState.value;
       };
       const getPageLoading = computed(() => viewStore.getLoadingTimes > 0);
 
+      // iframe 通讯监听方法
       function reciveMessage(e) {
         if (e.data.status === 401) {
           router.push({ path: '/login' });
