@@ -117,3 +117,9 @@
     },
   });
 </script>
+
+<style lang="less">
+  .menu-popper__container-animation {
+    .zoom-animation(left, scale(0, 0), scale(1, 1), top left);
+  }
+</style>

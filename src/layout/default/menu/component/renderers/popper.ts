@@ -6,23 +6,29 @@ export default function renderPopper(props, children: VNode[]) {
   const { visibility } = props;
 
   return h(
-    Transition,
+    'div',
     {
-      name: 'zoom-in-left',
+      class: 'menu-popper__container-animation',
     },
-    {
-      default: withCtx(() => [
-        withDirectives(
-          h(
-            'div',
-            {
-              ref: 'popperRef',
-            },
-            children
+    h(
+      Transition,
+      {
+        name: 'zoom-in-left',
+      },
+      {
+        default: withCtx(() => [
+          withDirectives(
+            h(
+              'div',
+              {
+                ref: 'popperRef',
+              },
+              children
+            ),
+            [[vShow, visibility]]
           ),
-          [[vShow, visibility]]
-        ),
-      ]),
-    }
+        ]),
+      }
+    )
   );
 }
