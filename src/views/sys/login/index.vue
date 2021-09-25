@@ -1,19 +1,21 @@
 <template>
   <div :class="prefixCls">
     <div class="container__wrap">
-      <div class="top-logo__wrap">
-        <SvgIcon size="130 30" name="logo-large"></SvgIcon>
+      <div class="top-logo__wrap" style="color: #76e9d0">
+        <SvgIcon size="175 39" name="logo-large"></SvgIcon>
       </div>
-      <div class="form-container__wrap">
+      <div class="container__wrap_left">
         <div class="image-container__wrap">
           <img
             class="image-container__inner"
-            src="http://file.otwb.linshimuye.com:30011/file/tms/frontend/login/loginLeftMap.png"
+            src="http://file.otwb.linshimuye.com:30011/file/ods/webclient/img/ods_login.png"
           />
         </div>
+      </div>
+      <div class="container__wrap_right">
         <div class="login-form-container__wrap">
           <div class="login-form-container__inner">
-            <div class="login-form-title__wrap">林氏订单调度中心</div>
+            <div class="login-form-title__wrap">林氏ODS订单调度中心</div>
             <DxForm
               :form-data="loginData"
               label-location="top"
@@ -21,15 +23,17 @@
               show-colon-after-label
             >
               <DxItem
+                css-class="login-form-item"
                 data-field="userName"
                 :editor-options="{
                   placeholder: '请输入账号',
                 }"
               >
-                <DxLabel text="账号"></DxLabel>
+                <DxLabel :visible="false"></DxLabel>
                 <DxRequiredRule message="请输入账号" />
               </DxItem>
               <DxItem
+                css-class="login-form-item"
                 data-field="password"
                 :editor-options="{
                   mode: 'password',
@@ -37,18 +41,13 @@
                   showClearButton: true,
                 }"
               >
-                <DxLabel text="密码"></DxLabel>
+                <DxLabel :visible="false"></DxLabel>
                 <DxRequiredRule message="请输入密码" />
               </DxItem>
             </DxForm>
-            <DxButton class="login-btn__inner" @click="onLogin">登入</DxButton>
+            <DxButton class="login-btn__inner" @click="onLogin">登录</DxButton>
           </div>
         </div>
-      </div>
-      <div class="foot-container__wrap">
-        <div class="foot-line__inner"></div>
-        <div class="foot-title__wrap">让生活过得更好</div>
-        <div class="foot-line__inner"></div>
       </div>
       <PasswordModal
         v-if="popupVisable"
@@ -134,15 +133,16 @@
 
 <style lang="less">
   @prefix-cls: ~'@{namespace}-login';
-  @fileService: 'http://file.otwb.linshimuye.com:30011/file/tms/frontend';
+  @fileService: 'http://file.otwb.linshimuye.com:30011/file/ods/webclient/img';
 
   @proportion: 0.69; //小屏比例
 
   .@{prefix-cls} {
+    position: relative;
     display: flex;
     height: 100%;
-    min-height: 624px;
-    background: url('@{fileService}/login/backgroupMap.png') bottom right no-repeat;
+    // min-height: 624px;
+    background: url('@{fileService}/ods_login_background.png') bottom right no-repeat;
     -webkit-background-size: cover;
     -o-background-size: cover;
     background-size: cover;
@@ -150,110 +150,96 @@
     .container__wrap {
       @media screen and (max-width: 992px) {
         width: unset;
-        margin: 3.5% 4%;
+        margin: auto;
       }
 
-      width: 833.25px;
-      margin: auto;
-    }
-
-    .top-logo__wrap {
-      width: 149.984px;
-      height: 30.797px;
-      margin-bottom: 4%; // 50px * $proportion;
-    }
-
-    .form-container__wrap {
-      @media screen and (max-width: 992px) {
-        width: 60%;
-        height: unset;
-      }
-
-      position: relative;
-      width: 833.25px;
-      height: 472.688px;
-      background-color: #fff;
-      border-radius: 20px;
-      -webkit-box-sizing: border-box;
-      box-sizing: border-box;
-    }
-
-    .image-container__wrap {
-      @media screen and (max-width: 992px) {
-        width: 0%;
-      }
-
-      display: inline-block;
-      width: 55%; //695.3px * $proportion;
-
-      .image-container__inner {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-      }
-    }
-
-    .login-form-container__wrap {
-      @media screen and (max-width: 992px) {
-        width: 100%;
-      }
-
-      display: inline-block;
-      width: 45%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
       height: 100%;
-      min-height: 472.688px;
-      vertical-align: top;
+      // margin: auto;
 
-      .login-form-container__inner {
-        width: 72%; // 460px * $proportion;
-        margin: 22% auto 0 auto; // 130px * $proportion;
+      .top-logo__wrap {
+        position: absolute;
+        top: 49px;
+        left: 70px;
       }
+      .container__wrap_left {
+        @media screen and (max-width: 992px) {
+          display: none;
+        }
 
-      .login-form-title__wrap {
-        margin-bottom: 14%; //65px * $proportion;
-        font-size: 38px * @proportion;
-        font-weight: 500;
-        color: #00596e;
-        text-align: left;
+        flex: 1;
+        height: 100%;
+        margin: auto;
+
+        .image-container__wrap {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          width: 100%;
+          height: 100%;
+          margin: 0 auto auto 10%;
+
+          .image-container__inner {
+            width: 37vw;
+            height: 52vh;
+            object-fit: contain;
+          }
+        }
       }
+      .container__wrap_right {
+        flex: 1;
+        .login-form-container__wrap {
+          @media screen and (max-width: 992px) {
+            width: 70%;
+            min-width: 349px;
+            margin: auto;
+          }
 
-      .login-btn__inner {
-        width: 100%;
-        height: 65px * @proportion;
-        margin-top: 20px;
-        font-weight: normal;
-        color: rgba(58, 239, 208, 1);
-        background-color: #00596e;
-        border-radius: 10px;
+          display: inline-block;
+          width: 378px;
+          height: 410px;
+          margin: 7.4% 11.4% 13% 22%;
+          vertical-align: middle;
+          background-color: #fff;
+          border-radius: 4px;
+
+          .login-form-container__inner {
+            width: 72%; // 460px * $proportion;
+            margin: 10% auto 0 auto; // 130px * $proportion;
+            .login-form-item {
+              margin-top: 23px;
+            }
+          }
+
+          .login-form-title__wrap {
+            height: 33px;
+            margin-top: 76px;
+            font-size: 24px;
+            font-weight: 500;
+            line-height: 33px;
+            color: #1890ff;
+            text-align: left;
+          }
+
+          .login-btn__inner {
+            width: 100%;
+            height: 48px;
+            margin-top: 30px;
+            margin-bottom: 115px;
+            font-size: 16px;
+            color: #e1f0ff;
+            background: #1890ff;
+            border-radius: 4px;
+          }
+          //  .dx-state-hover{
+          //     color:#E1F0FF;
+          //     background: #5CB1FF;
+          //   }
+        }
       }
-    }
-
-    .foot-container__wrap {
-      width: 733.1px * @proportion;
-      margin: 4% auto 1% auto;
-      text-align: center;
-    }
-
-    .foot-line__inner {
-      display: inline-block;
-      width: 20.83333%;
-      height: 16px * @proportion;
-      border-bottom: 1px solid rgba(196, 255, 242, 1);
-      opacity: 0.4;
-    }
-
-    .foot-title__wrap {
-      @media screen and (max-width: 992px) {
-        width: 25%;
-      }
-
-      display: inline-block;
-      width: 41.66667%;
-      height: 16px * @proportion;
-      font-size: 16px * @proportion;
-      font-weight: 400;
-      color: rgba(254, 255, 255, 1);
-      opacity: 0.4;
     }
   }
 </style>
