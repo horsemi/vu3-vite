@@ -8,7 +8,7 @@ export default function renderPopper(props, children: VNode[]) {
   return h(
     'div',
     {
-      class: 'menu-popper__container-animation',
+      // class: 'menu-popper__container-animation',
     },
     h(
       Transition,
