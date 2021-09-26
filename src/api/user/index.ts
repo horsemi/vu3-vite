@@ -17,7 +17,7 @@ enum apiUrl {
   logout = '/passport/api/logout',
   menus = '/passport/api/menus',
   permission = '/passport/api/authenticate-for-web',
-  queryPasswordPolicy = '/api/accounts/password-policy/searchv2',
+  queryPasswordPolicy = '/permission/api/accounts/password-policy/searchv2',
   changePassword = '/passport/api/change-password',
   passwordPolicy = '/passport/api/password-policy',
 }

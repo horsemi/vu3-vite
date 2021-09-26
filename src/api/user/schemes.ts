@@ -15,12 +15,12 @@ export interface ISchemeData {
 }
 
 enum apiUrl {
-  schemeSearch = '/api/schemes/search',
-  schemeSave = '/api/schemes/save',
-  schemeUpdate = '/api/schemes/update',
-  schemeDelete = '/api/schemes/delete',
+  schemeSearch = '/permission/api/schemes/search',
+  schemeSave = '/permission/api/schemes/save',
+  schemeUpdate = '/permission/api/schemes/update',
+  schemeDelete = '/permission/api/schemes/delete',
 
-  defaultSchemeSave = '/api/schemes/user/save',
+  defaultSchemeSave = '/permission/api/schemes/user/save',
 }
 
 export class SchemeApi {

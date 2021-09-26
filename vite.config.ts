@@ -50,12 +50,8 @@ export default defineConfig(
             target: 'http://10.10.14.245:30034',
             changeOrigin: true,
           },
-          '/api/accounts': {
-            target: 'http://10.10.14.245:30035',
-            changeOrigin: true,
-          },
-          '/api/schemes': {
-            target: 'http://10.10.14.245:30035',
+          '/permission': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
           },
           '/ods/api': {
