@@ -234,10 +234,6 @@
             background: #1890ff;
             border-radius: 4px;
           }
-          //  .dx-state-hover{
-          //     color:#E1F0FF;
-          //     background: #5CB1FF;
-          //   }
         }
       }
     }
