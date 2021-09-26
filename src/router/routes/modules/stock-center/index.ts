@@ -27,7 +27,7 @@ const stockCenter: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '库存查询',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8094/#/querystock',
+              frameSrc: `${import.meta.env.VITE_ROUTER_STOCK_CENTER_URL}#/querystock`,
               permissions: ['StockSearchList'],
             },
           },
@@ -56,7 +56,7 @@ const stockCenter: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '占用日志查询',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8094/#/queryacquirelog',
+              frameSrc: `${import.meta.env.VITE_ROUTER_STOCK_CENTER_URL}#/queryacquirelog`,
               permissions: ['QueryAcquireLog'],
             },
           },

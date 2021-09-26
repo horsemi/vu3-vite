@@ -27,7 +27,7 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '推荐策略',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/recommendrule/list',
+              frameSrc: `${import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL}#/recommendrule/list`,
               permissions: ['RecommendRuleList'],
             },
           },
@@ -37,7 +37,9 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '限制策略',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/restrictive-rule/list',
+              frameSrc: `${
+                import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL
+              }#/restrictive-rule/list`,
               permissions: ['RestrictiveRuleList'],
             },
           },

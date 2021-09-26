@@ -27,7 +27,7 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '快递订单',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/expressbill/list',
+              frameSrc: `${import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL}#/expressbill/list`,
               permissions: ['ExpressBillList'],
             },
           },
@@ -47,7 +47,7 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '运费账单',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/freightbill/list',
+              frameSrc: `${import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL}#/freightbill/list`,
               permissions: ['FreightBillList'],
             },
           },
@@ -67,7 +67,9 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '时效监控',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/report/timelimit/list',
+              frameSrc: `${
+                import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL
+              }#/report/timelimit/list`,
               permissions: ['ExpressReportTimeLimitList'],
             },
           },
@@ -77,7 +79,7 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '订单轨迹',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/search/list',
+              frameSrc: `${import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL}#/search/list`,
               permissions: ['ExpressSearchList'],
             },
           },
@@ -87,8 +89,9 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '发货明细',
-              frameSrc:
-                'http://test.tms.4pl.linshimuye.com:8095/#/report/shipping-advice-express/list',
+              frameSrc: `${
+                import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL
+              }#/report/shipping-advice-express/list`,
               permissions: ['ExpressPlatformReportShippingAdviceExpress'],
             },
           },
@@ -108,7 +111,7 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '快递公司',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/expresscompany/list',
+              frameSrc: `${import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL}#/expresscompany/list`,
               permissions: ['ExpressCompanyList'],
             },
           },
@@ -118,7 +121,7 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '账户配置',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/expressaccount/list',
+              frameSrc: `${import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL}#/expressaccount/list`,
               permissions: ['ExpressAccountList'],
             },
           },
@@ -128,7 +131,9 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '地址映射',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/regiontransformation/list',
+              frameSrc: `${
+                import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL
+              }#/regiontransformation/list`,
               permissions: ['RegionTransformationList'],
             },
           },
@@ -138,7 +143,9 @@ const expressPlatform: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '运费价目',
-              frameSrc: 'http://test.tms.4pl.linshimuye.com:8095/#/estimated-feeprice/list',
+              frameSrc: `${
+                import.meta.env.VITE_ROUTER_EXPRESSES_SERVERS_URL
+              }#/estimated-feeprice/list`,
               permissions: ['ExpressPlatformEstimatedFeepriceList'],
             },
           },
