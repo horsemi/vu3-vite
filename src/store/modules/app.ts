@@ -32,7 +32,7 @@ export const useAppStore = defineStore({
       description: '',
     },
     // layout菜单展开状态
-    menuOpenState: false,
+    menuOpenState: true,
     systemConfig: Persistent.getLocal(SYSTEM_CFG_KEY),
     globalEnumData: [],
   }),
