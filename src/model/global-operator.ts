@@ -49,11 +49,37 @@ export const operatorMap = {
     key: 'thisMonth',
     value: '本月',
   },
+  isNull: {
+    key: 'isNull',
+    value: '为空',
+  },
+  isNotNull: {
+    key: 'isNotNull',
+    value: '不为空',
+  },
 };
 
 export const globalOperator = {
-  stringOperators: ['equal', 'notEqual', 'contains', 'notcontains', 'startswith', 'endswith'],
-  numberOperators: ['equal', 'notEqual', 'greater', 'greaterEqual', 'less', 'lessEqual'],
+  stringOperators: [
+    'equal',
+    'notEqual',
+    'contains',
+    'notcontains',
+    'startswith',
+    'endswith',
+    'isNull',
+    'isNotNull',
+  ],
+  numberOperators: [
+    'equal',
+    'notEqual',
+    'greater',
+    'greaterEqual',
+    'less',
+    'lessEqual',
+    'isNull',
+    'isNotNull',
+  ],
   datetimeOperators: [
     'equal',
     'notEqual',
@@ -63,6 +89,8 @@ export const globalOperator = {
     'lessEqual',
     'today',
     'thisMonth',
+    'isNull',
+    'isNotNull',
   ],
   dateOperators: [
     'equal',
@@ -73,10 +101,12 @@ export const globalOperator = {
     'lessEqual',
     'today',
     'thisMonth',
+    'isNull',
+    'isNotNull',
   ],
   booleanOperators: ['equal', 'notEqual'],
-  enumOperators: ['equal', 'notEqual'],
-  foundationOperators: ['equal', 'notEqual'],
+  enumOperators: ['equal', 'notEqual', 'isNull', 'isNotNull'],
+  foundationOperators: ['equal', 'notEqual', 'isNull', 'isNotNull'],
   allOperators: [
     'equal',
     'notEqual',
@@ -88,11 +118,18 @@ export const globalOperator = {
     'greaterEqual',
     'less',
     'lessEqual',
+    'isNull',
+    'isNotNull',
   ],
 };
 
 export function getOperatorByType(operatorCode: OperatorType | string) {
-  const operator = operatorCode && globalOperator[`${operatorCode}Operators`];
+  let operator: string[];
+  if (operatorCode === 'int32' || operatorCode === 'int64' || operatorCode === 'decimal') {
+    operator = operatorCode && globalOperator['numberOperators'];
+  } else {
+    operator = operatorCode && globalOperator[`${operatorCode}Operators`];
+  }
   return initOperatorMap(operator);
 }
 
@@ -110,4 +147,17 @@ export function initOperatorMap(operators: string[]) {
   }
 
   return result;
+}
+
+export function isDisabedSelect(operation: string): boolean {
+  if (
+    operation === 'isNull' ||
+    operation === 'isNotNull' ||
+    operation === 'today' ||
+    operation === 'thisMonth'
+  ) {
+    return true;
+  } else {
+    return false;
+  }
 }

@@ -223,20 +223,42 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
 const initValueData = (item: IRequirementItem, requirement) => {
   let result = '';
 
-  const value = item.value ? item.value : null;
+  const value = item.value;
   result += `["${requirement}"`;
 
   switch (item.type) {
     case 'int32': {
-      result += `,"${item.operator}",${value}]`;
+      if (item.operator === 'isNull') {
+        result += ',"=",null]';
+      } else if (item.operator === 'isNotNull') {
+        result += ',"<>",null]';
+      } else if (!value) {
+        result = '';
+      } else {
+        result += `,"${item.operator}",${value}]`;
+      }
       break;
     }
     case 'boolean': {
-      result += `,"${item.operator}",${value}]`;
+      if (item.operator === 'isNull') {
+        result += ',"=",null]';
+      } else if (item.operator === 'isNotNull') {
+        result += ',"<>",null]';
+      } else if (!value) {
+        result = '';
+      } else {
+        result += `,"${item.operator}",${value}]`;
+      }
       break;
     }
     case 'date': {
-      if (item.operator === 'today') {
+      if (item.operator === 'isNull') {
+        result += ',"=",null]';
+      } else if (item.operator === 'isNotNull') {
+        result += ',"<>",null]';
+      } else if (!value) {
+        result = '';
+      } else if (item.operator === 'today') {
         result += rangeFormat(
           getBeginTime(getCurrentDate()),
           requirement,
@@ -248,8 +270,6 @@ const initValueData = (item: IRequirementItem, requirement) => {
           requirement,
           getEndTime(getCurrentDate(), 'month')
         );
-      } else if (value === null) {
-        result += `,"${item.operator}", ${value}]`;
       } else if (item.operator === '=') {
         result += rangeFormat(getBeginTime(value as Date), requirement, getEndTime(value as Date));
       } else if (item.operator === '<>') {
@@ -262,7 +282,13 @@ const initValueData = (item: IRequirementItem, requirement) => {
       break;
     }
     case 'datetime': {
-      if (item.operator === 'today') {
+      if (item.operator === 'isNull') {
+        result += ',"=",null]';
+      } else if (item.operator === 'isNotNull') {
+        result += ',"<>",null]';
+      } else if (!value) {
+        result = '';
+      } else if (item.operator === 'today') {
         result += rangeFormat(
           getBeginTime(getCurrentDate()),
           requirement,
@@ -274,8 +300,6 @@ const initValueData = (item: IRequirementItem, requirement) => {
           requirement,
           getEndTime(getCurrentDate(), 'month')
         );
-      } else if (value === null) {
-        result += `,"${item.operator}", ${value}]`;
       } else if (item.operator === '=') {
         result += rangeFormat(getBeginTime(value as Date), requirement, getEndTime(value as Date));
       } else if (item.operator === '<>') {
@@ -288,8 +312,12 @@ const initValueData = (item: IRequirementItem, requirement) => {
       break;
     }
     default: {
-      if (value === null) {
-        result += `,"${item.operator}",${value}]`;
+      if (item.operator === 'isNull') {
+        result += ',"=",null]';
+      } else if (item.operator === 'isNotNull') {
+        result += ',"<>",null]';
+      } else if (!value) {
+        result = '';
       } else {
         result += `,"${item.operator}","${value}"]`;
       }

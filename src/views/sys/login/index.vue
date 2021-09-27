@@ -38,7 +38,6 @@
                 :editor-options="{
                   mode: 'password',
                   placeholder: '请输入密码',
-                  showClearButton: true,
                 }"
               >
                 <DxLabel :visible="false"></DxLabel>
@@ -131,7 +130,7 @@
   });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   @prefix-cls: ~'@{namespace}-login';
   @fileService: 'http://file.otwb.linshimuye.com:30011/file/ods/webclient/img';
 
@@ -209,7 +208,7 @@
           .login-form-container__inner {
             width: 72%; // 460px * $proportion;
             margin: 10% auto 0 auto; // 130px * $proportion;
-            .login-form-item {
+            /deep/ .login-form-item {
               margin-top: 23px;
             }
           }
@@ -236,6 +235,18 @@
           }
         }
       }
+    }
+  }
+  .dx-button-mode-contained.dx-state-hover {
+    background-color: #5cb1ff !important;
+    border-color: #52b7ff !important;
+  }
+  .dx-button-mode-contained.dx-state-focused {
+    color: #fff !important;
+    background-color: #1065b3 !important;
+    border-color: #0486fe !important;
+    .dx-icon {
+      color: #0486fe !important;
     }
   }
 </style>

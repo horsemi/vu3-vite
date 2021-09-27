@@ -5,6 +5,7 @@
       v-model:opened="isGridBoxOpened"
       :accept-custom-value="true"
       placeholder="请输入"
+      :disabled="selectDisabled"
       :open-on-field-click="false"
       :defer-rendering="false"
       :show-clear-button="true"
@@ -65,6 +66,10 @@
       filter: {
         type: Array as PropType<Record<string, unknown>[]>,
         default: () => [],
+      },
+      selectDisabled: {
+        type: Boolean,
+        default: false,
       },
     },
     emits: ['update:value'],

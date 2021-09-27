@@ -33,6 +33,7 @@
         :value="value"
         :show-spin-buttons="true"
         format="###,##0.###"
+        :disabled="selectDisabled"
         width="180"
         @update:value="$emit('update:value', $event)"
       >
@@ -43,6 +44,7 @@
         :data-source="booleanOptions"
         :show-clear-button="true"
         value-expr="key"
+        :disabled="selectDisabled"
         display-expr="value"
         width="180"
         @update:value="$emit('update:value', $event)"
@@ -53,6 +55,7 @@
         :value="value"
         :type="paramDataType"
         apply-value-mode="useButtons"
+        :disabled="selectDisabled"
         :display-format="paramDataType === 'date' ? 'yyyy-MM-dd' : 'yyyy-MM-dd HH:mm:ss'"
         :show-analog-clock="false"
         :show-clear-button="true"
@@ -66,6 +69,7 @@
         :data-source="options"
         :show-clear-button="true"
         value-expr="key"
+        :disabled="selectDisabled"
         display-expr="description"
         width="180"
         @update:value="$emit('update:value', $event)"
@@ -75,6 +79,7 @@
         v-else-if="paramDatatypekeies"
         width="180"
         :value="value"
+        :select-disabled="selectDisabled"
         :foundation-code="paramDatatypekeies"
         :filter="paramFilter"
         @update:value="$emit('update:value', $event)"
@@ -83,6 +88,7 @@
       <DxTextBox
         v-else
         :value="value"
+        :disabled="selectDisabled"
         :show-clear-button="true"
         width="180"
         placeholder="请输入"
@@ -100,7 +106,7 @@
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { getOperatorByType, initOperatorMap } from '/@/model/global-operator';
+  import { getOperatorByType, initOperatorMap, isDisabedSelect } from '/@/model/global-operator';
 
   import DxSelectBox from 'devextreme-vue/select-box';
   import DxTextBox from 'devextreme-vue/text-box';
@@ -158,6 +164,7 @@
     setup(props, context) {
       const appStore = useAppStore();
       const { prefixCls } = useDesign('dynamic-select');
+      let selectDisabled = ref(false);
       let options = ref<{ key: string; value: string }[]>([]);
       let operatorOptions = ref<{ key: string; value: string }[]>([]);
       let dataType = ref<string>('');
@@ -235,6 +242,20 @@
         context.emit('update:value', undefined);
       }
 
+      watch(
+        () => props.operation,
+        (v) => {
+          if (isDisabedSelect(v)) {
+            (selectDisabled.value = true), context.emit('update:value', undefined);
+          } else {
+            selectDisabled.value = false;
+          }
+        },
+        {
+          immediate: true,
+        }
+      );
+
       return {
         prefixCls,
         options,
@@ -242,6 +263,7 @@
         paramFilter,
         operatorOptions,
         booleanOptions,
+        selectDisabled,
         handleItemClick,
       };
     },
