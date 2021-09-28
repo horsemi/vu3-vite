@@ -13,7 +13,7 @@ export function checkStatus(status: number, msg: string): void {
     // Jump to the login page if not logged in, and carry the path of the current page
     // Return to the current page after successful login. This step needs to be operated on the login page.
     case 401:
-      error('您的账号没有权限访问该系统');
+      error('账号已登出，请重新登录');
       useAppStore().resumeAllState();
       router.push(PageEnum.BASE_LOGIN);
       break;

@@ -42,7 +42,6 @@
         :data-source="multiViewItems"
         :loop="true"
         :animation-enabled="true"
-        :swipe-enabled="true"
         :focus-state-enabled="false"
       >
         <template #item="{ data }">
@@ -85,7 +84,6 @@
         :data-source="multiEntityItems"
         :loop="true"
         :animation-enabled="true"
-        :swipe-enabled="true"
         :focus-state-enabled="false"
       >
         <template #item="{ data }">

@@ -208,7 +208,9 @@
           .login-form-container__inner {
             width: 72%; // 460px * $proportion;
             margin: 10% auto 0 auto; // 130px * $proportion;
-            /deep/ .login-form-item {
+
+            /* stylelint-disable-next-line */
+            :deep(.login-form-item) {
               margin-top: 23px;
             }
           }
