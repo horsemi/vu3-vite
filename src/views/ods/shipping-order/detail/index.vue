@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-    <div v-loading="loading" :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
+    <div :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
       <div class="btn-box">
         <DxDropDownButton
           :element-attr="dropDownButtonAttributes"
@@ -184,7 +184,6 @@
       const route = useRoute();
       const Id = route.query.Id as string;
       const BillCode = route.query.BillCode as string;
-      const loading = ref(false);
       const formData = ref();
       const baseInformation = ref<IDetailItem[]>([]);
       const receiverInformation = ref<IDetailItem[]>([]);
@@ -334,31 +333,25 @@
       };
 
       const getDetail = (columnsData: any) => {
-        loading.value = true;
-        getDetailData(['Id', '=', Id], columnsData)
-          .then((res) => {
-            if (res) {
-              const { baseList, receiverList, logisticsList, otherList, data } = res;
-              formData.value = data;
-              baseInformation.value = baseList;
-              receiverInformation.value = receiverList;
-              logisticsInformation.value = logisticsList;
-              otherInformation.value = otherList;
-              [
-                baseInformation.value,
-                receiverInformation.value,
-                logisticsInformation.value,
-                otherInformation.value,
-              ].forEach((data, index) => {
-                multiViewItems.value[index].rowCount = getRowCount(data);
-              });
-              handleHeight(0, 0);
-            }
-            loading.value = false;
-          })
-          .catch(() => {
-            loading.value = false;
-          });
+        getDetailData(['Id', '=', Id], columnsData).then((res) => {
+          if (res) {
+            const { baseList, receiverList, logisticsList, otherList, data } = res;
+            formData.value = data;
+            baseInformation.value = baseList;
+            receiverInformation.value = receiverList;
+            logisticsInformation.value = logisticsList;
+            otherInformation.value = otherList;
+            [
+              baseInformation.value,
+              receiverInformation.value,
+              logisticsInformation.value,
+              otherInformation.value,
+            ].forEach((data, index) => {
+              multiViewItems.value[index].rowCount = getRowCount(data);
+            });
+            handleHeight(0, 0);
+          }
+        });
       };
 
       const getData = async () => {
@@ -425,7 +418,6 @@
       getData();
 
       return {
-        loading,
         tableHeight,
         formRowHeight,
         formRowPaddingTop,
