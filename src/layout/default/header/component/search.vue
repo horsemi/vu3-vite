@@ -146,7 +146,7 @@
         options.value = [];
       }
 
-      const DounceChangeQuery = useDebounceFn(querySearch, 1000);
+      const DounceChangeQuery = useDebounceFn(querySearch, 300);
 
       watch(
         () => PermissionStore.getMenuList,
