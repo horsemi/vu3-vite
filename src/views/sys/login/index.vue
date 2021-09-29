@@ -47,6 +47,11 @@
             <DxButton class="login-btn__inner" @click="onLogin">登录</DxButton>
           </div>
         </div>
+        <div class="footer_container">
+          <div class="foot-line" />
+          <div class="foot-font"> 用精致 活出兴致 </div>
+          <div class="foot-line" />
+        </div>
       </div>
       <PasswordModal
         v-if="popupVisable"
@@ -140,7 +145,7 @@
     position: relative;
     display: flex;
     height: 100%;
-    // min-height: 624px;
+    min-height: 624px;
     background: url('@{fileService}/ods_login_background.png') bottom right no-repeat;
     -webkit-background-size: cover;
     -o-background-size: cover;
@@ -182,14 +187,17 @@
           margin: 0 auto auto 10%;
 
           .image-container__inner {
-            width: 37vw;
-            height: 52vh;
+            width: 70%;
+            max-width: 550px;
             object-fit: contain;
           }
         }
       }
       .container__wrap_right {
         flex: 1;
+        display: flex;
+        height: 100%;
+        align-items: center;
         .login-form-container__wrap {
           @media screen and (max-width: 992px) {
             width: 70%;
@@ -200,7 +208,7 @@
           display: inline-block;
           width: 378px;
           height: 410px;
-          margin: 7.4% 11.4% 13% 22%;
+          margin: 0 11.4% 0 22%;
           vertical-align: middle;
           background-color: #fff;
           border-radius: 4px;
@@ -235,6 +243,45 @@
             background: #1890ff;
             border-radius: 4px;
           }
+        }
+      }
+    }
+    .footer_container {
+      position: fixed;
+      right: 0;
+      bottom: 51px;
+      left: 0;
+      display: flex;
+      width: 19vw;
+      height: 2vh;
+      margin: 0 auto;
+      /* stylelint-disable-next-line */
+      @media screen and (max-width: 992px) {
+        display: none;
+      }
+
+      .foot-line {
+        display: block;
+        width: 20.83333%;
+        height: 11px;
+        border-bottom: 1px solid rgba(196, 255, 242, 1);
+        opacity: 0.4;
+        /* stylelint-disable-next-line */
+        @media screen and (max-width: 992px) {
+          width: 13%;
+        }
+      }
+      .foot-font {
+        width: 41.66667%;
+        height: 17px;
+        font-size: 16px;
+        font-weight: 400;
+        color: rgba(254, 255, 255, 1);
+        text-align: center;
+        opacity: 0.4;
+        /* stylelint-disable-next-line */
+        @media screen and (max-width: 992px) {
+          width: 25%;
         }
       }
     }
