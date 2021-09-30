@@ -248,6 +248,7 @@
           ...cloneDeep(schemeList.value[checkedIndex.value]),
           title: '',
           id: '0',
+          creatorId: userStore.getUserInfo.accountId,
         });
         checkedIndex.value = schemeList.value.length - 1;
       };
