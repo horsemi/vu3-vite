@@ -52,7 +52,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed, ref, onMounted, onUnmounted } from 'vue';
+  import { defineComponent, computed, onMounted, onUnmounted } from 'vue';
 
   import LayoutContent from './default/content/index.vue';
   import LayoutHeader from './default/header/index.vue';
@@ -63,7 +63,6 @@
   import DxScrollView from 'devextreme-vue/scroll-view';
   import { DxLoadPanel } from 'devextreme-vue/load-panel';
 
-  import { useRouter } from 'vue-router';
   import { useViewStore } from '/@/store/modules/view';
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -88,7 +87,6 @@
       initGlobalEnumData();
       const viewStore = useViewStore();
       const appStore = useAppStore();
-      const router = useRouter();
       const { prefixCls } = useDesign('layout');
 
       const viewState = computed(() => viewStore.getViewList);
@@ -107,7 +105,7 @@
       // iframe 通讯监听方法
       function reciveMessage(e) {
         if (e.data.status === 401) {
-          router.push({ path: '/login' });
+          window.location.href = 'http://test.sso.4pl.linshimuye.com:8097/#/login?tag=ods';
         }
       }
       onMounted(() => {

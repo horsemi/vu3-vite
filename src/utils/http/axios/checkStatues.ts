@@ -1,6 +1,5 @@
 import { errorMessage } from '/@/hooks/web/useMessage';
-import router from '/@/router';
-import { PageEnum } from '/@/enums/pageEnum';
+
 import { useAppStore } from '/@/store/modules/app';
 
 const error = errorMessage;
@@ -15,7 +14,7 @@ export function checkStatus(status: number, msg: string): void {
     case 401:
       error('账号已登出，请重新登录');
       useAppStore().resumeAllState();
-      router.push(PageEnum.BASE_LOGIN);
+      window.location.href = 'http://test.sso.4pl.linshimuye.com:8097/#/login?tag=ods';
       break;
     case 403:
       error('您的账号没有权限访问该页面');

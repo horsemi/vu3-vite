@@ -61,7 +61,7 @@ export function createPermissionGuard(router: Router) {
         };
       }
       await appStore.resumeAllState();
-      next(redirectData);
+      window.location.href = 'http://test.sso.4pl.linshimuye.com:8097/#/login?tag=ods';
       return;
     }
 
