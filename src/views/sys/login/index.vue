@@ -252,37 +252,29 @@
       bottom: 51px;
       left: 0;
       display: flex;
-      width: 19vw;
+      width: 364px;
       height: 2vh;
       margin: 0 auto;
       /* stylelint-disable-next-line */
-      @media screen and (max-width: 992px) {
-        display: none;
-      }
+      // @media screen and (max-width: 992px) {
+      //   display: none;
+      // }
 
       .foot-line {
         display: block;
-        width: 20.83333%;
         height: 11px;
+        min-width: 90px;
         border-bottom: 1px solid rgba(196, 255, 242, 1);
         opacity: 0.4;
-        /* stylelint-disable-next-line */
-        @media screen and (max-width: 992px) {
-          width: 13%;
-        }
       }
       .foot-font {
-        width: 41.66667%;
         height: 17px;
+        min-width: 184px;
         font-size: 16px;
         font-weight: 400;
         color: rgba(254, 255, 255, 1);
         text-align: center;
         opacity: 0.4;
-        /* stylelint-disable-next-line */
-        @media screen and (max-width: 992px) {
-          width: 25%;
-        }
       }
     }
   }
