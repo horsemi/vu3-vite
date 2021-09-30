@@ -256,9 +256,9 @@
       height: 2vh;
       margin: 0 auto;
       /* stylelint-disable-next-line */
-      // @media screen and (max-width: 992px) {
-      //   display: none;
-      // }
+      @media screen and (max-height: 624px) {
+        display: none;
+      }
 
       .foot-line {
         display: block;
