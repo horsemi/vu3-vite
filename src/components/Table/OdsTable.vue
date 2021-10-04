@@ -326,6 +326,8 @@
       };
 
       onBeforeUnmount(() => {
+        tableData.value = null;
+        // tableColumns.value = null;
         if (!isEmpty(tableData.value)) {
           tableData.value.dispose();
         }
