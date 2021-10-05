@@ -8,8 +8,6 @@ import type {
 import type { IColumnItem, IKeyType } from '/@/model/types';
 import type { ISortItem } from '/@/api/ods/types';
 
-import { isNil } from 'lodash-es';
-
 import { getDataSource } from '/@/api/ods/common';
 import {
   formatToDate,
@@ -19,6 +17,10 @@ import {
   getCurrentDate,
 } from '/@/utils/date';
 import { useMessage } from '/@/hooks/web/useMessage';
+
+import { isNullOrUnDef } from '/@/utils/is';
+
+import { operatorMap, isDisabedSelect } from '/@/model/global-operator';
 
 const defaultPaginate = true;
 
@@ -103,6 +105,11 @@ export const getFilter = (requirements: IRequirementItem[]) => {
   });
 
   for (let i = 0; i < requireData.length; i++) {
+    // 判断是否为第一条搜索条件 参数是否不为null与undef
+    if (i !== 0 && !isValueNullOrUndef(requireData[i])) {
+      result += `,"${requireData[i - 1].logic}",`;
+    }
+
     const requirement = requireData[i].relationKey
       ? requireData[i].relationKey
       : requireData[i].requirement;
@@ -118,9 +125,6 @@ export const getFilter = (requirements: IRequirementItem[]) => {
         result += ']';
       }
     }
-    if (i !== requireData.length - 1) {
-      result += `,"${requireData[i].logic}",`;
-    }
   }
   let filter = [];
   try {
@@ -129,14 +133,14 @@ export const getFilter = (requirements: IRequirementItem[]) => {
     useMessage(`请检查是否格式有误，如左右括号是否对等 \n ${result}`, 'error', '搜索条件无法解析');
   }
   // 获取解析后的搜索条件
-  // console.info(
-  //   '转换为字符串的结果:',
-  //   result,
-  //   '原数据:',
-  //   requireData,
-  //   '转为为数组后的结果:',
-  //   filter
-  // );
+  console.info(
+    '转换为字符串的结果:',
+    result,
+    '原数据:',
+    requireData,
+    '转为为数组后的结果:',
+    filter
+  );
   return filter;
 };
 
@@ -228,9 +232,9 @@ const initValueData = (item: IRequirementItem, requirement) => {
 
   switch (item.type) {
     case 'int32': {
-      if (item.operator === 'isNull') {
+      if (item.operator === operatorMap.isNull.key) {
         result += ',"=",null]';
-      } else if (item.operator === 'isNotNull') {
+      } else if (item.operator === operatorMap.isNotNull.key) {
         result += ',"<>",null]';
       } else if (!value) {
         result = '';
@@ -240,11 +244,11 @@ const initValueData = (item: IRequirementItem, requirement) => {
       break;
     }
     case 'boolean': {
-      if (item.operator === 'isNull') {
+      if (item.operator === operatorMap.isNull.key) {
         result += ',"=",null]';
-      } else if (item.operator === 'isNotNull') {
+      } else if (item.operator === operatorMap.isNotNull.key) {
         result += ',"<>",null]';
-      } else if (!value) {
+      } else if (isNullOrUnDef(value)) {
         result = '';
       } else {
         result += `,"${item.operator}",${value}]`;
@@ -252,24 +256,24 @@ const initValueData = (item: IRequirementItem, requirement) => {
       break;
     }
     case 'date': {
-      if (item.operator === 'isNull') {
+      if (item.operator === operatorMap.isNull.key) {
         result += ',"=",null]';
-      } else if (item.operator === 'isNotNull') {
+      } else if (item.operator === operatorMap.isNotNull.key) {
         result += ',"<>",null]';
-      } else if (!value) {
-        result = '';
-      } else if (item.operator === 'today') {
+      } else if (item.operator === operatorMap.today.key) {
         result += rangeFormat(
           getBeginTime(getCurrentDate()),
           requirement,
           getEndTime(getCurrentDate())
         );
-      } else if (item.operator === 'thisMonth') {
+      } else if (item.operator === operatorMap.thisMonth.key) {
         result += rangeFormat(
           getBeginTime(getCurrentDate(), 'month'),
           requirement,
           getEndTime(getCurrentDate(), 'month')
         );
+      } else if (!value) {
+        result = '';
       } else if (item.operator === '=') {
         result += rangeFormat(getBeginTime(value as Date), requirement, getEndTime(value as Date));
       } else if (item.operator === '<>') {
@@ -282,27 +286,27 @@ const initValueData = (item: IRequirementItem, requirement) => {
       break;
     }
     case 'datetime': {
-      if (item.operator === 'isNull') {
+      if (item.operator === operatorMap.isNull.key) {
         result += ',"=",null]';
-      } else if (item.operator === 'isNotNull') {
+      } else if (item.operator === operatorMap.isNotNull.key) {
         result += ',"<>",null]';
-      } else if (!value) {
-        result = '';
-      } else if (item.operator === 'today') {
+      } else if (item.operator === operatorMap.today.key) {
         result += rangeFormat(
           getBeginTime(getCurrentDate()),
           requirement,
           getEndTime(getCurrentDate())
         );
-      } else if (item.operator === 'thisMonth') {
+      } else if (item.operator === operatorMap.thisMonth.key) {
         result += rangeFormat(
           getBeginTime(getCurrentDate(), 'month'),
           requirement,
           getEndTime(getCurrentDate(), 'month')
         );
-      } else if (item.operator === '=') {
+      } else if (!value) {
+        result = '';
+      } else if (item.operator === operatorMap.equal.key) {
         result += rangeFormat(getBeginTime(value as Date), requirement, getEndTime(value as Date));
-      } else if (item.operator === '<>') {
+      } else if (item.operator === operatorMap.notEqual.key) {
         result += `,"<","${getBeginTime(
           value as Date
         )}"],"and",["${requirement}",">=","${getEndTime(value as Date)}"]`;
@@ -312,9 +316,9 @@ const initValueData = (item: IRequirementItem, requirement) => {
       break;
     }
     default: {
-      if (item.operator === 'isNull') {
+      if (item.operator === operatorMap.isNull.key) {
         result += ',"=",null]';
-      } else if (item.operator === 'isNotNull') {
+      } else if (item.operator === operatorMap.isNotNull.key) {
         result += ',"<>",null]';
       } else if (!value) {
         result = '';
@@ -328,4 +332,20 @@ const initValueData = (item: IRequirementItem, requirement) => {
 
 const rangeFormat = (startTime: string, requirement, endTime: string): string => {
   return `,">=","${startTime}"],"and",["${requirement}","<=","${endTime}"]`;
+};
+
+/**
+ * 判断搜索条件value是否为空
+ * @param {IRequirementItem} data
+ * @returns {boolean}
+ */
+const isValueNullOrUndef = (data: IRequirementItem): boolean => {
+  if (isDisabedSelect(data.operator)) {
+    return false;
+  } else if (isNullOrUnDef(data.value)) {
+    return true;
+  } else {
+    // 考虑布尔型的false
+    return false;
+  }
 };
