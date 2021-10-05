@@ -456,8 +456,10 @@ export const definite: IColumnItem[] = [
     relationKey: 'MaterialCode',
   },
   {
-    key: 'DefaultAreaCode',
+    key: 'DefaultArea_Name',
     caption: '默认区域',
+    expand: 'DefaultArea',
+    relationKey: 'DefaultAreaCode',
   },
   {
     key: 'Unit_Name',

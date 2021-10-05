@@ -133,14 +133,14 @@ export const getFilter = (requirements: IRequirementItem[]) => {
     useMessage(`请检查是否格式有误，如左右括号是否对等 \n ${result}`, 'error', '搜索条件无法解析');
   }
   // 获取解析后的搜索条件
-  console.info(
-    '转换为字符串的结果:',
-    result,
-    '原数据:',
-    requireData,
-    '转为为数组后的结果:',
-    filter
-  );
+  // console.info(
+  //   '转换为字符串的结果:',
+  //   result,
+  //   '原数据:',
+  //   requireData,
+  //   '转为为数组后的结果:',
+  //   filter
+  // );
   return filter;
 };
 
