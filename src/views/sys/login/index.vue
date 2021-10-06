@@ -145,7 +145,7 @@
     position: relative;
     display: flex;
     height: 100%;
-    min-height: 624px;
+    min-height: 600px;
     background: url('@{fileService}/ods_login_background.png') bottom right no-repeat;
     -webkit-background-size: cover;
     -o-background-size: cover;
@@ -162,7 +162,7 @@
 
       .top-logo__wrap {
         position: absolute;
-        top: 49px;
+        top: 6%;
         left: 70px;
       }
       .container__wrap_left {
@@ -259,7 +259,7 @@
       height: 2vh;
       margin: 0 auto;
       /* stylelint-disable-next-line */
-      @media screen and (max-height: 624px) {
+      @media screen and (max-height: 600px) {
         display: none;
       }
 
