@@ -10,8 +10,8 @@
           text="提交"
           display-expr="name"
           key-expr="key"
-          @button-click="onSubmitClick"
-          @item-click="onItemButtonClick"
+          @button-click="onSubmitClickThrottleFn"
+          @item-click="onItemButtonClickThrottleFn"
         />
         <DxDropDownButton
           :items="dropButtonItems.apply"
@@ -20,11 +20,11 @@
           text="审核"
           display-expr="name"
           key-expr="key"
-          @button-click="onApplyClick"
-          @item-click="onItemButtonClick"
+          @button-click="onApplyClickThrottleFn"
+          @item-click="onItemButtonClickThrottleFn"
         />
-        <DxButton text="下推" @click="onPushClick" />
-        <DxButton text="刷新" @click="onRefresh" />
+        <DxButton text="下推" @click="onPushClickThrottleFn" />
+        <DxButton text="刷新" @click="getDataThrottleFn" />
       </div>
       <DxTabPanel
         v-model:selected-index="selectedIndex"
@@ -100,6 +100,7 @@
 
   import { defineComponent, ref, watch, reactive } from 'vue';
   import { useRoute } from 'vue-router';
+  import { useThrottleFn } from '@vueuse/core';
 
   import { getColumns } from '/@/model/shipping-orders';
   import { getDefiniteColumns } from '/@/model/shipping-order-items';
@@ -107,6 +108,7 @@
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
   import { getDetailData, getDefiniteData, getRecordData } from './index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
+  import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
@@ -411,6 +413,17 @@
         });
       };
 
+      // 所有操作设置为节流
+      const getDataThrottleFn = useThrottleFn(getData, DEFAULT_THROTTLE_TIME);
+
+      const onSubmitClickThrottleFn = useThrottleFn(onSubmitClick, DEFAULT_THROTTLE_TIME);
+
+      const onApplyClickThrottleFn = useThrottleFn(onApplyClick, DEFAULT_THROTTLE_TIME);
+
+      const onPushClickThrottleFn = useThrottleFn(onPushClick, DEFAULT_THROTTLE_TIME);
+
+      const onItemButtonClickThrottleFn = useThrottleFn(onItemButtonClick, DEFAULT_THROTTLE_TIME);
+
       watch([selectedIndex, tableIndex], ([sIndex, tIndex]) => {
         handleHeight(sIndex, tIndex);
       });
@@ -439,11 +452,11 @@
         dropButtonItems,
         formData,
         isFixHeight,
-        onSubmitClick,
-        onApplyClick,
-        onPushClick,
-        onItemButtonClick,
-        onRefresh,
+        onSubmitClickThrottleFn,
+        onApplyClickThrottleFn,
+        onPushClickThrottleFn,
+        onItemButtonClickThrottleFn,
+        getDataThrottleFn,
         onChangeOpened,
         getColseHeight,
         dropDownButtonAttributes: {
