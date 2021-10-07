@@ -48,7 +48,19 @@
           <div class="tab">
             <div class="form-box" :style="{ height: opened ? '' : getColseHeight(data.rowCount) }">
               <DetailForm
-                :form-data="formData"
+                :form-data="
+                  data.key === 'base'
+                    ? baseFormData
+                    : data.key === 'receiver'
+                    ? receiverFormData
+                    : data.key === 'logistics'
+                    ? logisticsFormData
+                    : data.key === 'expressList'
+                    ? expressFormData
+                    : data.key === 'task'
+                    ? taskFormData
+                    : otherFormData
+                "
                 :form-list="
                   data.key === 'base'
                     ? baseInformation
@@ -62,8 +74,6 @@
                     ? taskInformation
                     : otherInformation
                 "
-                :step-data="stepData"
-                :step-active-index="stepActiveIndex"
               />
             </div>
             <div v-if="data.rowCount > 3" class="icon-box">
@@ -126,6 +136,7 @@
   import { getDetailData, getDefiniteData, getRecordData } from './index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
+  import { isFoundationType } from '/@/model/common';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
@@ -206,8 +217,8 @@
         ],
       };
 
-      const stepData = ['理货', '进场', '交接', '清货'];
-      const stepActiveIndex = ref(0);
+      // const stepData = ['理货', '进场', '交接', '清货'];
+      // const stepActiveIndex = ref(0);
 
       const opened = ref(false);
       const selectedIndex = ref(0);
@@ -225,12 +236,21 @@
       const Id = route.query.Id as string;
       const BillCode = route.query.BillCode as string;
       const formData = ref();
+
       const baseInformation = ref<IDetailItem[]>([]);
       const receiverInformation = ref<IDetailItem[]>([]);
       const logisticsInformation = ref<IDetailItem[]>([]);
       const expressListInformation = ref<IDetailItem[]>([]);
       const taskInformation = ref<IDetailItem[]>([]);
       const otherInformation = ref<IDetailItem[]>([]);
+
+      const baseFormData = ref<Record<string, unknown>>({});
+      const receiverFormData = ref<Record<string, unknown>>({});
+      const logisticsFormData = ref<Record<string, unknown>>({});
+      const expressFormData = ref<Record<string, unknown>>({});
+      const taskFormData = ref<Record<string, unknown>>({});
+      const otherFormData = ref<Record<string, unknown>>({});
+
       const isFixHeight = ref<boolean>(true);
 
       const definiteOptions = ref<Partial<ITableOptions>>({
@@ -388,15 +408,15 @@
         return Math.ceil(len / rowSpan);
       };
 
-      const handleStepActiveIndex = () => {
-        if (formData.value.isClean) {
-          stepActiveIndex.value = 3;
-        } else if (formData.value.isTransfer) {
-          stepActiveIndex.value = 2;
-        } else if (formData.value.isEntry) {
-          stepActiveIndex.value = 1;
-        }
-      };
+      // const handleStepActiveIndex = () => {
+      //   if (formData.value.isClean) {
+      //     stepActiveIndex.value = 3;
+      //   } else if (formData.value.isTransfer) {
+      //     stepActiveIndex.value = 2;
+      //   } else if (formData.value.isEntry) {
+      //     stepActiveIndex.value = 1;
+      //   }
+      // };
 
       const getDetail = (columnsData) => {
         getDetailData(['Id', '=', Id], columnsData).then((res) => {
@@ -410,7 +430,61 @@
               otherList,
               data,
             } = res;
-            formData.value = data;
+
+            // 页面中业务操作需要使用的字段
+            formData.value = {
+              GatheringParentCode: (data as Record<string, unknown>).GatheringParentCode,
+            };
+
+            /** 实验性功能 */
+            baseList.forEach((item) => {
+              if (isFoundationType(item)) {
+                baseFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
+              }
+              baseFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+            });
+
+            receiverList.forEach((item) => {
+              if (isFoundationType(item)) {
+                receiverFormData.value[item.expand!] = (data as Record<string, unknown>)[
+                  item.expand!
+                ];
+              }
+              baseFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+            });
+
+            logisticsList.forEach((item) => {
+              if (isFoundationType(item)) {
+                logisticsFormData.value[item.expand!] = (data as Record<string, unknown>)[
+                  item.expand!
+                ];
+              }
+              logisticsFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+            });
+
+            expressList.forEach((item) => {
+              if (isFoundationType(item)) {
+                expressFormData.value[item.expand!] = (data as Record<string, unknown>)[
+                  item.expand!
+                ];
+              }
+              expressFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+            });
+
+            taskList.forEach((item) => {
+              if (isFoundationType(item)) {
+                taskFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
+              }
+              taskFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+            });
+
+            otherList.forEach((item) => {
+              if (isFoundationType(item)) {
+                otherFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
+              }
+              otherFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+            });
+
             baseInformation.value = baseList;
             receiverInformation.value = receiverList;
             logisticsInformation.value = logisticsList;
@@ -428,7 +502,7 @@
               multiViewItems.value[index].rowCount = getRowCount(data);
             });
             handleHeight(0, 0);
-            handleStepActiveIndex();
+            // handleStepActiveIndex();
           }
         });
       };
@@ -515,21 +589,30 @@
         recordOptions,
         recordScheme,
         recordAllColumns,
+
         baseInformation,
         receiverInformation,
         logisticsInformation,
         expressListInformation,
         taskInformation,
         otherInformation,
+
+        baseFormData,
+        receiverFormData,
+        logisticsFormData,
+        expressFormData,
+        taskFormData,
+        otherFormData,
+
         selectedIndex,
         tableIndex,
         opened,
         multiViewItems,
         multiEntityItems,
         dropButtonItems,
-        formData,
-        stepData,
-        stepActiveIndex,
+        // formData,
+        // stepData,
+        // stepActiveIndex,
         isFixHeight,
         onSubmitClickThrottleFn,
         onApplyClickThrottleFn,
