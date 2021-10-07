@@ -145,7 +145,7 @@
     position: relative;
     display: flex;
     height: 100%;
-    min-height: 600px;
+    min-height: 440px;
     background: url('@{fileService}/ods_login_background.png') bottom right no-repeat;
     -webkit-background-size: cover;
     -o-background-size: cover;
@@ -161,6 +161,10 @@
       height: 100%;
 
       .top-logo__wrap {
+        @media screen and (max-height: 580px) {
+          display: none;
+        }
+
         position: absolute;
         top: 6%;
         left: 70px;
