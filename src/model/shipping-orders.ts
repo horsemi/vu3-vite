@@ -331,7 +331,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ThreeServiceSupplier',
     caption: '三包服务商',
-    relationKey: 'ThreeServiceSupplier',
+    relationKey: 'ThreeServiceSupplierCode',
     foundationList: [
       {
         key: 'ThreeServiceSupplier_Name',
