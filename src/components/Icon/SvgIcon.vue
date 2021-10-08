@@ -9,7 +9,9 @@
 </template>
 <script lang="ts">
   import type { CSSProperties } from 'vue';
+
   import { defineComponent, computed } from 'vue';
+
   import { useDesign } from '/@/hooks/web/useDesign';
 
   export default defineComponent({
@@ -21,7 +23,7 @@
       },
       name: {
         type: String,
-        required: true,
+        default: '',
       },
       size: {
         type: [Number, String],
@@ -41,9 +43,10 @@
           const { size } = props;
           let s = `${size}`;
           s = `${s.replace('px', '')}px`;
+          const sArray = s.split(' ');
           return {
-            width: s,
-            height: s,
+            width: sArray[0],
+            height: sArray.length === 2 ? sArray[1] : sArray[0],
           };
         }
       );

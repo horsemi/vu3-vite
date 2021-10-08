@@ -9,7 +9,9 @@ const dashboard: Array<AppRouteRecordRaw> = [
     redirect: '/dashboard/analysis',
     component: LAYOUT,
     meta: {
+      hideMenu: true,
       title: '根页面',
+      icon: 'order',
     },
     children: [
       {
@@ -24,28 +26,34 @@ const dashboard: Array<AppRouteRecordRaw> = [
   },
   {
     path: '/home',
-    name: 'Home',
-    redirect: '/home/index',
+    name: 'Main',
+    redirect: '/home/demo/index',
     component: LAYOUT,
     meta: {
-      title: '首页',
+      title: '工作台',
+      icon: 'menu-home',
+      order: 1,
     },
     children: [
       {
-        path: 'index',
-        name: 'Home',
-        component: () => import('/@/views/home/index.vue'),
+        path: 'demo',
+        name: 'HomeDemo',
+        redirect: '/home/demo/index',
         meta: {
-          title: '主页',
+          title: '工作台',
         },
-      },
-      {
-        path: ':id',
-        name: 'Home',
-        component: () => import('/@/views/home/index.vue'),
-        meta: {
-          title: '带ID主页',
-        },
+        children: [
+          {
+            path: 'index',
+            name: 'Home',
+            component: () => import('/@/views/home/index.vue'),
+            meta: {
+              title: '工作台',
+              affix: true,
+              ignoreKeepAlive: true,
+            },
+          },
+        ],
       },
     ],
   },

@@ -1,40 +1,24 @@
 <template>
-  <div v-loading.fullscreen="loading" element-loading-text="拼命加载中">
-    <h1>HOME</h1>
-    <select v-model="selectData">
-      <option>1</option>
-      <option>2</option>
-      <option>3</option>
-      <option>4</option>
-      <option>5</option>
-      <option>6</option>
-      <option>7</option>
-    </select>
-    <button @click="loadingChange"> loading </button>
+  <div style="width: 100%; height: 100%; text-align: center; background: #fff">
+    <img style="height: 400px" :src="pic" />
+    <h2>披星戴月开发中, 敬请期待!</h2>
   </div>
 </template>
 
 <script lang="ts">
   import { defineComponent } from 'vue';
 
+  import pic from '/@/assets/developing.png';
+
   export default defineComponent({
     name: 'Home',
-    setup() {
+    components: {
       //
     },
-    data: () => {
+    setup() {
       return {
-        selectData: '',
-        loading: false,
+        pic,
       };
-    },
-    methods: {
-      loadingChange() {
-        this.loading = true;
-        setTimeout(() => {
-          this.loading = false;
-        }, 5000);
-      },
     },
   });
 </script>

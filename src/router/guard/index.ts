@@ -1,14 +1,14 @@
 import router from '/@/router';
 
-import { createPageGuard } from './pageGuard';
 import { createPermissionGuard } from './permissionGuard';
-import { createStateGuard } from './stateGuard';
+
 import { createPageUuidGuard } from './pageUuidGuard';
 
-createPageUuidGuard(router);
+import { createPageGuard } from './pageGuard';
 
-createPageGuard(router);
+// TODO 单组件多页面模式存在性能问题，暂时关闭该功能
+createPageUuidGuard(router);
 
 createPermissionGuard(router);
 
-createStateGuard(router);
+createPageGuard(router);

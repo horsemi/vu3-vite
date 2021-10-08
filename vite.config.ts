@@ -1,26 +1,37 @@
 import type { UserConfig, ConfigEnv } from 'vite';
 
 import { defineConfig } from 'vite';
+import { resolve } from 'path';
 
-import { createAlias } from './build/vite/alias';
 import { createVitePlugins } from './build/vite/plugin';
 import { generateModifyVars } from './build/generate/generateModifyVars';
+
+function pathResolve(dir: string) {
+  return resolve(process.cwd(), '.', dir);
+}
 
 // https://vitejs.dev/config/
 export default defineConfig(
   ({ command }: ConfigEnv): UserConfig => {
     const isBuild = command === 'build';
-
+    const root = process.cwd();
     return {
-      base: '/devextreme-vue3-vite2/',
+      base: '/',
+      root,
       mode: 'development',
       resolve: {
-        alias: createAlias([
+        alias: [
           // /@/xxxx => src/xxxx
-          ['/@/', 'src'],
+          {
+            find: /\/@\//,
+            replacement: pathResolve('src') + '/',
+          },
           // /#/xxxx => types/xxxx
-          ['/#/', 'types'],
-        ]),
+          {
+            find: /\/#\//,
+            replacement: pathResolve('types') + '/',
+          },
+        ],
       },
       css: {
         preprocessorOptions: {
@@ -31,9 +42,27 @@ export default defineConfig(
         },
       },
       server: {
-        port: 8080,
+        port: 8096,
         open: true,
-        proxy: {},
+        host: 'test.ods.otwb.linshimuye.com',
+        proxy: {
+          '/api/foundation': {
+            target: 'http://10.10.14.245:30034',
+            changeOrigin: true,
+          },
+          '/permission': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
+            changeOrigin: true,
+          },
+          '/ods/api': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
+            changeOrigin: true,
+          },
+          '/passport': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
+            changeOrigin: true,
+          },
+        },
         cors: true,
       },
       plugins: createVitePlugins(isBuild),

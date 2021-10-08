@@ -7,18 +7,19 @@ import { createNow, formatRequestDate } from './helper';
 import { RequestEnum, ResultEnum, ContentTypeEnum } from '/@/enums/httpEnum';
 import { isString } from '/@/utils/is';
 import { setObjToUrlParams, deepMerge } from '/@/utils';
-import { errorResult } from './const';
+import { errorResult, tokenHeaderKey } from './const';
 import { useUserStoreWidthOut } from '/@/store/modules/user';
+import { useViewWithOutStore } from '/@/store/modules/view';
 import { useErrorLogStoreWithOut } from '/@/store/modules/error';
-import { errorMessage } from '/@/hooks/web/useMessage';
+import { errorMessage, successMessage } from '/@/hooks/web/useMessage';
 import { checkStatus } from './checkStatues';
 
 /**
- * @description: 数据处理，方便区分多种处理方式
+ * @description 数据处理，方便区分多种处理方式
  */
 const transform: AxiosTransform = {
   /**
-   * @description: 处理请求数据
+   * @description 处理请求数据
    */
   transformRequestHook: (res: AxiosResponse<Result>, options: RequestOptions) => {
     const { isTransformRequestResult } = options;
@@ -29,16 +30,16 @@ const transform: AxiosTransform = {
     }
     // 错误的时候返回
 
-    const { data } = res;
-    if (!data) {
+    const { data: resData } = res;
+    if (!resData) {
       // return '[HTTP] Request has no return value';
       return errorResult;
     }
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
-    const { code, result, message } = data;
+    const { result, data, message } = resData;
 
     // 这里逻辑可以根据项目进行修改
-    const hasSuccess = data && Reflect.has(data, 'code') && code === ResultEnum.SUCCESS;
+    const hasSuccess = result === ResultEnum.SUCCESS; // data && Reflect.has(data, 'code') && result === ResultEnum.SUCCESS
     if (!hasSuccess) {
       if (message) {
         errorMessage(message);
@@ -48,11 +49,12 @@ const transform: AxiosTransform = {
     }
 
     // 接口请求成功，直接返回结果
-    if (code === ResultEnum.SUCCESS) {
-      return result;
+    if (result === ResultEnum.SUCCESS) {
+      message && successMessage(message);
+      return data;
     }
     // 接口请求错误，统一提示错误信息
-    if (code === ResultEnum.ERROR) {
+    if (result === ResultEnum.ERROR) {
       if (message) {
         errorMessage(message);
         Promise.reject(new Error(message));
@@ -63,14 +65,6 @@ const transform: AxiosTransform = {
       }
       return errorResult;
     }
-    // 登录超时
-    if (code === ResultEnum.NOT_PERMISSION) {
-      const timeoutMsg = '登录超时, 请重新登录';
-      errorMessage('401');
-      Promise.reject(new Error(timeoutMsg));
-      return errorResult;
-    }
-    return errorResult;
   },
 
   // 请求之前处理config
@@ -105,7 +99,7 @@ const transform: AxiosTransform = {
   },
 
   /**
-   * @description: 请求拦截器处理
+   * @description 请求拦截器处理
    */
   requestInterceptors: (config) => {
     // 请求之前处理config
@@ -113,15 +107,17 @@ const transform: AxiosTransform = {
     const token = userStore.getToken;
     if (token) {
       // jwt token
-      config.headers.Authorization = token;
+      // config.headers.Authorization = token;
+      config.headers[tokenHeaderKey] = token;
     }
     return config;
   },
 
   /**
-   * @description: 响应错误处理
+   * @description 响应错误处理
    */
   responseInterceptorsCatch: (error: any) => {
+    useViewWithOutStore().setLoading(false);
     const errorLogStore = useErrorLogStoreWithOut();
     errorLogStore.addAjaxErrorInfo(error);
     const { response, code, message } = error || {};
@@ -146,7 +142,7 @@ function createAxios(opt?: Partial<CreateAxiosOptions>) {
   return new Request(
     deepMerge(
       {
-        timeout: 10 * 1000,
+        // timeout: 10 * 1000,
         // 基础接口地址
         // baseURL: globSetting.apiUrl,
         headers: { 'Content-Type': ContentTypeEnum.JSON },

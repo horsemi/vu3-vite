@@ -7,8 +7,6 @@
   import type { CSSProperties } from 'vue';
   import { defineComponent, ref, unref, onMounted, nextTick, computed } from 'vue';
 
-  import { getViewportOffset } from '/@/utils/dom';
-
   import { useWindowSizeFn } from '/@/hooks/event/useWindowSizeFn';
 
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -43,7 +41,7 @@
         if (!iframe) {
           return;
         }
-        let { top } = getViewportOffset(iframe);
+        let top = 112;
         top += 20;
         topRef.value = top;
         heightRef.value = window.innerHeight - top;
@@ -73,6 +71,7 @@
           }
         });
       }
+
       onMounted(() => {
         loading.value = true;
         init();
@@ -101,7 +100,7 @@
 
     &__main {
       width: 100%;
-      height: 100%;
+      // height: 100%;
       overflow: hidden;
       background-color: #fff;
       border: 0;

@@ -1,20 +1,26 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-cn">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" href="/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vite App</title>
+    <title>ODS订单调度中心</title>
   </head>
-  <body>
+  <body class="dx-viewport">
     <div id="app">
       <div class="app-loading">
         <div class="app-loading-wrap">
-          <img src="/resource/img/logo.png" class="app-loading-logo" alt="Logo" />
+          <img
+            src="
+          data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAAOkAAADpCAMAAAD26eDRAAAABGdBTUEAALGPC/xhBQAAACBjSFJNAAB6JgAAgIQAAPoAAACA6AAAdTAAAOpgAAA6mAAAF3CculE8AAAAzFBMVEUAAAA679A679A679A679A679AAWG0AWG0AWG0AWG0AWG0AWG0AWG0679A679A679AAWG0AWG0679A679A679A679AAWG0AWG0AWG0679A679A679AAWG0AWG0AWG046cwv0b0sy7k148gu0bwluawXlJUTiY0679AAWG0dpJ8PfoYEYXMv074syrghraUWkZIHa3k35soowLESh4wz3cQZmpgkt6sLdIArybcdo54WkJIz3MQ25soOfYULdH8v070DYXMHankktqsAAACpsdf/AAAAJ3RSTlMAwLCAcEAgQGCAkMAwkFAgoODgoDAQcLDwYPDQEFDQ+u/7v6CvoMSjFmmUAAAAAWJLR0QAiAUdSAAAAAlwSFlzAAALEgAACxIB0t1+/AAAB6pJREFUeNrt3HtjmjoUAPC6zjpn9+re6+7u+6pdsavWDRSf3/9DXSyCcsjjBJIA8Zw/M07MzwNJALuz1pPzp+32mcNx0XnWfd67POvvo9V6cf6y/arqYWkWvu69GcTRSaVJXLXeRkV+V/UwtQkHXGn/UOTzqMjvqx43Pi47H7ofe58G7BBIj4v8uc5FFgsVpEl82RW5XaMid1DCAtI0rh+LXN3c1el0u70eElhKeijyk12Ray7UIT0q8guDRf7a+S1aDgsLtUqTuNK6C4mF38oKjUjTiHchBecuzUKz0kORFXYh7AW/IdKjIvN3IYaFlqVJXB/tQi7tCCuSJvH7H38Ohzc3320xq5OmceuNhnc3P05AmsS9N94V+QSkaXhRkScmilw7aRIPUZGnOotcW2kanjeMilx+7qq/NIkH72dU5F8nIE1jV+QCC1QDpUncRkW+wxe5wdIk7uMin4A0DfEuxCVpEvfMBcpF6T48kjoXJHUvSOpekNS9IKl7QVL3gqTuBUndC5K6FyR1L0xK/QEI324+SUlKUpKSlKQkJSlJSUpSkpL0lKSDcuFzVMW6ISlJSUpSkpKUpCQlKUlJSlKSnqw04MYMDmfGOGge9zIvmp/txqiUH7k6NfyZA0lJSlKSkrQq6dzPBH+kYfbAOaeDOS9/zsm3Jg2y/fCloDHgdBDw8gNOPklJSlKSkpSkJCXpKUvHJyPl5ZOUpCSVBng267B0gZWGJyPtc0ZKUmekE04H7kkXDkuXJyPNHqks5c3d7kl5M1oNpdk9xrKkdIIeoX0pa99YXLpAj5Ck5qQ+48iTkK7clfZZbYWlS/QIzUjXeOm4nHSAHqEuKeuc4kizpmRBREs3zZFmF9SpqpR1ndRUGjAOLS5F/yKgAmm2ebPvILvxr690riAFe/SQ9VUJpNNs29ayFAxqKpKCOcVnSkd95B4LvcU3Iw2E0knOlJf6faR0ih2iJulIRZo9OL4bCRmHsvNBK3qTpEkKvuiRULrKNLJ3GWjpBjtETdIpY0j834itM60rNSmsvmUpc+rnSif51i04NOwjd5PpLYIlKdiizcXSbb4VnP4DQT5YecfIIWqSMs8orjTMt04ZPXDyGbspe9LsHLOfZAS/5VzmWsHwl4J8UH7skyQ9UvBKfiGTjnKtS0YPnHxwSWMnXz1S8DXPZNIw1zpg9MDJh82hTSn70uFLM7PvrhWc/nEPvHxurxak2QUymQ4F0jFoBad/vG/n5YOJHjklaZHCiqyk0uPRMn5lxNwNcfbN2P2gFilc9vty6SjbCk7/+Nrj5Qfsj7MhBV9y8rxOJA3XmVZw+gufuDF3jpakYJwzhPSoMH7uRl58J5/b+eJu3HRImdOJTHooqp8//cV38nDxxa2oOqTwryeTPbdQetD5+R624nx4OOpPSXRIwcmbfsViaVoZP7duqN0hpI8tjEvhyZtcpjKpn7bCVUq2b4YXKur01SAFM+/hNkoiTe5ffPhsJtm08/PBhYq6Ry0vhfPmOlc0njTc7FvhwEeyfHiPN0OMs7yU/6ky6f4AH35XyQzDz4f/skbs8ktLQzAfHT0DkErjRdWHJ+9Gng8/FPF8u7Q04AwTJX3cBfrw5J3K82f8TzUlzZX06M4CId1dqnDNwKzHcL5HFLWsFF6lx6s4QtpfrQewpEtMPvyC5UUtK4WDOZ4FMdJ8dQ77AFH+jJtlS3qMQUlzZ8VhHhXlw82GfPrVLM3cFeOk8NYUuUotUZ2bk2Y+DiXNFWeOy99iOjcnzc4LKCk8aIHMz036dqXZNweFpD42P0B0bkwKnl0VkS7Q+bCoVqXgw4pIFebuQN65KSl8HFlAqjJ3g6LalMK7xAJSpbk7kHZuSJq7SVSXTpTys0W1J81vUtSlc7X8raxzM9L8xlNZOlXNX0g6NyJl/NBWVQrPCnn+StK5ESnjg1SlW/X8qbhzE1LWGwNF6aJAfrixLd2w7pkUpasi+SvbUubHqEmDYvmBXSn7bZeStOiMls6/VqRL9v2+knRVMD/dP9iQrjkvC1Sko6L5jw/dbEl5TyAVpIvC+f1kq2RByn0pgpeyH3dhpTHVvJT/V0h46ap4fko1LhU8fURLtyXyU6pp6Vrw6hIrnZXJ38d4bVoqekeLlJa7ztOByH7sUPn/gOrPyuWjo3JpWDK/OVKD+SQlKUnlsVqAwP5pi6Z8e9J6BUndC5K6FyR1L0jqXpDUvSCpe0FS94Kk7gVJ3QuSOhfeyHHpg/dzOL35NciFM1LPGw0nN98H3Gi69MEbRyW8GcijqdLbxxL+QAgbKr2PSjhElbCp0l0J75RK2DDpveftSvi9jLDe0ttoqbhjLRXOSHclnOgpYT2l3NXeGamnvFQ0THrV+uvvf/79r/fGDrEC6XXrxfnn9quzQ1x0nnVfWxJbkH5pPTk/b7fPBGFDbFB63XoLSiiNi85v3ee9bw2Rfmm1diV8ryKE8dWAWJ/06rGE78oAjYrLS3clfFmuhPLodLrdXq8a6a6ETzWX0KhYWdqKloqXavOMIfHH3icT0t1S8VS8VFQRl50PWLFMml/taxkIMUeKWO1rGZf8LQiQXhtYKqoIxqYrlupY7WsZsfhbLLW/VFQQ0Rbk4n/cusEQ/ylxAAAAAABJRU5ErkJggg==
+          "
+            class="app-loading-logo"
+            alt="Logo"
+          />
           <div class="app-loading-dots">
             <span class="dot dot-spin"><i></i><i></i><i></i><i></i></span>
           </div>
-          <div class="app-loading-title">Vite App</div>
+          <div class="app-loading-title">ODS订单调度中心</div>
         </div>
       </div>
     </div>
@@ -59,7 +65,7 @@
 
       .app-loading .app-loading-logo {
         display: block;
-        width: 90px;
+        width: 250px;
         margin: 0 auto;
         margin-bottom: 20px;
       }

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="18px" height="16px" viewBox="0 0 18 16" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 59.1 (86144) - https://sketch.com -->
+    <title>减去</title>
+    <desc>Created with Sketch.</desc>
+    <g id="发货单" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="弹出菜单" transform="translate(-858.000000, -154.000000)" fill="#BFBFBF" fill-rule="nonzero">
+            <g id="查询字段备份" transform="translate(323.000000, 97.000000)">
+                <g id="2" transform="translate(0.000000, 48.000000)">
+                    <g id="减去" transform="translate(536.000000, 10.000000)">
+                        <path d="M15,-0.75 C15.9664983,-0.75 16.75,0.0335016878 16.75,1 L16.75,13 C16.75,13.9664983 15.9664983,14.75 15,14.75 L1,14.75 C0.0335016878,14.75 -0.75,13.9664983 -0.75,13 L-0.75,1 C-0.75,0.0335016878 0.0335016878,-0.75 1,-0.75 L15,-0.75 Z M15,0.75 L1,0.75 C0.861928813,0.75 0.75,0.861928813 0.75,1 L0.75,13 C0.75,13.1380712 0.861928813,13.25 1,13.25 L15,13.25 C15.1380712,13.25 15.25,13.1380712 15.25,13 L15.25,1 C15.25,0.861928813 15.1380712,0.75 15,0.75 Z" id="矩形"></path>
+                        <polygon id="直线" points="3.25 6.25 3.25 7.75 12.75 7.75 12.75 6.25"></polygon>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>

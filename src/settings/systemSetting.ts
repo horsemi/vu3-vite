@@ -3,7 +3,7 @@ import { PermissionModeEnum, TabRouterModeEnum } from '/@/enums/appEnum';
 import { CacheTypeEnum } from '/@/enums/cacheEnum';
 
 const setting: SystemConfig = {
-  permissionMode: PermissionModeEnum.ROLE,
+  permissionMode: PermissionModeEnum.PERMISSION,
   // Permission-related cache is stored in sessionStorage or localStorage
   permissionCacheType: CacheTypeEnum.LOCAL,
 

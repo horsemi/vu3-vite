@@ -13,8 +13,8 @@
   bottom: 0;
   left: 0;
   z-index: 2000;
-  margin: 0;
-  background-color: rgba(255, 255, 255, 0.9);
+  margin: auto;
+  background-color: transparent;
   -webkit-transition: opacity 0.3s;
   transition: opacity 0.3s;
 }
@@ -26,45 +26,15 @@
 .v-loading-spinner {
   position: absolute;
   top: 50%;
-  width: 100%;
-  margin-top: -21px;
+  left: 50%;
+  width: 222px;
+  height: 90px;
+  padding: 10px;
   text-align: center;
-}
-
-.v-loading-mask.is-fullscreen .v-loading-spinner {
-  margin-top: -25px;
-}
-
-.v-loading-spinner .v-loading-text {
-  margin: 3px 0;
-  font-size: 14px;
-  color: #409eff;
-}
-
-.v-loading-spinner .circular {
-  width: 42px;
-  height: 42px;
-  -webkit-animation: loading-rotate 2s linear infinite;
-  animation: loading-rotate 2s linear infinite;
-}
-
-.v-loading-mask.is-fullscreen .v-loading-spinner .circular {
-  width: 50px;
-  height: 50px;
-}
-
-.v-loading-spinner .path {
-  -webkit-animation: loading-dash 1.5s ease-in-out infinite;
-  animation: loading-dash 1.5s ease-in-out infinite;
-  stroke-dasharray: 90, 150;
-  stroke-dashoffset: 0;
-  stroke-width: 2;
-  stroke: #409eff;
-  stroke-linecap: round;
-}
-
-.v-loading-spinner i {
-  color: #409eff;
+  background: #fff;
+  border: 1px solid #ddd;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 6px 12px rgb(0 0 0 / 25%);
 }
 
 .v-loading-fade-enter-from,
@@ -72,50 +42,11 @@
   opacity: 0;
 }
 
-@-webkit-keyframes loading-rotate {
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes loading-rotate {
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
-}
-
-@-webkit-keyframes loading-dash {
-  0% {
-    stroke-dasharray: 1, 200;
-    stroke-dashoffset: 0;
-  }
-
-  50% {
-    stroke-dasharray: 90, 150;
-    stroke-dashoffset: -40px;
-  }
-
-  100% {
-    stroke-dasharray: 90, 150;
-    stroke-dashoffset: -120px;
-  }
-}
-
-@keyframes loading-dash {
-  0% {
-    stroke-dasharray: 1, 200;
-    stroke-dashoffset: 0;
-  }
-
-  50% {
-    stroke-dasharray: 90, 150;
-    stroke-dashoffset: -40px;
-  }
-
-  100% {
-    stroke-dasharray: 90, 150;
-    stroke-dashoffset: -120px;
-  }
+.dx-loadingContainer {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  overflow: hidden;
+  background-color: transparent;
+  border: none;
 }

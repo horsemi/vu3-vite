@@ -1,0 +1,117 @@
+// 重置表头样式
+.dx-datagrid-headers {
+  font-weight: 500 !important;
+  color: #333 !important;
+  background-color: #fafafa !important;
+  border-bottom: none !important;
+}
+
+// 行被选中样式
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > td,
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused) > tr > td,
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > td,
+.dx-datagrid-rowsview .dx-selection.dx-row:not(.dx-row-focused):hover > tr > td {
+  background-color: #e8f7ff !important;
+}
+
+// 表格行hover样式
+.dx-datagrid-table
+  .dx-data-row.dx-state-hover:not(.dx-selection):not(.dx-row-inserted):not(.dx-row-removed):not(.dx-edit-row):not(.dx-row-focused)
+  > td:not(.dx-focused) {
+  background-color: #e8f7ff !important;
+}
+
+// 重置选择框样式
+.dx-checkbox-checked .dx-checkbox-icon {
+  color: #fff !important;
+  background-color: #0486fe !important;
+}
+
+// 重置主题按钮背景色
+.dx-button-mode-contained.dx-button-default {
+  background-color: @color-primary !important;
+}
+.dx-button-mode-contained.dx-button-default.dx-state-hover {
+  background-color: #5eb2ff !important;
+}
+.dx-button-mode-contained.dx-button-default.dx-state-focused {
+  color: #fff !important;
+  background-color: #1165b2 !important;
+}
+
+// 重置默认按钮样式
+.dx-button-mode-contained.dx-state-hover {
+  background-color: #fff !important;
+  border-color: #52b7ff !important;
+}
+.dx-button-mode-contained.dx-state-focused {
+  color: #0486fe !important;
+  background-color: #fff !important;
+  border-color: #0486fe !important;
+  .dx-icon {
+    color: #0486fe !important;
+  }
+}
+
+// 重置tab样式
+.dx-tab {
+  padding: 8px 16px !important;
+  background-color: #fff !important;
+}
+.dx-tabpanel .dx-multiview-wrapper {
+  border: none !important;
+}
+.dx-tabpanel > .dx-tabpanel-tabs .dx-tabs {
+  color: #fff !important;
+  background-color: #fff !important;
+  border-bottom: 1px solid @border-color-primary !important;
+  box-shadow: none !important;
+}
+.dx-tabpanel > .dx-tabpanel-tabs .dx-tab.dx-tab-selected {
+  box-shadow: none !important;
+  .dx-tab-content {
+    color: @color-primary !important;
+  }
+  &::before {
+    position: absolute;
+    bottom: 0;
+    display: inline-block;
+    width: calc(100% - 32px);
+    height: 2px;
+    background: @color-primary;
+    border-radius: 1px;
+    content: '' !important;
+  }
+}
+.dx-tabpanel > .dx-tabpanel-tabs .dx-tab {
+  width: auto !important;
+  box-shadow: none !important;
+}
+.dx-tabpanel > .dx-tabpanel-tabs .dx-tabs-expanded .dx-tab:not(.dx-tab-selected):first-of-type {
+  box-shadow: none !important;
+}
+
+// 重置下拉框样式
+.dx-list:not(.dx-list-select-decorator-enabled) .dx-list-item.dx-state-focused {
+  background-color: @color-primary !important;
+}
+
+// form样式 调整label宽度与文本框的宽度
+.dx-layout-manager .dx-label-h-align .dx-field-item-label .dx-field-item-label-content {
+  display: block;
+  width: 85px !important;
+  overflow: hidden;
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dx-layout-manager .dx-field-item:not(.dx-first-col) {
+  padding: 0 8px;
+  padding-left: 8px !important;
+}
+
+.dx-layout-manager .dx-field-item:not(.dx-last-col) {
+  padding: 0 8px;
+  padding-right: 8px !important;
+}

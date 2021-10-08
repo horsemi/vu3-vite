@@ -1,4 +1,4 @@
-import type { RouteLocationNormalized, RouteLocationRaw } from 'vue-router';
+import type { RouteLocationNormalized, RouteLocationRaw, Router } from 'vue-router';
 
 import { toRaw, unref } from 'vue';
 import { defineStore } from 'pinia';
@@ -9,13 +9,16 @@ import { store } from '/@/store';
 import { useGo, useRedo } from '/@/hooks/web/usePage';
 import { getRawRoute } from '/@/utils';
 import { PageEnum } from '/@/enums/pageEnum';
-import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
+import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE, LOGIN_ROUTE } from '/@/router/routes/basic';
+
+let timeId: TimeoutHandle;
 
 export interface ViewState {
   cacheList: Set<string>;
   viewList: RouteLocationNormalized[];
   lastDragEndIndexState: number;
   loadingZindex: number;
+  loadingTimes: number;
 }
 
 export const useViewStore = defineStore({
@@ -25,6 +28,7 @@ export const useViewStore = defineStore({
     viewList: [],
     lastDragEndIndexState: 0,
     loadingZindex: 2000,
+    loadingTimes: 0,
   }),
   getters: {
     getViewList() {
@@ -45,6 +49,9 @@ export const useViewStore = defineStore({
     getLoadingZindex() {
       return this.loadingZindex;
     },
+    getLoadingTimes(): number {
+      return this.loadingTimes;
+    },
   },
   actions: {
     goToPage() {
@@ -63,6 +70,17 @@ export const useViewStore = defineStore({
 
       // Jump to the current page and report an error
       path !== toPath && go(toPath as PageEnum, true);
+    },
+    setLoading(value: boolean) {
+      let count = this.loadingTimes;
+      if (value) {
+        count += 1;
+        this.loadingTimes = count;
+      } else {
+        count = count - 1;
+        count = count < 0 ? 0 : count;
+        this.loadingTimes = count;
+      }
     },
     updateCacheList(): void {
       const cacheMap: Set<string> = new Set();
@@ -104,15 +122,6 @@ export const useViewStore = defineStore({
       }
       this.viewList = cloneDeep([...this.viewList, route]);
     },
-    /**
-     * @description: 关闭页面时在 viewsState 删除对应的路由
-     */
-    close(route: RouteLocationNormalized): void {
-      const { fullPath, meta: { affix } = {} } = route;
-      if (affix) return;
-      const index = this.viewList.findIndex((item) => item.fullPath === fullPath);
-      index !== -1 && this.viewList.splice(index, 1);
-    },
     clearCacheList(): void {
       this.cacheList = new Set();
     },
@@ -124,14 +133,14 @@ export const useViewStore = defineStore({
      * @description 滑动页面标签，更改页面顺序
      * @param param0
      */
-    sortViews({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }): void {
+    async sortViews({ oldIndex, newIndex }: { oldIndex: number; newIndex: number }) {
       const currentTab = this.viewList[oldIndex];
 
       this.viewList.splice(oldIndex, 1);
       this.viewList.splice(newIndex, 0, currentTab);
       this.lastDragEndIndexState = this.lastDragEndIndexState + 1;
     },
-    closeMultipleView({ pathList }: { pathList: string[] }): void {
+    async closeMultipleView({ pathList }: { pathList: string[] }) {
       this.viewList = toRaw(this.viewList).filter((item) => !pathList.includes(item.fullPath));
     },
     async redoPage() {
@@ -149,13 +158,13 @@ export const useViewStore = defineStore({
     nextLoadingZindex() {
       ++this.loadingZindex;
     },
-    addView(route: RouteLocationNormalized) {
+    async addView(route: RouteLocationNormalized) {
       const { path, name } = route;
       // 404  The page does not need to add a tab
       if (
         path === PageEnum.ERROR_PAGE ||
         !name ||
-        [REDIRECT_ROUTE.name, PAGE_NOT_FOUND_ROUTE.name].includes(name as string)
+        [REDIRECT_ROUTE.name, PAGE_NOT_FOUND_ROUTE.name, LOGIN_ROUTE.name].includes(name as string)
       ) {
         return;
       }
@@ -163,15 +172,15 @@ export const useViewStore = defineStore({
 
       this.updateCacheList();
     },
-    closeAllView() {
+    async closeAllView() {
       this.viewList = this.viewList.filter((item) => {
         return item.meta && item.meta.affix;
       });
       this.clearCacheList();
       this.goToPage();
     },
-    closeView(view: RouteLocationNormalized) {
-      function getObj(tabItem: RouteLocationNormalized) {
+    async closeView(view: RouteLocationNormalized, router: Router) {
+      function getToTarget(tabItem: RouteLocationNormalized) {
         const { params, path, query } = tabItem;
         return {
           params: params || {},
@@ -180,37 +189,56 @@ export const useViewStore = defineStore({
         };
       }
 
+      /**
+       * @description 关闭页面时在 viewsState 删除对应的路由
+       */
+      const close = (route: RouteLocationNormalized) => {
+        const { fullPath, meta: { affix } = {} } = route;
+        if (affix) {
+          return;
+        }
+
+        const index = this.viewList.findIndex((item) => item.fullPath === fullPath);
+        if (index !== -1) {
+          this.viewList.splice(index, 1);
+        }
+      };
+
       const { currentRoute, replace } = router;
 
-      const { path } = unref(currentRoute);
+      const { fullPath } = unref(currentRoute);
       // 关闭非当前页面
-      if (path !== view.path) {
-        this.close(view);
+      if (fullPath !== view.fullPath) {
+        close(view);
         return;
       }
 
       // 关闭页面为当前页面时
-      let toObj: RouteLocationRaw = {};
+      let toTarget: RouteLocationRaw = {};
 
-      const index = this.getViewList.findIndex((item) => item.path === path);
+      const index = this.getViewList.findIndex((item) => item.fullPath === fullPath);
 
       // 若当前页面为做左侧页面
       if (index === 0) {
         // 若目前只有一个页面，则默认打开首页
         if (this.getViewList.length === 1) {
-          toObj = PageEnum.BASE_HOME;
+          toTarget = PageEnum.BASE_HOME;
         } else {
           // 跳转到右方页面
           const page = this.getViewList[index + 1];
-          toObj = getObj(page);
+          toTarget = getToTarget(page);
         }
-        this.close(currentRoute.value);
-        replace(toObj);
+      } else {
+        // Close the current tab
+        const page = this.viewList[index - 1];
+        toTarget = getToTarget(page);
       }
+      close(currentRoute.value);
+      replace(toTarget);
     },
-    closeViewByKey(key: string) {
+    async closeViewByKey(key: string, router: Router) {
       const index = this.viewList.findIndex((item) => (item.fullPath || item.path) === key);
-      index !== -1 && this.closeView(this.viewList[index]);
+      index !== -1 && this.closeView(this.viewList[index], router);
     },
   },
 });

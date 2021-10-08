@@ -1,5 +1,5 @@
 <template>
-  <div v-if="showFrame">
+  <div v-if="showFrame" style="flex: 1">
     <template v-for="frame in getFramePages" :key="frame.path">
       <FramePage
         v-if="frame.meta.frameSrc && hasRenderFrame(frame.name)"

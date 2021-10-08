@@ -1,6 +1,13 @@
 export interface UserInfo {
-  userId: string | number;
+  accountId: string;
+  accountName: string;
+  applicationId: string;
   userName: string;
-  roles: string[];
+  roles?: string[];
   permissions: string[];
 }
+
+export type GlobalEnumType = {
+  name: string;
+  options: [{ key: string; value: string; description: string }];
+};
