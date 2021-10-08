@@ -450,7 +450,7 @@
                   item.expand!
                 ];
               }
-              baseFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+              receiverFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
             });
 
             logisticsList.forEach((item) => {
