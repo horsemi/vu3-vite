@@ -417,6 +417,11 @@
       font-weight: bold;
     }
 
+    .dx-header-row
+      > td
+      > .dx-datagrid-text-content:not(.dx-sort-indicator):not(.dx-header-filter-indicator) {
+      max-width: 102%;
+    }
     // 给表头单元格加上左右边框
     .dx-datagrid .dx-datagrid-headers .dx-header-filter,
     .dx-datagrid .dx-datagrid-headers .dx-header-row > td {
