@@ -1,7 +1,7 @@
 <template>
   <div :class="[prefixCls]">
     <SvgIcon size="24" name="notice"></SvgIcon>
-    <span :class="`${prefixCls}-notice-num__wrapper`">5</span>
+    <!-- <span :class="`${prefixCls}-notice-num__wrapper`">5</span> -->
   </div>
 </template>
 

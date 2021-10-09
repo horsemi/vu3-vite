@@ -23,12 +23,12 @@ const stockCenter: Array<AppRouteRecordRaw> = [
         children: [
           {
             path: 'stock-search/list',
-            name: 'StockSearchList',
+            name: 'QueryStock',
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),
             meta: {
               title: '库存查询',
               frameSrc: `${import.meta.env.VITE_ROUTER_STOCK_CENTER_URL}#/querystock`,
-              permissions: ['StockSearchList'],
+              permissions: ['QueryStock'],
             },
           },
           {

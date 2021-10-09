@@ -183,7 +183,7 @@
       const dataGrid = ref();
       const pageTitle = '共{1}页，{2}条数据';
       const pageIndex = ref(0);
-      const pageSizes = [50, 100, 200, 500, 1000];
+      const pageSizes = [50, 100, 200];
       const contentMenuTitle = [
         {
           text: '复制内容',
@@ -326,6 +326,8 @@
       };
 
       onBeforeUnmount(() => {
+        tableData.value = null;
+        // tableColumns.value = null;
         if (!isEmpty(tableData.value)) {
           tableData.value.dispose();
         }
@@ -415,6 +417,11 @@
       font-weight: bold;
     }
 
+    .dx-header-row
+      > td
+      > .dx-datagrid-text-content:not(.dx-sort-indicator):not(.dx-header-filter-indicator) {
+      max-width: 102%;
+    }
     // 给表头单元格加上左右边框
     .dx-datagrid .dx-datagrid-headers .dx-header-filter,
     .dx-datagrid .dx-datagrid-headers .dx-header-row > td {

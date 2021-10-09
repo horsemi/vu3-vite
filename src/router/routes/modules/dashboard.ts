@@ -30,7 +30,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
     redirect: '/home/demo/index',
     component: LAYOUT,
     meta: {
-      title: '系统首页',
+      title: '工作台',
       icon: 'menu-home',
       order: 1,
     },
@@ -40,7 +40,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
         name: 'HomeDemo',
         redirect: '/home/demo/index',
         meta: {
-          title: 'Demo',
+          title: '工作台',
         },
         children: [
           {
@@ -48,7 +48,7 @@ const dashboard: Array<AppRouteRecordRaw> = [
             name: 'Home',
             component: () => import('/@/views/home/index.vue'),
             meta: {
-              title: '主页',
+              title: '工作台',
               affix: true,
               ignoreKeepAlive: true,
             },

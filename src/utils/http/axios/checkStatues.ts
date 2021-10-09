@@ -12,7 +12,8 @@ export function checkStatus(status: number, msg: string): void {
     // Jump to the login page if not logged in, and carry the path of the current page
     // Return to the current page after successful login. This step needs to be operated on the login page.
     case 401:
-      error('账号已登出，请重新登录');
+      // error('账号已登出，请重新登录');
+      console.error('账号已登出，请重新登录');
       useAppStore().resumeAllState();
       window.location.href = 'http://test.sso.4pl.linshimuye.com:8097/#/login?tag=ods';
       break;

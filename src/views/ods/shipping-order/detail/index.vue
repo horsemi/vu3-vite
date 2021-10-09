@@ -10,8 +10,8 @@
           text="提交"
           display-expr="name"
           key-expr="key"
-          @button-click="onSubmitClick"
-          @item-click="onItemButtonClick"
+          @button-click="onSubmitClickThrottleFn"
+          @item-click="onItemButtonClickThrottleFn"
         />
         <DxDropDownButton
           :items="dropButtonItems.apply"
@@ -20,11 +20,11 @@
           text="审核"
           display-expr="name"
           key-expr="key"
-          @button-click="onApplyClick"
-          @item-click="onItemButtonClick"
+          @button-click="onApplyClickThrottleFn"
+          @item-click="onItemButtonClickThrottleFn"
         />
-        <DxButton text="下推" @click="onPushClick" />
-        <DxButton text="刷新" @click="onRefresh" />
+        <DxButton text="下推" @click="onPushClickThrottleFn" />
+        <DxButton text="刷新" @click="getDataThrottleFn" />
       </div>
       <DxTabPanel
         v-model:selected-index="selectedIndex"
@@ -37,7 +37,15 @@
           <div class="tab">
             <div class="form-box" :style="{ height: opened ? '' : getColseHeight(data.rowCount) }">
               <DetailForm
-                :form-data="formData"
+                :form-data="
+                  data.key === 'base'
+                    ? baseFormData
+                    : data.key === 'receiver'
+                    ? receiverFormData
+                    : data.key === 'logistics'
+                    ? logisticsFormData
+                    : otherFormData
+                "
                 :form-list="
                   data.key === 'base'
                     ? baseInformation
@@ -100,6 +108,7 @@
 
   import { defineComponent, ref, watch, reactive } from 'vue';
   import { useRoute } from 'vue-router';
+  import { useThrottleFn } from '@vueuse/core';
 
   import { getColumns } from '/@/model/shipping-orders';
   import { getDefiniteColumns } from '/@/model/shipping-order-items';
@@ -107,6 +116,8 @@
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
   import { getDetailData, getDefiniteData, getRecordData } from './index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
+  import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
+  import { isFoundationType } from '/@/model/common';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
@@ -185,10 +196,17 @@
       const Id = route.query.Id as string;
       const BillCode = route.query.BillCode as string;
       const formData = ref();
+
       const baseInformation = ref<IDetailItem[]>([]);
       const receiverInformation = ref<IDetailItem[]>([]);
       const logisticsInformation = ref<IDetailItem[]>([]);
       const otherInformation = ref<IDetailItem[]>([]);
+
+      const baseFormData = ref<Record<string, unknown>>({});
+      const receiverFormData = ref<Record<string, unknown>>({});
+      const logisticsFormData = ref<Record<string, unknown>>({});
+      const otherFormData = ref<Record<string, unknown>>({});
+
       const isFixHeight = ref<boolean>(true);
 
       const definiteOptions = ref<Partial<ITableOptions>>({
@@ -336,7 +354,45 @@
         getDetailData(['Id', '=', Id], columnsData).then((res) => {
           if (res) {
             const { baseList, receiverList, logisticsList, otherList, data } = res;
-            formData.value = data;
+
+            // 页面中业务操作需要使用的字段
+            formData.value = {
+              GatheringParentCode: (data as Record<string, unknown>).GatheringParentCode,
+            };
+
+            /** 实验性功能 */
+            baseList.forEach((item) => {
+              if (isFoundationType(item)) {
+                baseFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
+              }
+              baseFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+            });
+
+            receiverList.forEach((item) => {
+              if (isFoundationType(item)) {
+                receiverFormData.value[item.expand!] = (data as Record<string, unknown>)[
+                  item.expand!
+                ];
+              }
+              receiverFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+            });
+
+            logisticsList.forEach((item) => {
+              if (isFoundationType(item)) {
+                logisticsFormData.value[item.expand!] = (data as Record<string, unknown>)[
+                  item.expand!
+                ];
+              }
+              logisticsFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+            });
+
+            otherList.forEach((item) => {
+              if (isFoundationType(item)) {
+                otherFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
+              }
+              otherFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+            });
+
             baseInformation.value = baseList;
             receiverInformation.value = receiverList;
             logisticsInformation.value = logisticsList;
@@ -411,6 +467,17 @@
         });
       };
 
+      // 所有操作设置为节流
+      const getDataThrottleFn = useThrottleFn(getData, DEFAULT_THROTTLE_TIME);
+
+      const onSubmitClickThrottleFn = useThrottleFn(onSubmitClick, DEFAULT_THROTTLE_TIME);
+
+      const onApplyClickThrottleFn = useThrottleFn(onApplyClick, DEFAULT_THROTTLE_TIME);
+
+      const onPushClickThrottleFn = useThrottleFn(onPushClick, DEFAULT_THROTTLE_TIME);
+
+      const onItemButtonClickThrottleFn = useThrottleFn(onItemButtonClick, DEFAULT_THROTTLE_TIME);
+
       watch([selectedIndex, tableIndex], ([sIndex, tIndex]) => {
         handleHeight(sIndex, tIndex);
       });
@@ -427,23 +494,30 @@
         recordOptions,
         recordScheme,
         recordAllColumns,
+
         baseInformation,
         receiverInformation,
         logisticsInformation,
         otherInformation,
+
+        baseFormData,
+        receiverFormData,
+        logisticsFormData,
+        otherFormData,
+
         selectedIndex,
         tableIndex,
         opened,
         multiViewItems,
         multiEntityItems,
         dropButtonItems,
-        formData,
+        // formData,
         isFixHeight,
-        onSubmitClick,
-        onApplyClick,
-        onPushClick,
-        onItemButtonClick,
-        onRefresh,
+        onSubmitClickThrottleFn,
+        onApplyClickThrottleFn,
+        onPushClickThrottleFn,
+        onItemButtonClickThrottleFn,
+        getDataThrottleFn,
         onChangeOpened,
         getColseHeight,
         dropDownButtonAttributes: {

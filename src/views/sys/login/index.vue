@@ -48,6 +48,11 @@
           </div>
         </div>
       </div>
+      <div class="footer_container">
+        <div class="foot-line" />
+        <div class="foot-font"> 用精致 活出兴致 </div>
+        <div class="foot-line" />
+      </div>
       <PasswordModal
         v-if="popupVisable"
         :popup-visable="popupVisable"
@@ -140,7 +145,7 @@
     position: relative;
     display: flex;
     height: 100%;
-    // min-height: 624px;
+    min-height: 440px;
     background: url('@{fileService}/ods_login_background.png') bottom right no-repeat;
     -webkit-background-size: cover;
     -o-background-size: cover;
@@ -152,16 +157,16 @@
         margin: auto;
       }
 
-      display: flex;
-      justify-content: center;
-      align-items: center;
       width: 100%;
       height: 100%;
-      // margin: auto;
 
       .top-logo__wrap {
+        @media screen and (max-height: 580px) {
+          display: none;
+        }
+
         position: absolute;
-        top: 49px;
+        top: 6%;
         left: 70px;
       }
       .container__wrap_left {
@@ -169,7 +174,8 @@
           display: none;
         }
 
-        flex: 1;
+        display: inline-block;
+        width: 50%;
         height: 100%;
         margin: auto;
 
@@ -182,26 +188,35 @@
           margin: 0 auto auto 10%;
 
           .image-container__inner {
-            width: 37vw;
-            height: 52vh;
+            width: 70%;
+            max-width: 550px;
             object-fit: contain;
           }
         }
       }
       .container__wrap_right {
-        flex: 1;
+        position: relative;
+        display: inline-block;
+        width: 50%;
+        height: 100%;
+        vertical-align: bottom;
         .login-form-container__wrap {
           @media screen and (max-width: 992px) {
+            left: -171px;
             width: 70%;
             min-width: 349px;
             margin: auto;
           }
 
+          position: absolute;
+          top: 0;
+          right: 11.4%;
+          bottom: 0;
+          left: 22%;
           display: inline-block;
           width: 378px;
           height: 410px;
-          margin: 7.4% 11.4% 13% 22%;
-          vertical-align: middle;
+          margin: auto;
           background-color: #fff;
           border-radius: 4px;
 
@@ -236,6 +251,37 @@
             border-radius: 4px;
           }
         }
+      }
+    }
+    .footer_container {
+      position: fixed;
+      right: 0;
+      bottom: 51px;
+      left: 0;
+      display: flex;
+      width: 364px;
+      height: 2vh;
+      margin: 0 auto;
+      /* stylelint-disable-next-line */
+      @media screen and (max-height: 600px) {
+        display: none;
+      }
+
+      .foot-line {
+        display: block;
+        height: 11px;
+        min-width: 90px;
+        border-bottom: 1px solid rgba(196, 255, 242, 1);
+        opacity: 0.4;
+      }
+      .foot-font {
+        height: 17px;
+        min-width: 184px;
+        font-size: 16px;
+        font-weight: 400;
+        color: rgba(254, 255, 255, 1);
+        text-align: center;
+        opacity: 0.4;
       }
     }
   }

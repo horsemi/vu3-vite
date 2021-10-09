@@ -39,6 +39,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'DefaultAreaCode',
     caption: '默认区域',
+    foundationList: [
+      {
+        key: 'DefaultArea_Name',
+        caption: '默认区域',
+      },
+    ],
   },
   {
     key: 'UnitCode',

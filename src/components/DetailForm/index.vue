@@ -1,6 +1,12 @@
 <template>
   <div :class="prefixCls">
-    <DxForm :form-data="formData" :col-count="8" :show-colon-after-label="false" :read-only="true">
+    <DxForm
+      :form-data="formData"
+      :col-count="8"
+      :show-colon-after-label="false"
+      :read-only="true"
+      :items="[]"
+    >
       <template v-for="(item, index) in formList" :key="index">
         <DxItem
           v-if="!item.hide"
@@ -29,9 +35,9 @@
           @update:value="onChangeData($event, data.dataField)"
         />
       </template>
-      <template #stepBar>
+      <!-- <template #stepBar>
         <StepBar :step-data="stepData" :step-active-index="stepActiveIndex" />
-      </template>
+      </template> -->
       <template #expand="{ data }">
         <EnumSelect
           v-if="data.editorOptions.type === 'enum'"
@@ -65,7 +71,7 @@
 
   import FoundationText from '/@/components/FoundationText/index.vue';
   import EnumSelect from '/@/components/EnumSelect/index.vue';
-  import StepBar from '/@/components/StepBar/index.vue';
+  // import StepBar from '/@/components/StepBar/index.vue';
   import Switch from '/@/components/Switch/index.vue';
 
   export default defineComponent({
@@ -74,7 +80,7 @@
       DxItem,
       FoundationText,
       EnumSelect,
-      StepBar,
+      // StepBar,
       Switch,
     },
     props: {
@@ -90,14 +96,14 @@
           return [];
         },
       },
-      stepData: {
-        type: Array as PropType<string[]>,
-        default: () => [],
-      },
-      stepActiveIndex: {
-        type: Number,
-        default: 0,
-      },
+      // stepData: {
+      //   type: Array as PropType<string[]>,
+      //   default: () => [],
+      // },
+      // stepActiveIndex: {
+      //   type: Number,
+      //   default: 0,
+      // },
     },
     setup(props) {
       const { prefixCls } = useDesign('detail-form');
