@@ -1,11 +1,11 @@
 import Cookies from 'js-cookie';
 
 export function setCookie(key: string, value: string) {
-  Cookies.set(key, value, { expires: 1, domain: 'linshimuye.com' });
+  Cookies.set(`${process.env.NODE_ENV}-${key}`, value, { expires: 1, domain: 'linshimuye.com' });
 }
 
 export function getCookie(key: string) {
-  return Cookies.get(key);
+  return Cookies.get(`${process.env.NODE_ENV}-${key}`);
 }
 
 export function checkCookie(): boolean {
@@ -22,5 +22,5 @@ export function checkCookie(): boolean {
   }
 }
 export function removeCookie(key: string) {
-  Cookies.remove(key, { domain: 'linshimuye.com' });
+  Cookies.remove(`${process.env.NODE_ENV}-${key}`, { domain: 'linshimuye.com' });
 }
