@@ -4,7 +4,7 @@
   "license": "MIT",
   "scripts": {
     "dev": "vite --mode development",
-    "build": "vite build --mode development",
+    "build:s": "vite build --mode sit",
     "build:p": "vite build --mode production",
     "serve": "vite preview",
     "type:check": "vue-tsc --noEmit",
