@@ -277,8 +277,20 @@ export const customColumns: IColumnItem[] = [
     caption: '直达承运商编码',
   },
   {
-    key: 'HandCarLine',
+    key: 'HandCarsLine',
     caption: '挂车路线',
+    relationKey: 'HandCarLine',
+    foundationList: [
+      {
+        key: 'HandCarsLine_Name',
+        caption: '挂车路线',
+      },
+    ],
+    datatypekeies: 'line-circuits',
+  },
+  {
+    key: 'HandCarLine',
+    caption: '挂车路线编码',
   },
   {
     key: 'TrainCode',
@@ -317,8 +329,20 @@ export const customColumns: IColumnItem[] = [
     caption: '转运承运商编码',
   },
   {
-    key: 'SmallCarLine',
+    key: 'SmallCarsLine',
     caption: '小挂路线',
+    relationKey: 'SmallCarLine',
+    foundationList: [
+      {
+        key: 'SmallCarsLine_Name',
+        caption: '小挂路线',
+      },
+    ],
+    datatypekeies: 'line-circuits',
+  },
+  {
+    key: 'SmallCarLine',
+    caption: '小挂路线编码',
   },
   {
     key: 'CarModeCode',
