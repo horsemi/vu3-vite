@@ -40,7 +40,7 @@ export interface IFoundationConfig {
 }
 
 enum apiUrl {
-  getFoundationUrl = '/api/foundation',
+  getFoundationUrl = '/wms-foundation/api/foundation',
 }
 
 export class FoundationApi {

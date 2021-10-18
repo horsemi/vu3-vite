@@ -231,7 +231,9 @@ const initValueData = (item: IRequirementItem, requirement) => {
   result += `["${requirement}"`;
 
   switch (item.type) {
-    case 'int32': {
+    case 'int32':
+    case 'int64':
+    case 'decimal': {
       if (item.operator === operatorMap.isNull.key) {
         result += ',"=",null]';
       } else if (item.operator === operatorMap.isNotNull.key) {
