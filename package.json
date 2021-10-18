@@ -3,7 +3,7 @@
   "version": "0.0.2--alpha.1",
   "license": "MIT",
   "scripts": {
-    "dev": "vite --mode development",
+    "dev": "vite --mode sit",
     "build:s": "vite build --mode sit",
     "build:p": "vite build --mode production",
     "serve": "vite preview",
