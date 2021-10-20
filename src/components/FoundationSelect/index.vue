@@ -87,6 +87,9 @@
       // 下拉框组件文本框绑定的文本
       const dropDownValue = ref('');
 
+      // 用于判断value更改触发方式是否为下拉框点击
+      const isDropDownBoxClick = ref(false);
+
       const dropDownValueComputed = computed({
         get: () => {
           return unref(dropDownValue);
@@ -126,17 +129,23 @@
       const options = ref<FoundationDataType[]>([]);
       const debounceFn = useDebounceFn(searchFn, 800);
 
+      // 选中选项后会调用接口
       watch(
         () => props.value,
         (value) => {
           if (value) {
-            getFoundationByCode(
-              {
-                codes: [value as string],
-              },
-              props.foundationCode,
-              true
-            );
+            // 若为下拉框点击，则不执行
+            if (!unref(isDropDownBoxClick)) {
+              getFoundationByCode(
+                {
+                  codes: [value as string],
+                  names: [value as string],
+                },
+                props.foundationCode,
+                true
+              );
+            }
+            isDropDownBoxClick.value = false;
           } else {
             dropDownValueComputed.value = '';
           }
@@ -210,6 +219,7 @@
       }
 
       function onDataGridRowClick() {
+        isDropDownBoxClick.value = true;
         isGridBoxOpened.value = false;
       }
 
@@ -231,6 +241,7 @@
           getFoundationByCode(
             {
               names: [value],
+              codes: [value],
               isPrecised: false,
             },
             props.foundationCode
