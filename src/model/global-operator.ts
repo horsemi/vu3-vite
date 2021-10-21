@@ -106,7 +106,6 @@ export const globalOperator = {
   ],
   datetimeOperators: [
     operatorMap.equal.name,
-    operatorMap.notEqual.name,
     operatorMap.greater.name,
     operatorMap.greaterEqual.name,
     operatorMap.less.name,
@@ -118,7 +117,6 @@ export const globalOperator = {
   ],
   dateOperators: [
     operatorMap.equal.name,
-    operatorMap.notEqual.name,
     operatorMap.greater.name,
     operatorMap.greaterEqual.name,
     operatorMap.less.name,

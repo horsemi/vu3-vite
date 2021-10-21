@@ -278,10 +278,6 @@ const initValueData = (item: IRequirementItem, requirement) => {
         result = '';
       } else if (item.operator === '=') {
         result += rangeFormat(getBeginTime(value as Date), requirement, getEndTime(value as Date));
-      } else if (item.operator === '<>') {
-        result += `,"<","${getBeginTime(value as Date)}"],"or",["${requirement}",">=","${getEndTime(
-          value as Date
-        )}"]`;
       } else {
         result += `,"${item.operator}","${formatToDate(value as Date)}"]`;
       }
@@ -308,10 +304,6 @@ const initValueData = (item: IRequirementItem, requirement) => {
         result = '';
       } else if (item.operator === operatorMap.equal.key) {
         result += rangeFormat(getBeginTime(value as Date), requirement, getEndTime(value as Date));
-      } else if (item.operator === operatorMap.notEqual.key) {
-        result += `,"<","${getBeginTime(
-          value as Date
-        )}"],"and",["${requirement}",">=","${getEndTime(value as Date)}"]`;
       } else {
         result += `,"${item.operator}","${formatToDateTime(value as Date)}"]`;
       }
