@@ -25,7 +25,7 @@ export function getBeginTime(
   return moment(date).startOf(type).format(format);
 }
 
-export function getEndTime(
+export function getNextDayBeginTime(
   date: moment.MomentInput = null,
   type: moment.unitOfTime.Base | moment.unitOfTime.StartOf = 'day',
   format = DATE_TIME_FORMAT
@@ -34,6 +34,14 @@ export function getEndTime(
     .add(1, type as moment.unitOfTime.Base)
     .startOf(type)
     .format(format);
+}
+
+export function getEndTime(
+  date: moment.MomentInput = null,
+  type: moment.unitOfTime.Base | moment.unitOfTime.StartOf = 'day',
+  format = DATE_TIME_FORMAT
+) {
+  return moment(date).endOf(type).format(format);
 }
 
 export function getCurrentDate(format = DATE_FORMAT) {
