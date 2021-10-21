@@ -482,7 +482,19 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'FreightTypeCode',
+    caption: '运费类型编码',
+  },
+  {
+    key: 'FreightType',
     caption: '运费类型',
+    relationKey: 'FreightTypeCode',
+    foundationList: [
+      {
+        key: 'FreightType_Name',
+        caption: '运费类型',
+      },
+    ],
+    datatypekeies: 'freight-types',
   },
   {
     key: 'ThreeServiceCostType',
@@ -523,13 +535,13 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'LockBatchUserCode',
     caption: '锁定批次人ID',
-    allowQuery: false,
+    notAllowQuery: true,
   },
   {
     key: 'LockBatchUser',
     caption: '锁定批次人',
     relationKey: 'LockBatchUserCode',
-    allowQuery: false,
+    notAllowQuery: true,
     foundationList: [
       {
         key: 'LockBatchUser_AccountName',
@@ -596,13 +608,13 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CancellerId',
     caption: '作废人ID',
-    allowQuery: false,
+    notAllowQuery: true,
   },
   {
     key: 'Canceller',
     caption: '作废人',
     relationKey: 'CancellerId',
-    allowQuery: false,
+    notAllowQuery: true,
     foundationList: [
       {
         key: 'Canceller_AccountName',
@@ -629,13 +641,13 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CreatorId',
     caption: '创建人ID',
-    allowQuery: false,
+    notAllowQuery: true,
   },
   {
     key: 'Creator',
     caption: '创建人',
     relationKey: 'CreatorId',
-    allowQuery: false,
+    notAllowQuery: true,
     foundationList: [
       {
         key: 'Creator_AccountName',
@@ -654,13 +666,13 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ApplierId',
     caption: '审核人ID',
-    allowQuery: false,
+    notAllowQuery: true,
   },
   {
     key: 'Applier',
     caption: '审核人',
     relationKey: 'ApplierId',
-    allowQuery: false,
+    notAllowQuery: true,
     foundationList: [
       {
         key: 'Applier_AccountName',
@@ -683,13 +695,13 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'UpdaterId',
     caption: '修改人ID',
-    allowQuery: false,
+    notAllowQuery: true,
   },
   {
     key: 'Updater',
     caption: '修改人',
     relationKey: 'UpdaterId',
-    allowQuery: false,
+    notAllowQuery: true,
     foundationList: [
       {
         key: 'Updater_AccountName',

@@ -10,10 +10,10 @@ import type { ISortItem } from '/@/api/ods/types';
 
 import { getDataSource } from '/@/api/ods/common';
 import {
-  formatToDate,
   formatToDateTime,
   getBeginTime,
   getEndTime,
+  getNextDayBeginTime,
   getCurrentDate,
 } from '/@/utils/date';
 import { useMessage } from '/@/hooks/web/useMessage';
@@ -257,36 +257,7 @@ const initValueData = (item: IRequirementItem, requirement) => {
       }
       break;
     }
-    case 'date': {
-      if (item.operator === operatorMap.isNull.key) {
-        result += ',"=",null]';
-      } else if (item.operator === operatorMap.isNotNull.key) {
-        result += ',"<>",null]';
-      } else if (item.operator === operatorMap.today.key) {
-        result += rangeFormat(
-          getBeginTime(getCurrentDate()),
-          requirement,
-          getEndTime(getCurrentDate())
-        );
-      } else if (item.operator === operatorMap.thisMonth.key) {
-        result += rangeFormat(
-          getBeginTime(getCurrentDate(), 'month'),
-          requirement,
-          getEndTime(getCurrentDate(), 'month')
-        );
-      } else if (!value) {
-        result = '';
-      } else if (item.operator === '=') {
-        result += rangeFormat(getBeginTime(value as Date), requirement, getEndTime(value as Date));
-      } else if (item.operator === '<>') {
-        result += `,"<","${getBeginTime(value as Date)}"],"or",["${requirement}",">=","${getEndTime(
-          value as Date
-        )}"]`;
-      } else {
-        result += `,"${item.operator}","${formatToDate(value as Date)}"]`;
-      }
-      break;
-    }
+    case 'date':
     case 'datetime': {
       if (item.operator === operatorMap.isNull.key) {
         result += ',"=",null]';
@@ -296,22 +267,24 @@ const initValueData = (item: IRequirementItem, requirement) => {
         result += rangeFormat(
           getBeginTime(getCurrentDate()),
           requirement,
-          getEndTime(getCurrentDate())
+          getNextDayBeginTime(getCurrentDate())
         );
       } else if (item.operator === operatorMap.thisMonth.key) {
         result += rangeFormat(
           getBeginTime(getCurrentDate(), 'month'),
           requirement,
-          getEndTime(getCurrentDate(), 'month')
+          getNextDayBeginTime(getCurrentDate(), 'month')
         );
       } else if (!value) {
         result = '';
       } else if (item.operator === operatorMap.equal.key) {
-        result += rangeFormat(getBeginTime(value as Date), requirement, getEndTime(value as Date));
-      } else if (item.operator === operatorMap.notEqual.key) {
-        result += `,"<","${getBeginTime(
-          value as Date
-        )}"],"and",["${requirement}",">=","${getEndTime(value as Date)}"]`;
+        result += rangeFormat(
+          getBeginTime(value as Date),
+          requirement,
+          getNextDayBeginTime(value as Date)
+        );
+      } else if (item.operator === operatorMap.greater.key) {
+        result += `,"${item.operator}","${getEndTime(value as Date)}"]`;
       } else {
         result += `,"${item.operator}","${formatToDateTime(value as Date)}"]`;
       }

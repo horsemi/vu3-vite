@@ -64,9 +64,9 @@ export interface IColumnItem {
   hide?: boolean;
 
   /**
-   * @description 是否允许查询
+   * @description 是否不允许查询
    */
-  allowQuery?: boolean;
+  notAllowQuery?: boolean;
 
   /**
    * @description 是否允许排序

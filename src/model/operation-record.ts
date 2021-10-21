@@ -33,7 +33,7 @@ export const customColumns: IColumnItem[] = [
     key: 'Operator',
     caption: '操作人ID',
     relationKey: 'OperatorId',
-    allowQuery: false,
+    notAllowQuery: true,
     foundationList: [
       {
         key: 'Operator_AccountName',
