@@ -96,25 +96,23 @@
         :animation-enabled="true"
         :focus-state-enabled="false"
       >
-        <template #item="{ data }">
-          <div class="tab">
-            <OdsTable
-              :height="tableHeight"
-              :table-options="data.key === 'definite' ? definiteOptions : recordOptions"
-              :filter-scheme="data.key === 'definite' ? definiteScheme : recordScheme"
-              :all-columns="data.key === 'definite' ? definiteAllColumns : recordAllColumns"
-              :table-key="['Id']"
-              :table-key-type="[
-                {
-                  key: 'Id',
-                  type: 'string',
-                },
-              ]"
-            >
-            </OdsTable>
-          </div>
-        </template>
       </DxTabPanel>
+      <div class="tab">
+        <OdsTable
+          :height="tableHeight"
+          :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
+          :filter-scheme="tableIndex === 0 ? definiteScheme : recordScheme"
+          :all-columns="tableIndex === 0 ? definiteAllColumns : recordAllColumns"
+          :table-key="['Id']"
+          :table-key-type="[
+            {
+              key: 'Id',
+              type: 'string',
+            },
+          ]"
+        >
+        </OdsTable>
+      </div>
     </div>
   </div>
 </template>
