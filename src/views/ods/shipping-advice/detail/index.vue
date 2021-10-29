@@ -123,7 +123,7 @@
   import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch, reactive } from 'vue';
+  import { defineComponent, ref, watch, reactive, nextTick } from 'vue';
   import { useRoute } from 'vue-router';
   import { useThrottleFn } from '@vueuse/core';
 
@@ -359,7 +359,6 @@
       };
 
       const onChangeOpened = () => {
-        isFixHeight.value = !isFixHeight.value;
         opened.value = !opened.value;
         handleHeight(selectedIndex.value, tableIndex.value);
       };
@@ -501,6 +500,9 @@
             });
             handleHeight(0, 0);
             // handleStepActiveIndex();
+            nextTick(() => {
+              isFixHeight.value = !isFixHeight.value;
+            });
           }
         });
       };
@@ -658,7 +660,7 @@
     }
 
     .fixHeight {
-      height: 255px;
+      min-height: 255px;
     }
     .tab-panel {
       position: relative;
