@@ -55,7 +55,12 @@
         info-text="共{1}页，{2}条数据"
         display-mode="full"
       />
-      <DxScrolling v-if="options.useScrolling" mode="virtual" row-rendering-mode="virtual" />
+      <DxScrolling
+        v-if="options.useScrolling"
+        mode="virtual"
+        row-rendering-mode="virtual"
+        column-rendering-mode="virtual"
+      />
       <template #billCode="{ data }">
         <div
           id="billcode"
@@ -98,6 +103,7 @@
     nextTick,
     computed,
     onMounted,
+    onActivated,
   } from 'vue';
   import { cloneDeep, isEmpty } from 'lodash-es';
 
@@ -205,6 +211,15 @@
         });
         clipboard.on('error', function () {
           useMessage('复制失败', 'error');
+        });
+      });
+
+      onActivated(() => {
+        const instance = dataGrid.value.instance;
+        const index = instance.pageIndex();
+        instance.pageIndex(-1);
+        nextTick(() => {
+          instance.pageIndex(index);
         });
       });
 
