@@ -36,9 +36,18 @@
 </template>
 
 <script lang="ts">
-  import type { FoundationMap, FoundationDataType, IFoundationConfig } from '/@/api/app/foundation';
+  import type { FoundationMap, IFoundationConfig } from '/@/api/app/foundation';
 
-  import { defineComponent, computed, PropType, ref, unref, watch, onBeforeUnmount } from 'vue';
+  import {
+    defineComponent,
+    computed,
+    PropType,
+    ref,
+    unref,
+    watch,
+    onMounted,
+    onBeforeUnmount,
+  } from 'vue';
   import { useDebounceFn } from '@vueuse/core';
   import DxDropDownBox from 'devextreme-vue/drop-down-box';
   import { DxDataGrid, DxColumn, DxSelection, DxScrolling } from 'devextreme-vue/data-grid';
@@ -46,6 +55,7 @@
   import { FoundationApi } from '/@/api/app';
 
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { isUnDef } from '/@/utils/is';
 
   export default defineComponent({
     name: 'FoundationSelect',
@@ -70,6 +80,18 @@
       selectDisabled: {
         type: Boolean,
         default: false,
+      },
+      defaultOptions: {
+        type: Object as PropType<Record<string, unknown>>,
+        default: () => undefined,
+      },
+      showProperty: {
+        type: String,
+        default: 'Name',
+      },
+      keyProperty: {
+        type: String,
+        default: 'Code',
       },
     },
     emits: ['update:value'],
@@ -112,21 +134,24 @@
           return [unref(gridValue)];
         },
         set: (val) => {
-          gridValue.value = val[0];
+          if (val && val.length) {
+            gridValue.value = val[0];
 
-          // 列表选中一列后更改下拉框文本框内容，并同步 value 值
-          if (gridValue.value && gridValue.value.name && gridValue.value.code) {
-            dropDownValueComputed.value = gridValue.value.name;
+            // 列表选中一列后更改下拉框文本框内容，并同步 value 值
+            if (gridValue.value && gridValue.value.name && gridValue.value.code) {
+              dropDownValueComputed.value = gridValue.value.name;
 
-            if (unref(gridValue).code !== props.value) {
-              ctx.emit('update:value', gridValue.value.code);
+              if (unref(gridValue).code !== props.value) {
+                ctx.emit('update:value', gridValue.value.code);
+              }
             }
           }
         },
       });
+
       const isGridBoxOpened = ref(false);
 
-      const options = ref<FoundationDataType[]>([]);
+      const options = ref<Record<string, unknown>[]>([]);
       const debounceFn = useDebounceFn(searchFn, 800);
 
       // 选中选项后会调用接口
@@ -149,9 +174,6 @@
           } else {
             dropDownValueComputed.value = '';
           }
-        },
-        {
-          immediate: true,
         }
       );
 
@@ -169,11 +191,40 @@
           } else {
             options.value = [];
           }
-        },
-        {
-          immediate: true,
         }
       );
+
+      // 该方法是从两个watch中拆分出来
+      function initFoundationList() {
+        if (props.foundationCode && isUnDef(props.defaultOptions)) {
+          getFoundationByCode(
+            {
+              top: 10,
+              isall: props.filter && props.filter.length > 0 ? false : true,
+            },
+            props.foundationCode
+          );
+        } else {
+          options.value = [];
+        }
+
+        if (props.value) {
+          // 若为下拉框点击或默认下拉列为空，则不执行
+          if (!unref(isDropDownBoxClick) && isUnDef(props.defaultOptions)) {
+            getFoundationByCode(
+              {
+                codes: [props.value as string],
+                names: [props.value as string],
+              },
+              props.foundationCode,
+              true
+            );
+          }
+          isDropDownBoxClick.value = false;
+        } else {
+          dropDownValueComputed.value = '';
+        }
+      }
 
       function onInitialized(e) {
         dataGrid.value = e.component;
@@ -257,6 +308,24 @@
         }
       }
 
+      onMounted(() => {
+        if (props.defaultOptions) {
+          gridValueComputed.value = [
+            {
+              code: props.defaultOptions[props.keyProperty],
+              name: props.defaultOptions[props.showProperty],
+            },
+          ];
+
+          options.value = [
+            {
+              code: props.defaultOptions[props.keyProperty],
+              name: props.defaultOptions[props.showProperty] as string,
+            },
+          ];
+        }
+      });
+
       onBeforeUnmount(() => {
         if (dropDownBox.value) {
           dropDownBox.value.dispose();
@@ -266,6 +335,8 @@
           dataGrid.value.dispose();
         }
       });
+
+      initFoundationList();
 
       return {
         prefixCls,

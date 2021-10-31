@@ -37,6 +37,7 @@
           <div class="tab">
             <div class="form-box" :style="{ height: opened ? '' : getColseHeight(data.rowCount) }">
               <DetailForm
+                :read-only="true"
                 :form-data="
                   data.key === 'base'
                     ? baseFormData

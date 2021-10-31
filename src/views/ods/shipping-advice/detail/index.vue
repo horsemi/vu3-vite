@@ -48,6 +48,7 @@
           <div class="tab">
             <div class="form-box" :style="{ height: opened ? '' : getColseHeight(data.rowCount) }">
               <DetailForm
+                :read-only="true"
                 :form-data="
                   data.key === 'base'
                     ? baseFormData
@@ -363,10 +364,10 @@
       const onChangeOpened = () => {
         isFixHeight.value = !isFixHeight.value;
         opened.value = !opened.value;
-        handleHeight(selectedIndex.value, tableIndex.value);
+        handleHeight(selectedIndex.value);
       };
 
-      const handleHeight = (sIndex: number, tIndex: number) => {
+      const handleHeight = (sIndex: number) => {
         // 表单行数
         const rowCount = multiViewItems.value[sIndex].rowCount;
         // 展开按钮高度，超出3行才会出现展开按钮
@@ -501,7 +502,7 @@
             ].forEach((data, index) => {
               multiViewItems.value[index].rowCount = getRowCount(data);
             });
-            handleHeight(0, 0);
+            handleHeight(0);
             // handleStepActiveIndex();
           }
         });
@@ -575,8 +576,8 @@
 
       const onItemButtonClickThrottleFn = useThrottleFn(onItemButtonClick, DEFAULT_THROTTLE_TIME);
 
-      watch([selectedIndex, tableIndex], ([sIndex, tIndex]) => {
-        handleHeight(sIndex, tIndex);
+      watch([selectedIndex, tableIndex], ([sIndex]) => {
+        handleHeight(sIndex);
       });
 
       getData();
