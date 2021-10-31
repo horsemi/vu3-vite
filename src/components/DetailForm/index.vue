@@ -4,7 +4,8 @@
       :form-data="formData"
       :col-count="8"
       :show-colon-after-label="false"
-      :read-only="true"
+      :read-only="readOnly"
+      :disabled="disabled"
       :items="[]"
     >
       <template v-for="(item, index) in formList" :key="index">
@@ -30,7 +31,7 @@
       <template #OdsSwitch="{ data }">
         <Switch
           :style="{ opacity: !data.editorType.disabled ? 0.6 : 1, margin: '2.5px 0' }"
-          :read-only="true"
+          :read-only="readOnly"
           :value="formData[data.dataField]"
           @update:value="onChangeData($event, data.dataField)"
         />
@@ -42,18 +43,21 @@
         <EnumSelect
           v-if="data.editorOptions.type === 'enum'"
           :value="formData[data.dataField]"
-          :read-only="true"
+          :read-only="readOnly"
           width="100%"
           :expand="data.editorOptions.expand"
           @update:value="onChangeData($event, data.dataField)"
         />
-        <FoundationText
+        <FoundationSelect
           v-else
           width="100%"
           :value="formData[data.dataField]"
+          :select-disabled="readOnly"
           :show-property="data.editorOptions.showProperty"
-          :read-only="true"
-          :foundation-data="formData[data.editorOptions.expand]"
+          :key-property="data.editorOptions.keyProperty"
+          :foundation-code="data.editorOptions.datatypekeies"
+          :default-options="formData[data.editorOptions.expand]"
+          @update:value="onChangeData($event, data.dataField)"
         />
       </template>
     </DxForm>
@@ -69,16 +73,18 @@
 
   import { DxForm, DxItem } from 'devextreme-vue/form';
 
-  import FoundationText from '/@/components/FoundationText/index.vue';
+  import FoundationSelect from '/@/components/FoundationSelect/index.vue';
+
   import EnumSelect from '/@/components/EnumSelect/index.vue';
   // import StepBar from '/@/components/StepBar/index.vue';
   import Switch from '/@/components/Switch/index.vue';
+  import { camelCaseToHyphenCase } from '/@/utils/helper/dataHelper';
 
   export default defineComponent({
     components: {
       DxForm,
       DxItem,
-      FoundationText,
+      FoundationSelect,
       EnumSelect,
       // StepBar,
       Switch,
@@ -95,6 +101,14 @@
         default: () => {
           return [];
         },
+      },
+      readOnly: {
+        type: Boolean,
+        default: false,
+      },
+      disabled: {
+        type: Boolean,
+        default: false,
       },
       // stepData: {
       //   type: Array as PropType<string[]>,
@@ -135,6 +149,7 @@
       return {
         prefixCls,
         handleEditorOptions,
+        camelCaseToHyphenCase,
         onChangeData,
       };
     },

@@ -300,6 +300,7 @@ export const task: IDetailItem[] = [
   {
     key: 'LockBatchUserCode',
     caption: '锁定批次人',
+    keyProperty: 'Id',
     showProperty: 'AccountName',
   },
   {
@@ -325,6 +326,7 @@ export const task: IDetailItem[] = [
   {
     key: 'CancellerId',
     caption: '作废人',
+    keyProperty: 'Id',
     showProperty: 'AccountName',
   },
   {
@@ -368,6 +370,7 @@ export const other: IDetailItem[] = [
   {
     key: 'CreatorId',
     caption: '创建人',
+    keyProperty: 'Id',
     showProperty: 'AccountName',
   },
   {
@@ -385,6 +388,7 @@ export const other: IDetailItem[] = [
   {
     key: 'UpdaterId',
     caption: '修改人',
+    keyProperty: 'Id',
     showProperty: 'AccountName',
   },
   {
@@ -402,6 +406,7 @@ export const other: IDetailItem[] = [
   {
     key: 'ApplierId',
     caption: '审核人',
+    keyProperty: 'Id',
     showProperty: 'AccountName',
   },
   {

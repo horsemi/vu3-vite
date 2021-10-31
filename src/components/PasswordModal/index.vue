@@ -5,25 +5,30 @@
       :drag-enabled="dragEnabled"
       :close-on-outside-click="closeOnOutsideClick"
       :show-close-button="showCloseButton"
-      :show-title="true"
-      :width="500"
-      :height="370"
-      shading-color="transparent"
-      title="修改密码"
+      :show-title="false"
+      :width="460"
+      height="auto"
       @hidden="onClose"
     >
+      <img
+        class="header-img"
+        src="http://file.otwb.linshimuye.com:30011/file/ods/webclient/img/update-password.png"
+      />
+      <i class="dx-icon-close close-icon" @click="onClose"></i>
       <DxForm
         :form-data="changePasswordData"
         label-location="top"
         :col-count="1"
         show-colon-after-label
+        :show-required-mark="false"
       >
         <DxItem
           data-field="oldPassword"
           :editor-options="{
             mode: 'password',
+            cssClass: 'test',
             showClearButton: true,
-            placeholder: '请输入密码',
+            placeholder: '请输入旧密码',
           }"
         >
           <DxLabel text="旧密码"></DxLabel>
@@ -34,7 +39,7 @@
           :editor-options="{
             mode: 'password',
             showClearButton: true,
-            placeholder: '请输入密码',
+            placeholder: '请输入新密码',
           }"
         >
           <DxLabel text="新密码"></DxLabel>
@@ -46,35 +51,24 @@
           :editor-options="{
             mode: 'password',
             showClearButton: true,
-            placeholder: '请输入密码',
+            placeholder: '请再次输入新密码',
           }"
         >
           <DxLabel text="确认密码"></DxLabel>
-          <DxRequiredRule message="请再次输入密码" />
+          <DxRequiredRule message="请再次输入新密码" />
           <DxPatternRule :pattern="passwordPattern" :message="passwordMessage" />
           <DxCompareRule :comparison-target="passwordComparison" message="两次输入密码不一致!" />
         </DxItem>
       </DxForm>
       <DxButton
-        style="margin: 15px 0"
-        :width="500"
-        :height="30"
+        style="margin: 24px 40px 12px 40px"
+        :width="340"
+        :height="48"
         text="Contained"
         type="default"
         styling-mode="Contained"
         @click="onChangePassword"
-        >提交</DxButton
-      >
-      <DxButton
-        :width="500"
-        :height="30"
-        style="margin: 3px 0"
-        text="Text"
-        type="default"
-        styling-mode="text"
-        :disabled="showTextClose"
-        @click="onClose"
-        >关闭</DxButton
+        >确定</DxButton
       >
     </DxPopup>
   </div>
@@ -115,7 +109,7 @@
       },
       closeOnOutsideClick: {
         type: Boolean,
-        default: false,
+        default: true,
       },
       showCloseButton: {
         type: Boolean,
@@ -185,5 +179,42 @@
   .@{prefix-cls} {
     display: inline-block;
     width: 100%;
+  }
+
+  .header-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 460px;
+    height: 201px;
+  }
+
+  .dx-form {
+    padding: 0 40px;
+    margin-top: 206px;
+
+    /* stylelint-disable-next-line */
+    :deep(.dx-texteditor-container) {
+      height: 48px;
+    }
+
+    /* stylelint-disable-next-line */
+    :deep(.dx-field-item-label-location-top) {
+      margin-bottom: 4px;
+    }
+
+    /* stylelint-disable-next-line */
+    :deep(.dx-layout-manager .dx-field-item:not(.dx-first-row)) {
+      padding-top: 24px;
+    }
+  }
+
+  .close-icon {
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: @page-popup-z-index;
+    padding: 16px;
+    cursor: pointer;
   }
 </style>

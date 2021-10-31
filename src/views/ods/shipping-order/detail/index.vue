@@ -37,6 +37,7 @@
           <div class="tab">
             <div class="form-box" :style="{ height: opened ? '' : getColseHeight(data.rowCount) }">
               <DetailForm
+                :read-only="true"
                 :form-data="
                   data.key === 'base'
                     ? baseFormData
@@ -77,25 +78,23 @@
         :animation-enabled="true"
         :focus-state-enabled="false"
       >
-        <template #item="{ data }">
-          <div class="tab">
-            <OdsTable
-              :height="tableHeight"
-              :table-options="data.key === 'definite' ? definiteOptions : recordOptions"
-              :filter-scheme="data.key === 'definite' ? definiteScheme : recordScheme"
-              :all-columns="data.key === 'definite' ? definiteAllColumns : recordAllColumns"
-              :table-key="['Id']"
-              :table-key-type="[
-                {
-                  key: 'Id',
-                  type: 'string',
-                },
-              ]"
-            >
-            </OdsTable>
-          </div>
-        </template>
       </DxTabPanel>
+      <div class="tab">
+        <OdsTable
+          :height="tableHeight"
+          :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
+          :filter-scheme="tableIndex === 0 ? definiteScheme : recordScheme"
+          :all-columns="tableIndex === 0 ? definiteAllColumns : recordAllColumns"
+          :table-key="['Id']"
+          :table-key-type="[
+            {
+              key: 'Id',
+              type: 'string',
+            },
+          ]"
+        >
+        </OdsTable>
+      </div>
     </div>
   </div>
 </template>
@@ -106,7 +105,7 @@
   import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch, reactive } from 'vue';
+  import { defineComponent, ref, watch, reactive, nextTick } from 'vue';
   import { useRoute } from 'vue-router';
   import { useThrottleFn } from '@vueuse/core';
 
@@ -303,7 +302,6 @@
       };
 
       const onChangeOpened = () => {
-        isFixHeight.value = !isFixHeight.value;
         opened.value = !opened.value;
         handleHeight(selectedIndex.value, tableIndex.value);
       };
@@ -406,6 +404,9 @@
               multiViewItems.value[index].rowCount = getRowCount(data);
             });
             handleHeight(0, 0);
+            nextTick(() => {
+              isFixHeight.value = !isFixHeight.value;
+            });
           }
         });
       };
@@ -555,7 +556,7 @@
       }
     }
     .fixHeight {
-      height: 255px;
+      min-height: 255px;
     }
 
     .tab-panel {
