@@ -50,7 +50,6 @@
         />
         <FoundationSelect
           v-else
-          width="100%"
           :value="formData[data.dataField]"
           :select-disabled="readOnly"
           :show-property="data.editorOptions.showProperty"
