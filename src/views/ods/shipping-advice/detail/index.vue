@@ -280,6 +280,8 @@
 
       const onRefresh = () => {
         getData();
+        getDefinite();
+        getRecord();
       };
 
       const onSubmitClick = () => {
@@ -499,10 +501,10 @@
             ].forEach((data, index) => {
               multiViewItems.value[index].rowCount = getRowCount(data);
             });
-            handleHeight(0);
+            handleHeight(selectedIndex.value);
             // handleStepActiveIndex();
             nextTick(() => {
-              isFixHeight.value = !isFixHeight.value;
+              isFixHeight.value = false;
             });
           }
         });
@@ -512,13 +514,13 @@
         if (JSON.stringify(columnsData) === '{}') {
           columnsData = await getColumns();
         }
-        if (JSON.stringify(recordColumnsData) === '{}') {
-          recordColumnsData = await getRecordColumns();
-        }
+        getDetail(columnsData);
+      };
+
+      const getDefinite = async () => {
         if (JSON.stringify(definiteColumnsData) === '{}') {
           definiteColumnsData = await getDefiniteColumns();
         }
-        getDetail(columnsData);
         getDefiniteData(definiteColumnsData).then((res) => {
           if (res) {
             definiteAllColumns.value = res.columnList;
@@ -541,6 +543,12 @@
             };
           }
         });
+      };
+
+      const getRecord = async () => {
+        if (JSON.stringify(recordColumnsData) === '{}') {
+          recordColumnsData = await getRecordColumns();
+        }
         getRecordData(recordColumnsData).then((res) => {
           if (res) {
             recordAllColumns.value = res.columnList;
@@ -566,7 +574,7 @@
       };
 
       // 所有操作设置为节流
-      const getDataThrottleFn = useThrottleFn(getData, DEFAULT_THROTTLE_TIME);
+      const getDataThrottleFn = useThrottleFn(onRefresh, DEFAULT_THROTTLE_TIME);
 
       const onSubmitClickThrottleFn = useThrottleFn(onSubmitClick, DEFAULT_THROTTLE_TIME);
 
@@ -576,11 +584,11 @@
 
       const onItemButtonClickThrottleFn = useThrottleFn(onItemButtonClick, DEFAULT_THROTTLE_TIME);
 
-      watch([selectedIndex, tableIndex], ([sIndex]) => {
+      watch(selectedIndex, (sIndex) => {
         handleHeight(sIndex);
       });
 
-      getData();
+      onRefresh();
 
       return {
         tableHeight,

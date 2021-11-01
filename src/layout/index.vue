@@ -177,6 +177,14 @@
       padding-bottom: 16px;
       overflow: hidden;
       background-color: @background-color-primary;
+
+      .dx-scrollview-content {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
     }
   }
 </style>
