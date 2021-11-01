@@ -15,6 +15,7 @@
       :show-borders="options.showBorders"
       :row-alternation-enabled="options.rowAlternationEnabled"
       @selection-changed="onSelectionChanged"
+      @option-changed="onOptionChanged"
     >
       <template v-for="(item, index) in tableColumns" :key="index">
         <DxColumn
@@ -56,10 +57,8 @@
         display-mode="full"
       />
       <DxScrolling
-        v-if="options.useScrolling"
-        mode="virtual"
-        row-rendering-mode="virtual"
-        column-rendering-mode="virtual"
+        :mode="options.useScrolling ? 'virtual' : 'standard'"
+        :row-rendering-mode="rowRenderingMode"
       />
       <template #billCode="{ data }">
         <div
@@ -187,9 +186,9 @@
       const { prefixCls } = useDesign('ods-table');
       const appStore = useAppStore();
       const dataGrid = ref();
-      const pageTitle = '共{1}页，{2}条数据';
       const pageIndex = ref(0);
-      const pageSizes = [50, 100, 200];
+      const pageSizes = [50, 100, 3000];
+      const rowRenderingMode = ref('standard');
       const contentMenuTitle = [
         {
           text: '复制内容',
@@ -215,12 +214,9 @@
       });
 
       onActivated(() => {
-        const instance = dataGrid.value.instance;
-        const index = instance.pageIndex();
-        instance.pageIndex(-1);
-        nextTick(() => {
-          instance.pageIndex(index);
-        });
+        if (dataGrid.value && dataGrid.value.instance) {
+          dataGrid.value.instance.updateDimensions();
+        }
       });
 
       const handleCustomizeDecimal = (cellInfo) => {
@@ -391,6 +387,12 @@
         return dataGrid.value.instance.getSelectedRowsData();
       }
 
+      function onOptionChanged(e) {
+        if (e.fullName === 'paging.pageSize') {
+          rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
+        }
+      }
+
       return {
         dataGrid,
         options,
@@ -413,7 +415,8 @@
         getRowData,
         clipValue,
         contentMenuTitle,
-        pageTitle,
+        rowRenderingMode,
+        onOptionChanged,
       };
     },
   });
