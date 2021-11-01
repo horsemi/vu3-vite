@@ -54,6 +54,11 @@ export interface IDetailItem {
   expand?: string;
 
   /**
+   * @description 表单关联ID
+   */
+  keyProperty?: string;
+
+  /**
    * @description 表单显示关联属性
    */
   showProperty?: string;
