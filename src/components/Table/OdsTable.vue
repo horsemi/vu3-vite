@@ -187,7 +187,7 @@
       const appStore = useAppStore();
       const dataGrid = ref();
       const pageIndex = ref(0);
-      const pageSizes = [50, 100, 3000];
+      const pageSizes = [50, 100, 1000, 2000, 3000];
       const rowRenderingMode = ref('standard');
       const contentMenuTitle = [
         {
@@ -214,10 +214,23 @@
       });
 
       onActivated(() => {
-        if (dataGrid.value && dataGrid.value.instance) {
-          dataGrid.value.instance.updateDimensions();
-        }
+        hiddenVirtualRow();
       });
+
+      // 处理keep-alive等情况下骨架屏遮挡列表数据，滚动条位置错误问题
+      const hiddenVirtualRow = () => {
+        if (dataGrid.value && dataGrid.value.instance && dataGrid.value.dataSource) {
+          const key = dataGrid.value.dataSource.key();
+          const items = dataGrid.value.dataSource.items();
+          if (items.length > 1) {
+            const preItem = { [key]: items[0][key] };
+            const nextItem = { [key]: items[1][key] };
+            // 滚动到第二条数据的位置，再回到第一条，刷新滚动状态
+            dataGrid.value.instance.navigateToRow(nextItem);
+            dataGrid.value.instance.navigateToRow(preItem);
+          }
+        }
+      };
 
       const handleCustomizeDecimal = (cellInfo) => {
         const { value } = cellInfo;
@@ -389,6 +402,8 @@
 
       function onOptionChanged(e) {
         if (e.fullName === 'paging.pageSize') {
+          // 切换页码也会有滚动条问题
+          hiddenVirtualRow();
           rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
         }
       }
