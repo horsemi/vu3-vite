@@ -9,7 +9,7 @@
       :open-on-field-click="false"
       :defer-rendering="false"
       :show-clear-button="true"
-      width="180"
+      :width="width"
       :drop-down-options="dropDownOptions"
       :on-initialized="onDropDownBoxInitialized"
       @focus-in="onFocusIn"
@@ -67,7 +67,7 @@
       },
       width: {
         type: String,
-        default: '200',
+        default: '',
       },
       foundationCode: {
         type: String,
