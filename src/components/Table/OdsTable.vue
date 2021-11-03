@@ -219,15 +219,16 @@
 
       // 处理keep-alive等情况下骨架屏遮挡列表数据，滚动条位置错误问题
       const hiddenVirtualRow = () => {
-        if (dataGrid.value && dataGrid.value.instance && dataGrid.value.dataSource) {
-          const key = dataGrid.value.dataSource.key();
-          const items = dataGrid.value.dataSource.items();
+        const { dataSource, instance } = dataGrid.value;
+        if (dataSource && instance) {
+          const key = dataSource.key();
+          const items = dataSource.items();
           if (items.length > 1) {
             const preItem = { [key]: items[0][key] };
             const nextItem = { [key]: items[1][key] };
             // 滚动到第二条数据的位置，再回到第一条，刷新滚动状态
-            dataGrid.value.instance.navigateToRow(nextItem);
-            dataGrid.value.instance.navigateToRow(preItem);
+            instance.navigateToRow(nextItem);
+            instance.navigateToRow(preItem);
           }
         }
       };
