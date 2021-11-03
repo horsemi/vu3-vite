@@ -15,6 +15,7 @@
       :show-borders="options.showBorders"
       :row-alternation-enabled="options.rowAlternationEnabled"
       @selection-changed="onSelectionChanged"
+      @option-changed="onOptionChanged"
     >
       <template v-for="(item, index) in tableColumns" :key="index">
         <DxColumn
@@ -56,10 +57,8 @@
         display-mode="full"
       />
       <DxScrolling
-        v-if="options.useScrolling"
-        mode="virtual"
-        row-rendering-mode="virtual"
-        column-rendering-mode="virtual"
+        :mode="options.useScrolling ? 'virtual' : 'standard'"
+        :row-rendering-mode="rowRenderingMode"
       />
       <template #billCode="{ data }">
         <div
@@ -187,9 +186,9 @@
       const { prefixCls } = useDesign('ods-table');
       const appStore = useAppStore();
       const dataGrid = ref();
-      const pageTitle = '共{1}页，{2}条数据';
       const pageIndex = ref(0);
-      const pageSizes = [50, 100, 200];
+      const pageSizes = [50, 100, 1000, 2000, 3000];
+      const rowRenderingMode = ref('standard');
       const contentMenuTitle = [
         {
           text: '复制内容',
@@ -215,13 +214,24 @@
       });
 
       onActivated(() => {
-        const instance = dataGrid.value.instance;
-        const index = instance.pageIndex();
-        instance.pageIndex(-1);
-        nextTick(() => {
-          instance.pageIndex(index);
-        });
+        hiddenVirtualRow();
       });
+
+      // 处理keep-alive等情况下骨架屏遮挡列表数据，滚动条位置错误问题
+      const hiddenVirtualRow = () => {
+        const { dataSource, instance } = dataGrid.value;
+        if (dataSource && instance) {
+          const key = dataSource.key();
+          const items = dataSource.items();
+          if (items.length > 1) {
+            const preItem = { [key]: items[0][key] };
+            const nextItem = { [key]: items[1][key] };
+            // 滚动到第二条数据的位置，再回到第一条，刷新滚动状态
+            instance.navigateToRow(nextItem);
+            instance.navigateToRow(preItem);
+          }
+        }
+      };
 
       const handleCustomizeDecimal = (cellInfo) => {
         const { value } = cellInfo;
@@ -391,6 +401,14 @@
         return dataGrid.value.instance.getSelectedRowsData();
       }
 
+      function onOptionChanged(e) {
+        if (e.fullName === 'paging.pageSize') {
+          // 切换页码也会有滚动条问题
+          hiddenVirtualRow();
+          rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
+        }
+      }
+
       return {
         dataGrid,
         options,
@@ -413,7 +431,8 @@
         getRowData,
         clipValue,
         contentMenuTitle,
-        pageTitle,
+        rowRenderingMode,
+        onOptionChanged,
       };
     },
   });
