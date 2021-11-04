@@ -1,12 +1,13 @@
 import { getDataSource } from './common';
 
-const prefixUrls = '/ods/api/odata/';
+const prefixUrls = '/api/odata/';
 
 export const getDetailDataSource = (
   code: string,
   select: string[],
   expand: string[],
-  filter: unknown[]
+  filter: unknown[],
+  systemCode = 'ods'
 ): Promise<unknown[]> => {
   return new Promise((reslove, reject) => {
     const data = getDataSource(
@@ -18,7 +19,7 @@ export const getDetailDataSource = (
         expand: expand,
       },
       {
-        url: `${prefixUrls}${code}`,
+        url: `/${systemCode}${prefixUrls}${code}`,
         key: 'Id',
       }
     );
