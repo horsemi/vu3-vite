@@ -54,12 +54,12 @@ const transform: AxiosTransform = {
       return data;
     }
     // 接口请求错误，统一提示错误信息
-    if (result === ResultEnum.ERROR) {
+    if (result === ResultEnum.ERROR || result === ResultEnum.ERR) {
       if (message) {
         errorMessage(message);
         Promise.reject(new Error(message));
       } else {
-        const msg = '后台系统报错';
+        const msg = '后台系统错误';
         errorMessage(msg);
         Promise.reject(new Error(msg));
       }
