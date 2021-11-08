@@ -66,7 +66,7 @@
       const queryPlan = ref();
       const loading = ref(false);
 
-      const ORDER_CODE = 'shipping-advice';
+      const ORDER_CODE = 'shipping-advices';
       const options: Partial<ITableOptions> = {
         height: 'calc(100vh - 276px)',
         dataSourceOptions: {

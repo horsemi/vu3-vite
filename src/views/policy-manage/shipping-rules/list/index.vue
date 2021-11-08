@@ -11,8 +11,10 @@
     <div v-loading="loading" class="example">
       <div class="btn__wrap">
         <div class="btn__box">
-          <DxButton :width="76" text="提交" type="default" @click="onSubmitClick" />
-          <DxButton :width="76" text="审核" @click="onApplyClick" />
+          <DxButton :width="76" text="新增" type="default" @click="onAddClickFn" />
+          <DxButton :width="76" text="删除" @click="onDeleteClickThrottleFn" />
+          <DxButton :width="76" text="生效" @click="onSwitchClickThrottleFn(true)" />
+          <DxButton :width="76" text="失效" @click="onSwitchClickThrottleFn(false)" />
         </div>
         <div class="btn__box">
           <DxButton :width="100" icon="refresh" text="刷新" @click="onRefresh" />
@@ -39,39 +41,43 @@
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
+  import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
+  import { ShippingRulesApi } from '/@/api/policy-manage/shipping-rules';
 
-  import { defineComponent, ref, onMounted } from 'vue';
+  import { defineComponent, ref, onMounted, onActivated } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
+  import { useThrottleFn } from '@vueuse/core';
 
-  import { getColumns } from '/@/model/shipping-orders';
+  import { getColumns } from '/@/model/shipping-rules';
   import { isArrayEmpty } from '/@/utils/bill/index';
-  import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { getSchemesData } from '/@/utils/scheme/index';
 
   import DxButton from 'devextreme-vue/button';
 
   import QueryPlan from '/@/components/QueryPlan/index.vue';
+  import { useMessage } from '/@/hooks/web/useMessage';
 
   export default defineComponent({
-    name: 'OdsShippingOrderList',
+    name: 'PolicyManageShippingRulesList',
     components: {
       QueryPlan,
       DxButton,
     },
     setup() {
       const router = useRouter();
+
       const dataGrid = ref();
       const queryPlan = ref();
       const loading = ref(false);
 
-      const ORDER_CODE = 'shipping-orders';
+      const ORDER_CODE = 'shipping-rules';
       const options: Partial<ITableOptions> = {
         height: 'calc(100vh - 276px)',
         dataSourceOptions: {
           oDataOptions: {
-            url: getOdsListUrlByCode(ORDER_CODE),
+            url: getOdsListUrlByCode(ORDER_CODE, 'policy-manage'),
           },
         },
       };
@@ -93,51 +99,66 @@
 
       const handleBillCodeClick = (data) => {
         router.push({
-          name: 'OdsShippingOrderDetail',
+          name: 'PolicyManageShippingRulesDetail',
           query: {
             Id: data.data.Id,
-            BillCode: data.data.BillCode,
+            RuleCode: data.data.RuleCode,
           },
         });
       };
 
-      const onSubmitClick = () => {
-        const selectionData = dataGrid.value.getSelectedRowsData() as {
-          GatheringParentCode: string;
-        }[];
+      const onAddClickFn = () => {
+        router.push({
+          name: 'PolicyManageShippingRulesDetail',
+          query: {
+            Id: '',
+            RuleCode: '',
+          },
+        });
+      };
+
+      const onDeleteClick = () => {
+        const selectionData = dataGrid.value.getSelectedRowsData();
         if (isArrayEmpty(selectionData)) {
           loading.value = true;
-          ShippingOrderApi.onShippingOrderSubmit(
-            selectionData.map((item) => item.GatheringParentCode)
-          )
+          ShippingRulesApi.onShippingRulesDelete(selectionData.map((item) => item.Id))
             .then(() => {
-              loading.value = false;
+              useMessage('操作成功', 'success');
               onRefresh();
             })
             .catch(() => {
+              onRefresh();
+            })
+            .finally(() => {
               loading.value = false;
             });
         }
       };
 
-      const onApplyClick = () => {
-        const selectionData = dataGrid.value.getSelectedRowsData() as {
-          GatheringParentCode: string;
-        }[];
+      const onSwitchClick = (switchStatus: boolean) => {
+        const selectionData = dataGrid.value.getSelectedRowsData();
         if (isArrayEmpty(selectionData)) {
           loading.value = true;
-          ShippingOrderApi.onShippingOrderApply(
-            selectionData.map((item) => item.GatheringParentCode)
-          )
+          ShippingRulesApi.onShippingRulesSwitch({
+            ids: selectionData.map((item) => item.Id),
+            isEnabled: switchStatus,
+          })
             .then(() => {
-              loading.value = false;
+              useMessage('操作成功', 'success');
               onRefresh();
             })
             .catch(() => {
+              onRefresh();
+            })
+            .finally(() => {
               loading.value = false;
             });
         }
       };
+
+      const onDeleteClickThrottleFn = useThrottleFn(onDeleteClick, DEFAULT_THROTTLE_TIME);
+
+      const onSwitchClickThrottleFn = useThrottleFn(onSwitchClick, DEFAULT_THROTTLE_TIME);
 
       const onChangeScheme = (data: ISchemeItem) => {
         filterScheme.value = cloneDeep(data);
@@ -152,7 +173,7 @@
         schemeCheckedIndex.value = schemeData.value.checkedIndex;
         const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
 
-        const fast = scheme.fast || [];
+        const fast = scheme && scheme.fast ? scheme.fast : [];
         if (fast.length > 0) {
           scheme.requirement.push(...fast);
         }
@@ -168,7 +189,7 @@
         queryPlan.value.handleData();
       };
 
-      onMounted(() => {
+      onActivated(() => {
         getTableData();
       });
 
@@ -188,9 +209,10 @@
         schemeCheckedIndex,
         handleBillCodeClick,
         onChangeScheme,
-        onSubmitClick,
-        onApplyClick,
+        onAddClickFn,
         onRefresh,
+        onDeleteClickThrottleFn,
+        onSwitchClickThrottleFn,
       };
     },
   });
