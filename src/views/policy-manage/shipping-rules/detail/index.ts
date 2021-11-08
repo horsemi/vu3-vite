@@ -11,20 +11,6 @@ export const base: IDetailItem[] = [
     disabled: true,
   },
   {
-    key: 'CreatedTime',
-    caption: '创建日期',
-    disabled: true,
-  },
-  {
-    key: 'UpdatedTime',
-    caption: '更新日期',
-    disabled: true,
-  },
-  {
-    key: 'ShippingType',
-    caption: '发运方式',
-  },
-  {
     key: 'ProvinceCode',
     caption: '省',
   },
@@ -35,6 +21,20 @@ export const base: IDetailItem[] = [
   {
     key: 'MaxWeight',
     caption: '重量上限',
+  },
+  {
+    key: 'ShippingType',
+    caption: '发运方式',
+  },
+  {
+    key: 'CreatedTime',
+    caption: '创建日期',
+    disabled: true,
+  },
+  {
+    key: 'UpdatedTime',
+    caption: '更新日期',
+    disabled: true,
   },
   {
     key: 'IsEnabled',
