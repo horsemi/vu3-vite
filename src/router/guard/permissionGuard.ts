@@ -8,7 +8,7 @@ import { useAppStoreWidthOut } from '/@/store/modules/app';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
-const whitePathList: PageEnum[] = [LOGIN_PATH];
+const whitePathList: PageEnum[] = [];
 const blackPathList: string[] = [];
 
 const permissionStrictState = true;
@@ -49,19 +49,19 @@ export function createPermissionGuard(router: Router) {
         next();
         return;
       }
-      // redirect login page
-      const redirectData: { path: string; replace: boolean; query?: Recordable<string> } = {
-        path: LOGIN_PATH,
-        replace: true,
-      };
-      if (to.path) {
-        redirectData.query = {
-          ...redirectData.query,
-          redirect: to.path,
-        };
-      }
+      // // redirect login page
+      // const redirectData: { path: string; replace: boolean; query?: Recordable<string> } = {
+      //   path: LOGIN_PATH,
+      //   replace: true,
+      // };
+      // if (to.path) {
+      //   redirectData.query = {
+      //     ...redirectData.query,
+      //     redirect: to.path,
+      //   };
+      // }
       await appStore.resumeAllState();
-      window.location.href = 'http://test.sso.4pl.linshimuye.com:8097/#/login?tag=ods';
+      window.location.href = `${import.meta.env.VITE_APP_SSO_SERVERS_URL}#/login?tag=ods`;
       return;
     }
 

@@ -146,9 +146,9 @@
       const onChangePassword = async () => {
         const params: ISumbitPassword = {
           userName: prop.loginUserName || userStore.getUserInfo.userName,
-          oldPassword: changePasswordData.oldPassword,
-          newPassword: changePasswordData.newPassword,
-          newPasswordRe: changePasswordData.newPasswordRe,
+          oldPassword: window.btoa(changePasswordData.oldPassword),
+          newPassword: window.btoa(changePasswordData.newPassword),
+          newPasswordRe: window.btoa(changePasswordData.newPasswordRe),
         };
         userStore.changePassword(params).then(() => {
           successMessage('修改成功');

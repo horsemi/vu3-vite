@@ -18,7 +18,7 @@ enum apiUrl {
   menus = '/passport/api/menus',
   permission = '/passport/api/authenticate-for-web',
   queryPasswordPolicy = '/permission/api/accounts/password-policy/searchv2',
-  changePassword = '/passport/api/change-password',
+  changePassword = '/passport/api/change-password-cipher',
   passwordPolicy = '/passport/api/password-policy',
 }
 export class UserApi {

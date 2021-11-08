@@ -117,7 +117,7 @@ export const useUserStore = defineStore({
         UserApi.logout()
           .then(() => {
             useAppStore().resumeAllState();
-            window.location.href = 'http://test.sso.4pl.linshimuye.com:8097/#/login?tag=ods';
+            window.location.href = `${import.meta.env.VITE_APP_SSO_SERVERS_URL}#/login?tag=ods`;
           })
           .catch((error) => {
             reject(error);

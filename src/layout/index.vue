@@ -105,7 +105,7 @@
       // iframe 通讯监听方法
       function reciveMessage(e) {
         if (e.data.status === 401) {
-          window.location.href = 'http://test.sso.4pl.linshimuye.com:8097/#/login?tag=ods';
+          window.location.href = `${import.meta.env.VITE_APP_SSO_SERVERS_URL}#/login?tag=ods`;
         }
       }
       onMounted(() => {

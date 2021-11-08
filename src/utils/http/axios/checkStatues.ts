@@ -15,7 +15,7 @@ export function checkStatus(status: number, msg: string): void {
       // error('账号已登出，请重新登录');
       console.error('账号已登出，请重新登录');
       useAppStore().resumeAllState();
-      window.location.href = 'http://test.sso.4pl.linshimuye.com:8097/#/login?tag=ods';
+      window.location.href = `${import.meta.env.VITE_APP_SSO_SERVERS_URL}#/login?tag=ods`;
       break;
     case 403:
       error('您的账号没有权限访问该页面');

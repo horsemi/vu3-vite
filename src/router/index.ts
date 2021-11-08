@@ -3,9 +3,9 @@ import type { App } from 'Vue';
 
 import { createRouter, createWebHashHistory } from 'vue-router';
 import { basicRoutes } from './routes';
-import { REDIRECT_ROUTE, LOGIN_ROUTE, ROOT_ROUTE } from '/@/router/routes/basic';
+import { REDIRECT_ROUTE, ROOT_ROUTE } from '/@/router/routes/basic';
 
-const WHITE_NAME_LIST = [LOGIN_ROUTE.name, REDIRECT_ROUTE.name, ROOT_ROUTE.name];
+const WHITE_NAME_LIST = [REDIRECT_ROUTE.name, ROOT_ROUTE.name];
 
 const router = createRouter({
   history: createWebHashHistory(),

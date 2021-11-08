@@ -9,7 +9,7 @@ import { store } from '/@/store';
 import { useGo, useRedo } from '/@/hooks/web/usePage';
 import { getRawRoute } from '/@/utils';
 import { PageEnum } from '/@/enums/pageEnum';
-import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE, LOGIN_ROUTE } from '/@/router/routes/basic';
+import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE } from '/@/router/routes/basic';
 
 let timeId: TimeoutHandle;
 
@@ -164,7 +164,7 @@ export const useViewStore = defineStore({
       if (
         path === PageEnum.ERROR_PAGE ||
         !name ||
-        [REDIRECT_ROUTE.name, PAGE_NOT_FOUND_ROUTE.name, LOGIN_ROUTE.name].includes(name as string)
+        [REDIRECT_ROUTE.name, PAGE_NOT_FOUND_ROUTE.name].includes(name as string)
       ) {
         return;
       }

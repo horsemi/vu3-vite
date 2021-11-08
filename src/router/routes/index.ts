@@ -1,10 +1,5 @@
 import type { AppRouteModule, AppRouteRecordRaw } from '/@/router/types';
-import {
-  PAGE_NOT_FOUND_ROUTE,
-  REDIRECT_ROUTE,
-  LOGIN_ROUTE,
-  ROOT_ROUTE,
-} from '/@/router/routes/basic';
+import { PAGE_NOT_FOUND_ROUTE, REDIRECT_ROUTE, ROOT_ROUTE } from '/@/router/routes/basic';
 
 const modules = import.meta.globEager('./modules/**/*.ts');
 
@@ -28,4 +23,4 @@ const afterSortRouteList: AppRouteModule[] = routeModuleList.sort(
 
 export const asyncRoutes = [PAGE_NOT_FOUND_ROUTE, ...afterSortRouteList];
 
-export const basicRoutes = [LOGIN_ROUTE, ROOT_ROUTE, REDIRECT_ROUTE];
+export const basicRoutes = [ROOT_ROUTE, REDIRECT_ROUTE];
