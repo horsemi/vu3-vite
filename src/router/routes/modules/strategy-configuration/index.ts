@@ -32,6 +32,23 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
             },
           },
           {
+            path: 'policy-manage/shipping-rules/list',
+            name: 'PolicyManageShippingRulesList',
+            component: () => import('/@/views/policy-manage/shipping-rules/list/index.vue'),
+            meta: {
+              title: '发运策略',
+            },
+          },
+          {
+            path: 'policy-manage/shipping-rules/detail',
+            name: 'PolicyManageShippingRulesDetail',
+            component: () => import('/@/views/policy-manage/shipping-rules/detail/index.vue'),
+            meta: {
+              title: '发运策略详情',
+              hideMenu: true,
+            },
+          },
+          {
             path: 'restrictive-rule/list',
             name: 'RestrictiveRuleList',
             component: () => import('/@/views/sys/iframe/FrameBlank.vue'),

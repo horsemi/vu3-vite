@@ -43,4 +43,8 @@ export function initGlobalEnumData() {
   AppConfigApi.getGlobalEnum().then((resolve) => {
     appStore.setGlobalEnumData(resolve);
   });
+
+  AppConfigApi.getGlobalEnum('policy-manage').then((resolve) => {
+    appStore.setGlobalEnumData(resolve);
+  });
 }

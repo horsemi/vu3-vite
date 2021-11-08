@@ -77,6 +77,7 @@
   import type { IQueryItem } from '/@/components/QueryPlan/types';
   import { getColumns as getAdvicesColumns } from '/@/model/shipping-advices';
   import { getColumns as getOrdersColumns } from '/@/model/shipping-orders';
+  import { getColumns as getRulesColumns } from '/@/model/shipping-rules';
 
   import { defineComponent, ref, reactive } from 'vue';
   import DxTabPanel from 'devextreme-vue/tab-panel';
@@ -88,7 +89,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
 
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { SHIPPINGADVICE, SHIPPINGORDER } from './constant';
+  import { SHIPPINGADVICE, SHIPPINGORDER, SHIPPINGRULE } from './constant';
   import QueryFrom from '/@/components/QueryPlan/component/form.vue';
   import Content from '/@/components/QueryPopup/content/index.vue';
   import Requirement from '/@/components/QueryPopup/content/requirement.vue';
@@ -142,7 +143,7 @@
         },
       ];
 
-      const billType = [SHIPPINGORDER, SHIPPINGADVICE];
+      const billType = [SHIPPINGORDER, SHIPPINGADVICE, SHIPPINGRULE];
 
       function onChangeRequirement(data: IRequirementItem[]) {
         filterData.requirement = data;
@@ -192,6 +193,15 @@
             break;
           case SHIPPINGADVICE:
             getAdvicesColumns().then((res) => {
+              if (res) {
+                const { columnList } = res;
+                allColumns.value = columnList;
+              }
+              resetFilterValue();
+            });
+            break;
+          case SHIPPINGRULE:
+            getRulesColumns().then((res) => {
               if (res) {
                 const { columnList } = res;
                 allColumns.value = columnList;
