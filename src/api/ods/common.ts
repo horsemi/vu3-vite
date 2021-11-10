@@ -9,16 +9,16 @@ import { tokenHeaderKey } from '/@/utils/http/axios/const';
 import { checkStatus } from '/@/utils/http/axios/checkStatues';
 import { useUserStoreWidthOut } from '/@/store/modules/user';
 
-export const getOdsListUrlByCode = (code: string): string => {
-  return `/ods/api/odata/${code}s`;
+export const getOdsListUrlByCode = (code: string, systemCode = 'ods'): string => {
+  return `/${systemCode}/api/odata/${code}`;
 };
 
-export const getList = (code: string): Promise<any> => {
-  return defHttp.get({ url: `/ods/api/odata/${code}/scheme/list` });
+export const getList = (code: string, systemCode = 'ods'): Promise<any> => {
+  return defHttp.get({ url: `/${systemCode}/api/odata/${code}/scheme/list` });
 };
 
-export const getFilter = (code: string): Promise<any> => {
-  return defHttp.get({ url: `/ods/api/odata/${code}/scheme/filter` });
+export const getFilter = (code: string, systemCode = 'ods'): Promise<any> => {
+  return defHttp.get({ url: `/${systemCode}/api/odata/${code}/scheme/filter` });
 };
 
 export const getDataSource = (dataSource: IDataSource, oDataStore: IODataStore) => {
