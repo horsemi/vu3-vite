@@ -108,6 +108,8 @@
       function reciveMessage(e) {
         if (e.data.status === 401) {
           router.push({ path: '/login' });
+        } else if (e.data.message === 'GoExportList') {
+          router.push({ path: '/basic-management/export-configuration/export/list' });
         }
       }
       onMounted(() => {

@@ -16,15 +16,22 @@
       :row-alternation-enabled="options.rowAlternationEnabled"
       @selection-changed="onSelectionChanged"
       @option-changed="onOptionChanged"
+      @cellClick="onCellClick"
     >
       <template v-for="(item, index) in tableColumns" :key="index">
         <DxColumn
           v-if="!item.hide"
-          css-class="header-bold"
+          :css-class="`${item.cssClass || ''} header-bold`"
           :data-field="item.key"
           :allow-sorting="getSorting(item.allowSort, item.expand, item.relationKey)"
           :caption="item.caption"
-          :customize-text="item.type === 'decimal' ? handleCustomizeDecimal : handleCustomizeText"
+          :customize-text="
+            item.customizeText
+              ? item.customizeText
+              : item.type === 'decimal'
+              ? handleCustomizeDecimal
+              : handleCustomizeText
+          "
           :data-type="item.type"
           :cell-template="getTemplate(item.cellTemplate, item.expand, item.relationKey)"
           :alignment="getAlignment(item)"
@@ -181,7 +188,7 @@
         default: '',
       },
     },
-    emits: ['handleBillCodeClick', 'handleSelectionClick'],
+    emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('ods-table');
       const appStore = useAppStore();
@@ -220,7 +227,7 @@
       // 处理keep-alive等情况下骨架屏遮挡列表数据，滚动条位置错误问题
       const hiddenVirtualRow = () => {
         const { dataSource, instance } = dataGrid.value;
-        if (dataSource && instance) {
+        if (dataSource && dataSource.key && instance) {
           const key = dataSource.key();
           const items = dataSource.items();
           if (items.length > 1) {
@@ -407,6 +414,11 @@
           hiddenVirtualRow();
           rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
         }
+        ctx.emit('optionChanged', e);
+      }
+
+      function onCellClick(e) {
+        ctx.emit('cellClick', e);
       }
 
       return {
@@ -433,6 +445,7 @@
         contentMenuTitle,
         rowRenderingMode,
         onOptionChanged,
+        onCellClick,
       };
     },
   });
