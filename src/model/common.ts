@@ -7,10 +7,11 @@ import { getList } from '/@/api/ods/common';
 
 export const getColumnList = async (
   code: string,
-  customColumns: IColumnItem[]
+  customColumns: IColumnItem[],
+  systemCode = 'ods'
 ): Promise<{ columnList: IColumnItem[]; key: string[]; keyType: IKeyType[] } | undefined> => {
   try {
-    const res = await getList(code);
+    const res = await getList(code, systemCode);
     const fieldTypes = res.store.odata.fieldTypes as IFieldType[];
     const key = res.store.odata.key as string[];
     const keyType = res.store.odata.keyType as IKeyType[];

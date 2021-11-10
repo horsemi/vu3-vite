@@ -212,7 +212,7 @@
         height: defaultDefiniteHeight,
         dataSourceOptions: {
           oDataOptions: {
-            url: getOdsListUrlByCode('shipping-order-item'),
+            url: getOdsListUrlByCode('shipping-order-items'),
           },
         },
         useScrolling: true,
@@ -226,7 +226,7 @@
         height: defaultRecordHeight,
         dataSourceOptions: {
           oDataOptions: {
-            url: getOdsListUrlByCode('operation-record'),
+            url: getOdsListUrlByCode('operation-records'),
           },
         },
         useScrolling: true,
