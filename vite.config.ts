@@ -57,10 +57,6 @@ export default defineConfig(
             target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
           },
-          '/permission': {
-            target: 'http://test.api.otwb.linshimuye.com:30024',
-            changeOrigin: true,
-          },
           '/ods/api': {
             target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
