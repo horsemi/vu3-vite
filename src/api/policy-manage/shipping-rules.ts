@@ -1,5 +1,7 @@
 import { defHttp } from '/@/utils/http/axios';
 
+import type { UploadFileParams } from '/@/utils/http/axios/types';
+
 enum apiUrl {
   onShippingRulesCreateUrl = '/policy-manage/api/v1/manage/shipping-rules/create',
   onShippingRulesUpdateUrl = '/policy-manage/api/v1/manage/shipping-rules/update',
@@ -45,10 +47,12 @@ export class ShippingRulesApi {
     });
   }
 
-  static onShippingRulesImport(codes: string[]) {
-    return defHttp.post({
-      url: apiUrl.onShippingRulesImportUrl,
-      params: { GatheringParentCodes: codes },
-    });
+  static onShippingRulesImport(fileParams: UploadFileParams) {
+    return defHttp.uploadFile(
+      {
+        url: apiUrl.onShippingRulesImportUrl,
+      },
+      fileParams
+    );
   }
 }

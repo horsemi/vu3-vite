@@ -16,7 +16,7 @@
           <DxButton :width="76" text="生效" @click="onSwitchClickThrottleFn(true)" />
           <DxButton :width="76" text="失效" @click="onSwitchClickThrottleFn(false)" />
           <DxButton :width="76" text="导出" @click="onExportClickThrottleFn" />
-          <!-- <DxButton :width="76" text="导入" @click="onDeleteClickThrottleFn" /> -->
+          <DxButton :width="76" text="导入" @click="onImportClickThrottleFn" />
         </div>
         <div class="btn__box">
           <DxButton :width="100" icon="refresh" text="刷新" @click="onRefresh" />
@@ -35,6 +35,13 @@
       >
       </OdsTable>
     </div>
+    <input
+      ref="fileUploadInput"
+      style="display: none"
+      accept="application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      type="file"
+      @change="uploadHandle"
+    />
   </div>
 </template>
 
@@ -77,6 +84,7 @@
 
       const dataGrid = ref();
       const queryPlan = ref();
+      const fileUploadInput = ref();
       const loading = ref(false);
 
       const ORDER_CODE = 'shipping-rules';
@@ -186,14 +194,30 @@
           ...storeLoadOptions,
         });
 
-        exportDataSource.load().then(() => {
-          useMessage(
-            '<a href="#/basic-management/export-configuration/export/list">请点击查看</a>',
-            'success',
-            '导出成功',
-            true
-          );
-        });
+        exportDataSource
+          .load()
+          .then(() => {
+            useMessage(
+              '<a href="#/basic-management/export-configuration/export/list">请点击查看</a>',
+              'success',
+              '导出成功',
+              true
+            );
+          })
+          .catch((error) => {
+            useMessage(error, 'error', '导出失败');
+          });
+      };
+
+      const onImportClick = () => {
+        fileUploadInput.value.click();
+      };
+
+      const uploadHandle = (ev: DragEvent) => {
+        const files = (ev.target as HTMLInputElement).files;
+        let postFiles = Array.prototype.slice.call(files);
+
+        ShippingRulesApi.onShippingRulesImport(postFiles[0]);
       };
 
       const onDeleteClickThrottleFn = useThrottleFn(onDeleteClick, DEFAULT_THROTTLE_TIME);
@@ -201,6 +225,8 @@
       const onSwitchClickThrottleFn = useThrottleFn(onSwitchClick, DEFAULT_THROTTLE_TIME);
 
       const onExportClickThrottleFn = useThrottleFn(onExportClick, DEFAULT_THROTTLE_TIME);
+
+      const onImportClickThrottleFn = useThrottleFn(onImportClick, DEFAULT_THROTTLE_TIME);
 
       const onChangeScheme = (data: ISchemeItem) => {
         filterScheme.value = cloneDeep(data);
@@ -239,6 +265,7 @@
         ORDER_CODE,
         loading,
         dataGrid,
+        fileUploadInput,
         queryPlan,
         options,
         tableKey,
@@ -256,6 +283,8 @@
         onDeleteClickThrottleFn,
         onSwitchClickThrottleFn,
         onExportClickThrottleFn,
+        onImportClickThrottleFn,
+        uploadHandle,
       };
     },
   });
