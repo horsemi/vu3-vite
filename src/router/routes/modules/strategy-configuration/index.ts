@@ -27,6 +27,7 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
             component: () => import('/@/views/policy-manage/shipping-rules/list/index.vue'),
             meta: {
               title: '发运方式策略',
+              permissions: ['PolicyManageShippingRulesList'],
             },
           },
           {

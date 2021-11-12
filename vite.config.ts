@@ -47,10 +47,10 @@ export default defineConfig(
         host: 'test.ods.otwb.linshimuye.com',
         proxy: {
           '/policy-manage': {
-            target: 'http://10.10.14.207:30046',
-            rewrite: (path: string) => {
-              return path.replace('/policy-manage', '');
-            },
+            target: 'http://test.api.otwb.linshimuye.com:30024',
+            // rewrite: (path: string) => {
+            //   return path.replace('/policy-manage', '');
+            // },
             changeOrigin: true,
           },
           '/wms-foundation': {
