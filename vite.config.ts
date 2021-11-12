@@ -65,6 +65,10 @@ export default defineConfig(
             target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
           },
+          '/api/exportation': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
+            changeOrigin: true,
+          },
           '/passport': {
             target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
