@@ -186,7 +186,14 @@
           ...storeLoadOptions,
         });
 
-        exportDataSource.load();
+        exportDataSource.load().then(() => {
+          useMessage(
+            '<a href="#/basic-management/export-configuration/export/list">请点击查看</a>',
+            'success',
+            '导出成功',
+            true
+          );
+        });
       };
 
       const onDeleteClickThrottleFn = useThrottleFn(onDeleteClick, DEFAULT_THROTTLE_TIME);

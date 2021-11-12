@@ -57,12 +57,13 @@ export const useAppStore = defineStore({
     initToast(fn: () => void) {
       this.showToastFn = fn;
     },
-    showToast(type: string, message: string, description = '') {
+    showToast(type: string, message: string, description = '', dangerouslyUseHtmlString = false) {
       this.showToastFn();
       this.toastData = {
         type,
         message,
         description,
+        dangerouslyUseHtmlString,
       };
     },
     setMenuOpenState(state: boolean) {
