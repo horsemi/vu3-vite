@@ -65,6 +65,10 @@ export function createPermissionGuard(router: Router) {
       return;
     }
 
+    if (to.path === LOGIN_PATH) {
+      next(PageEnum.BASE_HOME);
+      return;
+    }
     if (permissionStore.getIsDynamicAddedRoute) {
       next();
       return;
