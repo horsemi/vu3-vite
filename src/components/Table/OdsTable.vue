@@ -350,6 +350,10 @@
         }
       };
 
+      const getTableDataSourceOption = () => {
+        return tableData.value;
+      };
+
       onBeforeUnmount(() => {
         tableData.value = null;
         // tableColumns.value = null;
@@ -433,6 +437,7 @@
         contentMenuTitle,
         rowRenderingMode,
         onOptionChanged,
+        getTableDataSourceOption,
       };
     },
   });

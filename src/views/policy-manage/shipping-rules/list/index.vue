@@ -15,6 +15,8 @@
           <DxButton :width="76" text="删除" @click="onDeleteClickThrottleFn" />
           <DxButton :width="76" text="生效" @click="onSwitchClickThrottleFn(true)" />
           <DxButton :width="76" text="失效" @click="onSwitchClickThrottleFn(false)" />
+          <DxButton :width="76" text="导出" @click="onExportClickThrottleFn" />
+          <!-- <DxButton :width="76" text="导入" @click="onDeleteClickThrottleFn" /> -->
         </div>
         <div class="btn__box">
           <DxButton :width="100" icon="refresh" text="刷新" @click="onRefresh" />
@@ -44,7 +46,7 @@
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
   import { ShippingRulesApi } from '/@/api/policy-manage/shipping-rules';
 
-  import { defineComponent, ref, onMounted, onActivated } from 'vue';
+  import { defineComponent, ref, onActivated } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
   import { useThrottleFn } from '@vueuse/core';
@@ -58,6 +60,11 @@
 
   import QueryPlan from '/@/components/QueryPlan/index.vue';
   import { useMessage } from '/@/hooks/web/useMessage';
+  import { useUserStore } from '/@/store/modules/user';
+  import { tokenHeaderKey } from '/@/utils/http/axios/const';
+
+  import DataSource from 'devextreme/data/data_source';
+  import ODataStore from 'devextreme/data/odata/store';
 
   export default defineComponent({
     name: 'PolicyManageShippingRulesList',
@@ -156,9 +163,37 @@
         }
       };
 
+      const onExportClick = () => {
+        const storeLoadOptions = dataGrid.value.getTableDataSourceOption()._storeLoadOptions;
+
+        const exportDataSource = new DataSource({
+          store: new ODataStore({
+            version: 4,
+            url: '/policy-manage/api/v1/manage/shipping-rules/export/background-export',
+            beforeSend: (e) => {
+              e.method = 'post';
+              e.payload = {
+                QueryParameter: e.params,
+              };
+              e.params = null;
+              e.headers = {
+                [tokenHeaderKey]: useUserStore().getToken,
+              };
+            },
+          }),
+          paginate: false,
+          requireTotalCount: false,
+          ...storeLoadOptions,
+        });
+
+        exportDataSource.load();
+      };
+
       const onDeleteClickThrottleFn = useThrottleFn(onDeleteClick, DEFAULT_THROTTLE_TIME);
 
       const onSwitchClickThrottleFn = useThrottleFn(onSwitchClick, DEFAULT_THROTTLE_TIME);
+
+      const onExportClickThrottleFn = useThrottleFn(onExportClick, DEFAULT_THROTTLE_TIME);
 
       const onChangeScheme = (data: ISchemeItem) => {
         filterScheme.value = cloneDeep(data);
@@ -213,6 +248,7 @@
         onRefresh,
         onDeleteClickThrottleFn,
         onSwitchClickThrottleFn,
+        onExportClickThrottleFn,
       };
     },
   });
