@@ -117,7 +117,7 @@ const transform: AxiosTransform = {
     const { data: resData } = res;
     if (!resData) {
       // return '[HTTP] Request has no return value';
-      return errorResult;
+      return Promise.reject(new Error());
     }
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
     const { result, data, message } = resData;
@@ -128,8 +128,7 @@ const transform: AxiosTransform = {
       if (message) {
         errorMessage(message);
       }
-      Promise.reject(new Error(message));
-      return errorResult;
+      return Promise.reject(new Error(message));
     }
 
     // 接口请求成功，直接返回结果
@@ -141,13 +140,12 @@ const transform: AxiosTransform = {
     if (result === ResultEnum.ERROR || result === ResultEnum.ERR) {
       if (message) {
         errorMessage(message);
-        Promise.reject(new Error(message));
+        return Promise.reject(new Error(message));
       } else {
         const msg = '后台系统错误';
         errorMessage(msg);
-        Promise.reject(new Error(msg));
+        return Promise.reject(new Error(msg));
       }
-      return errorResult;
     }
   },
 

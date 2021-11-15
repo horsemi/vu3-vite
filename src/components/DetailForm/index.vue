@@ -2,7 +2,7 @@
   <div :class="prefixCls">
     <DxForm
       :form-data="formData"
-      :col-count="8"
+      :col-count="colCount"
       :show-colon-after-label="false"
       :read-only="readOnly"
       :disabled="disabled"
@@ -14,6 +14,7 @@
           :label="{ text: item.caption }"
           :data-field="item.key"
           :editor-type="item.editorType"
+          :validation-rules="item.validate"
           :disabled="item.disabled"
           :editor-options="handleEditorOptions(item)"
           :col-span="item.colSpan ? item.colSpan : item.editorType === 'dxSwitch' ? 1 : 2"
@@ -109,6 +110,10 @@
         type: Boolean,
         default: false,
       },
+      colCount: {
+        type: Number,
+        default: 8,
+      },
       // stepData: {
       //   type: Array as PropType<string[]>,
       //   default: () => [],
@@ -128,6 +133,7 @@
         if (item.editorType === 'dxNumberBox') {
           editorOptions = {
             showSpinButtons: true,
+            format: '###,##0.###',
           };
         } else if (item.editorType === 'dxDateBox') {
           editorOptions = {

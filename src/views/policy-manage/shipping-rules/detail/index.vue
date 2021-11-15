@@ -2,39 +2,14 @@
   <div class="detail">
     <div :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
       <div class="btn-box">
-        <DxButton text="新增" type="default" @click="onAddClickFn" />
         <DxButton text="保存" @click="onSaveClickThrottleFn" />
-        <DxButton text="刷新" @click="getDataThrottleFn" />
-        <DxButton text="生效" @click="onSwitchClickThrottleFn(true)" />
-        <DxButton text="失效" @click="onSwitchClickThrottleFn(false)" />
       </div>
-      <DxTabPanel
-        v-model:selected-index="selectedIndex"
-        :data-source="multiViewItems"
-        :loop="true"
-        :animation-enabled="true"
-        :focus-state-enabled="false"
-      >
-        <template #item="{ data }">
-          <div class="tab">
-            <div class="form-box" :style="{ height: opened ? '' : getColseHeight(data.rowCount) }">
-              <DetailForm
-                :read-only="false"
-                :form-data="baseFormData"
-                :form-list="baseInformation"
-              />
-            </div>
-            <div v-if="data.rowCount > 3" class="icon-box">
-              <SvgIcon
-                :class="['icon', opened && 'icon--translate']"
-                size="14"
-                name="multi-arrow"
-                @click="onChangeOpened"
-              ></SvgIcon>
-            </div>
-          </div>
-        </template>
-      </DxTabPanel>
+      <DetailForm
+        :col-count="1"
+        :read-only="false"
+        :form-data="baseFormData"
+        :form-list="baseInformation"
+      />
     </div>
   </div>
 </template>
@@ -58,7 +33,6 @@
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
   import { isFoundationType } from '/@/model/common';
 
-  import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxButton from 'devextreme-vue/button';
 
   import DetailForm from '/@/components/DetailForm/index.vue';
@@ -68,7 +42,6 @@
   export default defineComponent({
     name: 'PolicyManageShippingRulesDetail',
     components: {
-      DxTabPanel,
       DxButton,
       DetailForm,
     },
@@ -129,27 +102,13 @@
         getData();
       };
 
-      const onAddClickFn = () => {
-        router.push({
-          name: 'PolicyManageShippingRulesDetail',
-          query: {
-            Id: '',
-            RuleCode: '',
-          },
-        });
-      };
-
       const onSaveClick = () => {
         if (formEditStatus.value === 'Add') {
-          ShippingRulesApi.onShippingRulesCreate(baseFormData.value)
-            .then(() => {
-              viewStore.closeViewByKey(route.fullPath, router);
-              useMessage('保存成功', 'success');
-              onRefresh();
-            })
-            .catch(() => {
-              onRefresh();
-            });
+          ShippingRulesApi.onShippingRulesCreate(baseFormData.value).then(() => {
+            viewStore.closeViewByKey(route.fullPath, router);
+            useMessage('保存成功', 'success');
+            onRefresh();
+          });
         } else {
           ShippingRulesApi.onShippingRulesUpdate(Object.assign(baseFormData.value, { Id }))
             .then(() => {
@@ -160,20 +119,6 @@
               onRefresh();
             });
         }
-      };
-
-      const onSwitchClick = (switchStatus: boolean) => {
-        ShippingRulesApi.onShippingRulesSwitch({
-          ids: [Id || ''],
-          isEnabled: switchStatus,
-        })
-          .then(() => {
-            useMessage('操作成功', 'success');
-            onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
       };
 
       const onChangeOpened = () => {
@@ -226,6 +171,11 @@
       const getDetail = (columnsData: any) => {
         const baseList = getDetailColumn(columnsData);
 
+        baseFormData.value['CreatedTime'] = Date.now();
+        baseFormData.value['UpdatedTime'] = Date.now();
+        baseFormData.value['IsEnabled'] = true;
+        baseFormData.value['MinWeight'] = 0;
+
         if (formEditStatus.value === 'Edit' && baseList) {
           getDetailData(['Id', '=', Id], columnsData).then((res) => {
             if (res) {
@@ -269,8 +219,6 @@
 
       const onSaveClickThrottleFn = useThrottleFn(onSaveClick, DEFAULT_THROTTLE_TIME);
 
-      const onSwitchClickThrottleFn = useThrottleFn(onSwitchClick, DEFAULT_THROTTLE_TIME);
-
       watch(selectedIndex, (sIndex) => {
         handleHeight(sIndex);
       });
@@ -297,15 +245,10 @@
         multiViewItems,
         // formData,
         isFixHeight,
-        onAddClickFn,
         onSaveClickThrottleFn,
-        onSwitchClickThrottleFn,
         getDataThrottleFn,
         onChangeOpened,
         getColseHeight,
-        dropDownButtonAttributes: {
-          class: 'first-dropButton',
-        },
       };
     },
   });
