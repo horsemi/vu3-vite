@@ -23,7 +23,16 @@
           @button-click="onApplyClickThrottleFn"
           @item-click="onItemButtonClickThrottleFn"
         />
-        <DxButton text="下推" @click="onPushClickThrottleFn" />
+        <DxDropDownButton
+          :items="dropButtonItems.push"
+          :split-button="true"
+          :use-select-mode="false"
+          text="下推"
+          display-expr="name"
+          key-expr="key"
+          @button-click="onPushClickThrottleFn"
+          @item-click="onItemButtonClickThrottleFn"
+        />
         <DxButton text="刷新" @click="getDataThrottleFn" />
       </div>
       <DxTabPanel
@@ -178,6 +187,12 @@
             name: '撤销',
           },
         ],
+        push: [
+          {
+            key: 'recall',
+            name: '撤回',
+          },
+        ],
       };
       const opened = ref(false);
       const selectedIndex = ref(0);
@@ -290,6 +305,16 @@
           });
       };
 
+      const onRecallClick = () => {
+        ShippingOrderApi.onShippingOrderRecall([formData.value.GatheringParentCode])
+          .then(() => {
+            onRefresh();
+          })
+          .catch(() => {
+            onRefresh();
+          });
+      };
+
       const onItemButtonClick = (e) => {
         switch (e.itemData.key) {
           case 'redraft': {
@@ -298,6 +323,10 @@
           }
           case 'revoke': {
             onRevokeClick();
+            break;
+          }
+          case 'recall': {
+            onRecallClick();
             break;
           }
         }
