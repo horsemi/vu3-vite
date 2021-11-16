@@ -1,13 +1,14 @@
 import { defHttp } from '/@/utils/http/axios';
 
 import type { UploadFileParams } from '/@/utils/http/axios/types';
+import type { OdataQuery } from './type';
 
 enum apiUrl {
   onShippingRulesCreateUrl = '/policy-manage/api/v1/manage/shipping-rules/create',
   onShippingRulesUpdateUrl = '/policy-manage/api/v1/manage/shipping-rules/update',
   onShippingRulesDeleteUrl = '/policy-manage/api/v1/manage/shipping-rules/delete',
   onShippingRulesSwitchUrl = '/policy-manage/api/v1/manage/shipping-rules/switch',
-  onShippingRulesExportUrl = '/policy-manage/api/v1/manage/shipping-rules/export',
+  onShippingRulesExportUrl = '/policy-manage/api/v1/manage/shipping-rules/export/background-export',
   onShippingRulesImportUrl = '/policy-manage/api/v1/manage/shipping-rules/import',
 }
 
@@ -40,10 +41,10 @@ export class ShippingRulesApi {
     });
   }
 
-  static onShippingRulesExport(codes: string[]) {
+  static onShippingRulesExport(QueryParameter: OdataQuery) {
     return defHttp.post({
       url: apiUrl.onShippingRulesExportUrl,
-      params: { GatheringParentCodes: codes },
+      params: { QueryParameter },
     });
   }
 

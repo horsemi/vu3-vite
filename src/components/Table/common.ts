@@ -141,6 +141,7 @@ export const getFilter = (requirements: IRequirementItem[]) => {
   //   '转为为数组后的结果:',
   //   filter
   // );
+
   return filter;
 };
 
