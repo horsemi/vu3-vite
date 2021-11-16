@@ -53,7 +53,7 @@
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
   import { ShippingRulesApi } from '/@/api/policy-manage/shipping-rules';
 
-  import { defineComponent, ref, onActivated, computed } from 'vue';
+  import { defineComponent, ref, onActivated, onMounted, computed } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
   import { deepMerge } from '/@/utils';
@@ -238,8 +238,12 @@
         queryPlan.value.handleData();
       };
 
-      onActivated(() => {
+      onMounted(() => {
         getTableData();
+      });
+
+      onActivated(() => {
+        onRefresh();
       });
 
       return {

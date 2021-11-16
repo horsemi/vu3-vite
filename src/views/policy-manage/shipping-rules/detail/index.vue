@@ -5,7 +5,7 @@
         <DxButton text="保存" @click="onSaveClickThrottleFn" />
       </div>
       <DetailForm
-        :col-count="1"
+        :col-count="8"
         :read-only="false"
         :form-data="baseFormData"
         :form-list="baseInformation"

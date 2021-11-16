@@ -28,11 +28,6 @@ export const base: IDetailItem[] = [
     validate: [{ type: 'required', message: '请输入发运方式' }],
   },
   {
-    key: 'IsEnabled',
-    caption: '状态',
-    disabled: true,
-  },
-  {
     key: 'CreatedTime',
     caption: '创建日期',
     disabled: true,
@@ -40,6 +35,11 @@ export const base: IDetailItem[] = [
   {
     key: 'UpdatedTime',
     caption: '更新日期',
+    disabled: true,
+  },
+  {
+    key: 'IsEnabled',
+    caption: '状态',
     disabled: true,
   },
 ];

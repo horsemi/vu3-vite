@@ -14,15 +14,15 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
     },
     children: [
       {
-        path: 'express-strategy',
-        name: 'ExpressStrategy',
-        redirect: '/strategy-configuration/express-strategy/recommendrule/list',
+        path: 'policy-manage',
+        name: 'PolicyManage',
+        redirect: '/strategy-configuration/policy-manage/shipping-rules/list',
         meta: {
           title: '发运策略',
         },
         children: [
           {
-            path: 'policy-manage/shipping-rules/list',
+            path: 'shipping-rules/list',
             name: 'PolicyManageShippingRulesList',
             component: () => import('/@/views/policy-manage/shipping-rules/list/index.vue'),
             meta: {
@@ -31,7 +31,7 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
             },
           },
           {
-            path: 'policy-manage/shipping-rules/detail',
+            path: 'shipping-rules/detail',
             name: 'PolicyManageShippingRulesDetail',
             component: () => import('/@/views/policy-manage/shipping-rules/detail/index.vue'),
             meta: {
