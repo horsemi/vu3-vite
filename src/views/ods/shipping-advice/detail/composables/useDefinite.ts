@@ -104,6 +104,22 @@ export function useDefinite(requirement: IRequirementItem[]) {
       caption: '是否核销',
     },
     {
+      key: 'CategoryLCode',
+      caption: '产品大类',
+    },
+    {
+      key: 'CategoryMCode',
+      caption: '产品中类',
+    },
+    {
+      key: 'CategorySCode',
+      caption: '产品小类',
+    },
+    {
+      key: 'CategoryXSCode',
+      caption: '产品细类',
+    },
+    {
       key: 'Shop',
       caption: '店铺',
     },
@@ -130,6 +146,24 @@ export function useDefinite(requirement: IRequirementItem[]) {
     {
       key: 'Texture',
       caption: '材质',
+    },
+    {
+      key: 'Area_Name',
+      caption: '区域',
+      expand: 'Area',
+      relationKey: 'AreaCode',
+    },
+    {
+      key: 'SourceMaterialCode',
+      caption: '来源商品编码',
+    },
+    {
+      key: 'SourceProductBomCode',
+      caption: '来源商品BOM',
+    },
+    {
+      key: 'SourceProductLotCode',
+      caption: '来源商品批号',
     },
   ];
 
