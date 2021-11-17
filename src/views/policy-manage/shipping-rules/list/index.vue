@@ -24,7 +24,7 @@
       </div>
       <OdsTable
         ref="dataGrid"
-        :table-options="options"
+        :table-options="option"
         :data-source="dataSource"
         :columns="columns"
         :all-columns="allColumns"
@@ -53,10 +53,13 @@
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
   import { ShippingRulesApi } from '/@/api/policy-manage/shipping-rules';
 
-  import { defineComponent, ref, onActivated } from 'vue';
+  import { defineComponent, ref, onActivated, onMounted, computed } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
+  import { deepMerge } from '/@/utils';
   import { useThrottleFn } from '@vueuse/core';
+  import { defaultTableOptions } from '/@/components/Table/common';
+  import { getOdataQuery } from '/@/utils/odata';
 
   import { getColumns } from '/@/model/shipping-rules';
   import { isArrayEmpty } from '/@/utils/bill/index';
@@ -67,11 +70,6 @@
 
   import QueryPlan from '/@/components/QueryPlan/index.vue';
   import { useMessage } from '/@/hooks/web/useMessage';
-  import { useUserStore } from '/@/store/modules/user';
-  import { tokenHeaderKey } from '/@/utils/http/axios/const';
-
-  import DataSource from 'devextreme/data/data_source';
-  import ODataStore from 'devextreme/data/odata/store';
 
   export default defineComponent({
     name: 'PolicyManageShippingRulesList',
@@ -88,7 +86,7 @@
       const loading = ref(false);
 
       const ORDER_CODE = 'shipping-rules';
-      const options: Partial<ITableOptions> = {
+      const option: Partial<ITableOptions> = {
         height: 'calc(100vh - 276px)',
         dataSourceOptions: {
           oDataOptions: {
@@ -96,6 +94,9 @@
           },
         },
       };
+      const options = computed(() => {
+        return deepMerge(cloneDeep(defaultTableOptions), option);
+      });
       const filterScheme = ref<ISchemeItem>();
       const tableKey = ref<string[]>([]);
       const tableKeyType = ref<IKeyType[]>([]);
@@ -172,41 +173,21 @@
       };
 
       const onExportClick = () => {
-        const storeLoadOptions = dataGrid.value.getTableDataSourceOption()._storeLoadOptions;
-
-        const exportDataSource = new DataSource({
-          store: new ODataStore({
-            version: 4,
-            url: '/policy-manage/api/v1/manage/shipping-rules/export/background-export',
-            beforeSend: (e) => {
-              e.method = 'post';
-              e.payload = {
-                QueryParameter: e.params,
-              };
-              e.params = null;
-              e.headers = {
-                [tokenHeaderKey]: useUserStore().getToken,
-              };
-            },
-          }),
-          paginate: false,
-          requireTotalCount: false,
-          ...storeLoadOptions,
+        ShippingRulesApi.onShippingRulesExport(
+          getOdataQuery(
+            options.value,
+            filterScheme.value as ISchemeItem,
+            allColumns.value,
+            tableKey.value
+          )
+        ).then(() => {
+          useMessage(
+            '<a href="#/basic-management/export-configuration/export/list">请点击查看</a>',
+            'success',
+            '导出成功',
+            true
+          );
         });
-
-        exportDataSource
-          .load()
-          .then(() => {
-            useMessage(
-              '<a href="#/basic-management/export-configuration/export/list">请点击查看</a>',
-              'success',
-              '导出成功',
-              true
-            );
-          })
-          .catch((error) => {
-            useMessage(error, 'error', '导出失败');
-          });
       };
 
       const onImportClick = () => {
@@ -257,8 +238,12 @@
         queryPlan.value.handleData();
       };
 
-      onActivated(() => {
+      onMounted(() => {
         getTableData();
+      });
+
+      onActivated(() => {
+        onRefresh();
       });
 
       return {
@@ -267,6 +252,7 @@
         dataGrid,
         fileUploadInput,
         queryPlan,
+        option,
         options,
         tableKey,
         tableKeyType,

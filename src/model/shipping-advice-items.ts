@@ -194,6 +194,23 @@ export const customColumns: IColumnItem[] = [
     key: 'Texture',
     caption: '材质',
   },
+  {
+    key: 'Area',
+    caption: '区域',
+    relationKey: 'AreaCode',
+    foundationList: [
+      {
+        key: 'Area_Name',
+        caption: '区域',
+      },
+    ],
+    datatypekeies: 'area',
+  },
+  {
+    key: 'AreaCode',
+    caption: '区域编码',
+    datatypekeies: 'area',
+  },
   // {
   //   key: 'SourceMaterialCode',
   //   caption: '来源商品编码',

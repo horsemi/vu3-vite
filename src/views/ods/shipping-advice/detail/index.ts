@@ -587,6 +587,12 @@ export const definite: IColumnItem[] = [
     caption: '材质',
   },
   {
+    key: 'Area_Name',
+    caption: '区域',
+    expand: 'Area',
+    relationKey: 'AreaCode',
+  },
+  {
     key: 'SourceMaterialCode',
     caption: '来源商品编码',
   },

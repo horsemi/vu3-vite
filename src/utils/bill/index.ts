@@ -7,7 +7,7 @@ const getEditorType = (type) => {
   let editorType: EditorType | undefined = undefined;
   if (type === 'string') {
     editorType = 'dxTextBox';
-  } else if (type === 'number') {
+  } else if (type === 'number' || type === 'decimal') {
     editorType = 'dxNumberBox';
   } else if (type === 'boolean') {
     editorType = 'dxSwitch';

@@ -6,6 +6,7 @@ enum apiUrl {
   onShippingOrderPushUrl = '/ods/api/v1/shipping-orders/push',
   onShippingOrderRevokeUrl = '/ods/api/v1/shipping-orders/revoke',
   onShippingOrderRedraftUrl = '/ods/api/v1/shipping-orders/redraft',
+  onShippingOrderRecallUrl = '/ods/api/v1/shipping-orders/recall',
 }
 
 export class ShippingOrderApi {
@@ -40,6 +41,13 @@ export class ShippingOrderApi {
   static onShippingOrderRedraft(codes: string[]) {
     return defHttp.post({
       url: apiUrl.onShippingOrderRedraftUrl,
+      params: { GatheringParentCodes: codes },
+    });
+  }
+
+  static onShippingOrderRecall(codes: string[]) {
+    return defHttp.post({
+      url: apiUrl.onShippingOrderRecallUrl,
       params: { GatheringParentCodes: codes },
     });
   }
