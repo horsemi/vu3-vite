@@ -96,9 +96,24 @@
         :loop="true"
         :animation-enabled="true"
         :focus-state-enabled="false"
+        @titleClick="onTableTitleClick"
       >
       </DxTabPanel>
-      <div class="tab">
+      <div v-if="tableIndex === 0" class="search-box">
+        <QueryForm
+          ref="queryForm"
+          class="query-form"
+          :columns="definiteAllColumns"
+          :fast="fast"
+          :save-fast="false"
+          @on-search="onSearch"
+        />
+        <div class="search-btn">
+          <DxButton text="查询" type="default" @click="onSearch" />
+          <DxButton text="重置" @click="onReset" />
+        </div>
+      </div>
+      <div class="tab" :style="tableIndex === 0 && 'padding-top: 0'">
         <OdsTable
           :height="tableHeight"
           :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
@@ -120,28 +135,28 @@
 
 <script lang="ts">
   import type { ITableOptions } from '/@/components/Table/types';
-  import type { IDetailItem } from '/@/utils/bill/types';
-  import type { IColumnItem } from '/@/model/types';
-  import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
+  import type { IRequirementItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch, reactive, nextTick } from 'vue';
+  import { defineComponent, ref, watch, nextTick } from 'vue';
   import { useRoute } from 'vue-router';
   import { useThrottleFn } from '@vueuse/core';
 
-  import { getColumns } from '/@/model/shipping-advices';
-  import { getRecordColumns } from '/@/model/operation-record';
-  import { getDefiniteColumns } from '/@/model/shipping-advice-items';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
-  import { getDetailData, getDefiniteData, getRecordData } from './index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
-  import { isFoundationType } from '/@/model/common';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
   import DxButton from 'devextreme-vue/button';
 
   import DetailForm from '/@/components/DetailForm/index.vue';
+  import QueryForm from '/@/components/QueryPlan/component/form.vue';
+
+  import { useDetailForm } from './composables/useDetailForm';
+  import { useDefinite } from './composables/useDefinite';
+  import { useRecord } from './composables/useRecord';
+  import { useSearchDefinite } from './composables/useSearchDefinite';
+  import { useHeight } from './composables/useHeight';
 
   export default defineComponent({
     name: 'OdsShippingAdviceDetail',
@@ -150,6 +165,7 @@
       DxButton,
       DxDropDownButton,
       DetailForm,
+      QueryForm,
     },
     setup() {
       const multiViewItems = ref([
@@ -194,7 +210,6 @@
           key: 'record',
         },
       ];
-
       const dropButtonItems = {
         apply: [
           {
@@ -220,37 +235,75 @@
       // const stepActiveIndex = ref(0);
 
       const opened = ref(false);
-      const selectedIndex = ref(0);
-      const tableIndex = ref(0);
-      const tableHeight = ref('');
-      const rowSpan = 8;
-      const formRowHeight = 29;
-      const formRowPaddingTop = 12;
-      const overHeight = 330;
-      const arrowIconHeight = 26;
-      const defaultDefiniteHeight = `calc(100vh - ${overHeight}px)`;
-      const defaultRecordHeight = `calc(100vh - ${overHeight}px)`;
-
       const route = useRoute();
       const Id = route.query.Id as string;
       const BillCode = route.query.BillCode as string;
-      const formData = ref();
-
-      const baseInformation = ref<IDetailItem[]>([]);
-      const receiverInformation = ref<IDetailItem[]>([]);
-      const logisticsInformation = ref<IDetailItem[]>([]);
-      const expressListInformation = ref<IDetailItem[]>([]);
-      const taskInformation = ref<IDetailItem[]>([]);
-      const otherInformation = ref<IDetailItem[]>([]);
-
-      const baseFormData = ref<Record<string, unknown>>({});
-      const receiverFormData = ref<Record<string, unknown>>({});
-      const logisticsFormData = ref<Record<string, unknown>>({});
-      const expressFormData = ref<Record<string, unknown>>({});
-      const taskFormData = ref<Record<string, unknown>>({});
-      const otherFormData = ref<Record<string, unknown>>({});
-
+      const selectedIndex = ref(0);
+      const tableIndex = ref(0);
       const isFixHeight = ref<boolean>(true);
+
+      const definiteRequirement: IRequirementItem[] = [
+        {
+          requirement: 'ShippingAdviceId',
+          operator: '=',
+          value: Id,
+          operatorList: [],
+          type: 'string',
+          relationKey: '',
+          datatypekeies: '',
+          logic: 'and',
+        },
+      ];
+
+      function detailFormCallBack() {
+        handleHeight(
+          multiViewItems.value[selectedIndex.value].rowCount,
+          tableIndex.value,
+          opened.value
+        );
+        nextTick(() => {
+          isFixHeight.value = false;
+        });
+      }
+
+      const {
+        formData,
+        baseFormData,
+        receiverFormData,
+        logisticsFormData,
+        expressFormData,
+        taskFormData,
+        otherFormData,
+        baseInformation,
+        receiverInformation,
+        logisticsInformation,
+        expressListInformation,
+        taskInformation,
+        otherInformation,
+        refreshDetailForm,
+      } = useDetailForm(Id, multiViewItems, detailFormCallBack);
+
+      const {
+        definiteScheme,
+        definiteAllColumns,
+        definiteCustomColumns,
+        refreshDefinite,
+      } = useDefinite(definiteRequirement);
+
+      const { recordScheme, recordAllColumns, refreshRecord } = useRecord(BillCode);
+      const { onSearch, onReset, fast, queryForm } = useSearchDefinite(
+        definiteRequirement,
+        definiteCustomColumns,
+        definiteScheme
+      );
+
+      const {
+        tableHeight,
+        defaultDefiniteHeight,
+        defaultRecordHeight,
+        handleHeight,
+        getColseHeight,
+      } = useHeight();
 
       const definiteOptions = ref<Partial<ITableOptions>>({
         height: defaultDefiniteHeight,
@@ -261,11 +314,7 @@
         },
         useScrolling: true,
       });
-      const definiteScheme = ref<ISchemeItem>();
-      const definiteAllColumns = ref<IColumnItem[]>([]);
-      let columnsData: any = reactive({});
-      let recordColumnsData: any = reactive({});
-      let definiteColumnsData: any = reactive({});
+
       const recordOptions = ref<Partial<ITableOptions>>({
         height: defaultRecordHeight,
         dataSourceOptions: {
@@ -275,75 +324,53 @@
         },
         useScrolling: true,
       });
-      const recordScheme = ref<ISchemeItem>();
-      const recordAllColumns = ref<IColumnItem[]>([]);
 
       const onRefresh = () => {
-        getData();
-        getDefinite();
-        getRecord();
+        refreshDetailForm(detailFormCallBack);
+        refreshDefinite();
+        refreshRecord();
       };
 
       const onSubmitClick = () => {
-        ShippingAdviceApi.onShippingAdviceSubmit([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingAdviceApi.onShippingAdviceSubmit([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
-
       const onApplyClick = () => {
-        ShippingAdviceApi.onShippingAdviceApply([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingAdviceApi.onShippingAdviceApply([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
-
       const onSendClick = () => {
-        ShippingAdviceApi.onShippingAdviceSend([formData.value.GatheringParentCode])
-          .then(() => {
-            onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+        ShippingAdviceApi.onShippingAdviceSend([formData.value.GatheringParentCode]).finally(() => {
+          onRefresh();
+        });
       };
-
       const onRecallClick = () => {
-        ShippingAdviceApi.onShippingAdviceRecall([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingAdviceApi.onShippingAdviceRecall([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
-
       const onRedraftClick = () => {
-        ShippingAdviceApi.onShippingAdviceRedraft([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingAdviceApi.onShippingAdviceRedraft([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
-
       const onRevokeClick = () => {
-        ShippingAdviceApi.onShippingAdviceRevoke([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingAdviceApi.onShippingAdviceRevoke([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
-
       const onItemButtonClick = (e) => {
         switch (e.itemData.key) {
           case 'redraft': {
@@ -360,52 +387,20 @@
           }
         }
       };
-
+      const onTableTitleClick = () => {
+        handleHeight(
+          multiViewItems.value[selectedIndex.value].rowCount,
+          tableIndex.value,
+          opened.value
+        );
+      };
       const onChangeOpened = () => {
         opened.value = !opened.value;
-        handleHeight(selectedIndex.value);
-      };
-
-      const handleHeight = (sIndex: number) => {
-        // 表单行数
-        const rowCount = multiViewItems.value[sIndex].rowCount;
-        // 展开按钮高度，超出3行才会出现展开按钮
-        const iconHeight = rowCount > 3 ? arrowIconHeight : 0;
-        // 表格高度
-        let formHeight = 0;
-        if (opened.value) {
-          // 表格高度
-          formHeight = formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1);
-        } else {
-          formHeight = formRowHeight * 3 + formRowPaddingTop * 2;
-        }
-        // 总裁剪高度
-        const cutHeight = formHeight + iconHeight + overHeight;
-        tableHeight.value = `calc(100vh - ${cutHeight}px)`;
-      };
-
-      const getColseHeight = (rowCount) => {
-        if (rowCount >= 3) {
-          return `${formRowHeight * 3 + formRowPaddingTop * 2}px`;
-        } else {
-          return `${formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1)}px`;
-        }
-      };
-
-      const getRowCount = (data: IDetailItem[]) => {
-        let len = 0;
-        data.forEach((item) => {
-          if (!item.hide) {
-            if (item.colSpan) {
-              len += item.colSpan;
-            } else if (item.editorType === 'dxSwitch') {
-              len += 1;
-            } else {
-              len += 2;
-            }
-          }
-        });
-        return Math.ceil(len / rowSpan);
+        handleHeight(
+          multiViewItems.value[selectedIndex.value].rowCount,
+          tableIndex.value,
+          opened.value
+        );
       };
 
       // const handleStepActiveIndex = () => {
@@ -417,161 +412,6 @@
       //     stepActiveIndex.value = 1;
       //   }
       // };
-
-      const getDetail = (columnsData) => {
-        getDetailData(['Id', '=', Id], columnsData).then((res) => {
-          if (res) {
-            const {
-              baseList,
-              receiverList,
-              logisticsList,
-              expressList,
-              taskList,
-              otherList,
-              data,
-            } = res;
-
-            // 页面中业务操作需要使用的字段
-            formData.value = {
-              GatheringParentCode: (data as Record<string, unknown>).GatheringParentCode,
-            };
-
-            /** 实验性功能 */
-            baseList.forEach((item) => {
-              if (isFoundationType(item)) {
-                baseFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
-              }
-              baseFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            receiverList.forEach((item) => {
-              if (isFoundationType(item)) {
-                receiverFormData.value[item.expand!] = (data as Record<string, unknown>)[
-                  item.expand!
-                ];
-              }
-              receiverFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            logisticsList.forEach((item) => {
-              if (isFoundationType(item)) {
-                logisticsFormData.value[item.expand!] = (data as Record<string, unknown>)[
-                  item.expand!
-                ];
-              }
-              logisticsFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            expressList.forEach((item) => {
-              if (isFoundationType(item)) {
-                expressFormData.value[item.expand!] = (data as Record<string, unknown>)[
-                  item.expand!
-                ];
-              }
-              expressFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            taskList.forEach((item) => {
-              if (isFoundationType(item)) {
-                taskFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
-              }
-              taskFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            otherList.forEach((item) => {
-              if (isFoundationType(item)) {
-                otherFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
-              }
-              otherFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            baseInformation.value = baseList;
-            receiverInformation.value = receiverList;
-            logisticsInformation.value = logisticsList;
-            expressListInformation.value = expressList;
-            taskInformation.value = taskList;
-            otherInformation.value = otherList;
-            [
-              baseInformation.value,
-              receiverInformation.value,
-              logisticsInformation.value,
-              expressListInformation.value,
-              taskInformation.value,
-              otherInformation.value,
-            ].forEach((data, index) => {
-              multiViewItems.value[index].rowCount = getRowCount(data);
-            });
-            handleHeight(selectedIndex.value);
-            // handleStepActiveIndex();
-            nextTick(() => {
-              isFixHeight.value = false;
-            });
-          }
-        });
-      };
-
-      const getData = async () => {
-        if (JSON.stringify(columnsData) === '{}') {
-          columnsData = await getColumns();
-        }
-        getDetail(columnsData);
-      };
-
-      const getDefinite = async () => {
-        if (JSON.stringify(definiteColumnsData) === '{}') {
-          definiteColumnsData = await getDefiniteColumns();
-        }
-        getDefiniteData(definiteColumnsData).then((res) => {
-          if (res) {
-            definiteAllColumns.value = res.columnList;
-            definiteScheme.value = {
-              id: '',
-              title: '',
-              requirement: [
-                {
-                  requirement: 'ShippingAdviceId',
-                  operator: '=',
-                  value: Id,
-                  operatorList: [],
-                  type: 'string',
-                  relationKey: '',
-                  datatypekeies: '',
-                },
-              ],
-              orderBy: [],
-              columns: res.definite,
-            };
-          }
-        });
-      };
-
-      const getRecord = async () => {
-        if (JSON.stringify(recordColumnsData) === '{}') {
-          recordColumnsData = await getRecordColumns();
-        }
-        getRecordData(recordColumnsData).then((res) => {
-          if (res) {
-            recordAllColumns.value = res.columnList;
-            recordScheme.value = {
-              id: '',
-              title: '',
-              requirement: [
-                {
-                  requirement: 'BillCode',
-                  operator: '=',
-                  value: BillCode,
-                  operatorList: [],
-                  type: 'string',
-                  relationKey: '',
-                  datatypekeies: '',
-                },
-              ],
-              orderBy: [],
-              columns: res.record,
-            };
-          }
-        });
-      };
 
       // 所有操作设置为节流
       const getDataThrottleFn = useThrottleFn(onRefresh, DEFAULT_THROTTLE_TIME);
@@ -585,10 +425,8 @@
       const onItemButtonClickThrottleFn = useThrottleFn(onItemButtonClick, DEFAULT_THROTTLE_TIME);
 
       watch(selectedIndex, (sIndex) => {
-        handleHeight(sIndex);
+        handleHeight(multiViewItems.value[sIndex].rowCount, tableIndex.value, opened.value);
       });
-
-      onRefresh();
 
       return {
         tableHeight,
@@ -619,6 +457,10 @@
         multiViewItems,
         multiEntityItems,
         dropButtonItems,
+
+        queryForm,
+        fast,
+
         // formData,
         // stepData,
         // stepActiveIndex,
@@ -631,6 +473,9 @@
         getDataThrottleFn,
         onChangeOpened,
         getColseHeight,
+        onSearch,
+        onReset,
+        onTableTitleClick,
         dropDownButtonAttributes: {
           class: 'first-dropButton',
         },
@@ -680,6 +525,27 @@
         flex: 1;
         margin-top: 16px;
       }
+      .search-box {
+        display: flex;
+
+        .query-form {
+          .vue3-vite-query-form__box {
+            padding-left: 16px;
+          }
+
+          &.dx-texteditor-input {
+            min-height: 34px;
+          }
+        }
+
+        .search-btn {
+          display: flex;
+          align-items: center;
+          > * {
+            margin-left: 8px;
+          }
+        }
+      }
       .tab {
         padding: 12px 16px;
         background-color: #fff;
@@ -693,6 +559,11 @@
     }
     .form-box {
       overflow: hidden;
+
+      .dx-texteditor-input {
+        min-height: 0;
+        padding: 4px 8px 4px;
+      }
     }
     .icon-box {
       display: flex;
@@ -711,11 +582,6 @@
 
     .dx-layout-manager .dx-field-item:not(.dx-first-row) {
       padding-top: 12px;
-    }
-
-    .dx-texteditor-input {
-      min-height: 0;
-      padding: 4px 8px 4px;
     }
   }
 </style>

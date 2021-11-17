@@ -317,7 +317,7 @@ const rangeFormat = (startTime: string, requirement, endTime: string): string =>
 const isValueNullOrUndef = (data: IRequirementItem): boolean => {
   if (isDisabedSelect(data.operator)) {
     return false;
-  } else if (isNullOrUnDef(data.value)) {
+  } else if (isNullOrUnDef(data.value) || data.value === '') {
     return true;
   } else {
     // 考虑布尔型的false
