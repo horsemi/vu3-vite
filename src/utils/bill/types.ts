@@ -34,6 +34,11 @@ export interface IDetailItem {
   disabled?: boolean;
 
   /**
+   * @description 校验规则
+   */
+  validate?: unknown[];
+
+  /**
    * @description 是否隐藏
    */
   hide?: boolean;

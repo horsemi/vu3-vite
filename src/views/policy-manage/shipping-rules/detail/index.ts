@@ -25,6 +25,7 @@ export const base: IDetailItem[] = [
   {
     key: 'ShippingType',
     caption: '发运方式',
+    validate: [{ type: 'required', message: '请输入发运方式' }],
   },
   {
     key: 'CreatedTime',

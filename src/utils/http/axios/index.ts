@@ -117,37 +117,22 @@ const transform: AxiosTransform = {
     const { data: resData } = res;
     if (!resData) {
       // return '[HTTP] Request has no return value';
-      return errorResult;
+      return Promise.reject(new Error());
     }
     //  这里 code，result，message为 后台统一的字段，需要在 types.ts内修改为项目自己的接口返回格式
     const { result, data, message } = resData;
 
     // 这里逻辑可以根据项目进行修改
     const hasSuccess = result === ResultEnum.SUCCESS; // data && Reflect.has(data, 'code') && result === ResultEnum.SUCCESS
+    // 接口请求错误，统一提示错误信息
     if (!hasSuccess) {
-      if (message) {
-        errorMessage(message);
-      }
-      Promise.reject(new Error(message));
-      return errorResult;
+      return Promise.reject(new Error(message));
     }
 
     // 接口请求成功，直接返回结果
     if (result === ResultEnum.SUCCESS) {
       message && successMessage(message);
       return data;
-    }
-    // 接口请求错误，统一提示错误信息
-    if (result === ResultEnum.ERROR || result === ResultEnum.ERR) {
-      if (message) {
-        errorMessage(message);
-        Promise.reject(new Error(message));
-      } else {
-        const msg = '后台系统错误';
-        errorMessage(msg);
-        Promise.reject(new Error(msg));
-      }
-      return errorResult;
     }
   },
 
@@ -158,20 +143,9 @@ const transform: AxiosTransform = {
     useViewWithOutStore().setLoading(false);
     const errorLogStore = useErrorLogStoreWithOut();
     errorLogStore.addAjaxErrorInfo(error);
-    const { response, code, message } = error || {};
-    const msg: string = response?.data?.error?.message ?? '';
-    const err: string = error?.toString?.() ?? '';
-    try {
-      if (code === 'ECONNABORTED' && message.indexOf('timeout') !== -1) {
-        errorMessage('接口请求超时,请刷新页面重试!');
-      }
-      if (err?.includes('Network Error')) {
-        errorMessage('请检查您的网络连接是否正常!');
-      }
-    } catch (error) {
-      throw new Error(error);
-    }
-    checkStatus(error?.response?.status, msg);
+    const { message } = error || {};
+
+    checkStatus(error?.response?.status, message);
     return Promise.reject(error);
   },
 };
