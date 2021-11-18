@@ -191,6 +191,7 @@
       };
 
       const onImportClick = () => {
+        fileUploadInput.value.value = null;
         fileUploadInput.value.click();
       };
 

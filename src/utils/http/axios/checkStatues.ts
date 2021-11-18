@@ -49,6 +49,6 @@ export function checkStatus(status: number, msg: string): void {
       error(msg, 'http版本不支持该请求!');
       break;
     default:
-      error(msg, '系统发生错误!');
+      error(msg, '温馨提示');
   }
 }
