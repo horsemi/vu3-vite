@@ -2,9 +2,10 @@
   <div class="detail">
     <div :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
       <div class="btn-box">
-        <DxButton text="保存" @click="onSaveClickThrottleFn" />
+        <DxButton type="default" text="保存" @click="onSaveClickThrottleFn" />
       </div>
       <DetailForm
+        style="padding-bottom: 10px"
         :col-count="8"
         :read-only="false"
         :form-data="baseFormData"
@@ -195,12 +196,12 @@
                 multiViewItems.value[index].rowCount = getRowCount(data);
               });
               handleHeight(selectedIndex.value);
-              nextTick(() => {
-                isFixHeight.value = false;
-              });
             }
           });
         }
+        nextTick(() => {
+          isFixHeight.value = false;
+        });
         baseInformation.value = baseList || [];
       };
 
