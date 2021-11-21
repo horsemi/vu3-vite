@@ -3,18 +3,37 @@ import type { ITableOptions } from '/@/components/Table/types';
 import type { IColumnItem } from '/@/model/types';
 import { getSelectAndExpand, getFilter, getSort } from '/@/components/Table/common';
 
+interface Isort {
+  selector: string;
+  desc: boolean;
+}
 // 获得odata请求参数
 export const getOdataQuery = (
   options: ITableOptions,
   scheme: ISchemeItem,
   allColumns: IColumnItem[],
   key: string[] = [],
+  top = 50,
+  skip = 0,
+  tableSort: Isort[] = [],
   count = 'true'
 ) => {
   const { select, expand } = getSelectAndExpand(allColumns, scheme.columns, key);
   const filter = getFilter(scheme.requirement);
   const sort = scheme.orderBy ? getSort(scheme.orderBy, options.dataSourceOptions.sort) : [];
   const orderBy: any[] = [];
+  if (tableSort) {
+    sort.forEach((sortItem) => {
+      if (sortItem.selector != tableSort[0].selector && sortItem.desc != tableSort[0].desc) {
+        sort.push(tableSort[0]);
+      } else if (
+        sortItem.selector === tableSort[0].selector &&
+        sortItem.desc != tableSort[0].desc
+      ) {
+        sortItem.desc = tableSort[0].desc;
+      }
+    });
+  }
   sort.forEach((item) => {
     if (item.desc) {
       orderBy.push(item.selector + ' ' + 'desc');
@@ -23,11 +42,13 @@ export const getOdataQuery = (
     }
   });
   const queryParams = {
+    $count: count,
     $orderby: orderBy.length ? orderBy.join(',') : '',
     $select: select.join(','),
     $expand: expand.join(','),
     $filter: filter.length ? getOdataFilter(filter) : '',
-    $count: count,
+    $skip: skip === 0 ? '' : skip * top,
+    $top: top,
   };
   Object.keys(queryParams).forEach((item) => {
     if (queryParams[item] === '') {
@@ -148,6 +169,9 @@ const serializeValue = function serializeValue(value) {
         .join(','),
       ']'
     );
+  }
+  if (typeof value === 'boolean' || typeof value === 'number') {
+    return value;
   }
   return value && value.toString();
 };

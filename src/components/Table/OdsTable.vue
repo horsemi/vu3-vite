@@ -14,10 +14,13 @@
       :show-row-lines="options.showRowLines"
       :show-borders="options.showBorders"
       :row-alternation-enabled="options.rowAlternationEnabled"
+      :cache-enabled="false"
+      :remote-operations="{ paging: true, sorting: true }"
       @selection-changed="onSelectionChanged"
       @option-changed="onOptionChanged"
       @cellClick="onCellClick"
     >
+      <DxLoadPanel :enabled="false" />
       <template v-for="(item, index) in tableColumns" :key="index">
         <DxColumn
           v-if="!item.hide"
@@ -112,10 +115,11 @@
     onActivated,
   } from 'vue';
   import { cloneDeep, isEmpty } from 'lodash-es';
-
+  import { getOdataList } from '/@/api/ods/common';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { defaultTableOptions, getCompleteColumns, getTableDataSource } from './common';
   import { useAppStore } from '/@/store/modules/app';
+
   import { deepMerge } from '/@/utils';
   import DxContextMenu from 'devextreme-vue/context-menu';
   import DxDataGrid, {
@@ -125,10 +129,13 @@
     DxPager,
     DxLookup,
     DxScrolling,
+    DxLoadPanel,
   } from 'devextreme-vue/data-grid';
   import Clipboard from 'clipboard';
   import { useMessage } from '/@/hooks/web/useMessage';
-
+  import { getOdataQuery } from '/@/utils/odata';
+  import CustomStore from 'devextreme/data/custom_store';
+  import DataSource from 'devextreme/data/data_source';
   export default defineComponent({
     components: {
       DxDataGrid,
@@ -139,6 +146,7 @@
       DxColumn,
       DxScrolling,
       DxContextMenu,
+      DxLoadPanel,
     },
     props: {
       tableOptions: {
@@ -187,6 +195,14 @@
         type: String,
         default: '',
       },
+      orderCode: {
+        type: String,
+        default: '',
+      },
+      systemCode: {
+        type: String,
+        default: '',
+      },
     },
     emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],
     setup(props, ctx) {
@@ -194,6 +210,7 @@
       const appStore = useAppStore();
       const dataGrid = ref();
       const pageIndex = ref(0);
+      const pageSize = ref(50);
       const pageSizes = [50, 100, 1000, 2000, 3000];
       const rowRenderingMode = ref('standard');
       const contentMenuTitle = [
@@ -219,7 +236,6 @@
           useMessage('复制失败', 'error');
         });
       });
-
       onActivated(() => {
         hiddenVirtualRow();
       });
@@ -294,13 +310,14 @@
             // 重新 获取列数据
             tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
             // 重新 new datasource
-            tableData.value = getTableDataSource(
-              options.value,
-              scheme,
-              props.allColumns,
-              props.tableKey,
-              props.tableKeyType
-            );
+            // tableData.value = getTableDataSource(
+            //   options.value,
+            //   scheme,
+            //   props.allColumns,
+            //   props.tableKey,
+            //   props.tableKeyType
+            // );
+            getTableData();
           });
         }
       };
@@ -313,6 +330,36 @@
         }
       };
 
+      const getTableData = () => {
+        tableData.value = new DataSource({
+          store: new CustomStore({
+            key: 'Id',
+            async load(loadOptions) {
+              console.log(loadOptions);
+              if (Object.keys(loadOptions).length) {
+                const result = await getOdataList(
+                  props.orderCode,
+                  getOdataQuery(
+                    options.value,
+                    props.filterScheme,
+                    props.allColumns,
+                    props.tableKey,
+                    pageSize.value,
+                    pageIndex.value,
+                    loadOptions.sort
+                  ),
+                  props.systemCode ? props.systemCode : undefined
+                );
+
+                return {
+                  data: result.value,
+                  totalCount: result['@odata.count'],
+                };
+              }
+            },
+          }),
+        });
+      };
       const getSorting = (allowSort, expand, relationKey) => {
         if (expand && relationKey) {
           return false;
@@ -413,8 +460,12 @@
       }
 
       function onOptionChanged(e) {
+        if (e.fullName === 'paging.pageIndex') {
+          pageIndex.value = e.value;
+        }
         if (e.fullName === 'paging.pageSize') {
           // 切换页码也会有滚动条问题
+          pageSize.value = e.value;
           hiddenVirtualRow();
           rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
         }

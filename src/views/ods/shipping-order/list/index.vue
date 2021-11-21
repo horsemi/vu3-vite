@@ -21,6 +21,7 @@
       <OdsTable
         ref="dataGrid"
         :table-options="options"
+        :order-code="ORDER_CODE"
         :data-source="dataSource"
         :columns="columns"
         :all-columns="allColumns"

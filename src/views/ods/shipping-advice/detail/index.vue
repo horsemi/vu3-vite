@@ -101,6 +101,7 @@
       <div class="tab">
         <OdsTable
           :height="tableHeight"
+          :order-code="tableIndex === 0 ? 'shipping-advice-items' : 'operation-records'"
           :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
           :filter-scheme="tableIndex === 0 ? definiteScheme : recordScheme"
           :all-columns="tableIndex === 0 ? definiteAllColumns : recordAllColumns"

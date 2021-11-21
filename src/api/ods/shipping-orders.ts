@@ -1,6 +1,8 @@
 import { defHttp } from '/@/utils/http/axios';
+import type { OdataQuery } from '../policy-manage/type';
 
 enum apiUrl {
+  onShippingOrderSearchUrl = '/ods/api/odata/shipping-orders/$query',
   onShippingOrderSubmitUrl = '/ods/api/v1/shipping-orders/submit',
   onShippingOrderApplyUrl = '/ods/api/v1/shipping-orders/apply',
   onShippingOrderPushUrl = '/ods/api/v1/shipping-orders/push',
@@ -10,6 +12,13 @@ enum apiUrl {
 }
 
 export class ShippingOrderApi {
+  static onShippingOrderSearch(QueryParameters: OdataQuery) {
+    return defHttp.post({
+      url: apiUrl.onShippingOrderSearchUrl,
+      params: { ...QueryParameters },
+    });
+  }
+
   static onShippingOrderSubmit(codes: string[]) {
     return defHttp.post({
       url: apiUrl.onShippingOrderSubmitUrl,

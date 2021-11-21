@@ -125,14 +125,14 @@ const transform: AxiosTransform = {
     // 这里逻辑可以根据项目进行修改
     const hasSuccess = result === ResultEnum.SUCCESS; // data && Reflect.has(data, 'code') && result === ResultEnum.SUCCESS
     // 接口请求错误，统一提示错误信息
-    if (!hasSuccess) {
+    if (!hasSuccess && !resData.value) {
       return Promise.reject(new Error(message));
     }
 
     // 接口请求成功，直接返回结果
-    if (result === ResultEnum.SUCCESS) {
+    if (result === ResultEnum.SUCCESS || resData.value) {
       message && successMessage(message);
-      return data;
+      return resData.value ? resData : data;
     }
   },
 

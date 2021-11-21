@@ -26,6 +26,8 @@
         ref="dataGrid"
         :table-options="option"
         :data-source="dataSource"
+        :order-code="ORDER_CODE"
+        system-code="policy-manage"
         :columns="columns"
         :all-columns="allColumns"
         :filter-scheme="filterScheme"

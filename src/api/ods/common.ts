@@ -20,6 +20,13 @@ export const getList = (code: string, systemCode = 'ods'): Promise<any> => {
 export const getFilter = (code: string, systemCode = 'ods'): Promise<any> => {
   return defHttp.get({ url: `/${systemCode}/api/odata/${code}/scheme/filter` });
 };
+// 统一OdsTable接口
+export const getOdataList = (code: string, QueryParameters, systemCode = 'ods'): Promise<any> => {
+  return defHttp.post({
+    url: `/${systemCode}/api/odata/${code}/$query`,
+    params: { ...QueryParameters },
+  });
+};
 
 export const getDataSource = (dataSource: IDataSource, oDataStore: IODataStore) => {
   const data = new DataSource({

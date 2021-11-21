@@ -4,5 +4,6 @@ export interface OdataQuery {
   $count: string;
   $orderBy?: string;
   $filter?: string;
-  $top?: string;
+  $top?: number;
+  $skip?: string | number;
 }
