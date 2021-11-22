@@ -3,9 +3,9 @@ import type { ITableOptions } from '/@/components/Table/types';
 import type { IColumnItem } from '/@/model/types';
 import { getSelectAndExpand, getFilter, getSort } from '/@/components/Table/common';
 
-interface Isort {
+interface ISortItem {
   selector: string;
-  desc: boolean;
+  desc?: boolean;
 }
 // 获得odata请求参数
 export const getOdataQuery = (
@@ -15,29 +15,19 @@ export const getOdataQuery = (
   key: string[] = [],
   top = 50,
   skip = 0,
-  tableSort: Isort[] = [],
+  tableSort: ISortItem[] = [],
   count = 'true'
 ) => {
   const { select, expand } = getSelectAndExpand(allColumns, scheme.columns, key);
   const filter = getFilter(scheme.requirement);
   const sort = scheme.orderBy ? getSort(scheme.orderBy, options.dataSourceOptions.sort) : [];
-  const orderBy: any[] = [];
-  const newSort = [...sort];
-  console.log(sort);
+  const orderBy: string[] = [];
+  const newSort: ISortItem[] = [];
   if (tableSort) {
-    sort.forEach((sortItem) => {
-      if (sortItem.selector != tableSort[0].selector) {
-        console.log(tableSort[0]);
-        newSort.push(tableSort[0]);
-      } else if (
-        sortItem.selector === tableSort[0].selector &&
-        sortItem.desc != tableSort[0].desc
-      ) {
-        sortItem.desc = tableSort[0].desc;
-      }
-    });
+    newSort.push(tableSort[0]);
+  } else {
+    newSort.push(...sort);
   }
-  console.log(newSort);
   newSort.forEach((item) => {
     if (item.desc) {
       orderBy.push(item.selector + ' ' + 'desc');

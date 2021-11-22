@@ -329,7 +329,6 @@
           store: new CustomStore({
             key: 'Id',
             load: async (loadOptions) => {
-              console.log(loadOptions);
               if (Object.keys(loadOptions).length) {
                 const result = await getOdataList(
                   props.orderCode,
