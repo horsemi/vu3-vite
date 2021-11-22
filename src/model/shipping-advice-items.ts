@@ -14,7 +14,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'Material',
-    caption: '物料编码',
+    caption: '物料名称',
     relationKey: 'MaterialCode',
     foundationList: [
       {
@@ -26,7 +26,7 @@ export const customColumns: IColumnItem[] = [
         caption: '物料分组',
       },
     ],
-    datatypekeies: 'material',
+    datatypekeies: 'materials',
   },
   // {
   //   key: '',
@@ -45,6 +45,7 @@ export const customColumns: IColumnItem[] = [
         caption: '默认区域',
       },
     ],
+    datatypekeies: 'areas',
   },
   {
     key: 'UnitCode',
@@ -60,7 +61,7 @@ export const customColumns: IColumnItem[] = [
         caption: '单位',
       },
     ],
-    datatypekeies: 'unit',
+    datatypekeies: 'units',
   },
   {
     key: 'Qty',

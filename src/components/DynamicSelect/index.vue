@@ -171,7 +171,7 @@
       let paramFilter = ref();
 
       const paramListComputed = computed(() =>
-        props.paramList.filter((item) => !item.notAllowQuery)
+        props.paramList.filter((item) => !item.notAllowQuery && !item.hide)
       );
 
       let booleanOptions = [
