@@ -22,10 +22,13 @@ export const getOdataQuery = (
   const filter = getFilter(scheme.requirement);
   const sort = scheme.orderBy ? getSort(scheme.orderBy, options.dataSourceOptions.sort) : [];
   const orderBy: any[] = [];
+  const newSort = [...sort];
+  console.log(sort);
   if (tableSort) {
     sort.forEach((sortItem) => {
-      if (sortItem.selector != tableSort[0].selector && sortItem.desc != tableSort[0].desc) {
-        sort.push(tableSort[0]);
+      if (sortItem.selector != tableSort[0].selector) {
+        console.log(tableSort[0]);
+        newSort.push(tableSort[0]);
       } else if (
         sortItem.selector === tableSort[0].selector &&
         sortItem.desc != tableSort[0].desc
@@ -34,7 +37,8 @@ export const getOdataQuery = (
       }
     });
   }
-  sort.forEach((item) => {
+  console.log(newSort);
+  newSort.forEach((item) => {
     if (item.desc) {
       orderBy.push(item.selector + ' ' + 'desc');
     } else {

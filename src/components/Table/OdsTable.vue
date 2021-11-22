@@ -15,7 +15,7 @@
       :show-borders="options.showBorders"
       :row-alternation-enabled="options.rowAlternationEnabled"
       :cache-enabled="false"
-      :remote-operations="{ paging: true, sorting: true }"
+      :remote-operations="remoteOperationValue"
       @selection-changed="onSelectionChanged"
       @option-changed="onOptionChanged"
       @cellClick="onCellClick"
@@ -117,7 +117,7 @@
   import { cloneDeep, isEmpty } from 'lodash-es';
   import { getOdataList } from '/@/api/ods/common';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defaultTableOptions, getCompleteColumns, getTableDataSource } from './common';
+  import { defaultTableOptions, getCompleteColumns } from './common';
   import { useAppStore } from '/@/store/modules/app';
 
   import { deepMerge } from '/@/utils';
@@ -213,6 +213,7 @@
       const pageSize = ref(50);
       const pageSizes = [50, 100, 1000, 2000, 3000];
       const rowRenderingMode = ref('standard');
+      const remoteOperationValue = { paging: true, sorting: true, summary: true };
       const contentMenuTitle = [
         {
           text: '复制内容',
@@ -310,13 +311,6 @@
             // 重新 获取列数据
             tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
             // 重新 new datasource
-            // tableData.value = getTableDataSource(
-            //   options.value,
-            //   scheme,
-            //   props.allColumns,
-            //   props.tableKey,
-            //   props.tableKeyType
-            // );
             getTableData();
           });
         }
@@ -334,7 +328,7 @@
         tableData.value = new DataSource({
           store: new CustomStore({
             key: 'Id',
-            async load(loadOptions) {
+            load: async (loadOptions) => {
               console.log(loadOptions);
               if (Object.keys(loadOptions).length) {
                 const result = await getOdataList(
@@ -502,6 +496,7 @@
         onOptionChanged,
         getTableDataSourceOption,
         onCellClick,
+        remoteOperationValue,
       };
     },
   });
