@@ -5,7 +5,6 @@
         <DxButton type="default" text="保存" @click="onSaveClickThrottleFn" />
       </div>
       <DetailForm
-        style="padding-bottom: 10px"
         :col-count="8"
         :read-only="false"
         :form-data="baseFormData"
@@ -199,9 +198,9 @@
             }
           });
         }
-        nextTick(() => {
-          isFixHeight.value = false;
-        });
+        // nextTick(() => {
+        //   isFixHeight.value = false;
+        // });
         baseInformation.value = baseList || [];
       };
 
@@ -282,7 +281,7 @@
       }
     }
     .fixHeight {
-      min-height: 255px;
+      min-height: 155px;
     }
 
     .tab-panel {
