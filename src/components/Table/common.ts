@@ -16,7 +16,7 @@ import {
   getNextDayBeginTime,
   getCurrentDate,
 } from '/@/utils/date';
-import { useMessage } from '/@/hooks/web/useMessage';
+import { odsMessage } from '/@/components/Message';
 
 import { isNullOrUnDef } from '/@/utils/is';
 
@@ -130,7 +130,11 @@ export const getFilter = (requirements: IRequirementItem[]) => {
   try {
     filter = JSON.parse(`[${result}]`);
   } catch (e) {
-    useMessage(`请检查是否格式有误，如左右括号是否对等 \n ${result}`, 'error', '搜索条件无法解析');
+    odsMessage({
+      type: 'error',
+      title: '搜索条件无法解析',
+      message: `请检查是否格式有误，如左右括号是否对等 \n ${result}`,
+    });
   }
   // 获取解析后的搜索条件
   // console.info(

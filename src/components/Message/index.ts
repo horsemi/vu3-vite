@@ -12,8 +12,8 @@ const withInstallFunction = <T>(fn: T, name: string) => {
   return fn as SFCWithInstall<T>;
 };
 
-export const message = withInstallFunction(Message, '$message');
-export default message;
+export const odsMessage = withInstallFunction(Message, '$message');
+export default odsMessage;
 
 /* 
 使用方式：

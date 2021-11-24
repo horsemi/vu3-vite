@@ -69,7 +69,7 @@
   import DxButton from 'devextreme-vue/button';
 
   import QueryPlan from '/@/components/QueryPlan/index.vue';
-  import { useMessage } from '/@/hooks/web/useMessage';
+  import { odsMessage } from '/@/components/Message';
 
   export default defineComponent({
     name: 'PolicyManageShippingRulesList',
@@ -139,7 +139,10 @@
           loading.value = true;
           ShippingRulesApi.onShippingRulesDelete(selectionData.map((item) => item.Id))
             .then(() => {
-              useMessage('操作成功', 'success');
+              odsMessage({
+                type: 'success',
+                message: '操作成功',
+              });
               onRefresh();
             })
             .catch(() => {
@@ -160,7 +163,10 @@
             isEnabled: switchStatus,
           })
             .then(() => {
-              useMessage('操作成功', 'success');
+              odsMessage({
+                type: 'success',
+                message: '操作成功',
+              });
               onRefresh();
             })
             .catch(() => {
@@ -181,12 +187,12 @@
             tableKey.value
           )
         ).then(() => {
-          useMessage(
-            '<a href="#/basic-management/export-configuration/export/list">请点击查看</a>',
-            'success',
-            '导出成功',
-            true
-          );
+          odsMessage({
+            type: 'success',
+            title: '导出成功',
+            dangerouslyUseHTMLString: true,
+            message: '<a href="#/basic-management/export-configuration/export/list">请点击查看</a>',
+          });
         });
       };
 

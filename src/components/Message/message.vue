@@ -15,12 +15,19 @@
       @mouseenter="clearTimer"
       @mouseleave="startTimer"
     >
-      <i class="message__icon" :class="iconComponent" />
-      <slot>
-        <p class="message__content">
-          {{ message }}
-        </p>
-      </slot>
+      <svg v-if="iconComponent" class="message__icon" aria-hidden="true">
+        <use :xlink:href="`#icon-${iconComponent}`" />
+      </svg>
+      <div>
+        <p class="message__title">{{ titleText }}</p>
+        <slot>
+          <p v-if="!dangerouslyUseHTMLString" class="message__content">
+            {{ message }}
+          </p>
+          <!-- Caution here, message could've been compromised, never use user's input as message -->
+          <p v-else class="message__content" v-html="message"></p>
+        </slot>
+      </div>
       <i v-if="showClose" class="message__closeBtn dx-icon-close" @click.stop="close" />
     </div>
   </transition>
@@ -41,10 +48,17 @@
     },
     setup(props) {
       const TypeComponentsMap = {
-        success: 'dx-icon-check',
-        info: 'dx-icon-info',
-        warning: 'dx-icon-warning',
-        error: 'dx-icon-clear',
+        success: 'system-checkCircleFill',
+        info: 'system-infoCircleFill',
+        warning: 'system-warningCircleFill',
+        error: 'system-closeCircleFill',
+      };
+
+      const TitleTextMap = {
+        success: '操作成功',
+        info: '提示',
+        warning: '警告',
+        error: '错误',
       };
 
       const visible = ref(false);
@@ -58,6 +72,10 @@
 
       const iconComponent = computed(() => {
         return props.icon || TypeComponentsMap[props.type] || '';
+      });
+
+      const titleText = computed(() => {
+        return props.title || TitleTextMap[props.type] || '';
       });
 
       const customStyle = computed<CSSProperties>(() => ({
@@ -104,6 +122,7 @@
         customStyle,
         typeClass,
         iconComponent,
+        titleText,
 
         close,
         startTimer,
@@ -119,9 +138,9 @@
     top: 20px;
     left: 50%;
     display: flex;
-    align-items: center;
     min-width: 380px;
     padding: 15px 15px 15px 20px;
+    line-height: 24px;
     background-color: #edf2fc;
     border-color: #ebeef5;
     border-style: solid;
@@ -130,6 +149,12 @@
     transform: translateX(-50%);
     box-sizing: border-box;
     transition: opacity 0.3s, transform 0.4s, top 0.4s;
+
+    .message__title {
+      margin-bottom: 8px;
+      font-size: 16px;
+      color: #000000d9;
+    }
 
     .message__content {
       padding: 0;
@@ -156,25 +181,31 @@
   }
 
   .message__icon {
+    display: inline-block;
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
     margin-right: 10px;
-    font-size: 14px;
+    flex-shrink: 0;
+    overflow: hidden;
+    vertical-align: -0.15em;
   }
 
   /* stylelint-disable */
   @colors: {
-    success: #67c23a;
-    info: #909399;
-    warning: #e6a23c;
-    error: #f56c6c;
+    success: #52c41a;
+    info: #3694fd;
+    warning: #faad14;
+    error: #ff4d4f;
   };
 
   each(@colors, {
   .message--@{key} {
-    color: @value;
-    background-color: mix(#fff, @value, 90%);
-    border-color: mix(#fff, @value, 80%);
-    .message__content {
-      color: @value;
+    background-color: mix(#fff, @value, 95%);
+    border-color: mix(#fff, @value, 70%);
+
+    .message__icon {
+      color: @value
     }
   }
 });
@@ -182,7 +213,7 @@
 
   .message__closeBtn {
     position: absolute;
-    top: 50%;
+    top: 22px;
     right: 15px;
     font-size: 14px;
     color: #c0c4cc;

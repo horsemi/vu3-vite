@@ -25,6 +25,10 @@ export const messageProps = buildProps({
     type: String,
     default: '',
   },
+  title: {
+    type: String,
+    default: '',
+  },
   message: {
     type: definePropType<string | VNode>([String, Object]),
     default: '',
@@ -49,6 +53,10 @@ export const messageProps = buildProps({
   zIndex: {
     type: Number,
     default: 0,
+  },
+  dangerouslyUseHTMLString: {
+    type: Boolean,
+    default: false,
   },
 } as const);
 export type MessageProps = ExtractPropTypes<typeof messageProps>;

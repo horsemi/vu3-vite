@@ -47,9 +47,9 @@
   import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { useUserStore } from '/@/store/modules/user';
   import { saveSchemesData, deleteSchemes, saveDefaultScheme } from '/@/utils/scheme/index';
+  import { odsMessage } from '/@/components/Message';
 
   import QueryFrom from './component/form.vue';
   import QueryButton from './component/button.vue';
@@ -184,7 +184,10 @@
         }
 
         handleOverLength();
-        useMessage(msg, 'success');
+        odsMessage({
+          type: 'success',
+          message: msg,
+        });
       };
       // 处理默认方案更新
       const handleChangeCheckedDefault = (checkedState: boolean) => {
