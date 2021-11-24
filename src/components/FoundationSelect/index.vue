@@ -101,7 +101,6 @@
       const dropDownBox = ref();
       const dropDownOptions = {
         width: 270,
-        maxHeight: 400,
       };
 
       const dataGrid = ref();
