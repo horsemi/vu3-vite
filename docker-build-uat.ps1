@@ -1,4 +1,4 @@
-npm run build
+npm run build:u
 docker build --rm -f "dockerfile" -t vu3vite:latest "."
 $date = Get-Date -Format 'yyyyMMddHHmm'
 docker login registry.cn-shenzhen.aliyuncs.com -u tanzi@1460787438751845 -p Lsmy!@#2020
