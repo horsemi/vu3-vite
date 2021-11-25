@@ -3,7 +3,7 @@
     <div>
       <DxSelectBox
         :value="paramKey"
-        :data-source="paramList"
+        :data-source="paramListComputed"
         :show-clear-button="true"
         value-expr="key"
         width="180"
@@ -102,7 +102,7 @@
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
 
-  import { defineComponent, watch, PropType, ref } from 'vue';
+  import { defineComponent, watch, PropType, computed, ref } from 'vue';
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -170,6 +170,10 @@
       let dataType = ref<string>('');
       let paramFilter = ref();
 
+      const paramListComputed = computed(() =>
+        props.paramList.filter((item) => !item.notAllowQuery)
+      );
+
       let booleanOptions = [
         {
           key: true,
@@ -192,7 +196,7 @@
 
       function initData(paramKey: string) {
         if (paramKey) {
-          if (props.paramList.length === 0) return;
+          if (paramListComputed.value.length === 0) return;
           let {
             type,
             operations,
@@ -200,7 +204,7 @@
             relationKey,
             expand,
             filter,
-          } = (props.paramList as IColumnItem[]).filter((item) => paramKey === item.key)[0];
+          } = (paramListComputed.value as IColumnItem[]).filter((item) => paramKey === item.key)[0];
 
           paramFilter.value = filter;
 
@@ -261,6 +265,7 @@
         options,
         dataType,
         paramFilter,
+        paramListComputed,
         operatorOptions,
         booleanOptions,
         selectDisabled,

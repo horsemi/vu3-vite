@@ -104,8 +104,8 @@ export class Request {
         formData.append(key, params.data[key]);
       });
     }
-
-    formData.append(params.name || 'file', params.file, params.filename);
+    // TODO: file不能写死
+    formData.append('file', params as any);
 
     return this.axiosInstance.request<T>({
       ...config,
@@ -172,11 +172,12 @@ export class Request {
       this.axiosInstance
         .request<any, AxiosResponse<Result>>(conf)
         .then((res: AxiosResponse<Result>) => {
-          if (transformRequestHook && isFunction(transformRequestHook)) {
-            const ret = transformRequestHook(res, opt);
-            ret !== errorResult ? resolve(ret) : reject(new Error('request error!'));
-            return;
-          }
+          // TODO: 该hook需要调整
+          // if (transformRequestHook && isFunction(transformRequestHook)) {
+          //   const ret = transformRequestHook(res, opt);
+          //   ret !== errorResult ? resolve(ret) : reject(new Error('request error!'));
+          //   return;
+          // }
           resolve((res as unknown) as Promise<T>);
         })
         .catch((e: Error) => {

@@ -74,6 +74,25 @@ const basicManagement: Array<AppRouteRecordRaw> = [
           },
         ],
       },
+      {
+        path: 'export-configuration',
+        name: 'ExportConfiguration',
+        redirect: '/basic-management/export-configuration/export/list',
+        meta: {
+          title: '导出配置',
+        },
+        children: [
+          {
+            path: 'export/list',
+            name: 'ExportList',
+            component: () => import('/@/views/export/index.vue'),
+            meta: {
+              title: '导出列表',
+              permissions: ['ExportList'],
+            },
+          },
+        ],
+      },
     ],
   },
 ];

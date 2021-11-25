@@ -30,11 +30,11 @@ export const REDIRECT_ROUTE: AppRouteRecordRaw = {
   },
 };
 
-export const LOGIN_ROUTE: AppRouteRecordRaw = {
-  path: '/login',
-  name: 'Login',
-  component: () => import('/@/views/sys/login/index.vue'),
-  meta: {
-    title: '登录',
-  },
-};
+// export const LOGIN_ROUTE: AppRouteRecordRaw = {
+//   path: '/login',
+//   name: 'Login',
+//   component: () => import('/@/views/sys/login/index.vue'),
+//   meta: {
+//     title: '登录',
+//   },
+// };

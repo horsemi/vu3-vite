@@ -1,11 +1,17 @@
 <template>
   <div v-loading="loading" :class="prefixCls" :style="getWrapStyle">
-    <iframe ref="frameRef" :src="frameSrc" :class="`${prefixCls}__main`" />
+    <iframe
+      v-if="isMounted"
+      ref="frameRef"
+      :src="frameSrc"
+      :class="`${prefixCls}__main`"
+      @load="hideLoading"
+    />
   </div>
 </template>
 <script lang="ts">
   import type { CSSProperties } from 'vue';
-  import { defineComponent, ref, unref, onMounted, nextTick, computed } from 'vue';
+  import { defineComponent, ref, unref, computed, onMounted } from 'vue';
 
   import { useWindowSizeFn } from '/@/hooks/event/useWindowSizeFn';
 
@@ -20,7 +26,8 @@
       },
     },
     setup() {
-      const loading = ref(false);
+      const loading = ref(true);
+      const isMounted = ref(false);
       const topRef = ref(50);
       const heightRef = ref(window.innerHeight);
       const frameRef = ref<HTMLFrameElement | null>(null);
@@ -54,27 +61,8 @@
         calcHeight();
       }
 
-      function init() {
-        nextTick(() => {
-          const iframe = unref(frameRef);
-          if (!iframe) return;
-
-          const _frame = iframe as any;
-          if (_frame.attachEvent) {
-            _frame.attachEvent('onload', () => {
-              hideLoading();
-            });
-          } else {
-            iframe.onload = () => {
-              hideLoading();
-            };
-          }
-        });
-      }
-
       onMounted(() => {
-        loading.value = true;
-        init();
+        isMounted.value = true;
       });
 
       return {
@@ -82,6 +70,8 @@
         loading,
         frameRef,
         prefixCls,
+        isMounted,
+        hideLoading,
       };
     },
   });

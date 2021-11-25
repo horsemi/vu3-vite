@@ -14,16 +14,25 @@
       :show-row-lines="options.showRowLines"
       :show-borders="options.showBorders"
       :row-alternation-enabled="options.rowAlternationEnabled"
+      :remote-operations="true"
       @selection-changed="onSelectionChanged"
+      @option-changed="onOptionChanged"
+      @cellClick="onCellClick"
     >
       <template v-for="(item, index) in tableColumns" :key="index">
         <DxColumn
           v-if="!item.hide"
-          css-class="header-bold"
+          :css-class="`${item.cssClass || ''} header-bold`"
           :data-field="item.key"
           :allow-sorting="getSorting(item.allowSort, item.expand, item.relationKey)"
           :caption="item.caption"
-          :customize-text="item.type === 'decimal' ? handleCustomizeDecimal : handleCustomizeText"
+          :customize-text="
+            item.customizeText
+              ? item.customizeText
+              : item.type === 'decimal'
+              ? handleCustomizeDecimal
+              : handleCustomizeText
+          "
           :data-type="item.type"
           :cell-template="getTemplate(item.cellTemplate, item.expand, item.relationKey)"
           :alignment="getAlignment(item)"
@@ -55,7 +64,20 @@
         info-text="共{1}页，{2}条数据"
         display-mode="full"
       />
-      <DxScrolling v-if="options.useScrolling" mode="virtual" row-rendering-mode="virtual" />
+      <DxScrolling
+        :mode="options.useScrolling ? 'virtual' : 'standard'"
+        :row-rendering-mode="rowRenderingMode"
+      />
+      <DxSummary v-if="summaryArray.length > 0">
+        <DxTotalItem
+          v-for="item in summaryArray"
+          :key="item.columnName"
+          summary-type="custom"
+          :show-in-column="item.columnName"
+          :customize-text="item.showSummaryFn"
+        >
+        </DxTotalItem>
+      </DxSummary>
       <template #billCode="{ data }">
         <div
           id="billcode"
@@ -98,6 +120,7 @@
     nextTick,
     computed,
     onMounted,
+    onActivated,
   } from 'vue';
   import { cloneDeep, isEmpty } from 'lodash-es';
 
@@ -113,6 +136,8 @@
     DxPager,
     DxLookup,
     DxScrolling,
+    DxSummary,
+    DxTotalItem,
   } from 'devextreme-vue/data-grid';
   import Clipboard from 'clipboard';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -127,6 +152,8 @@
       DxColumn,
       DxScrolling,
       DxContextMenu,
+      DxSummary,
+      DxTotalItem,
     },
     props: {
       tableOptions: {
@@ -175,15 +202,21 @@
         type: String,
         default: '',
       },
+      summaryArray: {
+        type: Array as PropType<{ columnName: string; showSummaryFn: (data: unknown) => void }[]>,
+        default: () => {
+          return [];
+        },
+      },
     },
-    emits: ['handleBillCodeClick', 'handleSelectionClick'],
+    emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('ods-table');
       const appStore = useAppStore();
       const dataGrid = ref();
-      const pageTitle = '共{1}页，{2}条数据';
       const pageIndex = ref(0);
-      const pageSizes = [50, 100, 200];
+      const pageSizes = [50, 100, 1000, 2000, 3000];
+      const rowRenderingMode = ref('standard');
       const contentMenuTitle = [
         {
           text: '复制内容',
@@ -207,6 +240,26 @@
           useMessage('复制失败', 'error');
         });
       });
+
+      onActivated(() => {
+        hiddenVirtualRow();
+      });
+
+      // 处理keep-alive等情况下骨架屏遮挡列表数据，滚动条位置错误问题
+      const hiddenVirtualRow = () => {
+        const { dataSource, instance } = dataGrid.value;
+        if (dataSource && dataSource.key && instance) {
+          const key = dataSource.key();
+          const items = dataSource.items();
+          if (items.length > 1) {
+            const preItem = { [key]: items[0][key] };
+            const nextItem = { [key]: items[1][key] };
+            // 滚动到第二条数据的位置，再回到第一条，刷新滚动状态
+            instance.navigateToRow(nextItem);
+            instance.navigateToRow(preItem);
+          }
+        }
+      };
 
       const handleCustomizeDecimal = (cellInfo) => {
         const { value } = cellInfo;
@@ -325,6 +378,10 @@
         }
       };
 
+      const getTableDataSourceOption = () => {
+        return tableData.value;
+      };
+
       onBeforeUnmount(() => {
         tableData.value = null;
         // tableColumns.value = null;
@@ -376,6 +433,19 @@
         return dataGrid.value.instance.getSelectedRowsData();
       }
 
+      function onOptionChanged(e) {
+        if (e.fullName === 'paging.pageSize') {
+          // 切换页码也会有滚动条问题
+          hiddenVirtualRow();
+          rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
+        }
+        ctx.emit('optionChanged', e);
+      }
+
+      function onCellClick(e) {
+        ctx.emit('cellClick', e);
+      }
+
       return {
         dataGrid,
         options,
@@ -398,7 +468,10 @@
         getRowData,
         clipValue,
         contentMenuTitle,
-        pageTitle,
+        rowRenderingMode,
+        onOptionChanged,
+        getTableDataSourceOption,
+        onCellClick,
       };
     },
   });

@@ -108,6 +108,8 @@
       function reciveMessage(e) {
         if (e.data.status === 401) {
           router.push({ path: '/login' });
+        } else if (e.data.message === 'GoExportList') {
+          router.push({ path: '/basic-management/export-configuration/export/list' });
         }
       }
       onMounted(() => {
@@ -179,6 +181,14 @@
       padding-bottom: 16px;
       overflow: hidden;
       background-color: @background-color-primary;
+
+      .dx-scrollview-content {
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+      }
     }
   }
 </style>

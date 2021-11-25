@@ -2,9 +2,10 @@
   <div :class="prefixCls">
     <DxForm
       :form-data="formData"
-      :col-count="8"
+      :col-count="colCount"
       :show-colon-after-label="false"
-      :read-only="true"
+      :read-only="readOnly"
+      :disabled="disabled"
       :items="[]"
     >
       <template v-for="(item, index) in formList" :key="index">
@@ -13,6 +14,7 @@
           :label="{ text: item.caption }"
           :data-field="item.key"
           :editor-type="item.editorType"
+          :validation-rules="item.validate"
           :disabled="item.disabled"
           :editor-options="handleEditorOptions(item)"
           :col-span="item.colSpan ? item.colSpan : item.editorType === 'dxSwitch' ? 1 : 2"
@@ -30,7 +32,7 @@
       <template #OdsSwitch="{ data }">
         <Switch
           :style="{ opacity: !data.editorType.disabled ? 0.6 : 1, margin: '2.5px 0' }"
-          :read-only="true"
+          :read-only="readOnly"
           :value="formData[data.dataField]"
           @update:value="onChangeData($event, data.dataField)"
         />
@@ -42,18 +44,20 @@
         <EnumSelect
           v-if="data.editorOptions.type === 'enum'"
           :value="formData[data.dataField]"
-          :read-only="true"
+          :read-only="readOnly"
           width="100%"
           :expand="data.editorOptions.expand"
           @update:value="onChangeData($event, data.dataField)"
         />
-        <FoundationText
+        <FoundationSelect
           v-else
-          width="100%"
           :value="formData[data.dataField]"
+          :select-disabled="readOnly"
           :show-property="data.editorOptions.showProperty"
-          :read-only="true"
-          :foundation-data="formData[data.editorOptions.expand]"
+          :key-property="data.editorOptions.keyProperty"
+          :foundation-code="data.editorOptions.datatypekeies"
+          :default-options="formData[data.editorOptions.expand]"
+          @update:value="onChangeData($event, data.dataField)"
         />
       </template>
     </DxForm>
@@ -69,16 +73,18 @@
 
   import { DxForm, DxItem } from 'devextreme-vue/form';
 
-  import FoundationText from '/@/components/FoundationText/index.vue';
+  import FoundationSelect from '/@/components/FoundationSelect/index.vue';
+
   import EnumSelect from '/@/components/EnumSelect/index.vue';
   // import StepBar from '/@/components/StepBar/index.vue';
   import Switch from '/@/components/Switch/index.vue';
+  import { camelCaseToHyphenCase } from '/@/utils/helper/dataHelper';
 
   export default defineComponent({
     components: {
       DxForm,
       DxItem,
-      FoundationText,
+      FoundationSelect,
       EnumSelect,
       // StepBar,
       Switch,
@@ -95,6 +101,18 @@
         default: () => {
           return [];
         },
+      },
+      readOnly: {
+        type: Boolean,
+        default: false,
+      },
+      disabled: {
+        type: Boolean,
+        default: false,
+      },
+      colCount: {
+        type: Number,
+        default: 8,
       },
       // stepData: {
       //   type: Array as PropType<string[]>,
@@ -115,6 +133,7 @@
         if (item.editorType === 'dxNumberBox') {
           editorOptions = {
             showSpinButtons: true,
+            format: '###,##0.###',
           };
         } else if (item.editorType === 'dxDateBox') {
           editorOptions = {
@@ -135,6 +154,7 @@
       return {
         prefixCls,
         handleEditorOptions,
+        camelCaseToHyphenCase,
         onChangeData,
       };
     },

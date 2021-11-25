@@ -42,6 +42,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'DeliveryWarehouseCode',
     caption: '仓库编码',
+    datatypekeies: 'stocks',
   },
   {
     key: 'Nickname',
@@ -62,6 +63,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'DeliveryPointCode',
     caption: '提货点编码',
+    datatypekeies: 'delivery-points',
   },
   {
     key: 'ThreeServicePoint',
@@ -78,6 +80,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ThreeServicePointCode',
     caption: '三包点编码',
+    datatypekeies: 'three-service-points',
   },
   {
     key: 'TotalVolume',
@@ -107,6 +110,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'BillTypeCode',
     caption: '单据类型编码',
+    datatypekeies: 'bill-types',
   },
   {
     key: 'ServiceContent',
@@ -123,6 +127,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ServiceItemCode',
     caption: '服务项目编码',
+    datatypekeies: 'service-contents',
   },
   {
     key: 'TotalPackage',
@@ -191,6 +196,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ProvinceCode',
     caption: '省编码',
+    datatypekeies: 'provinces',
   },
   {
     key: 'City',
@@ -207,6 +213,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CityCode',
     caption: '市编码',
+    datatypekeies: 'cities',
   },
   {
     key: 'District',
@@ -223,6 +230,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'DistrictCode',
     caption: '区编码',
+    datatypekeies: 'districts',
   },
   {
     key: 'StreetCode',
@@ -243,6 +251,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'AgencyCode',
     caption: '经销商编码',
+    datatypekeies: 'customers',
   },
   {
     key: 'PromisedDeliveryDate',
@@ -279,6 +288,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'GatheringPointCode',
     caption: '集货点编码',
+    datatypekeies: 'gathering-points',
   },
   {
     key: 'Contractor',
@@ -295,6 +305,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ContractorCode',
     caption: '中转承运商编码',
+    datatypekeies: 'suppliers',
   },
   {
     key: 'ThreeServiceCostType',
@@ -311,6 +322,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ThreeServiceFeeTypeCode',
     caption: '三包费用类型编码',
+    datatypekeies: 'three-service-cost-types',
   },
   {
     key: 'LineArea',
@@ -327,6 +339,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'LineAreaCode',
     caption: '线路区域编码',
+    datatypekeies: 'line-areas',
   },
   {
     key: 'ThreeServiceSupplier',
@@ -343,10 +356,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ThreeServiceSupplierCode',
     caption: '三包服务商编码',
+    datatypekeies: 'suppliers',
   },
   {
     key: 'FreightTypeCode',
     caption: '运费类型编码',
+    datatypekeies: 'freight-types',
   },
   {
     key: 'FreightType',
@@ -379,13 +394,13 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CreatorId',
     caption: '创建人ID',
-    allowQuery: false,
+    notAllowQuery: true,
   },
   {
     key: 'Creator',
     caption: '创建人',
     relationKey: 'CreatorId',
-    allowQuery: false,
+    notAllowQuery: true,
     foundationList: [
       {
         key: 'Creator_AccountName',
@@ -408,6 +423,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CustomerTypeCode',
     caption: '客户类型编码',
+    datatypekeies: 'customer-types',
   },
   {
     key: 'AppliedTime',
@@ -416,13 +432,13 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ApplierId',
     caption: '审核人ID',
-    allowQuery: false,
+    notAllowQuery: true,
   },
   {
     key: 'Applier',
     caption: '审核人',
     relationKey: 'ApplierId',
-    allowQuery: false,
+    notAllowQuery: true,
     foundationList: [
       {
         key: 'Applier_AccountName',
@@ -445,6 +461,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CustomerCode',
     caption: '客户编码',
+    datatypekeies: 'customers',
   },
   {
     key: 'OutSourceBillCode',
@@ -457,13 +474,13 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'UpdaterId',
     caption: '修改人ID',
-    allowQuery: false,
+    notAllowQuery: true,
   },
   {
     key: 'Updater',
     caption: '修改人',
     relationKey: 'UpdaterId',
-    allowQuery: false,
+    notAllowQuery: true,
     foundationList: [
       {
         key: 'Updater_AccountName',
@@ -486,13 +503,13 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CancellerId',
     caption: '作废人ID',
-    allowQuery: false,
+    notAllowQuery: true,
   },
   {
     key: 'Canceller',
     caption: '作废人',
     relationKey: 'CancellerId',
-    allowQuery: false,
+    notAllowQuery: true,
     foundationList: [
       {
         key: 'Canceller_AccountName',

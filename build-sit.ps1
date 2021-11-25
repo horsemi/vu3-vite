@@ -1,13 +1,15 @@
 param(
-  # ·ÖÖ§Ãû³Æ
+  # åˆ†æ”¯åç§°
   [string]$Branch=$(throw "Parameter missing: -Branch name"),
-  # ¹¹½¨ºóÎÄ¼şĞè¸²¸ÇÂ·¾¶
+  # æ„å»ºæ¨¡å¼(è¯¦æƒ…è§é¡¹ç›®è‡ªèº«è„šæœ¬)
+  [string]$BuildMode="p",
+  # æ„å»ºåæ–‡ä»¶éœ€è¦†ç›–è·¯å¾„
   [string]$OutPath=$(throw "Parameter missing: -OutPath")
 )
 
 $_progress = 1;
-Write-Progress -Activity "ODS vu3-vite ¹¹½¨½Å±¾" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "¼ì²égit·ÖÖ§ÊÇ·ñ´æÔÚ";
-# ¼ìÑé·ÖÖ§ÊÇ·ñ´æÔÚ
+Write-Progress -Activity "ODS vu3-vite æ„å»ºè„šæœ¬" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "æ£€æŸ¥gitåˆ†æ”¯æ˜¯å¦å­˜åœ¨";
+# æ£€éªŒåˆ†æ”¯æ˜¯å¦å­˜åœ¨
 $_branch = git branch --list $Branch
 if([String]::IsNullOrEmpty($_branch)) {
   # throw "branch is not exists, branch name: $Branch"
@@ -16,59 +18,61 @@ if([String]::IsNullOrEmpty($_branch)) {
 }
 
 $_progress = 10;
-Write-Progress -Activity "ODS vu3-vite ¹¹½¨½Å±¾" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "»ñÈ¡×îĞÂ´úÂë";
-# »ñÈ¡×îĞÂ´úÂë
+Write-Progress -Activity "ODS vu3-vite æ„å»ºè„šæœ¬" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "è·å–æœ€æ–°ä»£ç ";
+# è·å–æœ€æ–°ä»£ç 
 git checkout $Branch
 git pull origin $Branch
-Write-Output "------ÒÑ»ñÈ¡×îĞÂ´úÂë------"
-Write-Output "------¿ªÊ¼¹¹½¨------"
+Write-Output "------å·²è·å–æœ€æ–°ä»£ç ------"
+Write-Output "------å¼€å§‹æ„å»º------"
 
 $_progress = 30;
-Write-Progress -Activity "ODS vu3-vite ¹¹½¨½Å±¾" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "yarn °²×°ËùÓĞÒıÓÃ";
-# °²×°ÒÀÀµ
+Write-Progress -Activity "ODS vu3-vite æ„å»ºè„šæœ¬" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "yarn å®‰è£…æ‰€æœ‰å¼•ç”¨";
+# å®‰è£…ä¾èµ–
 yarn install
 
 $_progress = 60;
-Write-Progress -Activity "ODS vu3-vite ¹¹½¨½Å±¾" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "¹¹½¨Ó¦ÓÃ";
-# ¹¹½¨ÏîÄ¿
-yarn run build
-Write-Output "------¹¹½¨³É¹¦------"
+Write-Progress -Activity "ODS vu3-vite æ„å»ºè„šæœ¬" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "æ„å»ºåº”ç”¨";
+# æ„å»ºé¡¹ç›®
+yarn run build:$BuildMode
+Write-Output "------æ„å»ºæˆåŠŸ------"
 
 $_progress = 90;
-Write-Progress -Activity "ODS vu3-vite ¹¹½¨½Å±¾" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "Ìæ»»¾²Ì¬ÎÄ¼ş";
-# ÅĞ¶ÏÊä³öÂ·¾¶ÊÇ·ñ´æÔÚ
+Write-Progress -Activity "ODS vu3-vite æ„å»ºè„šæœ¬" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "æ›¿æ¢é™æ€æ–‡ä»¶";
+# åˆ¤æ–­è¾“å‡ºè·¯å¾„æ˜¯å¦å­˜åœ¨
 if(Test-Path $OutPath ) {
     Remove-Item ($OutPath + "\*") -Recurse
     Copy-Item -Path ".\dist\*" -Destination $OutPath -Recurse
-    Write-Output "------ÎÄ¼şÒÑÌæ»»------"
+    Write-Output "------æ–‡ä»¶å·²æ›¿æ¢------"
 } else {
-    throw "Êä³öÂ·¾¶²»´æÔÚ£¬Çë¼ì²éÂ·¾¶ÊÇ·ñ´æÔÚ: $OutPath" 
+    throw "è¾“å‡ºè·¯å¾„ä¸å­˜åœ¨ï¼Œè¯·æ£€æŸ¥è·¯å¾„æ˜¯å¦å­˜åœ¨: $OutPath" 
 }
 
 $_progress = 100;
-Write-Progress -Activity "ODS vu3-vite ¹¹½¨½Å±¾" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "½Å±¾Ö´ĞĞÍê±Ï";
+Write-Progress -Activity "ODS vu3-vite æ„å»ºè„šæœ¬" -Status "$_progress% Complete:" -PercentComplete $_progress -CurrentOperation "è„šæœ¬æ‰§è¡Œå®Œæ¯•";
 
 # ---------------------------------------------------------------------
-# ÓÃÓÚ·ÅÖÃ·şÎñ¶Ë¸¨Öú¹¹½¨½Å±¾ Í¨³£·ÅÖÃÔÚC:/User/Administrator/Documents/
+# ç”¨äºæ”¾ç½®æœåŠ¡ç«¯è¾…åŠ©æ„å»ºè„šæœ¬ é€šå¸¸æ”¾ç½®åœ¨C:/User/Administrator/Documents/
 
 # param(
-#     # ·ÖÖ§Ãû³Æ
+#     # åˆ†æ”¯åç§°
 #     [string]$Branch=$(throw "Parameter missing: -Branch name"),
+#     # æ„å»ºæ¨¡å¼
+#     [string]$BuildMode="s"
 # )
 
-# # Êä³öÂ·¾¶
+# # è¾“å‡ºè·¯å¾„
 # $_outPath = "C:\Otwb\OdsWebClient"
-# # ÏîÄ¿Â·¾¶
+# # é¡¹ç›®è·¯å¾„
 # $_srcPath = "C:\code\Otwb\vu3-vite"
 # $_originalPath = Get-Location
 
-# Write-Output "------¿ªÊ¼Ö´ĞĞ------"
+# Write-Output "------å¼€å§‹æ‰§è¡Œ------"
 # Write-Output "outPath:"$_outPath "srcPath:"$_srcPath
 
 # Set-Location $_srcPath
 
-# .\build-sit.ps1 -Branch $Branch -OutPath $_outPath -SrcPath $_srcPath
+# .\build-sit.ps1 -Branch $Branch -OutPath $_outPath -SrcPath $_srcPath -BuildMode $BuildMode
 
 # Set-Location $_originalPath
 
-# Write-Output "------Ö´ĞĞÍê±Ï------"
+# Write-Output "------æ‰§è¡Œå®Œæ¯•------"

@@ -14,6 +14,34 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
     },
     children: [
       {
+        path: 'policy-manage',
+        name: 'PolicyManage',
+        redirect: '/strategy-configuration/policy-manage/shipping-rules/list',
+        meta: {
+          title: '发运策略',
+        },
+        children: [
+          {
+            path: 'shipping-rules/list',
+            name: 'PolicyManageShippingRulesList',
+            component: () => import('/@/views/policy-manage/shipping-rules/list/index.vue'),
+            meta: {
+              title: '发运方式策略',
+              permissions: ['PolicyManageShippingRulesList'],
+            },
+          },
+          {
+            path: 'shipping-rules/detail',
+            name: 'PolicyManageShippingRulesDetail',
+            component: () => import('/@/views/policy-manage/shipping-rules/detail/index.vue'),
+            meta: {
+              title: '发运方式策略详情',
+              hideMenu: true,
+            },
+          },
+        ],
+      },
+      {
         path: 'express-strategy',
         name: 'ExpressStrategy',
         redirect: '/strategy-configuration/express-strategy/recommendrule/list',

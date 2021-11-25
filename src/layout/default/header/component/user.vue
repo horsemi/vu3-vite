@@ -6,7 +6,7 @@
         :height="50"
         display-expr="name"
         :items="items"
-        :text="`Hi, ${accountName}`"
+        :text="`Hi, ${userName}`"
         styling-mode="text"
       >
       </DxDropDownButton>
@@ -41,7 +41,7 @@
       const { prefixCls } = useDesign('header-user');
       const userStore = useUserStore();
       const appStore = useAppStore();
-      const { accountName } = userStore.getUserInfo;
+      const { userName } = userStore.getUserInfo;
       const popupVisable = ref<boolean>(false);
       let passwordPattern = ref<string>('');
       let passwordMessage = ref<string>('');
@@ -86,7 +86,7 @@
       return {
         prefixCls,
         items,
-        accountName,
+        userName,
         popupVisable,
         ClosePopup,
         passwordPattern,

@@ -46,8 +46,15 @@ export default defineConfig(
         open: true,
         host: 'test.ods.otwb.linshimuye.com',
         proxy: {
-          '/api/foundation': {
-            target: 'http://10.10.14.245:30034',
+          '/policy-manage': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
+            // rewrite: (path: string) => {
+            //   return path.replace('/policy-manage', '');
+            // },
+            changeOrigin: true,
+          },
+          '/wms-foundation': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
           },
           '/permission': {
@@ -55,6 +62,10 @@ export default defineConfig(
             changeOrigin: true,
           },
           '/ods/api': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
+            changeOrigin: true,
+          },
+          '/api/exportation': {
             target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
           },

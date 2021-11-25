@@ -307,7 +307,7 @@
           currentSchemeItem.isShare = val.scheme[checkedIndex.value].isShare || false;
           schemeList.value = cloneDeep(val.scheme);
           schemeListTemp.value = cloneDeep(val.scheme);
-          fast.value = cloneDeep(props.schemeData.scheme[props.schemeCheckedIndex].fast) || [];
+          fast.value = cloneDeep(props.schemeData.scheme[props.schemeData.checkedIndex].fast) || [];
         }
       };
       watch(

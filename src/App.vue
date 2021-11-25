@@ -6,6 +6,7 @@
       :message="visibleData.message"
       :description="visibleData.description"
       :type="visibleData.type"
+      :dangerously-use-html-string="visibleData.dangerouslyUseHtmlString"
     />
   </AppProvider>
 </template>

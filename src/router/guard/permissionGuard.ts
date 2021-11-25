@@ -8,7 +8,7 @@ import { useAppStoreWidthOut } from '/@/store/modules/app';
 
 const LOGIN_PATH = PageEnum.BASE_LOGIN;
 
-const whitePathList: PageEnum[] = [LOGIN_PATH];
+const whitePathList: PageEnum[] = [];
 const blackPathList: string[] = [];
 
 const permissionStrictState = true;
@@ -49,22 +49,26 @@ export function createPermissionGuard(router: Router) {
         next();
         return;
       }
-      // redirect login page
-      const redirectData: { path: string; replace: boolean; query?: Recordable<string> } = {
-        path: LOGIN_PATH,
-        replace: true,
-      };
-      if (to.path) {
-        redirectData.query = {
-          ...redirectData.query,
-          redirect: to.path,
-        };
-      }
+      // // redirect login page
+      // const redirectData: { path: string; replace: boolean; query?: Recordable<string> } = {
+      //   path: LOGIN_PATH,
+      //   replace: true,
+      // };
+      // if (to.path) {
+      //   redirectData.query = {
+      //     ...redirectData.query,
+      //     redirect: to.path,
+      //   };
+      // }
       await appStore.resumeAllState();
-      next(redirectData);
+      window.location.href = `${import.meta.env.VITE_APP_SSO_SERVERS_URL}#/login?tag=ods`;
       return;
     }
 
+    if (to.path === LOGIN_PATH) {
+      next(PageEnum.BASE_HOME);
+      return;
+    }
     if (permissionStore.getIsDynamicAddedRoute) {
       next();
       return;

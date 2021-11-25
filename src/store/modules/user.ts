@@ -4,12 +4,12 @@ import type { ISumbitPassword } from '/@/api/user';
 import { defineStore } from 'pinia';
 
 import { store } from '/@/store';
-import { PageEnum } from '/@/enums/pageEnum';
+
 import { usePermissionStore } from '/@/store/modules/permission';
 import { useAppStore } from '/@/store/modules/app';
 import { TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
-import router from '/@/router';
+
 import { UserApi, IUserData } from '/@/api/user';
 import { setCookie } from '/@/utils/cache/cookies';
 import { getToken } from '/@/utils/auth';
@@ -117,7 +117,7 @@ export const useUserStore = defineStore({
         UserApi.logout()
           .then(() => {
             useAppStore().resumeAllState();
-            router.push(PageEnum.BASE_LOGIN);
+            window.location.href = `${import.meta.env.VITE_APP_SSO_SERVERS_URL}#/login?tag=ods`;
           })
           .catch((error) => {
             reject(error);

@@ -1,6 +1,7 @@
 export enum ResultEnum {
   SUCCESS = 'ok',
   ERROR = 'error',
+  ERR = 'err',
   NOT_FOUND = 404,
   NOT_PERMISSION = 401,
 }

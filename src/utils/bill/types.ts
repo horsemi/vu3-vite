@@ -34,6 +34,11 @@ export interface IDetailItem {
   disabled?: boolean;
 
   /**
+   * @description 校验规则
+   */
+  validate?: unknown[];
+
+  /**
    * @description 是否隐藏
    */
   hide?: boolean;
@@ -52,6 +57,11 @@ export interface IDetailItem {
    * @description 关联数据
    */
   expand?: string;
+
+  /**
+   * @description 表单关联ID
+   */
+  keyProperty?: string;
 
   /**
    * @description 表单显示关联属性

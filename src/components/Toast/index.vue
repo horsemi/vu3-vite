@@ -17,7 +17,10 @@
           </span>
           <div class="toast-message__wrap">
             <div class="toast-title__wrap">{{ message }}</div>
-            <div class="toast-content__wrap">{{ description }}</div>
+            <div v-if="!dangerouslyUseHtmlString" class="toast-content__wrap">{{
+              description
+            }}</div>
+            <div v-else class="toast-content__wrap" v-html="description"></div>
           </div>
         </div>
       </div>
@@ -51,6 +54,10 @@
       description: {
         type: String,
         default: '',
+      },
+      dangerouslyUseHtmlString: {
+        type: Boolean,
+        default: false,
       },
     },
     emits: ['update:description'],
