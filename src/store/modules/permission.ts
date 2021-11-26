@@ -48,6 +48,9 @@ export const usePermissionStore = defineStore({
     setDynamicAddedRoute(added: boolean): void {
       this.isDynamicAddedRoute = added;
     },
+    setPermissionCodeList(permissionList: string[]) {
+      this.permCodeList = [...permissionList];
+    },
     setMenuList(menuList: AppRouteRecordRaw[]): void {
       const menuFilter = (menu: AppRouteRecordRaw, index: number) => {
         const { meta, children } = menu;
@@ -123,6 +126,9 @@ export const usePermissionStore = defineStore({
       this.setPermissionRoutes(routes);
 
       return routes;
+    },
+    hasPermission(permission: string): boolean {
+      return this.permCodeList.includes(permission);
     },
   },
 });

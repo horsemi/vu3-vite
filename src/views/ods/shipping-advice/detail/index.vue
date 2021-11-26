@@ -8,6 +8,7 @@
           :split-button="true"
           :use-select-mode="false"
           text="提交"
+          :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceSumit)"
           item-template="item"
           display-expr="name"
           key-expr="key"
@@ -20,6 +21,7 @@
           :split-button="true"
           :use-select-mode="false"
           text="审核"
+          :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceApply)"
           display-expr="name"
           key-expr="key"
           @button-click="onApplyClickThrottleFn"
@@ -30,12 +32,17 @@
           :split-button="true"
           :use-select-mode="false"
           text="发送"
+          :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdvicePush)"
           display-expr="name"
           key-expr="key"
           @button-click="onSendClickThrottleFn"
           @item-click="onItemButtonClickThrottleFn"
         />
-        <DxButton text="刷新" @click="getDataThrottleFn" />
+        <DxButton
+          :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceQueryItems)"
+          text="刷新"
+          @click="getDataThrottleFn"
+        />
       </div>
       <DxTabPanel
         v-model:selected-index="selectedIndex"
@@ -116,6 +123,7 @@
       <div class="tab" :style="tableIndex === 0 && 'padding-top: 0'">
         <OdsTable
           :height="tableHeight"
+          :query-list-permission="shippingAdviceType.shippingAdviceQueryItems"
           :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
           :filter-scheme="tableIndex === 0 ? definiteScheme : recordScheme"
           :all-columns="tableIndex === 0 ? definiteAllColumns : recordAllColumns"
@@ -141,10 +149,11 @@
   import { useRoute } from 'vue-router';
   import { useThrottleFn } from '@vueuse/core';
 
+  import { usePermissionStore } from '/@/store/modules/permission';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
-
+  import { shippingAdviceType } from '/@/enums/actionPermission/shipping-advice';
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
   import DxButton from 'devextreme-vue/button';
@@ -168,6 +177,7 @@
       QueryForm,
     },
     setup() {
+      const permissionStore = usePermissionStore();
       const multiViewItems = ref([
         {
           title: '基本信息',
@@ -215,18 +225,21 @@
           {
             key: 'redraft',
             name: '反审',
+            disabled: !permissionStore.hasPermission(shippingAdviceType.shippingAdviceRedraft),
           },
         ],
         submit: [
           {
             key: 'revoke',
             name: '撤销',
+            disabled: !permissionStore.hasPermission(shippingAdviceType.shippingAdviceRevoke),
           },
         ],
         send: [
           {
             key: 'recall',
             name: '撤回',
+            disabled: !permissionStore.hasPermission(shippingAdviceType.shippingAdviceRecall),
           },
         ],
       };
@@ -479,6 +492,8 @@
         dropDownButtonAttributes: {
           class: 'first-dropButton',
         },
+        shippingAdviceType,
+        permissionStore,
       };
     },
   });
