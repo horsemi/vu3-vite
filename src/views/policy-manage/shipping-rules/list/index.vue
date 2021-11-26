@@ -191,6 +191,7 @@
       };
 
       const onImportClick = () => {
+        fileUploadInput.value.value = null;
         fileUploadInput.value.click();
       };
 
@@ -198,7 +199,10 @@
         const files = (ev.target as HTMLInputElement).files;
         let postFiles = Array.prototype.slice.call(files);
 
-        ShippingRulesApi.onShippingRulesImport(postFiles[0]);
+        ShippingRulesApi.onShippingRulesImport(postFiles[0]).then(() => {
+          useMessage('导入成功', 'success');
+          onRefresh();
+        });
       };
 
       const onDeleteClickThrottleFn = useThrottleFn(onDeleteClick, DEFAULT_THROTTLE_TIME);
