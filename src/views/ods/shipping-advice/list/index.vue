@@ -4,6 +4,7 @@
       ref="queryPlan"
       :order-code="ORDER_CODE"
       :all-columns="allColumns"
+      :query-list-permission="shippingAdviceType.shippingAdviceQueryList"
       :scheme-data="schemeData"
       :scheme-checked-index="schemeCheckedIndex"
       @on-change-scheme="onChangeScheme"
@@ -11,11 +12,28 @@
     <div v-loading="loading" class="example">
       <div class="btn__wrap">
         <div class="btn__box">
-          <DxButton :width="76" text="提交" type="default" @click="onSubmitClick" />
-          <DxButton :width="76" text="审核" @click="onApplyClick" />
+          <DxButton
+            :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceSumit)"
+            :width="76"
+            text="提交"
+            type="default"
+            @click="onSubmitClick"
+          />
+          <DxButton
+            :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceApply)"
+            :width="76"
+            text="审核"
+            @click="onApplyClick"
+          />
         </div>
         <div class="btn__box">
-          <DxButton :width="100" icon="refresh" text="刷新" @click="onRefresh" />
+          <DxButton
+            :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceQueryList)"
+            :width="100"
+            icon="refresh"
+            text="刷新"
+            @click="onRefresh"
+          />
         </div>
       </div>
       <OdsTable
@@ -23,6 +41,7 @@
         :table-options="options"
         :data-source="dataSource"
         :columns="columns"
+        :query-list-permission="shippingAdviceType.shippingAdviceQueryList"
         :all-columns="allColumns"
         :filter-scheme="filterScheme"
         :table-key="tableKey"
@@ -42,7 +61,9 @@
 
   import { defineComponent, ref, onMounted } from 'vue';
   import { useRouter } from 'vue-router';
+  import { usePermissionStore } from '/@/store/modules/permission';
   import { cloneDeep } from 'lodash-es';
+  import { shippingAdviceType } from '/@/enums/actionPermission/shipping-advice';
 
   import { getColumns } from '/@/model/shipping-advices';
   import { isArrayEmpty } from '/@/utils/bill/index';
@@ -62,6 +83,7 @@
     },
     setup() {
       const router = useRouter();
+      const permissionStore = usePermissionStore();
       const dataGrid = ref();
       const queryPlan = ref();
       const loading = ref(false);
@@ -191,6 +213,8 @@
         onSubmitClick,
         onApplyClick,
         onRefresh,
+        shippingAdviceType,
+        permissionStore,
       };
     },
   });
