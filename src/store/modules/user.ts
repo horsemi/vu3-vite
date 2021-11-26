@@ -75,6 +75,7 @@ export const useUserStore = defineStore({
               roles: [],
               permissions: res.behaviors,
             });
+            permissionStore.setPermissionCodeList(res.behaviors);
             permissionStore.changePermissionCode();
             resolve(res);
           })

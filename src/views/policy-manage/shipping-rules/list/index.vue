@@ -4,6 +4,7 @@
       ref="queryPlan"
       :order-code="ORDER_CODE"
       :all-columns="allColumns"
+      :query-list-permission="shippingRuleType.shippingRuleQueryList"
       :scheme-data="schemeData"
       :scheme-checked-index="schemeCheckedIndex"
       @on-change-scheme="onChangeScheme"
@@ -11,15 +12,52 @@
     <div v-loading="loading" class="example">
       <div class="btn__wrap">
         <div class="btn__box">
-          <DxButton :width="76" text="新增" type="default" @click="onAddClickFn" />
-          <DxButton :width="76" text="删除" @click="onDeleteClickThrottleFn" />
-          <DxButton :width="76" text="生效" @click="onSwitchClickThrottleFn(true)" />
-          <DxButton :width="76" text="失效" @click="onSwitchClickThrottleFn(false)" />
-          <DxButton :width="76" text="导出" @click="onExportClickThrottleFn" />
-          <DxButton :width="76" text="导入" @click="onImportClickThrottleFn" />
+          <DxButton
+            :disabled="!permissionStore.hasPermission(shippingRuleType.shippingRuleCreate)"
+            :width="76"
+            text="新增"
+            type="default"
+            @click="onAddClickFn"
+          />
+          <DxButton
+            :disabled="!permissionStore.hasPermission(shippingRuleType.shippingRuleDelete)"
+            :width="76"
+            text="删除"
+            @click="onDeleteClickThrottleFn"
+          />
+          <DxButton
+            :disabled="!permissionStore.hasPermission(shippingRuleType.shippingRuleSwitch)"
+            :width="76"
+            text="生效"
+            @click="onSwitchClickThrottleFn(true)"
+          />
+          <DxButton
+            :disabled="!permissionStore.hasPermission(shippingRuleType.shippingRuleSwitch)"
+            :width="76"
+            text="失效"
+            @click="onSwitchClickThrottleFn(false)"
+          />
+          <DxButton
+            :disabled="!permissionStore.hasPermission(shippingRuleType.shippingRuleExport)"
+            :width="76"
+            text="导出"
+            @click="onExportClickThrottleFn"
+          />
+          <DxButton
+            :disabled="!permissionStore.hasPermission(shippingRuleType.shippingRuleImport)"
+            :width="76"
+            text="导入"
+            @click="onImportClickThrottleFn"
+          />
         </div>
         <div class="btn__box">
-          <DxButton :width="100" icon="refresh" text="刷新" @click="onRefresh" />
+          <DxButton
+            :disabled="!permissionStore.hasPermission(shippingRuleType.shippingRuleQueryList)"
+            :width="100"
+            icon="refresh"
+            text="刷新"
+            @click="onRefresh"
+          />
         </div>
       </div>
       <OdsTable
@@ -27,6 +65,7 @@
         :table-options="option"
         :data-source="dataSource"
         :columns="columns"
+        :query-list-permission="shippingRuleType.shippingRuleQueryList"
         :all-columns="allColumns"
         :filter-scheme="filterScheme"
         :table-key="tableKey"
@@ -55,12 +94,14 @@
 
   import { defineComponent, ref, onActivated, onMounted, computed } from 'vue';
   import { useRouter } from 'vue-router';
+  import { usePermissionStore } from '/@/store/modules/permission';
+
   import { cloneDeep } from 'lodash-es';
   import { deepMerge } from '/@/utils';
   import { useThrottleFn } from '@vueuse/core';
   import { defaultTableOptions } from '/@/components/Table/common';
   import { getOdataQuery } from '/@/utils/odata';
-
+  import { shippingRuleType } from '/@/enums/actionPermission/shipping-rules';
   import { getColumns } from '/@/model/shipping-rules';
   import { isArrayEmpty } from '/@/utils/bill/index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
@@ -79,7 +120,7 @@
     },
     setup() {
       const router = useRouter();
-
+      const permissionStore = usePermissionStore();
       const dataGrid = ref();
       const queryPlan = ref();
       const fileUploadInput = ref();
@@ -275,6 +316,8 @@
         onExportClickThrottleFn,
         onImportClickThrottleFn,
         uploadHandle,
+        shippingRuleType,
+        permissionStore,
       };
     },
   });

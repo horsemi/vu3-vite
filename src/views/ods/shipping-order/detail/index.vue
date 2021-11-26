@@ -8,6 +8,7 @@
           :split-button="true"
           :use-select-mode="false"
           text="提交"
+          :disabled="!permissionStore.hasPermission(shippingOrderType.shippingOrderSumit)"
           display-expr="name"
           key-expr="key"
           @button-click="onSubmitClickThrottleFn"
@@ -18,6 +19,7 @@
           :split-button="true"
           :use-select-mode="false"
           text="审核"
+          :disabled="!permissionStore.hasPermission(shippingOrderType.shippingOrderApply)"
           display-expr="name"
           key-expr="key"
           @button-click="onApplyClickThrottleFn"
@@ -27,13 +29,18 @@
           :items="dropButtonItems.push"
           :split-button="true"
           :use-select-mode="false"
+          :disabled="!permissionStore.hasPermission(shippingOrderType.shippingOrderPush)"
           text="下推"
           display-expr="name"
           key-expr="key"
           @button-click="onPushClickThrottleFn"
           @item-click="onItemButtonClickThrottleFn"
         />
-        <DxButton text="刷新" @click="getDataThrottleFn" />
+        <DxButton
+          text="刷新"
+          :disabled="!permissionStore.hasPermission(shippingOrderType.shippingOrderQueryItems)"
+          @click="getDataThrottleFn"
+        />
       </div>
       <DxTabPanel
         v-model:selected-index="selectedIndex"
@@ -91,6 +98,7 @@
       <div class="tab">
         <OdsTable
           :height="tableHeight"
+          :query-list-permission="shippingOrderType.shippingOrderQueryItems"
           :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
           :filter-scheme="tableIndex === 0 ? definiteScheme : recordScheme"
           :all-columns="tableIndex === 0 ? definiteAllColumns : recordAllColumns"
@@ -116,8 +124,8 @@
 
   import { defineComponent, ref, watch, reactive, nextTick } from 'vue';
   import { useRoute } from 'vue-router';
+  import { usePermissionStore } from '/@/store/modules/permission';
   import { useThrottleFn } from '@vueuse/core';
-
   import { getColumns } from '/@/model/shipping-orders';
   import { getDefiniteColumns } from '/@/model/shipping-order-items';
   import { getRecordColumns } from '/@/model/operation-record';
@@ -126,6 +134,7 @@
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
   import { isFoundationType } from '/@/model/common';
+  import { shippingOrderType } from '/@/enums/actionPermission/shipping-order';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
@@ -142,6 +151,7 @@
       DetailForm,
     },
     setup() {
+      const permissionStore = usePermissionStore();
       const multiViewItems = ref([
         {
           title: '基本信息',
@@ -179,18 +189,21 @@
           {
             key: 'redraft',
             name: '反审',
+            disabled: !permissionStore.hasPermission(shippingOrderType.shippingOrderRedraft),
           },
         ],
         submit: [
           {
             key: 'revoke',
             name: '撤销',
+            disabled: !permissionStore.hasPermission(shippingOrderType.shippingOrderRevoke),
           },
         ],
         push: [
           {
             key: 'recall',
             name: '撤回',
+            disabled: !permissionStore.hasPermission(shippingOrderType.shippingOrderRecall),
           },
         ],
       };
@@ -561,6 +574,8 @@
         dropDownButtonAttributes: {
           class: 'first-dropButton',
         },
+        shippingOrderType,
+        permissionStore,
       };
     },
   });
