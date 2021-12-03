@@ -11,7 +11,7 @@
         <span style="width: 120px">操作</span>
       </div>
       <div>
-        <div v-for="(item, index) in dataSource" :key="index" :class="`${prefixCls}__item`">
+        <div v-for="(item, index) in requirement" :key="index" :class="`${prefixCls}__item`">
           <DxSelectBox
             v-model:value="item.leftParenthesisCount"
             :data-source="leftParenthesisOptions"
@@ -24,12 +24,13 @@
           <DynamicSelect
             v-model:value="item.value"
             v-model:paramKey="item.requirement"
+            v-model:paramInfo="item.info"
             v-model:operation="item.operator"
             v-model:paramDataType="item.type"
             v-model:paramOperations="item.operatorList"
             v-model:paramDatatypekeies="item.datatypekeies"
             v-model:paramRelationKey="item.relationKey"
-            :param-list="allColumns"
+            :param-list="columns"
           />
           <DxSelectBox
             v-model:value="item.rightParenthesisCount"
@@ -51,7 +52,7 @@
           <div :class="`${prefixCls}__handle`">
             <span @click="onUpAdd(index)">上加</span>
             <span @click="onDownAdd(index)">下加</span>
-            <span v-if="dataSource.length > 1" @click="onDel(index)">删除</span>
+            <span v-if="requirement.length > 1" @click="onDel(index)">删除</span>
           </div>
         </div>
       </div>
@@ -60,10 +61,12 @@
 </template>
 
 <script lang="ts">
-  import type { ILogicOptions, IRequirementItem } from './types';
+  import type { ILogicOptions } from './types';
   import type { IColumnItem } from '/@/model/types';
+  import type { ISchemeData } from '../../QueryPlan/types';
+  import type { Ref } from 'vue';
 
-  import { defineComponent, PropType, ref, watch } from 'vue';
+  import { defineComponent, computed, inject } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -78,22 +81,35 @@
       DxSelectBox,
       DxScrollView,
     },
-    props: {
-      requirement: {
-        type: Array as PropType<IRequirementItem[]>,
-        default: () => {
+    setup() {
+      const allColumns = inject('allColumns') as Ref<IColumnItem[]>;
+      const schemeData = inject('schemeData') as Ref<ISchemeData>;
+
+      const infoMap = {
+        base: '基本信息',
+        base_Items: '明细信息',
+      };
+
+      const columns = computed(() => {
+        const _columns: IColumnItem[] = [];
+        allColumns.value.forEach((item) => {
+          _columns.push({
+            ...item,
+            caption: `${infoMap[item.info!]}-${item.caption}`,
+          });
+        });
+        return _columns;
+      });
+
+      const requirement = computed(() => {
+        const scheme = schemeData.value.scheme[schemeData.value.checkedIndex];
+        if (scheme) {
+          return scheme.requirement;
+        } else {
           return [];
-        },
-      },
-      allColumns: {
-        type: Array as PropType<IColumnItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-    },
-    emits: ['on-change-requirement'],
-    setup(props, ctx) {
+        }
+      });
+
       const { prefixCls } = useDesign('content-requirement');
       // 逻辑下拉框配置项
       const logicOptions: ILogicOptions[] = [
@@ -129,17 +145,9 @@
         },
       ];
 
-      // 条件列表数据
-      const dataSource = ref<IRequirementItem[]>([]);
-
-      // 外派条件更新事件
-      const onChangeRequirement = (data: IRequirementItem[]) => {
-        ctx.emit('on-change-requirement', data);
-      };
-
       // 点击上加触发
       const onUpAdd = (index) => {
-        dataSource.value.splice(index, 0, {
+        schemeData.value.scheme[schemeData.value.checkedIndex].requirement.splice(index, 0, {
           leftParenthesisCount: undefined,
           rightParenthesisCount: undefined,
           requirement: '',
@@ -150,12 +158,12 @@
           datatypekeies: '',
           relationKey: '',
           logic: 'and',
+          info: '',
         });
-        onChangeRequirement(dataSource.value);
       };
       // 点击下加触发
       const onDownAdd = (index) => {
-        dataSource.value.splice(index + 1, 0, {
+        schemeData.value.scheme[schemeData.value.checkedIndex].requirement.splice(index + 1, 0, {
           leftParenthesisCount: undefined,
           rightParenthesisCount: undefined,
           requirement: '',
@@ -166,31 +174,22 @@
           datatypekeies: '',
           relationKey: '',
           logic: 'and',
+          info: '',
         });
-        onChangeRequirement(dataSource.value);
       };
       // 点击删除触发
       const onDel = (index) => {
         // 删除到只剩下一个不能删除
-        if (dataSource.value.length > 1) {
-          dataSource.value.splice(index, 1);
-          onChangeRequirement(dataSource.value);
+        const temp = [...schemeData.value.scheme[schemeData.value.checkedIndex].requirement];
+        if (temp.length > 1) {
+          temp.splice(index, 1);
+          schemeData.value.scheme[schemeData.value.checkedIndex].requirement = temp;
         }
       };
 
-      // 更新条件列表数据
-      watch(
-        () => props.requirement,
-        (val) => {
-          dataSource.value = val;
-        },
-        {
-          immediate: true,
-        }
-      );
-
       return {
-        dataSource,
+        requirement,
+        columns,
         prefixCls,
         logicOptions,
         leftParenthesisOptions,
@@ -198,7 +197,6 @@
         onUpAdd,
         onDownAdd,
         onDel,
-        onChangeRequirement,
       };
     },
   });

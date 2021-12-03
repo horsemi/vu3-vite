@@ -1,4 +1,5 @@
 import type { IQueryItem } from '../../QueryPlan/types';
+import type { infoType } from '/@/model/types';
 
 type logicType = 'and' | 'or';
 
@@ -34,6 +35,11 @@ export interface IOrderByItem {
    * @description 排序 true为降序, false为升序
    */
   desc: boolean;
+
+  /**
+   * @description 信息类型
+   */
+  info?: string;
 }
 
 export interface ISchemeColumnsItem {
@@ -56,6 +62,11 @@ export interface ISchemeColumnsItem {
    * @description 基础数据的关联必要的字段
    */
   relationKey?: string;
+
+  /**
+   * @description 信息类型
+   */
+  info?: infoType;
 
   /**
    * @description 是否必要

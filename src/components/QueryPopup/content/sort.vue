@@ -25,7 +25,7 @@
     <div :class="`${prefixCls}__table`">
       <DxDataGrid
         height="100%"
-        :data-source="dataSource"
+        :data-source="schemeData.scheme[schemeData.checkedIndex].orderBy"
         :hover-state-enabled="true"
         :show-borders="false"
         :show-column-lines="false"
@@ -52,7 +52,6 @@
             :data-source="sortOptions"
             display-expr="name"
             value-expr="desc"
-            @valueChanged="onChangeSort(dataSource)"
           />
         </template>
         <template #handle="{ data }">
@@ -67,9 +66,11 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IFieldItem, IOrderByItem, ISchemeColumnsItem, ISortOptions } from './types';
+  import type { IFieldItem, IOrderByItem, ISortOptions } from './types';
+  import type { ISchemeData } from '../../QueryPlan/types';
+  import type { Ref } from 'vue';
 
-  import { defineComponent, PropType, ref, watch } from 'vue';
+  import { defineComponent, inject, ref, watch } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -93,28 +94,10 @@
       DxRowDragging,
       DxFilterRow,
     },
-    props: {
-      allColumns: {
-        type: Array as PropType<IColumnItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-      columns: {
-        type: Array as PropType<ISchemeColumnsItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-      orderBy: {
-        type: Array as PropType<IOrderByItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-    },
-    emits: ['on-change-sort', 'on-change-column'],
-    setup(props, ctx) {
+    setup() {
+      const allColumns = inject('allColumns') as Ref<IColumnItem[]>;
+      const schemeData = inject('schemeData') as Ref<ISchemeData>;
+
       const { prefixCls } = useDesign('content-sort');
       // 升降序下拉框配置项
       const sortOptions: ISortOptions[] = [
@@ -131,24 +114,11 @@
       // 左侧选择框字段数据
       const fieldList = ref<IFieldItem[]>([]);
 
-      // 右侧排序列表数据
-      const dataSource = ref<IOrderByItem[]>([]);
-
       // 右侧排序列表数据副本，用于记录点击箭头前的数据
       let dataSourceTemp: IOrderByItem[] = [];
 
-      // 外派排序更新事件
-      const onChangeSort = (data: IOrderByItem[]) => {
-        ctx.emit('on-change-sort', data);
-      };
-
-      // 外派显示隐藏列更新事件
-      const onChangeColumn = (data: ISchemeColumnsItem[]) => {
-        ctx.emit('on-change-column', data);
-      };
-
       // 点击全部字段行
-      const onRowClick = (e) => {
+      function onRowClick(e) {
         e.data.checked = !e.data.checked;
         if (e.data.checked) {
           const item = fieldList.value.find((item) => item.key === e.data.key);
@@ -160,6 +130,7 @@
             dataSourceTemp.push({
               key: item.key,
               caption: item.caption,
+              info: item.info,
               desc: false,
             });
           }
@@ -167,107 +138,115 @@
           const index = dataSourceTemp.findIndex((item) => item.key === e.data.key);
           dataSourceTemp.splice(index, 1);
         }
-      };
+      }
 
-      // 处理字段有排序但是没有显示的情况
-      const handleFieldShow = (data: IOrderByItem[]) => {
-        const columns = [...props.columns];
-        data.forEach((sort) => {
+      // 点击中间箭头触发
+      function onAddCol() {
+        // 更新排序列表数据
+        schemeData.value.scheme[schemeData.value.checkedIndex].orderBy = [...dataSourceTemp];
+
+        const columns = [...schemeData.value.scheme[schemeData.value.checkedIndex].columns];
+
+        // 处理字段有排序但是没有显示的情况
+        schemeData.value.scheme[schemeData.value.checkedIndex].orderBy.forEach((sort) => {
           const index = columns.findIndex((item) => item.key === sort.key);
           if (index === -1) {
             columns.push({
               key: sort.key,
               caption: sort.caption,
+              info: sort.info,
             });
+            schemeData.value.scheme[schemeData.value.checkedIndex].columns = columns;
           }
         });
-        onChangeColumn(columns);
-      };
-
-      // 点击中间箭头触发
-      const onAddCol = () => {
-        // 更新排序列表数据
-        dataSource.value = [...dataSourceTemp];
-        onChangeSort(dataSource.value);
-        handleFieldShow(dataSource.value);
-      };
+      }
 
       // 拖动位置触发
-      const onReorder = (e) => {
-        const newTasks = [...dataSource.value];
+      function onReorder(e) {
+        const newTasks = [...schemeData.value.scheme[schemeData.value.checkedIndex].orderBy];
         newTasks.splice(e.fromIndex, 1);
         newTasks.splice(e.toIndex, 0, e.itemData);
-        dataSource.value = newTasks;
-        onChangeSort(dataSource.value);
-      };
+        schemeData.value.scheme[schemeData.value.checkedIndex].orderBy = newTasks;
+      }
 
       // 点击删除触发
-      const onDel = (data) => {
-        const index = dataSource.value.indexOf(data.data);
-        if (index >= 0) {
-          dataSource.value.splice(index, 1);
-          onChangeSort(dataSource.value);
-        }
-      };
+      function onDel(data) {
+        const temp = [...schemeData.value.scheme[schemeData.value.checkedIndex].orderBy];
+        temp.splice(data.rowIndex, 1);
+        schemeData.value.scheme[schemeData.value.checkedIndex].orderBy = temp;
+      }
 
-      // 处理组件数据
-      const handleData = (allColumns: IColumnItem[], orderBy: IOrderByItem[]) => {
-        const fields: IFieldItem[] = [];
-        const sorts: IOrderByItem[] = [];
-        allColumns.forEach((item) => {
-          if (item.allowSort !== false && !item.relationKey) {
-            fields.push({
+      function handleAllowSortField(columns: IColumnItem[]) {
+        const data: IFieldItem[] = [];
+        const infoMap = {
+          base: '基本信息',
+          base_Items: '明细信息',
+        };
+        columns.forEach((item) => {
+          if (item.allowSort !== false && !item.relationKey && !item.hide) {
+            data.push({
               key: item.key,
-              caption: item.caption,
+              info: item.info,
+              caption: `${infoMap[item.info!]}-${item.caption}`,
               checked: false,
             });
           }
         });
+        return data;
+      }
 
-        orderBy.forEach((item) => {
-          const field = fields.find((field) => field.key === item.key);
-          if (field) {
-            sorts.push({
-              key: field.key,
-              caption: field.caption,
-              desc: item.desc,
-            });
+      function getFieldList(allColumns: IColumnItem[]) {
+        const obj = {};
+        let arr = handleAllowSortField(allColumns);
+        arr = arr.reduce((item, next) => {
+          obj[next.key] ? '' : (obj[next.key] = true && item.push(next));
+          return item;
+        }, [] as IFieldItem[]);
+        fieldList.value = arr;
+      }
+
+      function handleOrderByChange(orderBy: IOrderByItem[]) {
+        dataSourceTemp = [...orderBy];
+        fieldList.value.forEach((field) => {
+          const index = orderBy.findIndex((item) => item.key === field.key);
+          if (index !== -1) {
+            field.checked = true;
+          } else {
+            field.checked = false;
           }
         });
-        // 排序列表中有的字段，左侧选择框需要选中
-        if (fields.length > 0 && sorts.length > 0) {
-          fields.forEach((field) => {
-            if (sorts.some((item) => field.key === item.key)) {
-              field.checked = true;
-            }
-          });
-        }
-        fieldList.value = fields;
-        dataSource.value = sorts;
-        dataSourceTemp = [...sorts];
-      };
+      }
 
-      // 监听全部列和排序数据的更新，处理组件数据（全部列指的是前端model中获取到的列）
       watch(
-        () => [props.allColumns, props.orderBy],
-        ([allColumns, orderBy]) => {
-          handleData(allColumns as IColumnItem[], orderBy as IOrderByItem[]);
+        allColumns,
+        () => {
+          getFieldList(allColumns.value);
         },
         {
           immediate: true,
         }
       );
 
+      watch(
+        schemeData,
+        () => {
+          handleOrderByChange(schemeData.value.scheme[schemeData.value.checkedIndex].orderBy);
+        },
+        {
+          immediate: true,
+          deep: true,
+        }
+      );
+
       return {
         prefixCls,
         fieldList,
-        dataSource,
+        schemeData,
         sortOptions,
         onRowClick,
         onAddCol,
         onReorder,
         onDel,
-        onChangeSort,
       };
     },
   });

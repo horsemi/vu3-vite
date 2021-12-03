@@ -39,6 +39,11 @@ export interface IColumnItem {
   type?: string;
 
   /**
+   * @description 信息类型
+   */
+  info?: string;
+
+  /**
    * @description 关联字段
    */
   expand?: string;

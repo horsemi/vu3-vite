@@ -52,5 +52,5 @@ export const customColumns: IColumnItem[] = [
 ];
 
 export const getRecordColumns = async () => {
-  return await getColumnList('operation-records', customColumns);
+  return await getColumnList({ code: 'operation-records', customColumns });
 };

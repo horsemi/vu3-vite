@@ -28,33 +28,48 @@
 </template>
 
 <script lang="ts">
+  import type { ISchemeData } from '../types';
   import type { ISchemeItem } from '../../QueryPopup/content/types';
+  import type { Ref } from 'vue';
 
-  import { defineComponent, PropType, ref } from 'vue';
+  import { defineComponent, inject, ref, computed } from 'vue';
+
+  import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
   export default defineComponent({
-    props: {
-      schemeListTemp: {
-        type: Array as PropType<ISchemeItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-      checkedIndex: {
-        type: Number,
-        default: 0,
-      },
-    },
     emits: ['on-change-checked-index'],
-    setup(props, ctx) {
+    setup() {
+      const schemeData = inject('schemeData') as Ref<ISchemeData>;
+      const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
+      const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
+
+      const schemeListTemp = computed(() => {
+        return (schemeDataTemp.value && schemeDataTemp.value.scheme) || [];
+      });
+
+      const checkedIndex = computed(() => {
+        return schemeData.value.checkedIndex;
+      });
+
       const { prefixCls } = useDesign('query-quick');
       const quick = ref();
       const opened = ref<boolean>(false);
 
       const onActive = (index: number): void => {
-        ctx.emit('on-change-checked-index', index);
+        schemeData.value.checkedIndex = index;
+
+        // 共享方案状态更新
+        const scheme = cloneDeep(schemeListTemp.value[checkedIndex.value]);
+        schemeData.value.scheme[checkedIndex.value].fast = scheme.fast || [];
+        scheme.fast &&
+          scheme.fast.forEach((item) => {
+            if (item.requirement) {
+              scheme.requirement.push(item);
+            }
+          });
+        onChangeScheme(scheme);
       };
 
       const closePopup = () => {
@@ -65,6 +80,8 @@
         prefixCls,
         quick,
         opened,
+        schemeListTemp,
+        checkedIndex,
         onActive,
         closePopup,
       };

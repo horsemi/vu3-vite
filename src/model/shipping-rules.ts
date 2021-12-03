@@ -55,5 +55,9 @@ export const customColumns: IColumnItem[] = [
 ];
 
 export const getColumns = async () => {
-  return await getColumnList('shipping-rules', customColumns, 'policy-manage');
+  return await getColumnList({
+    code: 'shipping-rules',
+    customColumns,
+    systemCode: 'policy-manage',
+  });
 };

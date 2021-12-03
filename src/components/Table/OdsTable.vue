@@ -332,20 +332,28 @@
               if (Object.keys(loadOptions).length) {
                 const result = await getOdataList(
                   props.orderCode,
-                  getOdataQuery(
-                    options.value,
-                    props.filterScheme,
-                    props.allColumns,
-                    props.tableKey,
-                    pageSize.value,
-                    pageIndex.value,
-                    loadOptions.sort
-                  ),
+                  getOdataQuery({
+                    scheme: props.filterScheme,
+                    allColumns: props.allColumns,
+                    top: pageSize.value,
+                    skip: pageIndex.value,
+                    tableSort: loadOptions.sort,
+                  }),
                   props.systemCode ? props.systemCode : undefined
                 );
 
+                const data: any[] = [];
+                result.value.forEach((item) => {
+                  data.push(item);
+                  if (item.Items && item.Items.length) {
+                    item.Items.forEach((def) => {
+                      data.push(def);
+                    });
+                  }
+                });
+
                 return {
-                  data: result.value,
+                  data,
                   totalCount: result['@odata.count'],
                 };
               }

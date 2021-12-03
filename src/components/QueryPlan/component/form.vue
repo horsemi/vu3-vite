@@ -16,7 +16,7 @@
         v-model:paramOperations="queryList[0].operatorList"
         v-model:paramDatatypekeies="queryList[0].datatypekeies"
         v-model:paramRelationKey="queryList[0].relationKey"
-        :param-list="columns"
+        :param-list="allColumns"
       />
       <SvgIcon
         :class="[`${prefixCls}__icon`, opened && `${prefixCls}__icon--translate`]"
@@ -36,7 +36,7 @@
             v-model:paramOperations="item.operatorList"
             v-model:paramDatatypekeies="item.datatypekeies"
             v-model:paramRelationKey="item.relationKey"
-            :param-list="columns"
+            :param-list="allColumns"
           />
           <SvgIcon
             :class="`${prefixCls}__icon`"
@@ -65,12 +65,15 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IRequirementItem } from '../../QueryPopup/content/types';
+  import type { IRequirementItem, ISchemeItem } from '../../QueryPopup/content/types';
+  import type { ISchemeData } from '../types';
+  import { computed, Ref } from 'vue';
 
-  import { defineComponent, PropType, ref, watch } from 'vue';
+  import { defineComponent, inject, ref } from 'vue';
   import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { saveSchemesData } from '/@/utils/scheme/index';
 
   import DxButton from 'devextreme-vue/button';
   import DynamicSelect from '/@/components/DynamicSelect/index.vue';
@@ -80,38 +83,35 @@
       DxButton,
       DynamicSelect,
     },
-    props: {
-      columns: {
-        type: Array as PropType<IColumnItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-      fast: {
-        type: Array as PropType<IRequirementItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-    },
-    emits: ['on-save-fast', 'on-search'],
-    setup(props, ctx) {
+    setup() {
+      const allColumns = inject('allColumns') as Ref<IColumnItem>;
+
+      const schemeData = inject('schemeData') as Ref<ISchemeData>;
+      const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
+      const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
+
+      const queryList = computed(() => {
+        return (
+          (schemeData.value.scheme[schemeData.value.checkedIndex] &&
+            schemeData.value.scheme[schemeData.value.checkedIndex].fast) || [
+            {
+              requirement: '',
+              operator: '=',
+              operatorList: [],
+              value: undefined,
+              type: '',
+              datatypekeies: '',
+              relationKey: '',
+              logic: 'and',
+            },
+          ]
+        );
+      });
+
       const { prefixCls } = useDesign('query-form');
       const opened = ref<boolean>(false);
-      const queryList = ref<IRequirementItem[]>([
-        {
-          requirement: '',
-          operator: '=',
-          operatorList: [],
-          value: undefined,
-          type: '',
-          datatypekeies: '',
-          relationKey: '',
-          logic: 'and',
-        },
-      ]);
 
-      const onAddRequirement = () => {
+      function onAddRequirement() {
         queryList.value.push({
           requirement: '',
           operator: '=',
@@ -122,13 +122,13 @@
           relationKey: '',
           logic: 'and',
         });
-      };
+      }
 
-      const onDelRequirement = (index: number) => {
+      function onDelRequirement(index: number) {
         queryList.value.splice(index, 1);
-      };
+      }
 
-      const onSaveFast = () => {
+      function onSaveFast() {
         const temp: IRequirementItem[] = [];
         queryList.value.forEach((item) => {
           if (item.requirement) {
@@ -147,35 +147,49 @@
             logic: 'and',
           });
         }
-        ctx.emit('on-save-fast', temp);
-      };
+        if (schemeData.value.checkedIndex === 0) {
+          schemeData.value.scheme.push({
+            ...cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]),
+            title: '缺省方案（个人）',
+            id: '0',
+            fast: temp,
+          });
+          schemeData.value.checkedIndex = schemeData.value.scheme.length - 1;
+        }
+        let scheme = cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]);
+        scheme.fast = temp;
+        schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = scheme;
+
+        saveSchemesData(schemeDataTemp.value.scheme[schemeData.value.checkedIndex]).then(
+          (resolve) => {
+            if (resolve) {
+              schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = resolve;
+            }
+          }
+        );
+      }
 
       const closePopup = () => {
         opened.value = false;
       };
 
       const changeQueryList = (data: IRequirementItem[]) => {
-        queryList.value = cloneDeep(data);
+        schemeData.value.scheme[schemeData.value.checkedIndex].fast = cloneDeep(data);
       };
 
       const onSearch = () => {
-        ctx.emit('on-search');
-      };
-
-      watch(
-        () => props.fast,
-        (val) => {
-          if (val.length > 0) {
-            queryList.value = cloneDeep(val);
+        const scheme = cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]);
+        queryList.value.forEach((item) => {
+          if (item.requirement) {
+            scheme.requirement.push(item);
           }
-        },
-        {
-          immediate: true,
-        }
-      );
+        });
+        onChangeScheme(scheme);
+      };
 
       return {
         prefixCls,
+        allColumns,
         opened,
         queryList,
         onAddRequirement,

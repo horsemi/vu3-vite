@@ -1,13 +1,6 @@
 <template>
   <div class="list">
-    <QueryPlan
-      ref="queryPlan"
-      :order-code="ORDER_CODE"
-      :all-columns="allColumns"
-      :scheme-data="schemeData"
-      :scheme-checked-index="schemeCheckedIndex"
-      @on-change-scheme="onChangeScheme"
-    />
+    <QueryPlan />
     <div v-loading="loading" class="example">
       <div class="btn__wrap">
         <div class="btn__box">
@@ -41,11 +34,12 @@
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
 
-  import { defineComponent, ref, onMounted } from 'vue';
+  import { defineComponent, ref, provide } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
 
   import { getColumns } from '/@/model/shipping-orders';
+  import { getDefiniteColumns } from '/@/model/shipping-order-items';
   import { isArrayEmpty } from '/@/utils/bill/index';
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
@@ -64,7 +58,6 @@
     setup() {
       const router = useRouter();
       const dataGrid = ref();
-      const queryPlan = ref();
       const loading = ref(false);
 
       const ORDER_CODE = 'shipping-orders';
@@ -82,11 +75,16 @@
       const dataSource = ref();
       const columns = ref<IColumnItem[]>([]);
       const allColumns = ref<IColumnItem[]>([]);
+
       const schemeData = ref<ISchemeData>({
         scheme: [],
         checkedIndex: 0,
       });
-      const schemeCheckedIndex = ref<number>(0);
+      const schemeDataTemp = ref<ISchemeData>({
+        scheme: [],
+        checkedIndex: 0,
+      });
+      const schemeDefaultIndex = ref<number>(0);
 
       const onRefresh = () => {
         dataGrid.value.search();
@@ -142,7 +140,6 @@
 
       const onChangeScheme = (data: ISchemeItem) => {
         filterScheme.value = cloneDeep(data);
-        onRefresh();
       };
 
       const getTableData = async () => {
@@ -150,34 +147,41 @@
 
         schemeData.value.checkedIndex = schemeResult.checkedIndex;
         schemeData.value.scheme = schemeResult.scheme;
-        schemeCheckedIndex.value = schemeData.value.checkedIndex;
-        const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
+        schemeDataTemp.value = cloneDeep(schemeData.value);
+        schemeDefaultIndex.value = schemeData.value.checkedIndex;
+        const scheme = cloneDeep(schemeData.value.scheme[schemeDefaultIndex.value]);
 
         const fast = scheme.fast || [];
         if (fast.length > 0) {
           scheme.requirement.push(...fast);
         }
-        getColumns().then((res) => {
-          if (res) {
-            const { columnList, key, keyType } = res;
-            allColumns.value = columnList;
-            filterScheme.value = scheme;
+        Promise.all([getColumns(), getDefiniteColumns()]).then(([base, definite]) => {
+          if (base) {
+            const { columnList, key, keyType } = base;
+            allColumns.value.push(...columnList);
             tableKey.value = key;
             tableKeyType.value = keyType;
           }
+          if (definite) {
+            const { columnList } = definite;
+            allColumns.value.push(...columnList);
+          }
+          filterScheme.value = scheme;
         });
-        queryPlan.value.handleData();
       };
 
-      onMounted(() => {
-        getTableData();
-      });
+      getTableData();
+
+      provide('allColumns', allColumns);
+      provide('schemeData', schemeData);
+      provide('schemeDataTemp', schemeDataTemp);
+      provide('schemeDefaultIndex', schemeDefaultIndex);
+      provide('onChangeScheme', onChangeScheme);
 
       return {
         ORDER_CODE,
         loading,
         dataGrid,
-        queryPlan,
         options,
         tableKey,
         tableKeyType,
@@ -186,7 +190,6 @@
         allColumns,
         schemeData,
         filterScheme,
-        schemeCheckedIndex,
         handleBillCodeClick,
         onChangeScheme,
         onSubmitClick,
