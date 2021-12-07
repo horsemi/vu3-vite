@@ -176,33 +176,23 @@
         schemeData.value.scheme[schemeData.value.checkedIndex].orderBy = temp;
       }
 
-      function handleAllowSortField(columns: IColumnItem[]) {
+      function getFieldList(allColumns: IColumnItem[]) {
         const data: IFieldItem[] = [];
         const infoMap = {
-          base: '基本信息',
-          base_Items: '明细信息',
+          base: '基本',
+          base_Items: '明细',
         };
-        columns.forEach((item) => {
+        allColumns.forEach((item) => {
           if (item.allowSort !== false && !item.relationKey && !item.hide) {
             data.push({
               key: item.key,
               info: item.info,
-              caption: `${infoMap[item.info!]}-${item.caption}`,
+              caption: item.info ? `${infoMap[item.info]}.${item.caption}` : item.caption,
               checked: false,
             });
           }
         });
-        return data;
-      }
-
-      function getFieldList(allColumns: IColumnItem[]) {
-        const obj = {};
-        let arr = handleAllowSortField(allColumns);
-        arr = arr.reduce((item, next) => {
-          obj[next.key] ? '' : (obj[next.key] = true && item.push(next));
-          return item;
-        }, [] as IFieldItem[]);
-        fieldList.value = arr;
+        fieldList.value = data;
       }
 
       function handleOrderByChange(orderBy: IOrderByItem[]) {

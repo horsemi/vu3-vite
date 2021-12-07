@@ -20,6 +20,7 @@
           ref="queryForm"
           :columns="allColumns"
           :fast="filterData.fast"
+          :show-save-fast="false"
           @on-save-fast="onSaveFast"
         />
         <DxTabPanel

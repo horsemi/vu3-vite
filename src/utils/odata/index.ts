@@ -286,68 +286,54 @@ function getAllQueryParams({
     });
   });
 
-  // 格式化各个信息的过滤方案
+  // 格式化各个信息的过滤方案并合并
   const formatObj = {};
-  Object.entries(obj).forEach(([key, value]: [string, any]) => {
-    const name = key.split('_')[1] ?? key.split('_')[0];
+  const objKeys = Object.keys(obj);
+  objKeys.sort((a, b) => {
+    return b.split('_').length - a.split('_').length;
+  });
+  objKeys.forEach((key, index) => {
+    const value = obj[key];
+    const childs: string[] = [];
+    const keyArr = key.split('_');
+    for (let i = index - 1; i >= 0; i--) {
+      const arr = objKeys[i].split('_');
+      if (arr.length - keyArr.length === 1 && objKeys[i].indexOf(key) !== -1) {
+        childs.push(objKeys[i]);
+      }
+    }
+    const name = keyArr[keyArr.length - 1];
     const { select, expand } = getSelectAndExpand(allColumns, value.columns, ['Id']);
-    const filter = getFilter(value.requirement);
-    const sort = value.orderBy ? getSort(value.orderBy) : [];
-    formatObj[key] = {};
-    formatObj[key][name] = {};
-    sort.length ? (formatObj[key][name]['$orderby'] = sort.join(',')) : '';
-    select.length ? (formatObj[key][name]['$select'] = select.join(',')) : '';
-    expand.length ? (formatObj[key][name]['$expand'] = expand.join(',')) : '';
-    filter.length ? (formatObj[key][name]['$filter'] = getOdataFilter(filter)) : '';
+    const filter = value.requirement?.length ? getFilter(value.requirement) : [];
+    const orderby = value.orderBy?.length ? getSort(value.orderBy) : [];
+    const $select = select.length ? select.join(',') : '';
+    const $filter = filter.length ? getOdataFilter(filter) : '';
+    const $orderby = select.length ? orderby.join(',') : '';
+    let $expand = expand.length ? expand.join(',') : '';
+    if (childs.length) {
+      childs.forEach((childKey) => {
+        if ($expand) {
+          $expand += `,${formatObj[childKey]}`;
+        } else {
+          $expand += formatObj[childKey];
+        }
+      });
+    }
+    if (key === 'base') {
+      formatObj[key] = {
+        $select,
+        $filter,
+        $orderby,
+        $expand,
+      };
+    } else {
+      formatObj[key] = `${name}(${$select ? `$select=${$select};` : ''}${
+        $filter ? `$filter=${$filter};` : ''
+      }${$orderby ? `$orderby=${$orderby};` : ''}${$expand ? `$expand=${$expand};` : ''})`;
+    }
   });
 
-  if (Object.keys(formatObj).length > 1) {
-    // 获取各个信息的过滤方案的合集
-    const objKeys = Object.keys(obj);
-    objKeys.forEach((key) => {
-      const keyArr = key.split('_');
-      if (keyArr.length === 2) {
-        const parentKey = objKeys.find((item) => {
-          const itemArr = item.split('_');
-          return item === keyArr[0] || (itemArr.length === 2 && itemArr[1] === keyArr[0]);
-        });
-        if (parentKey) {
-          const name = parentKey.split('_')[1] ?? parentKey.split('_')[0];
-          formatObj[parentKey][name]['$expand']
-            ? formatObj[parentKey][name]['$expand'].push(formatObj[key])
-            : (formatObj[parentKey][name]['$expand'] = [formatObj[key]]);
-        }
-      }
-    });
-
-    // 将合集中的expand对象转换成字符串
-    let arr = [];
-    formatObj['base'] &&
-      formatObj['base']['base']['$expand'] &&
-      (arr = formatObj['base']['base']['$expand'].map((item) => {
-        if (Object.prototype.toString.call(item) === '[object Object]') {
-          const kv = Object.entries(item)[0];
-          item =
-            kv[0] +
-            JSON.stringify(kv[1]).replace(/:{|\[{|\}]|"|:|,"\$|\}|\{/g, function (word) {
-              const wordMap = {
-                ':{': '(',
-                '[{': '',
-                '}]': '',
-                '"': '',
-                ':': '=',
-                ',"$': ';$',
-                '}': ')',
-                '{': '(',
-              };
-              return wordMap[word];
-            });
-        }
-        return item;
-      }));
-    formatObj['base']['base']['$expand'] = arr.join(',');
-  }
-  return formatObj['base']['base'];
+  return formatObj['base'];
 }
 
 // 转换后的filter转换成odata格式

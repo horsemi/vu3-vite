@@ -10,13 +10,14 @@
     >
       <DynamicSelect
         v-model:value="queryList[0].value"
+        v-model:paramInfo="queryList[0].info"
         v-model:paramKey="queryList[0].requirement"
         v-model:operation="queryList[0].operator"
         v-model:paramDataType="queryList[0].type"
         v-model:paramOperations="queryList[0].operatorList"
         v-model:paramDatatypekeies="queryList[0].datatypekeies"
         v-model:paramRelationKey="queryList[0].relationKey"
-        :param-list="allColumns"
+        :param-list="columns"
       />
       <SvgIcon
         :class="[`${prefixCls}__icon`, opened && `${prefixCls}__icon--translate`]"
@@ -30,13 +31,14 @@
         <div v-for="(item, index) in queryList.slice(1)" :key="index" :class="`${prefixCls}__box`">
           <DynamicSelect
             v-model:value="item.value"
+            v-model:paramInfo="item.info"
             v-model:paramKey="item.requirement"
             v-model:operation="item.operator"
             v-model:paramDataType="item.type"
             v-model:paramOperations="item.operatorList"
             v-model:paramDatatypekeies="item.datatypekeies"
             v-model:paramRelationKey="item.relationKey"
-            :param-list="allColumns"
+            :param-list="columns"
           />
           <SvgIcon
             :class="`${prefixCls}__icon`"
@@ -51,6 +53,7 @@
             <span>添加条件</span>
           </div>
           <DxButton
+            v-if="showSaveFast"
             :class="`${prefixCls}__btn`"
             :width="100"
             type="default"
@@ -83,12 +86,33 @@
       DxButton,
       DynamicSelect,
     },
+    props: {
+      showSaveFast: {
+        type: Boolean,
+        default: true,
+      },
+    },
     setup() {
-      const allColumns = inject('allColumns') as Ref<IColumnItem>;
-
+      const allColumns = inject('allColumns') as Ref<IColumnItem[]>;
       const schemeData = inject('schemeData') as Ref<ISchemeData>;
       const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
       const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
+
+      const infoMap = {
+        base: '基本',
+        base_Items: '明细',
+      };
+
+      const columns = computed(() => {
+        const _columns: IColumnItem[] = [];
+        allColumns.value.forEach((item) => {
+          _columns.push({
+            ...item,
+            caption: item.info ? `${infoMap[item.info]}.${item.caption}` : item.caption,
+          });
+        });
+        return _columns;
+      });
 
       const queryList = computed(() => {
         return (
@@ -103,6 +127,7 @@
               datatypekeies: '',
               relationKey: '',
               logic: 'and',
+              info: '',
             },
           ]
         );
@@ -121,6 +146,7 @@
           datatypekeies: '',
           relationKey: '',
           logic: 'and',
+          info: '',
         });
       }
 
@@ -145,6 +171,7 @@
             datatypekeies: '',
             relationKey: '',
             logic: 'and',
+            info: '',
           });
         }
         if (schemeData.value.checkedIndex === 0) {
@@ -189,7 +216,7 @@
 
       return {
         prefixCls,
-        allColumns,
+        columns,
         opened,
         queryList,
         onAddRequirement,

@@ -181,20 +181,19 @@
         schemeData.value.scheme[schemeData.value.checkedIndex].columns = newTasks;
       }
 
-      // 处理基础数据
-      function handleFoundationList(columns: IColumnItem[]) {
+      function getFieldList(allColumns: IColumnItem[]) {
         const data: IFieldItem[] = [];
         const infoMap = {
-          base: '基本信息',
-          base_Items: '明细信息',
+          base: '基本',
+          base_Items: '明细',
         };
-        columns.forEach((item) => {
+        allColumns.forEach((item) => {
           if (item.foundationList && item.foundationList.length > 0) {
             item.foundationList.forEach((field) => {
               data.push({
                 ...field,
                 info: item.info,
-                caption: `${infoMap[item.info!]}-${field.caption}`,
+                caption: item.info ? `${infoMap[item.info]}.${field.caption}` : field.caption,
                 expand: item.expand,
                 relationKey: item.relationKey,
                 mustKey: item.mustKey,
@@ -204,22 +203,12 @@
           } else if (!item.hide) {
             data.push({
               ...item,
-              caption: `${infoMap[item.info!]}-${item.caption}`,
+              caption: item.info ? `${infoMap[item.info]}.${item.caption}` : item.caption,
               checked: item.mustKey ?? false,
             });
           }
         });
-        return data;
-      }
-
-      function getFieldList(allColumns: IColumnItem[]) {
-        const obj = {};
-        let arr = handleFoundationList(allColumns);
-        arr = arr.reduce((item, next) => {
-          obj[next.key] ? '' : (obj[next.key] = true && item.push(next));
-          return item;
-        }, [] as IFieldItem[]);
-        fieldList.value = arr;
+        fieldList.value = data;
       }
 
       function handleColumnsChange(columns: IColumnItem[]) {

@@ -100,14 +100,7 @@
       >
       </DxTabPanel>
       <div v-if="tableIndex === 0" class="search-box">
-        <QueryForm
-          ref="queryForm"
-          class="query-form"
-          :columns="definiteAllColumns"
-          :fast="fast"
-          :save-fast="false"
-          @on-search="onSearch"
-        />
+        <QueryForm ref="queryForm" class="query-form" :save-fast="false" @on-search="onSearch" />
         <div class="search-btn">
           <DxButton text="查询" type="default" @click="onSearch" />
           <DxButton text="重置" @click="onReset" />
@@ -138,7 +131,7 @@
   import type { ITableOptions } from '/@/components/Table/types';
   import type { IRequirementItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch, nextTick } from 'vue';
+  import { defineComponent, ref, watch, nextTick, provide } from 'vue';
   import { useRoute } from 'vue-router';
   import { useThrottleFn } from '@vueuse/core';
 
@@ -292,11 +285,15 @@
       } = useDefinite(definiteRequirement);
 
       const { recordScheme, recordAllColumns, refreshRecord } = useRecord(BillCode);
-      const { onSearch, onReset, fast, queryForm } = useSearchDefinite(
+      const { onSearch, onReset, schemeData } = useSearchDefinite(
         definiteRequirement,
         definiteCustomColumns,
         definiteScheme
       );
+      provide('allColumns', definiteAllColumns);
+      provide('schemeData', schemeData);
+      provide('onChangeScheme', onSearch);
+      provide('schemeDataTemp', ref({}));
 
       const {
         tableHeight,
@@ -458,9 +455,6 @@
         multiViewItems,
         multiEntityItems,
         dropButtonItems,
-
-        queryForm,
-        fast,
 
         // formData,
         // stepData,

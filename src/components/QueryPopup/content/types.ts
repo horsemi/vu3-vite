@@ -1,5 +1,4 @@
 import type { IQueryItem } from '../../QueryPlan/types';
-import type { infoType } from '/@/model/types';
 
 type logicType = 'and' | 'or';
 
@@ -66,7 +65,7 @@ export interface ISchemeColumnsItem {
   /**
    * @description 信息类型
    */
-  info?: infoType;
+  info?: string;
 
   /**
    * @description 是否必要
@@ -136,6 +135,11 @@ export interface ISchemeItem {
    * @description 是否共享
    */
   isShare?: boolean;
+
+  /**
+   * @description 是否关联明细
+   */
+  isUseItems?: boolean;
 }
 
 export interface ISortOptions {

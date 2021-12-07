@@ -3,10 +3,10 @@ import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 export interface IQueryItem {
   requirement: string;
   operator: string;
-  operatorList: string[];
+  operatorList: { key: string; value: string; name: string }[];
   value: string | number | boolean | Date | undefined;
   type: string;
-  info: string;
+  info?: string;
   relationKey: string;
   datatypekeies: string;
 }

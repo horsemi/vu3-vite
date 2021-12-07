@@ -86,8 +86,8 @@
       const schemeData = inject('schemeData') as Ref<ISchemeData>;
 
       const infoMap = {
-        base: '基本信息',
-        base_Items: '明细信息',
+        base: '基本',
+        base_Items: '明细',
       };
 
       const columns = computed(() => {
@@ -95,7 +95,7 @@
         allColumns.value.forEach((item) => {
           _columns.push({
             ...item,
-            caption: `${infoMap[item.info!]}-${item.caption}`,
+            caption: item.info ? `${infoMap[item.info]}.${item.caption}` : item.caption,
           });
         });
         return _columns;

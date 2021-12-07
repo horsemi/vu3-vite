@@ -156,16 +156,23 @@
           scheme.requirement.push(...fast);
         }
         Promise.all([getColumns(), getDefiniteColumns()]).then(([base, definite]) => {
+          let _allColumns: IColumnItem[] = [];
           if (base) {
             const { columnList, key, keyType } = base;
-            allColumns.value.push(...columnList);
+            _allColumns.push(...columnList);
             tableKey.value = key;
             tableKeyType.value = keyType;
           }
           if (definite) {
             const { columnList } = definite;
-            allColumns.value.push(...columnList);
+            _allColumns.push(...columnList);
           }
+          const obj = {};
+          _allColumns = _allColumns.reduce((item, next) => {
+            obj[next.key] ? '' : (obj[next.key] = true && item.push(next));
+            return item;
+          }, [] as IColumnItem[]);
+          allColumns.value = _allColumns;
           filterScheme.value = scheme;
         });
       };

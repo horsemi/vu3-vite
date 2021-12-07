@@ -95,12 +95,13 @@
         } else {
           schemeDefaultIndex.value = 0;
         }
-        saveDefaultScheme(schemeData.value.scheme[schemeData.value.checkedIndex], value);
+        if (schemeDataTemp.value.scheme[schemeData.value.checkedIndex]) {
+          saveDefaultScheme(schemeData.value.scheme[schemeData.value.checkedIndex], value);
+        }
       }
 
       function updateSchemeIsShareState(value: boolean) {
         schemeData.value.scheme[schemeData.value.checkedIndex].isShare = value;
-        schemeDataTemp.value.scheme[schemeData.value.checkedIndex].isShare = value;
         saveSchemesData(schemeDataTemp.value.scheme[schemeData.value.checkedIndex]).then(
           (resolve) => {
             if (resolve) {
@@ -132,7 +133,6 @@
         schemeShareComputed,
         isDisabledComputer,
         isDisabledDefaultIndex,
-        onSubmitCheckedDefault,
         onSubmit,
         onClosePopup,
       };
