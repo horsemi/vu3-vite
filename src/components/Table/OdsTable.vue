@@ -70,6 +70,16 @@
         :mode="options.useScrolling ? 'virtual' : 'standard'"
         :row-rendering-mode="rowRenderingMode"
       />
+      <DxSummary v-if="summaryArray.length > 0">
+        <DxTotalItem
+          v-for="item in summaryArray"
+          :key="item.columnName"
+          summary-type="custom"
+          :show-in-column="item.columnName"
+          :customize-text="item.showSummaryFn"
+        >
+        </DxTotalItem>
+      </DxSummary>
       <template #billCode="{ data }">
         <div
           id="billcode"
@@ -130,6 +140,8 @@
     DxLookup,
     DxScrolling,
     DxLoadPanel,
+    DxSummary,
+    DxTotalItem,
   } from 'devextreme-vue/data-grid';
   import Clipboard from 'clipboard';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -147,6 +159,8 @@
       DxScrolling,
       DxContextMenu,
       DxLoadPanel,
+      DxSummary,
+      DxTotalItem,
     },
     props: {
       tableOptions: {
@@ -202,6 +216,12 @@
       systemCode: {
         type: String,
         default: '',
+      },
+      summaryArray: {
+        type: Array as PropType<{ columnName: string; showSummaryFn: (data: unknown) => void }[]>,
+        default: () => {
+          return [];
+        },
       },
     },
     emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],

@@ -3,9 +3,8 @@ import { toRawType } from '@vue/shared';
 export function is(val: unknown, type: string): boolean {
   return toString.call(val) === `[object ${type}]`;
 }
-/* eslint-disable */
+/* eslint-disable-next-line */
 export function isFunction(val: unknown): val is Function {
-  /* eslint-enable */
   return typeof val === 'function';
 }
 

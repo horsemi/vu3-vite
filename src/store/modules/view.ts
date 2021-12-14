@@ -36,9 +36,8 @@ export const useViewStore = defineStore({
     },
     getCurrentView(): RouteLocationNormalized {
       const route = unref(router.currentRoute);
-      /* eslint-disable */
+      /* eslint-disable-next-line */
       return this.viewList.find((item) => item.path === route.path)!;
-      /* eslint-disable */
     },
     getCacheList(): string[] {
       return Array.from(this.cacheList);
