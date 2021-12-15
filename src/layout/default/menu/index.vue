@@ -195,8 +195,10 @@
     }
 
     &-item-box {
+      display: flex;
       width: 100%;
       cursor: pointer;
+      align-items: center;
       &_svg {
         color: #5c5c5c;
       }

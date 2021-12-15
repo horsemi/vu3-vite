@@ -23,8 +23,8 @@
   import { defineComponent, ref, watch, reactive, nextTick } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useThrottleFn } from '@vueuse/core';
-  import { useMessage } from '/@/hooks/web/useMessage';
   import { useViewStore } from '/@/store/modules/view';
+  import { odsMessage } from '/@/components/Message';
 
   import { getColumns } from '/@/model/shipping-rules';
   import { ShippingRulesApi } from '/@/api/policy-manage/shipping-rules';
@@ -106,13 +106,19 @@
         if (formEditStatus.value === 'Add') {
           ShippingRulesApi.onShippingRulesCreate(baseFormData.value).then(() => {
             viewStore.closeViewByKey(route.fullPath, router);
-            useMessage('保存成功', 'success');
+            odsMessage({
+              type: 'success',
+              message: '保存成功',
+            });
             onRefresh();
           });
         } else {
           ShippingRulesApi.onShippingRulesUpdate(Object.assign(baseFormData.value, { Id }))
             .then(() => {
-              useMessage('保存成功', 'success');
+              odsMessage({
+                type: 'success',
+                message: '保存成功',
+              });
               onRefresh();
             })
             .catch(() => {

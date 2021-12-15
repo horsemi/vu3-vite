@@ -84,7 +84,7 @@
   import DxButton from 'devextreme-vue/button';
   import { DxRequiredRule, DxCompareRule, DxPatternRule } from 'devextreme-vue/validator';
   import { DxForm, DxItem, DxLabel } from 'devextreme-vue/form';
-  import { successMessage } from '/@/hooks/web/useMessage';
+  import { odsMessage } from '/@/components/Message';
 
   export default defineComponent({
     name: 'PasswordModal',
@@ -151,7 +151,10 @@
           newPasswordRe: window.btoa(changePasswordData.newPasswordRe),
         };
         userStore.changePassword(params).then(() => {
-          successMessage('修改成功');
+          odsMessage({
+            type: 'success',
+            message: '修改成功',
+          });
           onClose();
           // if (prop.loginUserName) {
           //   router.replace('/');

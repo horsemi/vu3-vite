@@ -1,7 +1,7 @@
 import type { EditorType, IDetailItem } from './types';
 import type { IColumnItem } from '/@/model/types';
 
-import { warningMessage } from '/@/hooks/web/useMessage';
+import { odsMessage } from '/@/components/Message';
 
 const getEditorType = (type) => {
   let editorType: EditorType | undefined = undefined;
@@ -48,7 +48,10 @@ export const isArrayEmpty = (array: any[], msg = '请选择操作项'): boolean 
   if (Array.isArray(array) && array.length > 0) {
     return true;
   } else {
-    warningMessage(msg);
+    odsMessage({
+      type: 'warning',
+      message: msg,
+    });
     return false;
   }
 };
