@@ -4,11 +4,28 @@
     <div v-loading="loading" class="example">
       <div class="btn__wrap">
         <div class="btn__box">
-          <DxButton :width="76" text="提交" type="default" @click="onSubmitClick" />
-          <DxButton :width="76" text="审核" @click="onApplyClick" />
+          <DxButton
+            :width="76"
+            text="提交"
+            :disabled="!permissionStore.hasPermission(shippingOrderType.shippingOrderSumit)"
+            type="default"
+            @click="onSubmitClick"
+          />
+          <DxButton
+            :width="76"
+            text="审核"
+            :disabled="!permissionStore.hasPermission(shippingOrderType.shippingOrderApply)"
+            @click="onApplyClick"
+          />
         </div>
         <div class="btn__box">
-          <DxButton :width="100" icon="refresh" text="刷新" @click="onRefresh" />
+          <DxButton
+            :width="100"
+            icon="refresh"
+            :disabled="!permissionStore.hasPermission(shippingOrderType.shippingOrderQueryList)"
+            text="刷新"
+            @click="onRefresh"
+          />
         </div>
       </div>
       <OdsTable
@@ -17,6 +34,7 @@
         :order-code="ORDER_CODE"
         :data-source="dataSource"
         :columns="columns"
+        :query-list-permission="shippingOrderType.shippingOrderQueryList"
         :all-columns="allColumns"
         :filter-scheme="filterScheme"
         :table-key="tableKey"
@@ -37,7 +55,8 @@
   import { defineComponent, ref, provide } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
-
+  import { usePermissionStore } from '/@/store/modules/permission';
+  import { shippingOrderType } from '/@/enums/actionPermission/shipping-order';
   import { getColumns } from '/@/model/shipping-orders';
   import { getDefiniteColumns } from '/@/model/shipping-order-items';
   import { isArrayEmpty } from '/@/utils/bill/index';
@@ -57,6 +76,8 @@
     },
     setup() {
       const router = useRouter();
+      const permissionStore = usePermissionStore();
+
       const dataGrid = ref();
       const loading = ref(false);
 
@@ -202,6 +223,8 @@
         onSubmitClick,
         onApplyClick,
         onRefresh,
+        shippingOrderType,
+        permissionStore,
       };
     },
   });

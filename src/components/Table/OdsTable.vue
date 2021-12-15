@@ -70,6 +70,16 @@
         :mode="options.useScrolling ? 'virtual' : 'standard'"
         :row-rendering-mode="rowRenderingMode"
       />
+      <DxSummary v-if="summaryArray.length > 0">
+        <DxTotalItem
+          v-for="item in summaryArray"
+          :key="item.columnName"
+          summary-type="custom"
+          :show-in-column="item.columnName"
+          :customize-text="item.showSummaryFn"
+        >
+        </DxTotalItem>
+      </DxSummary>
       <template #billCode="{ data }">
         <div
           id="billcode"
@@ -117,6 +127,8 @@
   import { cloneDeep, isEmpty } from 'lodash-es';
   import { getOdataList } from '/@/api/ods/common';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { usePermissionStore } from '/@/store/modules/permission';
+
   import { defaultTableOptions, getCompleteColumns } from './common';
   import { useAppStore } from '/@/store/modules/app';
 
@@ -130,6 +142,8 @@
     DxLookup,
     DxScrolling,
     DxLoadPanel,
+    DxSummary,
+    DxTotalItem,
   } from 'devextreme-vue/data-grid';
   import Clipboard from 'clipboard';
   import { useMessage } from '/@/hooks/web/useMessage';
@@ -147,6 +161,8 @@
       DxScrolling,
       DxContextMenu,
       DxLoadPanel,
+      DxSummary,
+      DxTotalItem,
     },
     props: {
       tableOptions: {
@@ -203,10 +219,21 @@
         type: String,
         default: '',
       },
+      queryListPermission: {
+        type: String,
+        default: '',
+      },
+      summaryArray: {
+        type: Array as PropType<{ columnName: string; showSummaryFn: (data: unknown) => void }[]>,
+        default: () => {
+          return [];
+        },
+      },
     },
     emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('ods-table');
+      const permissionStore = usePermissionStore();
       const appStore = useAppStore();
       const dataGrid = ref();
       const pageIndex = ref(0);
@@ -225,6 +252,10 @@
       const clipValue = ref('');
       const options = computed(() => {
         return deepMerge(cloneDeep(defaultTableOptions), props.tableOptions);
+      });
+
+      const SearchPermission = computed(() => {
+        return permissionStore.hasPermission(props.queryListPermission);
       });
 
       onMounted(() => {
@@ -310,8 +341,10 @@
           nextTick(() => {
             // 重新 获取列数据
             tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
-            // 重新 new datasource
-            getTableData();
+            if (SearchPermission.value) {
+              // 重新 new datasource
+              getTableData();
+            }
           });
         }
       };
@@ -504,6 +537,7 @@
         getTableDataSourceOption,
         onCellClick,
         remoteOperationValue,
+        SearchPermission,
       };
     },
   });
