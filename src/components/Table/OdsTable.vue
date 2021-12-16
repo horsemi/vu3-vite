@@ -125,6 +125,8 @@
   import { cloneDeep, isEmpty } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { usePermissionStore } from '/@/store/modules/permission';
+
   import { defaultTableOptions, getCompleteColumns, getTableDataSource } from './common';
   import { useAppStore } from '/@/store/modules/app';
   import { deepMerge } from '/@/utils';
@@ -202,6 +204,10 @@
         type: String,
         default: '',
       },
+      queryListPermission: {
+        type: String,
+        default: '',
+      },
       summaryArray: {
         type: Array as PropType<{ columnName: string; showSummaryFn: (data: unknown) => void }[]>,
         default: () => {
@@ -212,6 +218,7 @@
     emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('ods-table');
+      const permissionStore = usePermissionStore();
       const appStore = useAppStore();
       const dataGrid = ref();
       const pageIndex = ref(0);
@@ -228,6 +235,10 @@
       const clipValue = ref('');
       const options = computed(() => {
         return deepMerge(cloneDeep(defaultTableOptions), props.tableOptions);
+      });
+
+      const SearchPermission = computed(() => {
+        return permissionStore.hasPermission(props.queryListPermission);
       });
 
       onMounted(() => {
@@ -320,14 +331,16 @@
           nextTick(() => {
             // 重新 获取列数据
             tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
-            // 重新 new datasource
-            tableData.value = getTableDataSource(
-              options.value,
-              scheme,
-              props.allColumns,
-              props.tableKey,
-              props.tableKeyType
-            );
+            if (SearchPermission.value) {
+              // 重新 new datasource
+              tableData.value = getTableDataSource(
+                options.value,
+                scheme,
+                props.allColumns,
+                props.tableKey,
+                props.tableKeyType
+              );
+            }
           });
         }
       };
@@ -478,6 +491,7 @@
         onOptionChanged,
         getTableDataSourceOption,
         onCellClick,
+        SearchPermission,
       };
     },
   });

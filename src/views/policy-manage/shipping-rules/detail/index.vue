@@ -2,7 +2,12 @@
   <div class="detail">
     <div :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
       <div class="btn-box">
-        <DxButton type="default" text="保存" @click="onSaveClickThrottleFn" />
+        <DxButton
+          :disabled="savePermission"
+          type="default"
+          text="保存"
+          @click="onSaveClickThrottleFn"
+        />
       </div>
       <DetailForm
         :col-count="8"
@@ -20,12 +25,14 @@
   import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch, reactive, nextTick } from 'vue';
+  import { defineComponent, ref, watch, reactive, nextTick, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useThrottleFn } from '@vueuse/core';
   import { useViewStore } from '/@/store/modules/view';
   import { odsMessage } from '/@/components/Message';
 
+  import { usePermissionStore } from '/@/store/modules/permission';
+  import { shippingRuleType } from '/@/enums/actionPermission/shipping-rules';
   import { getColumns } from '/@/model/shipping-rules';
   import { ShippingRulesApi } from '/@/api/policy-manage/shipping-rules';
   import { getDetailData, getDetailColumn } from './index';
@@ -47,7 +54,7 @@
     },
     setup() {
       const formEditStatus = ref<formEditType>('Edit');
-
+      const permissionStore = usePermissionStore();
       const multiViewItems = ref([
         {
           title: '基本信息',
@@ -101,7 +108,11 @@
       const onRefresh = () => {
         getData();
       };
-
+      const savePermission = computed(() => {
+        return formEditStatus.value === 'Add'
+          ? !permissionStore.hasPermission(shippingRuleType.shippingRuleCreate)
+          : !permissionStore.hasPermission(shippingRuleType.shippingRuleUpdate);
+      });
       const onSaveClick = () => {
         if (formEditStatus.value === 'Add') {
           ShippingRulesApi.onShippingRulesCreate(baseFormData.value).then(() => {
@@ -255,6 +266,7 @@
         getDataThrottleFn,
         onChangeOpened,
         getColseHeight,
+        savePermission,
       };
     },
   });

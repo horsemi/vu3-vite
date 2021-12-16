@@ -30,6 +30,7 @@
       @on-submit="onSubmit"
       @on-submit-checked-default="handleChangeCheckedDefault"
     />
+    <div v-if="!SearchPermission" class="disabled_mask" />
   </div>
 </template>
 
@@ -43,11 +44,12 @@
   } from '../QueryPopup/content/types';
   import type { IQueryItem, ISchemeData } from './types';
 
-  import { defineComponent, PropType, ref, watch, provide, reactive } from 'vue';
+  import { defineComponent, PropType, ref, watch, provide, reactive, computed } from 'vue';
   import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
+  import { usePermissionStore } from '/@/store/modules/permission';
   import { saveSchemesData, deleteSchemes, saveDefaultScheme } from '/@/utils/scheme/index';
   import { odsMessage } from '/@/components/Message';
 
@@ -86,6 +88,10 @@
         type: Number,
         default: 0,
       },
+      queryListPermission: {
+        type: String,
+        default: '',
+      },
     },
     emits: [
       'on-change-checked-index',
@@ -102,6 +108,8 @@
     setup(props, ctx) {
       const { prefixCls } = useDesign('query-plan');
       const userStore = useUserStore();
+      const permissionStore = usePermissionStore();
+
       // 弹窗的dom
       const popup = ref();
       // 左侧搜索组件
@@ -123,6 +131,11 @@
         creatorId: '',
         isShare: false,
       });
+
+      const SearchPermission = computed(() => {
+        return permissionStore.hasPermission(props.queryListPermission);
+      });
+
       const updateSchemeIsShareState = (isShareState: boolean) => {
         currentSchemeItem.isShare = isShareState;
         schemeList.value[checkedIndex.value].isShare = isShareState;
@@ -347,6 +360,7 @@
         schemeList,
         schemeListTemp,
         fast,
+        SearchPermission,
         handleData,
         onSearch,
         onReset,
@@ -380,5 +394,16 @@
     margin-bottom: 16px;
     background-color: #fff;
     box-sizing: border-box;
+    .disabled_mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+      width: 100%;
+      height: 100%;
+      cursor: not-allowed;
+      background: #fff;
+      opacity: 0.5;
+    }
   }
 </style>
