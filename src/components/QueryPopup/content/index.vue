@@ -35,6 +35,7 @@
   import Requirement from './requirement.vue';
   import Sort from './sort.vue';
   import Column from './column.vue';
+  import Summary from './summary.vue';
 
   export default defineComponent({
     components: {
@@ -43,6 +44,7 @@
       Requirement,
       Sort,
       Column,
+      Summary,
     },
     setup() {
       const { prefixCls } = useDesign('popup-content');
@@ -55,6 +57,10 @@
         {
           title: '排序',
           component: 'sort',
+        },
+        {
+          title: '汇总',
+          component: 'summary',
         },
         {
           title: '显示隐藏列',
