@@ -25,7 +25,7 @@
     <div :class="`${prefixCls}__table`">
       <DxDataGrid
         height="100%"
-        :data-source="schemeData.scheme[schemeData.checkedIndex].orderBy"
+        :data-source="schemeData.scheme[schemeData.checkedIndex]['orderBy']"
         :hover-state-enabled="true"
         :show-borders="false"
         :show-column-lines="false"
@@ -130,7 +130,6 @@
             dataSourceTemp.push({
               key: item.key,
               caption: item.caption,
-              info: item.info,
               desc: false,
             });
           }
@@ -154,7 +153,6 @@
             columns.push({
               key: sort.key,
               caption: sort.caption,
-              info: sort.info,
             });
             schemeData.value.scheme[schemeData.value.checkedIndex].columns = columns;
           }
@@ -178,16 +176,11 @@
 
       function getFieldList(allColumns: IColumnItem[]) {
         const data: IFieldItem[] = [];
-        const infoMap = {
-          base: '基本',
-          base_Items: '明细',
-        };
         allColumns.forEach((item) => {
           if (item.allowSort !== false && !item.relationKey && !item.hide) {
             data.push({
               key: item.key,
-              info: item.info,
-              caption: item.info ? `${infoMap[item.info]}.${item.caption}` : item.caption,
+              caption: item.caption,
               checked: false,
             });
           }
@@ -220,7 +213,9 @@
       watch(
         schemeData,
         () => {
-          handleOrderByChange(schemeData.value.scheme[schemeData.value.checkedIndex].orderBy);
+          !schemeData.value.scheme[schemeData.value.checkedIndex]['orderBy'] &&
+            (schemeData.value.scheme[schemeData.value.checkedIndex]['orderBy'] = []);
+          handleOrderByChange(schemeData.value.scheme[schemeData.value.checkedIndex]['orderBy']);
         },
         {
           immediate: true,

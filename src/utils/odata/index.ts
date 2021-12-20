@@ -19,8 +19,6 @@ import { isNullOrUnDef } from '/@/utils/is';
 import { operatorMap, isDisabedSelect } from '/@/model/global-operator';
 import { handleAllCol } from '/@/components/Table/common';
 
-import { cloneDeep } from 'lodash-es';
-
 // 获取格式化后的过滤条件
 const getFilter = (requirements: IRequirementItem[]) => {
   let result = '';
@@ -94,7 +92,7 @@ const getSelectAndExpand = (
 
   const allCol = handleAllCol(allColumns);
 
-  columns.forEach((item) => {
+  columns?.forEach((item) => {
     for (let i = 0; i < allCol.length; i++) {
       if (item.key === allCol[i].key) {
         if (item.expand && item.relationKey) {
@@ -224,117 +222,38 @@ export const getOdataQuery = ({
   scheme,
   allColumns,
   tableSort,
-  top = 50,
-  skip = 0,
-  count = 'true',
 }: {
   scheme: ISchemeItem;
   allColumns: IColumnItem[];
   tableSort: ISortItem[];
-  top: number;
-  skip: number;
-  count?: string;
 }) => {
-  const _scheme = cloneDeep(scheme);
+  let orderBy: IOrderByItem[] = [];
   if (tableSort) {
     const sort = tableSort[0];
     const column = allColumns.find((item) => item.key === sort.selector);
     if (column) {
-      _scheme.orderBy = [
-        { key: column.key, caption: column.caption, desc: sort.desc ?? false, info: column.info },
-      ];
+      orderBy = [{ key: column.key, caption: column.caption, desc: sort.desc ?? false }];
     }
+  } else {
+    orderBy = scheme.orderBy;
   }
-  const queryParams = {
-    $count: count,
-    $skip: skip === 0 ? '' : skip * top,
-    $top: top,
-    ...getAllQueryParams({ scheme: _scheme, allColumns }),
-  };
-  Object.keys(queryParams).forEach((item) => {
-    if (queryParams[item] === '') {
-      delete queryParams[item];
-    }
-  });
-  return queryParams;
+  const { columns, requirement } = scheme;
+
+  const { select, expand } = getSelectAndExpand(allColumns, columns, ['Id']);
+  const filter = requirement?.length ? getFilter(requirement) : [];
+  const orderby = orderBy?.length ? getSort(orderBy) : [];
+  const $select = select.length ? select.join(',') : '';
+  const $expand = expand.length ? expand.join(',') : '';
+  const $filter = filter.length ? getOdataFilter(filter) : '';
+  const $orderby = select.length ? orderby.join(',') : '';
+
+  const params = {};
+  $select && (params['$select'] = $select);
+  $filter && (params['$filter'] = $filter);
+  $orderby && (params['$orderby'] = $orderby);
+  $expand && (params['$expand'] = $expand);
+  return params;
 };
-
-function getAllQueryParams({
-  scheme,
-  allColumns,
-}: {
-  scheme: ISchemeItem;
-  allColumns: IColumnItem[];
-}) {
-  const { columns, requirement, orderBy } = scheme;
-
-  const schemeMap = {
-    0: 'columns',
-    1: 'requirement',
-    2: 'orderBy',
-  };
-
-  // 获取各个信息的过滤方案
-  const obj = {};
-  [columns, requirement, orderBy].forEach((list, index) => {
-    list.forEach((item) => {
-      const info = !item.info || item.info === 'base' ? 'base' : item.info;
-      obj[info] ? '' : (obj[info] = {});
-      obj[info][schemeMap[index]]
-        ? obj[info][schemeMap[index]].push(item)
-        : (obj[info][schemeMap[index]] = [item]);
-    });
-  });
-
-  // 格式化各个信息的过滤方案并合并
-  const formatObj = {};
-  const objKeys = Object.keys(obj);
-  objKeys.sort((a, b) => {
-    return b.split('_').length - a.split('_').length;
-  });
-  objKeys.forEach((key, index) => {
-    const value = obj[key];
-    const childs: string[] = [];
-    const keyArr = key.split('_');
-    for (let i = index - 1; i >= 0; i--) {
-      const arr = objKeys[i].split('_');
-      if (arr.length - keyArr.length === 1 && objKeys[i].indexOf(key) !== -1) {
-        childs.push(objKeys[i]);
-      }
-    }
-    const name = keyArr[keyArr.length - 1];
-    const { select, expand } = getSelectAndExpand(allColumns, value.columns, ['Id']);
-    const filter = value.requirement?.length ? getFilter(value.requirement) : [];
-    const orderby = value.orderBy?.length ? getSort(value.orderBy) : [];
-    const $select = select.length ? select.join(',') : '';
-    const $filter = filter.length ? getOdataFilter(filter) : '';
-    const $orderby = select.length ? orderby.join(',') : '';
-    let $expand = expand.length ? expand.join(',') : '';
-    if (childs.length) {
-      childs.forEach((childKey) => {
-        if ($expand) {
-          $expand += `,${formatObj[childKey]}`;
-        } else {
-          $expand += formatObj[childKey];
-        }
-      });
-    }
-    if (key === 'base') {
-      formatObj[key] = {
-        $select,
-        $filter,
-        $orderby,
-        $expand,
-      };
-    } else {
-      formatObj[key] = `${name}(${$select ? `$select=${$select};` : ''}${
-        $filter ? `$filter=${$filter};` : ''
-      }${$orderby ? `$orderby=${$orderby};` : ''}${$expand ? `$expand=${$expand};` : ''})`;
-    }
-  });
-
-  return formatObj['base'];
-}
 
 // 转换后的filter转换成odata格式
 export const getOdataFilter = (filter: any[]) => {

@@ -28,7 +28,7 @@
     <div :class="`${prefixCls}__table`">
       <DxDataGrid
         height="100%"
-        :data-source="schemeData.scheme[schemeData.checkedIndex].columns"
+        :data-source="schemeData.scheme[schemeData.checkedIndex]['columns']"
         :hover-state-enabled="true"
         :show-borders="true"
         :show-column-lines="false"
@@ -111,7 +111,6 @@
           if (item) {
             dataSourceTemp.push({
               key: item.key,
-              info: item.info,
               caption: item.caption,
               expand: item.expand,
               relationKey: item.relationKey,
@@ -133,7 +132,6 @@
               item.checked = true;
               dataSourceTemp.push({
                 key: item.key,
-                info: item.info,
                 caption: item.caption,
                 expand: item.expand,
                 relationKey: item.relationKey,
@@ -183,17 +181,12 @@
 
       function getFieldList(allColumns: IColumnItem[]) {
         const data: IFieldItem[] = [];
-        const infoMap = {
-          base: '基本',
-          base_Items: '明细',
-        };
         allColumns.forEach((item) => {
           if (item.foundationList && item.foundationList.length > 0) {
             item.foundationList.forEach((field) => {
               data.push({
                 ...field,
-                info: item.info,
-                caption: item.info ? `${infoMap[item.info]}.${field.caption}` : field.caption,
+                caption: field.caption,
                 expand: item.expand,
                 relationKey: item.relationKey,
                 mustKey: item.mustKey,
@@ -203,7 +196,7 @@
           } else if (!item.hide) {
             data.push({
               ...item,
-              caption: item.info ? `${infoMap[item.info]}.${item.caption}` : item.caption,
+              caption: item.caption,
               checked: item.mustKey ?? false,
             });
           }
@@ -236,7 +229,9 @@
       watch(
         schemeData,
         () => {
-          handleColumnsChange(schemeData.value.scheme[schemeData.value.checkedIndex].columns);
+          !schemeData.value.scheme[schemeData.value.checkedIndex]['columns'] &&
+            (schemeData.value.scheme[schemeData.value.checkedIndex]['columns'] = []);
+          handleColumnsChange(schemeData.value.scheme[schemeData.value.checkedIndex]['columns']);
         },
         {
           immediate: true,

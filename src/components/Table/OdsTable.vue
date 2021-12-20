@@ -70,11 +70,12 @@
         :mode="options.useScrolling ? 'virtual' : 'standard'"
         :row-rendering-mode="rowRenderingMode"
       />
-      <DxSummary v-if="summaryArray.length > 0">
+      <DxSummary v-if="summaryList.length > 0">
         <DxTotalItem
-          v-for="item in summaryArray"
+          v-for="item in summaryList"
           :key="item.columnName"
-          summary-type="custom"
+          :name="item.columnName"
+          :column="item.columnName"
           :show-in-column="item.columnName"
           :customize-text="item.showSummaryFn"
         >
@@ -109,9 +110,9 @@
 </template>
 
 <script lang="ts">
-  import type { ITableOptions } from './types';
+  import type { ITableOptions, ITableSummary } from './types';
   import type { IColumnItem, IKeyType } from '/@/model/types';
-  import type { ISchemeItem } from '../QueryPopup/content/types';
+  import type { ISchemeItem, ISummaryItem, SummaryType } from '../QueryPopup/content/types';
 
   import {
     defineComponent,
@@ -127,7 +128,7 @@
   import { cloneDeep, isEmpty } from 'lodash-es';
   import { getOdataList } from '/@/api/ods/common';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defaultTableOptions, getCompleteColumns } from './common';
+  import { clientSummary, defaultTableOptions, getCompleteColumns } from './common';
   import { useAppStore } from '/@/store/modules/app';
 
   import { deepMerge } from '/@/utils';
@@ -218,7 +219,7 @@
         default: '',
       },
       summaryArray: {
-        type: Array as PropType<{ columnName: string; showSummaryFn: (data: unknown) => void }[]>,
+        type: Array as PropType<{ columnName: string; summaryType: SummaryType }[]>,
         default: () => {
           return [];
         },
@@ -242,6 +243,7 @@
 
       const tableData = ref();
       const tableColumns = ref<IColumnItem[]>([]);
+      const summaryList = ref<ITableSummary[]>([]);
       const clipValue = ref('');
       const options = computed(() => {
         return deepMerge(cloneDeep(defaultTableOptions), props.tableOptions);
@@ -304,6 +306,25 @@
         pageIndex.value = index >= 0 ? index : 0;
       };
 
+      // 处理汇总信息
+      const handleSummary = (summary: ISummaryItem[]) => {
+        const _summary: ITableSummary[] = [];
+        summary?.forEach((item) => {
+          item.mode === 'page' &&
+            _summary.push({
+              columnName: item.key,
+              showSummaryFn: () => {
+                return clientSummary({
+                  summary: { columnName: item.key, summaryType: item.type },
+                  source: tableData.value._items,
+                  allColumns: props.allColumns,
+                });
+              },
+            });
+        });
+        summaryList.value = _summary;
+      };
+
       const handleFilterScheme = (scheme: ISchemeItem) => {
         if (
           !isEmpty(scheme) &&
@@ -332,6 +353,9 @@
             tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
             // 重新 new datasource
             getTableData();
+            nextTick(() => {
+              handleSummary(scheme?.summary);
+            });
           });
         }
       };
@@ -347,34 +371,36 @@
       const getTableData = () => {
         tableData.value = new DataSource({
           store: new CustomStore({
-            key: 'Id',
+            key: 'id',
             load: async (loadOptions) => {
               if (Object.keys(loadOptions).length) {
-                const result = await getOdataList(
-                  props.orderCode,
-                  getOdataQuery({
-                    scheme: props.filterScheme,
-                    allColumns: props.allColumns,
-                    top: pageSize.value,
-                    skip: pageIndex.value,
-                    tableSort: loadOptions.sort,
-                  }),
-                  props.systemCode ? props.systemCode : undefined
-                );
-
-                const data: any[] = [];
-                result.value.forEach((item) => {
-                  data.push(item);
-                  if (item.Items && item.Items.length) {
-                    item.Items.forEach((def) => {
-                      data.push(def);
-                    });
-                  }
+                const params = getOdataQuery({
+                  scheme: props.filterScheme,
+                  allColumns: props.allColumns,
+                  tableSort: loadOptions.sort,
                 });
+                const dataParams = { ...params, $top: pageSize.value };
+                pageIndex.value && (dataParams['$skip'] = pageIndex.value * pageSize.value);
+                const totalCountParams = { $aggregate: 'count(1)' };
+                params['$filter'] && (totalCountParams['$filter'] = params['$filter']);
+                params['$expand'] && (totalCountParams['$expand'] = params['$expand']);
+
+                const [data, totalCount] = await Promise.all([
+                  getOdataList(
+                    props.orderCode,
+                    dataParams,
+                    props.systemCode ? props.systemCode : undefined
+                  ),
+                  getOdataList(
+                    props.orderCode,
+                    totalCountParams,
+                    props.systemCode ? props.systemCode : undefined
+                  ),
+                ]);
 
                 return {
                   data,
-                  totalCount: result['@odata.count'],
+                  totalCount: totalCount[0].count || 0,
                 };
               }
             },
@@ -505,6 +531,7 @@
         prefixCls,
         pageIndex,
         pageSizes,
+        summaryList,
         onSelectionChanged,
         handleJump,
         getGlobalEnumDataByCode,

@@ -9,12 +9,10 @@ export const getColumnList = async ({
   code,
   customColumns,
   systemCode = 'ods',
-  info,
 }: {
   code: string;
   customColumns: IColumnItem[];
   systemCode?: string;
-  info?: string;
 }): Promise<{ columnList: IColumnItem[]; key: string[]; keyType: IKeyType[] } | undefined> => {
   try {
     const res = await getList(code, systemCode);
@@ -30,7 +28,6 @@ export const getColumnList = async ({
         columnList.push({
           type: fieldType.type,
           expand: fieldType.expand,
-          info,
           ...column,
         });
       }

@@ -159,19 +159,21 @@
           let _allColumns: IColumnItem[] = [];
           if (base) {
             const { columnList, key, keyType } = base;
+            columnList?.forEach((item) => {
+              item.caption = `基本.${item.caption}`;
+            });
             _allColumns.push(...columnList);
             tableKey.value = key;
             tableKeyType.value = keyType;
           }
           if (definite) {
             const { columnList } = definite;
+            columnList?.forEach((item) => {
+              item.caption = `明细.${item.caption}`;
+              item.key = `Items.${item.key}`;
+            });
             _allColumns.push(...columnList);
           }
-          const obj = {};
-          _allColumns = _allColumns.reduce((item, next) => {
-            obj[next.key] ? '' : (obj[next.key] = true && item.push(next));
-            return item;
-          }, [] as IColumnItem[]);
           allColumns.value = _allColumns;
           filterScheme.value = scheme;
         });

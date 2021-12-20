@@ -127,10 +127,6 @@
         type: String,
         default: '',
       },
-      paramInfo: {
-        type: String,
-        default: '',
-      },
       operation: {
         type: String,
         default: '=',
@@ -164,7 +160,6 @@
       'update:paramOperations',
       'update:paramRelationKey',
       'update:paramDatatypekeies',
-      'update:paramInfo',
     ],
     setup(props, context) {
       const appStore = useAppStore();
@@ -204,7 +199,6 @@
           if (paramListComputed.value.length === 0) return;
           let {
             type,
-            info,
             operations,
             datatypekeies,
             relationKey,
@@ -222,7 +216,6 @@
           context.emit('update:paramDataType', type);
           context.emit('update:paramDatatypekeies', datatypekeies);
           context.emit('update:paramRelationKey', relationKey);
-          context.emit('update:paramInfo', info);
           if (!props.operation) {
             context.emit('update:operation', '=');
           }
@@ -235,7 +228,6 @@
           context.emit('update:paramDatatypekeies', '');
           context.emit('update:paramRelationKey', '');
           context.emit('update:value', undefined);
-          context.emit('update:paramInfo', '');
         }
       }
 

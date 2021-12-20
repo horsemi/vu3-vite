@@ -536,5 +536,5 @@ export const customColumns: IColumnItem[] = [
 ];
 
 export const getColumns = async () => {
-  return await getColumnList({ code: 'shipping-orders', customColumns, info: 'base' });
+  return await getColumnList({ code: 'shipping-orders', customColumns });
 };

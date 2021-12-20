@@ -24,13 +24,12 @@
           <DynamicSelect
             v-model:value="item.value"
             v-model:paramKey="item.requirement"
-            v-model:paramInfo="item.info"
             v-model:operation="item.operator"
             v-model:paramDataType="item.type"
             v-model:paramOperations="item.operatorList"
             v-model:paramDatatypekeies="item.datatypekeies"
             v-model:paramRelationKey="item.relationKey"
-            :param-list="columns"
+            :param-list="allColumns"
           />
           <DxSelectBox
             v-model:value="item.rightParenthesisCount"
@@ -85,25 +84,9 @@
       const allColumns = inject('allColumns') as Ref<IColumnItem[]>;
       const schemeData = inject('schemeData') as Ref<ISchemeData>;
 
-      const infoMap = {
-        base: '基本',
-        base_Items: '明细',
-      };
-
-      const columns = computed(() => {
-        const _columns: IColumnItem[] = [];
-        allColumns.value.forEach((item) => {
-          _columns.push({
-            ...item,
-            caption: item.info ? `${infoMap[item.info]}.${item.caption}` : item.caption,
-          });
-        });
-        return _columns;
-      });
-
       const requirement = computed(() => {
         const scheme = schemeData.value.scheme[schemeData.value.checkedIndex];
-        if (scheme) {
+        if (scheme && scheme.requirement) {
           return scheme.requirement;
         } else {
           return [];
@@ -158,7 +141,6 @@
           datatypekeies: '',
           relationKey: '',
           logic: 'and',
-          info: '',
         });
       };
       // 点击下加触发
@@ -174,7 +156,6 @@
           datatypekeies: '',
           relationKey: '',
           logic: 'and',
-          info: '',
         });
       };
       // 点击删除触发
@@ -189,7 +170,7 @@
 
       return {
         requirement,
-        columns,
+        allColumns,
         prefixCls,
         logicOptions,
         leftParenthesisOptions,
