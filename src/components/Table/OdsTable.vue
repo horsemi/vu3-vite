@@ -129,6 +129,8 @@
   import { getOdataList } from '/@/api/ods/common';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { clientSummary, defaultTableOptions, getCompleteColumns } from './common';
+  import { usePermissionStore } from '/@/store/modules/permission';
+
   import { useAppStore } from '/@/store/modules/app';
 
   import { deepMerge } from '/@/utils';
@@ -218,6 +220,10 @@
         type: String,
         default: '',
       },
+      queryListPermission: {
+        type: String,
+        default: '',
+      },
       summaryArray: {
         type: Array as PropType<{ columnName: string; summaryType: SummaryType }[]>,
         default: () => {
@@ -228,6 +234,7 @@
     emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],
     setup(props, ctx) {
       const { prefixCls } = useDesign('ods-table');
+      const permissionStore = usePermissionStore();
       const appStore = useAppStore();
       const dataGrid = ref();
       const pageIndex = ref(0);
@@ -247,6 +254,10 @@
       const clipValue = ref('');
       const options = computed(() => {
         return deepMerge(cloneDeep(defaultTableOptions), props.tableOptions);
+      });
+
+      const SearchPermission = computed(() => {
+        return permissionStore.hasPermission(props.queryListPermission);
       });
 
       onMounted(() => {
@@ -351,11 +362,13 @@
           nextTick(() => {
             // 重新 获取列数据
             tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
-            // 重新 new datasource
-            getTableData();
-            nextTick(() => {
-              handleSummary(scheme?.summary);
-            });
+            if (SearchPermission.value) {
+              // 重新 new datasource
+              getTableData();
+              nextTick(() => {
+                handleSummary(scheme?.summary);
+              });
+            }
           });
         }
       };
@@ -551,6 +564,7 @@
         getTableDataSourceOption,
         onCellClick,
         remoteOperationValue,
+        SearchPermission,
       };
     },
   });

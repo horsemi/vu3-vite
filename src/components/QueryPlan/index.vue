@@ -60,5 +60,16 @@
     margin-bottom: 16px;
     background-color: #fff;
     box-sizing: border-box;
+    .disabled_mask {
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 2000;
+      width: 100%;
+      height: 100%;
+      cursor: not-allowed;
+      background: #fff;
+      opacity: 0.5;
+    }
   }
 </style>
