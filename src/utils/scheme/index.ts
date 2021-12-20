@@ -15,7 +15,7 @@ export async function getSchemesData(orderCode: string) {
   });
 
   const scheme = schemesData.map((item, index) => {
-    const { requirement, orderBy, columns, fast } = JSON.parse(item.queryData);
+    const { requirement, orderBy, columns, summary, fast } = JSON.parse(item.queryData);
     if (item.isUseScheme) {
       checkedIndex = index;
     }
@@ -32,6 +32,7 @@ export async function getSchemesData(orderCode: string) {
       requirement,
       orderBy,
       columns,
+      summary,
       fast,
     };
   });
@@ -51,6 +52,7 @@ export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem 
       requirement: scheme.requirement,
       orderBy: scheme.orderBy,
       columns: scheme.columns,
+      summary: scheme.summary,
       fast: scheme.fast,
     });
 
@@ -79,6 +81,7 @@ export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem 
         requirement: queryData.requirement,
         orderBy: queryData.orderBy,
         columns: queryData.columns,
+        summary: queryData.summary,
         fast: queryData.fast,
       };
 
