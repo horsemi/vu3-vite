@@ -2,7 +2,8 @@ import type { IPropsSummary, ITableOptions } from './types';
 import type { ISchemeColumnsItem } from '../QueryPopup/content/types';
 import type { IColumnItem } from '/@/model/types';
 
-import { sum, min, max, mean } from 'lodash-es';
+import { sum, min, max, mean, upperFirst } from 'lodash-es';
+import { getOdataList } from '/@/api/ods/common';
 
 const defaultPaginate = true;
 
@@ -15,6 +16,11 @@ export const defaultTableOptions: ITableOptions = {
     oDataOptions: {
       url: '',
     },
+    sort: [
+      {
+        selector: 'Id',
+      },
+    ],
   },
   useScrolling: false,
   height: '100%',
@@ -113,7 +119,7 @@ export const clientSummary = ({
       res =
         col && col.type === 'decimal'
           ? valArr.length && ((min(valArr) as number) / 1000).toFixed(3)
-          : min(valArr);
+          : max(valArr);
       break;
     case 'max':
       res =
@@ -132,4 +138,41 @@ export const clientSummary = ({
   }
 
   return `${summaryTypeMap[summary.summaryType]}: ${res}`;
+};
+
+export const serverSummary = async ({
+  orderCode,
+  systemCode,
+  summary,
+  $filter,
+  allColumns,
+}: {
+  orderCode: string;
+  systemCode?: string;
+  summary: IPropsSummary[];
+  $filter: string;
+  allColumns: IColumnItem[];
+}) => {
+  const _aggregate = summary.map((item) => {
+    return `${item.summaryType}(${item.columnName})`;
+  });
+  const $aggregate = _aggregate.join(',');
+  const params = {};
+  $filter && (params['$filter'] = $filter);
+  $aggregate && (params['$aggregate'] = $aggregate);
+
+  const data = await getOdataList(orderCode, params, systemCode ? systemCode : undefined);
+
+  const res = data[0] || {};
+
+  const list = summary.map((item) => {
+    const col = allColumns.find((col) => col.key === item.columnName);
+    return {
+      caption: col?.caption,
+      value: res[`${item.columnName}${upperFirst(item.summaryType)}`],
+      summaryType: item.summaryType,
+    };
+  });
+
+  return list;
 };

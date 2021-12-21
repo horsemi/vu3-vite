@@ -222,10 +222,12 @@ export const getOdataQuery = ({
   scheme,
   allColumns,
   tableSort,
+  defaultSort,
 }: {
   scheme: ISchemeItem;
   allColumns: IColumnItem[];
   tableSort: ISortItem[];
+  defaultSort?: ISortItem[];
 }) => {
   let orderBy: IOrderByItem[] = [];
   if (tableSort) {
@@ -234,8 +236,17 @@ export const getOdataQuery = ({
     if (column) {
       orderBy = [{ key: column.key, caption: column.caption, desc: sort.desc ?? false }];
     }
-  } else {
+  } else if (scheme.orderBy && scheme.orderBy.length > 0) {
     orderBy = scheme.orderBy;
+  } else {
+    orderBy =
+      defaultSort?.map((item) => {
+        return {
+          caption: '',
+          key: item.selector,
+          desc: item.desc ?? false,
+        };
+      }) || [];
   }
   const { columns, requirement } = scheme;
 

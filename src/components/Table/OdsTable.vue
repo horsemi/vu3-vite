@@ -125,7 +125,7 @@
     onMounted,
     onActivated,
   } from 'vue';
-  import { cloneDeep, isEmpty } from 'lodash-es';
+  import { cloneDeep, isEmpty, merge } from 'lodash-es';
   import { getOdataList } from '/@/api/ods/common';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { clientSummary, defaultTableOptions, getCompleteColumns } from './common';
@@ -133,7 +133,6 @@
 
   import { useAppStore } from '/@/store/modules/app';
 
-  import { deepMerge } from '/@/utils';
   import DxContextMenu from 'devextreme-vue/context-menu';
   import DxDataGrid, {
     DxSelection,
@@ -253,7 +252,7 @@
       const summaryList = ref<ITableSummary[]>([]);
       const clipValue = ref('');
       const options = computed(() => {
-        return deepMerge(cloneDeep(defaultTableOptions), props.tableOptions);
+        return merge(cloneDeep(defaultTableOptions), props.tableOptions);
       });
 
       const SearchPermission = computed(() => {
@@ -391,6 +390,7 @@
                   scheme: props.filterScheme,
                   allColumns: props.allColumns,
                   tableSort: loadOptions.sort,
+                  defaultSort: props.tableOptions.dataSourceOptions.sort,
                 });
                 const dataParams = { ...params, $top: pageSize.value };
                 pageIndex.value && (dataParams['$skip'] = pageIndex.value * pageSize.value);
