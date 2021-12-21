@@ -12,7 +12,7 @@
       >
         <DxFilterRow :visible="true" />
         <DxPaging :enabled="false" />
-        <DxColumn caption="全部字段" cell-template="show" :width="80" alignment="center" />
+        <DxColumn caption="可排序字段" cell-template="show" :width="86" alignment="center" />
         <DxColumn data-field="caption" caption="" alignment="center" />
         <template #show="{ data }">
           <DxCheckBox :value="data.data.checked" />

@@ -74,6 +74,11 @@ export interface IColumnItem {
   allowSort?: boolean;
 
   /**
+   * @description 是否允许汇总
+   */
+  allowSummary?: boolean;
+
+  /**
    * @description 过滤类型 (基础数据必要的字段，用于指定请求哪个接口)
    */
   datatypekeies?: string;

@@ -19,6 +19,12 @@
           />
         </div>
         <div class="btn__box">
+          <SummaryButton
+            :order-code="ORDER_CODE"
+            :all-columns="allColumns"
+            :scheme="filterScheme"
+            :odata-params="odataParams"
+          />
           <DxButton
             :width="100"
             icon="refresh"
@@ -52,7 +58,7 @@
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
 
-  import { defineComponent, ref, provide } from 'vue';
+  import { defineComponent, ref, provide, computed } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
   import { usePermissionStore } from '/@/store/modules/permission';
@@ -67,11 +73,13 @@
   import DxButton from 'devextreme-vue/button';
 
   import QueryPlan from '/@/components/QueryPlan/index.vue';
+  import SummaryButton from '/@/components/SummaryButton/index.vue';
 
   export default defineComponent({
     name: 'OdsShippingOrderList',
     components: {
       QueryPlan,
+      SummaryButton,
       DxButton,
     },
     setup() {
@@ -106,6 +114,10 @@
         checkedIndex: 0,
       });
       const schemeDefaultIndex = ref<number>(0);
+
+      const odataParams = computed(() => {
+        return dataGrid.value && dataGrid.value.odataParams;
+      });
 
       const onRefresh = () => {
         dataGrid.value.search();
@@ -220,6 +232,7 @@
         allColumns,
         schemeData,
         filterScheme,
+        odataParams,
         handleBillCodeClick,
         onChangeScheme,
         onSubmitClick,

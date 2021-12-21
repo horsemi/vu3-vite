@@ -12,7 +12,7 @@
       >
         <DxFilterRow :visible="true" />
         <DxPaging :enabled="false" />
-        <DxColumn caption="全部字段" cell-template="show" alignment="center" :width="80" />
+        <DxColumn caption="可汇总字段" cell-template="show" alignment="center" :width="86" />
         <DxColumn data-field="caption" caption="" alignment="center" />
         <template #show="{ data }">
           <DxCheckBox :value="data.data.checked" />
@@ -225,18 +225,7 @@
       function getFieldList(allColumns: IColumnItem[]) {
         const data: IFieldItem[] = [];
         allColumns.forEach((item) => {
-          if (item.foundationList && item.foundationList.length > 0) {
-            item.foundationList.forEach((field) => {
-              data.push({
-                ...field,
-                caption: field.caption,
-                expand: item.expand,
-                relationKey: item.relationKey,
-                mustKey: item.mustKey,
-                checked: false,
-              });
-            });
-          } else if (!item.hide) {
+          if (!item.hide && item.allowSummary) {
             data.push({
               ...item,
               caption: item.caption,
@@ -316,7 +305,7 @@
     &__field__checkall {
       position: absolute;
       top: 40px;
-      left: 30px;
+      left: 33px;
     }
 
     &__next {

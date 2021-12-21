@@ -52,7 +52,7 @@ const message: MessageFn & Partial<Message> = function (options: any = {}) {
   const userOnClose = options.onClose;
 
   const props: Partial<MessageProps> = {
-    zIndex: 1000, // PopupManager.nextZIndex()
+    zIndex: 9999, // PopupManager.nextZIndex()
     offset: verticalOffset,
     ...options,
     id,

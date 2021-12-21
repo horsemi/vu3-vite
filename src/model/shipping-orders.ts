@@ -85,6 +85,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'totalVolume',
     caption: '总体积数',
+    allowSummary: true,
   },
   {
     key: 'markStatus',
@@ -132,6 +133,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'totalPackage',
     caption: '总包件数',
+    allowSummary: true,
   },
   {
     key: 'group',
@@ -140,6 +142,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'totalOrderCount',
     caption: '订单总数',
+    allowSummary: true,
   },
   {
     key: 'customerSalesman',
@@ -378,10 +381,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'logisticsCostPrice',
     caption: '物流成本',
+    allowSummary: true,
   },
   {
     key: 'threeServiceCostPrice',
     caption: '三包成本',
+    allowSummary: true,
   },
   {
     key: 'logisticCode',

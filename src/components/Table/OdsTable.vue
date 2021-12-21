@@ -112,7 +112,7 @@
 <script lang="ts">
   import type { ITableOptions, ITableSummary } from './types';
   import type { IColumnItem, IKeyType } from '/@/model/types';
-  import type { ISchemeItem, ISummaryItem, SummaryType } from '../QueryPopup/content/types';
+  import type { ISchemeItem, ISummaryItem } from '../QueryPopup/content/types';
 
   import {
     defineComponent,
@@ -224,12 +224,6 @@
         type: String,
         default: '',
       },
-      summaryArray: {
-        type: Array as PropType<{ columnName: string; summaryType: SummaryType }[]>,
-        default: () => {
-          return [];
-        },
-      },
     },
     emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],
     setup(props, ctx) {
@@ -237,6 +231,7 @@
       const permissionStore = usePermissionStore();
       const appStore = useAppStore();
       const dataGrid = ref();
+      const odataParams = ref();
       const pageIndex = ref(0);
       const pageSize = ref(50);
       const pageSizes = [50, 100, 1000, 2000, 3000];
@@ -324,7 +319,7 @@
       };
 
       // 处理汇总信息
-      const handleSummary = (summary: ISummaryItem[]) => {
+      const handleClientSummary = (summary: ISummaryItem[]) => {
         const _summary: ITableSummary[] = [];
         summary?.forEach((item) => {
           item.mode === 'page' &&
@@ -372,7 +367,7 @@
               // 重新 new datasource
               getTableData();
               nextTick(() => {
-                handleSummary(scheme?.summary);
+                handleClientSummary(scheme?.summary);
               });
             }
           });
@@ -397,8 +392,9 @@
                   scheme: props.filterScheme,
                   allColumns: props.allColumns,
                   tableSort: loadOptions.sort,
-                  defaultSort: props.tableOptions.dataSourceOptions.sort,
+                  defaultSort: options.value.dataSourceOptions.sort,
                 });
+                odataParams.value = params;
                 const dataParams = { ...params, $top: pageSize.value };
                 pageIndex.value && (dataParams['$skip'] = pageIndex.value * pageSize.value);
                 const totalCountParams = { $aggregate: 'count(1)' };
@@ -548,6 +544,7 @@
         options,
         tableData,
         tableColumns,
+        odataParams,
         prefixCls,
         pageIndex,
         pageSizes,
