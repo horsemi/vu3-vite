@@ -4,33 +4,33 @@ import { getColumnList } from './common';
 
 export const customColumns: IColumnItem[] = [
   {
-    key: 'BillCode',
+    key: 'billCode',
     caption: '单据编码',
     cellTemplate: 'billCode',
     mustKey: true,
   },
   {
-    key: 'GatheringParentCode',
+    key: 'gatheringParentCode',
     caption: '父单号',
     mustKey: true,
   },
   {
-    key: 'BillDate',
+    key: 'billDate',
     caption: '单据日期',
     type: 'date',
   },
   {
-    key: 'BatchCode',
+    key: 'batchCode',
     caption: '发货批次',
   },
   {
-    key: 'TotalPackage',
+    key: 'totalPackage',
     caption: '总包件数',
   },
   {
-    key: 'BillType',
+    key: 'billType',
     caption: '单据类型',
-    relationKey: 'BillTypeCode',
+    relationKey: 'billTypeCode',
     filter: [
       {
         groupCodes: ['ZD_WMS_SendNotice'],
@@ -38,158 +38,158 @@ export const customColumns: IColumnItem[] = [
     ],
     foundationList: [
       {
-        key: 'BillType_Name',
+        key: 'billType_name',
         caption: '单据类型',
       },
     ],
     datatypekeies: 'bill-types',
   },
   {
-    key: 'BillTypeCode',
+    key: 'billTypeCode',
     caption: '单据类型编码',
     datatypekeies: 'bill-types',
   },
   {
-    key: 'BranchLineType',
+    key: 'branchLineType',
     caption: '支装类型',
   },
   {
-    key: 'SendGoodsMode',
+    key: 'sendGoodsMode',
     caption: '发货模式',
   },
   {
-    key: 'TotalPack',
+    key: 'totalPack',
     caption: '总包裹数',
   },
   {
-    key: 'DocumentStatus',
+    key: 'documentStatus',
     caption: '单据状态',
   },
   {
-    key: 'MarkStatus',
+    key: 'markStatus',
     caption: '标记状态',
   },
   {
-    key: 'TotalVolume',
+    key: 'totalVolume',
     caption: '总体积数',
   },
   {
-    key: 'OperationStatus',
+    key: 'operationStatus',
     caption: '业务状态',
   },
   {
-    key: 'DeliveryWarehouse',
+    key: 'deliveryWarehouse',
     caption: '发货仓库',
-    relationKey: 'DeliveryWarehouseCode',
+    relationKey: 'deliveryWarehouseCode',
     foundationList: [
       {
-        key: 'DeliveryWarehouse_Name',
+        key: 'deliveryWarehouse_name',
         caption: '发货仓库',
       },
       {
-        key: 'DeliveryWarehouse_GroupName',
+        key: 'deliveryWarehouse_groupName',
         caption: '发货仓库分组',
       },
     ],
     datatypekeies: 'stocks',
   },
   {
-    key: 'DeliveryWarehouseCode',
+    key: 'deliveryWarehouseCode',
     caption: '发货仓库编码',
     datatypekeies: 'stocks',
   },
   {
-    key: 'SentStatus',
+    key: 'sentStatus',
     caption: '发送状态',
   },
   {
-    key: 'SentMemo',
+    key: 'sentMemo',
     caption: '发送备注',
   },
   {
-    key: 'TotalOrderCount',
+    key: 'totalOrderCount',
     caption: '总订单数',
   },
   {
-    key: 'IsPicking',
+    key: 'isPicking',
     caption: '拣货',
   },
   {
-    key: 'IsGatheringOrder',
+    key: 'isGatheringOrder',
     caption: '集货订单',
   },
   {
-    key: 'IsSmallMode',
+    key: 'isSmallMode',
     caption: '小挂',
   },
   {
-    key: 'IsMergeLockOrder',
+    key: 'isMergeLockOrder',
     caption: '合并锁单',
   },
   {
-    key: 'Nickname',
+    key: 'nickname',
     caption: '买家昵称',
   },
   {
-    key: 'Receiver',
+    key: 'receiver',
     caption: '收货人',
   },
   {
-    key: 'Telephone',
+    key: 'telephone',
     caption: '电话',
   },
   {
-    key: 'TotalActualPrice',
+    key: 'totalActualPrice',
     caption: '实际售价汇总',
   },
   {
-    key: 'Province',
+    key: 'province',
     caption: '省',
-    relationKey: 'ProvinceCode',
+    relationKey: 'provinceCode',
     foundationList: [
       {
-        key: 'Province_Name',
+        key: 'province_name',
         caption: '省',
       },
     ],
     datatypekeies: 'provinces',
   },
   {
-    key: 'ProvinceCode',
+    key: 'provinceCode',
     caption: '省编码',
     datatypekeies: 'provinces',
   },
   {
-    key: 'City',
+    key: 'city',
     caption: '市',
-    relationKey: 'CityCode',
+    relationKey: 'cityCode',
     foundationList: [
       {
-        key: 'City_Name',
+        key: 'city_name',
         caption: '市',
       },
     ],
     datatypekeies: 'cities',
   },
   {
-    key: 'CityCode',
+    key: 'cityCode',
     caption: '市编码',
     datatypekeies: 'cities',
   },
   {
-    key: 'District',
+    key: 'district',
     caption: '区',
-    relationKey: 'DistrictCode',
+    relationKey: 'districtCode',
     foundationList: [
       {
-        key: 'District_Name',
+        key: 'district_name',
         caption: '区',
       },
     ],
     datatypekeies: 'districts',
   },
   {
-    key: 'DistrictCode',
+    key: 'districtCode',
     caption: '区编码',
     datatypekeies: 'districts',
   },
@@ -198,606 +198,606 @@ export const customColumns: IColumnItem[] = [
     caption: '街道',
   },
   {
-    key: 'Agency',
+    key: 'agency',
     caption: '经销商',
-    relationKey: 'AgencyCode',
+    relationKey: 'agencyCode',
     foundationList: [
       {
-        key: 'Agency_Name',
+        key: 'agency_name',
         caption: '经销商',
       },
     ],
     datatypekeies: 'customers',
   },
   {
-    key: 'AgencyCode',
+    key: 'agencyCode',
     caption: '经销商编码',
     datatypekeies: 'customers',
   },
   {
-    key: 'PromisedDeliveryDate',
+    key: 'promisedDeliveryDate',
     caption: '承诺发货时间',
   },
   {
-    key: 'DetailAddress',
+    key: 'detailAddress',
     caption: '详细地址',
   },
   {
-    key: 'ShowroomContacts',
+    key: 'showroomContacts',
     caption: '展厅联系人',
   },
   {
-    key: 'ShowroomTelephone',
+    key: 'showroomTelephone',
     caption: '展厅电话',
   },
   {
-    key: 'ShowroomAddress',
+    key: 'showroomAddress',
     caption: '展厅提货地址',
   },
   {
-    key: 'IsAgencyOrder',
+    key: 'isAgencyOrder',
     caption: '经销商订单',
   },
   {
-    key: 'IsInstall',
+    key: 'isInstall',
     caption: '上门服务',
   },
   {
-    key: 'IsRecycling',
+    key: 'isRecycling',
     caption: '回收服务',
   },
   {
-    key: 'IsExistMarble',
+    key: 'isExistMarble',
     caption: '大理石',
   },
   {
-    key: 'GatheringPoint',
+    key: 'gatheringPoint',
     caption: '集货点',
-    relationKey: 'GatheringPointCode',
+    relationKey: 'gatheringPointCode',
     foundationList: [
       {
-        key: 'GatheringPoint_Name',
+        key: 'gatheringPoint_name',
         caption: '集货点',
       },
     ],
     datatypekeies: 'gathering-points',
   },
   {
-    key: 'GatheringPointCode',
+    key: 'gatheringPointCode',
     caption: '集货点编码',
     datatypekeies: 'gathering-points',
   },
   {
-    key: 'NonstopContractor',
+    key: 'nonstopContractor',
     caption: '直达承运商',
-    relationKey: 'NonstopContractorCode',
+    relationKey: 'nonstopContractorCode',
     foundationList: [
       {
-        key: 'NonstopContractor_Name',
+        key: 'nonstopContractor_name',
         caption: '直达承运商',
       },
     ],
     datatypekeies: 'suppliers',
   },
   {
-    key: 'NonstopContractorCode',
+    key: 'nonstopContractorCode',
     caption: '直达承运商编码',
     datatypekeies: 'suppliers',
   },
   {
-    key: 'HandCarsLine',
+    key: 'handCarsLine',
     caption: '挂车路线',
-    relationKey: 'HandCarLine',
+    relationKey: 'handCarLine',
     foundationList: [
       {
-        key: 'HandCarsLine_Name',
+        key: 'handCarsLine_name',
         caption: '挂车路线',
       },
     ],
     datatypekeies: 'line-circuits',
   },
   {
-    key: 'HandCarLine',
+    key: 'handCarLine',
     caption: '挂车路线编码',
     datatypekeies: 'line-circuits',
   },
   {
-    key: 'TrainCode',
+    key: 'trainCode',
     caption: '车次',
   },
   {
-    key: 'DeliveryPoint',
+    key: 'deliveryPoint',
     caption: '提货点',
-    relationKey: 'DeliveryPointCode',
+    relationKey: 'deliveryPointCode',
     foundationList: [
       {
-        key: 'DeliveryPoint_Name',
+        key: 'deliveryPoint_name',
         caption: '提货点',
       },
     ],
     datatypekeies: 'delivery-points',
   },
   {
-    key: 'DeliveryPointCode',
+    key: 'deliveryPointCode',
     caption: '提货点编码',
     datatypekeies: 'delivery-points',
   },
   {
-    key: 'TransitContractor',
+    key: 'transitContractor',
     caption: '转运承运商',
-    relationKey: 'TransitContractorCode',
+    relationKey: 'transitContractorCode',
     foundationList: [
       {
-        key: 'TransitContractor_Name',
+        key: 'transitContractor_name',
         caption: '转运承运商',
       },
     ],
     datatypekeies: 'suppliers',
   },
   {
-    key: 'TransitContractorCode',
+    key: 'transitContractorCode',
     caption: '转运承运商编码',
     datatypekeies: 'suppliers',
   },
   {
-    key: 'SmallCarsLine',
+    key: 'smallCarsLine',
     caption: '小挂路线',
-    relationKey: 'SmallCarLine',
+    relationKey: 'smallCarLine',
     foundationList: [
       {
-        key: 'SmallCarsLine_Name',
+        key: 'smallCarsLine_name',
         caption: '小挂路线',
       },
     ],
     datatypekeies: 'line-circuits',
   },
   {
-    key: 'SmallCarLine',
+    key: 'smallCarLine',
     caption: '小挂路线编码',
     datatypekeies: 'line-circuits',
   },
   {
-    key: 'CarModeCode',
+    key: 'carModeCode',
     caption: '车型',
   },
   {
-    key: 'ThreeServicePoint',
+    key: 'threeServicePoint',
     caption: '三包点',
-    relationKey: 'ThreeServicePointCode',
+    relationKey: 'threeServicePointCode',
     foundationList: [
       {
-        key: 'ThreeServicePoint_Name',
+        key: 'threeServicePoint_name',
         caption: '三包点',
       },
     ],
     datatypekeies: 'three-service-points',
   },
   {
-    key: 'ThreeServicePointCode',
+    key: 'threeServicePointCode',
     caption: '三包点编码',
     datatypekeies: 'three-service-points',
   },
   {
-    key: 'Contractor',
+    key: 'contractor',
     caption: '中转承运商',
-    relationKey: 'ContractorCode',
+    relationKey: 'contractorCode',
     foundationList: [
       {
-        key: 'Contractor_Name',
+        key: 'contractor_name',
         caption: '中转承运商',
       },
     ],
     datatypekeies: 'suppliers',
   },
   {
-    key: 'ContractorCode',
+    key: 'contractorCode',
     caption: '中转承运商编码',
     datatypekeies: 'suppliers',
   },
   {
-    key: 'HandCarsGroup',
+    key: 'handCarsGroup',
     caption: '挂车组合',
-    relationKey: 'HandCarGroup',
+    relationKey: 'handCarGroup',
     foundationList: [
       {
-        key: 'HandCarsGroup_GroupName',
+        key: 'handCarsGroup_groupName',
         caption: '挂车组合分组',
       },
     ],
     datatypekeies: 'line-areas',
   },
   {
-    key: 'HandCarGroup',
+    key: 'handCarGroup',
     caption: '挂车组合编码',
     datatypekeies: 'line-areas',
   },
   {
-    key: 'LoadType',
+    key: 'loadType',
     caption: '配载方式',
   },
   {
-    key: 'LineArea',
+    key: 'lineArea',
     caption: '线路区域',
-    relationKey: 'LineAreaCode',
+    relationKey: 'lineAreaCode',
     foundationList: [
       {
-        key: 'LineArea_Name',
+        key: 'lineArea_name',
         caption: '线路区域',
       },
     ],
     datatypekeies: 'line-areas',
   },
   {
-    key: 'LineAreaCode',
+    key: 'lineAreaCode',
     caption: '线路区域编码',
     datatypekeies: 'line-areas',
   },
   {
-    key: 'ThreeServiceSupplier',
+    key: 'threeServiceSupplier',
     caption: '三包服务商',
-    relationKey: 'ThreeServiceSupplierCode',
+    relationKey: 'threeServiceSupplierCode',
     foundationList: [
       {
-        key: 'ThreeServiceSupplier_Name',
+        key: 'threeServiceSupplier_name',
         caption: '三包服务商',
       },
     ],
     datatypekeies: 'suppliers',
   },
   {
-    key: 'ThreeServiceSupplierCode',
+    key: 'threeServiceSupplierCode',
     caption: '三包服务商编码',
     datatypekeies: 'suppliers',
   },
   {
-    key: 'SmallCarsGroup',
+    key: 'smallCarsGroup',
     caption: '小挂组合',
-    relationKey: 'SmallCarGroup',
+    relationKey: 'smallCarGroup',
     foundationList: [
       {
-        key: 'SmallCarsGroup_GroupName',
+        key: 'smallCarsGroup_groupName',
         caption: '小挂组合分组',
       },
     ],
     datatypekeies: 'line-areas',
   },
   {
-    key: 'SmallCarGroup',
+    key: 'smallCarGroup',
     caption: '小挂组合编码',
     datatypekeies: 'line-areas',
   },
   {
-    key: 'DeliveryCos',
+    key: 'deliveryCos',
     caption: '提货费',
   },
   {
-    key: 'LogisticCode',
+    key: 'logisticCode',
     caption: '物流单号',
   },
   {
-    key: 'LogisticsLines',
+    key: 'logisticsLines',
     caption: '物流专线',
-    relationKey: 'LogisticsLine',
+    relationKey: 'logisticsLine',
     foundationList: [
       {
-        key: 'LogisticsLines_Name',
+        key: 'logisticsLines_name',
         caption: '物流专线',
       },
     ],
     datatypekeies: 'logistics-lines',
   },
   {
-    key: 'LogisticsLine',
+    key: 'logisticsLine',
     caption: '物流专线编码',
     datatypekeies: 'logistics-lines',
   },
   {
-    key: 'ThreeServiceCostPrice',
+    key: 'threeServiceCostPrice',
     caption: '三包成本',
   },
   {
-    key: 'LogisticsCostPrice',
+    key: 'logisticsCostPrice',
     caption: '物流成本',
   },
   {
-    key: 'FreightTypeCode',
+    key: 'freightTypeCode',
     caption: '运费类型编码',
     datatypekeies: 'freight-types',
   },
   {
-    key: 'FreightType',
+    key: 'freightType',
     caption: '运费类型',
-    relationKey: 'FreightTypeCode',
+    relationKey: 'freightTypeCode',
     foundationList: [
       {
-        key: 'FreightType_Name',
+        key: 'freightType_name',
         caption: '运费类型',
       },
     ],
     datatypekeies: 'freight-types',
   },
   {
-    key: 'ThreeServiceCostType',
+    key: 'threeServiceCostType',
     caption: '三包费用类型',
-    relationKey: 'ThreeServiceFeeTypeCode',
+    relationKey: 'threeServiceFeeTypeCode',
     foundationList: [
       {
-        key: 'ThreeServiceCostType_Name',
+        key: 'threeServiceCostType_name',
         caption: '三包费用类型',
       },
     ],
     datatypekeies: 'three-service-cost-types',
   },
   {
-    key: 'ThreeServiceFeeTypeCode',
+    key: 'threeServiceFeeTypeCode',
     caption: '三包费用类型编码',
     datatypekeies: 'three-service-cost-types',
   },
   {
-    key: 'ServiceContent',
+    key: 'serviceContent',
     caption: '服务项目',
-    relationKey: 'ServiceItemCode',
+    relationKey: 'serviceItemCode',
     foundationList: [
       {
-        key: 'ServiceContent_Name',
+        key: 'serviceContent_name',
         caption: '服务项目',
       },
     ],
     datatypekeies: 'service-contents',
   },
   {
-    key: 'ServiceItemCode',
+    key: 'serviceItemCode',
     caption: '服务项目编码',
     datatypekeies: 'service-contents',
   },
   {
-    key: 'LockBatchTime',
+    key: 'lockBatchTime',
     caption: '锁定批次时间',
   },
   {
-    key: 'LockBatchUserCode',
+    key: 'lockBatchUserCode',
     caption: '锁定批次人ID',
     notAllowQuery: true,
   },
   {
-    key: 'LockBatchUser',
+    key: 'lockBatchUser',
     caption: '锁定批次人',
-    relationKey: 'LockBatchUserCode',
+    relationKey: 'lockBatchUserCode',
     notAllowQuery: true,
     foundationList: [
       {
-        key: 'LockBatchUser_AccountName',
+        key: 'lockBatchUser_accountName',
         caption: '锁定批次人',
       },
     ],
   },
   {
-    key: 'ExpressSiteName',
+    key: 'expressSiteName',
     caption: '快递点名称',
   },
   {
-    key: 'PaintMarkerStatus',
+    key: 'paintMarkerStatus',
     caption: '大头笔状态',
   },
   {
-    key: 'ReturnGoodsStatus',
+    key: 'returnGoodsStatus',
     caption: '退货状态',
   },
   {
-    key: 'PlanSendGoodsDate',
+    key: 'planSendGoodsDate',
     caption: '计划发货日期',
   },
   {
-    key: 'ExpressStandard',
+    key: 'expressStandard',
     caption: '快递规格',
   },
   {
-    key: 'PaintMarkerMsg',
+    key: 'paintMarkerMsg',
     caption: '大头笔信息',
   },
   {
-    key: 'IsCancelled',
+    key: 'isCancelled',
     caption: '作废状态',
   },
   {
-    key: 'SendGoodsTimeOut',
+    key: 'sendGoodsTimeOut',
     caption: '发货超时时间',
   },
   {
-    key: 'BagsCentralizeAddress',
+    key: 'bagsCentralizeAddress',
     caption: '集包地',
   },
   {
-    key: 'LogisticNoStatus',
+    key: 'logisticNoStatus',
     caption: '快递号状态',
   },
   {
-    key: 'CancelledTime',
+    key: 'cancelledTime',
     caption: '作废时间',
   },
   {
-    key: 'SendGoodsTime',
+    key: 'sendGoodsTime',
     caption: '发货时间',
   },
   {
-    key: 'PaintMarker',
+    key: 'paintMarker',
     caption: '大头笔',
   },
   {
-    key: 'LogisticNoMsg',
+    key: 'logisticNoMsg',
     caption: '快递号信息',
   },
   {
-    key: 'CancellerId',
+    key: 'cancellerId',
     caption: '作废人ID',
     notAllowQuery: true,
   },
   {
-    key: 'Canceller',
+    key: 'canceller',
     caption: '作废人',
-    relationKey: 'CancellerId',
+    relationKey: 'cancellerId',
     notAllowQuery: true,
     foundationList: [
       {
-        key: 'Canceller_AccountName',
+        key: 'canceller_accountName',
         caption: '作废人',
       },
     ],
   },
   {
-    key: 'SentDate',
+    key: 'sentDate',
     caption: '发送时间',
   },
   {
-    key: 'InterceptReasonCode',
+    key: 'interceptReasonCode',
     caption: '截货原因',
   },
   {
-    key: 'InterceptTypeCode',
+    key: 'interceptTypeCode',
     caption: '截货类型',
   },
   {
-    key: 'CreatedTime',
+    key: 'createdTime',
     caption: '创建时间',
   },
   {
-    key: 'CreatorId',
+    key: 'creatorId',
     caption: '创建人ID',
     notAllowQuery: true,
   },
   {
-    key: 'Creator',
+    key: 'creator',
     caption: '创建人',
-    relationKey: 'CreatorId',
+    relationKey: 'creatorId',
     notAllowQuery: true,
     foundationList: [
       {
-        key: 'Creator_AccountName',
+        key: 'creator_accountName',
         caption: '创建人',
       },
     ],
   },
   {
-    key: 'OutSourceBillType',
+    key: 'outSourceBillType',
     caption: '原单类型',
   },
   {
-    key: 'AppliedTime',
+    key: 'appliedTime',
     caption: '审核时间',
   },
   {
-    key: 'ApplierId',
+    key: 'applierId',
     caption: '审核人ID',
     notAllowQuery: true,
   },
   {
-    key: 'Applier',
+    key: 'applier',
     caption: '审核人',
-    relationKey: 'ApplierId',
+    relationKey: 'applierId',
     notAllowQuery: true,
     foundationList: [
       {
-        key: 'Applier_AccountName',
+        key: 'applier_accountName',
         caption: '审核人',
       },
     ],
   },
   {
-    key: 'OutBillFormCode',
+    key: 'outBillFormCode',
     caption: '原单标识',
   },
   {
-    key: 'OutSourceBillCode',
+    key: 'outSourceBillCode',
     caption: '原单编号',
   },
   {
-    key: 'UpdatedTime',
+    key: 'updatedTime',
     caption: '修改时间',
   },
   {
-    key: 'UpdaterId',
+    key: 'updaterId',
     caption: '修改人ID',
     notAllowQuery: true,
   },
   {
-    key: 'Updater',
+    key: 'updater',
     caption: '修改人',
-    relationKey: 'UpdaterId',
+    relationKey: 'updaterId',
     notAllowQuery: true,
     foundationList: [
       {
-        key: 'Updater_AccountName',
+        key: 'updater_accountName',
         caption: '修改人',
       },
     ],
   },
   {
-    key: 'Customer',
+    key: 'customer',
     caption: '客户',
-    relationKey: 'CustomerCode',
+    relationKey: 'customerCode',
     foundationList: [
       {
-        key: 'Customer_Name',
+        key: 'customer_name',
         caption: '客户',
       },
     ],
     datatypekeies: 'customers',
   },
   {
-    key: 'CustomerCode',
+    key: 'customerCode',
     caption: '客户编码',
     datatypekeies: 'customers',
   },
   {
-    key: 'OutSaleBillCode',
+    key: 'outSaleBillCode',
     caption: '销售单号',
   },
   {
-    key: 'TotalWeight',
+    key: 'totalWeight',
     caption: '重量',
   },
   {
-    key: 'AreaName',
+    key: 'areaName',
     caption: '区域',
   },
   {
-    key: 'Group',
+    key: 'group',
     caption: '分组',
   },
   {
-    key: 'Memo',
+    key: 'memo',
     caption: '备注',
   },
   {
-    key: 'TotalMarble',
+    key: 'totalMarble',
     caption: '大理石数量',
   },
   {
-    key: 'TaoBaoCode',
+    key: 'taoBaoCode',
     caption: '平台单号',
   },
   {
-    key: 'CustomerSalesman',
+    key: 'customerSalesman',
     caption: '业务员',
   },
   {
-    key: 'IsTally',
+    key: 'isTally',
     caption: '理货',
   },
   {
-    key: 'IsEntry',
+    key: 'isEntry',
     caption: '进场',
   },
   {
-    key: 'IsTransfer',
+    key: 'isTransfer',
     caption: '交接',
   },
   {
-    key: 'IsClean',
+    key: 'isClean',
     caption: '清货',
   },
   {
-    key: 'DetailRowsCount',
+    key: 'detailRowsCount',
     caption: '明细行数',
   },
 ];

@@ -5,12 +5,15 @@ import { isString } from '/@/utils/is';
 import { unref } from 'vue';
 
 import router from '/@/router';
-import { errorMessage } from '/@/hooks/web/useMessage';
+import { odsMessage } from '/@/components/Message';
 
 export type RouteLocationRawEx = Omit<RouteLocationRaw, 'path'> & { path: string };
 
 function handleError(e: Error) {
-  errorMessage(e);
+  odsMessage({
+    type: 'error',
+    message: `${e}`,
+  });
 }
 
 export function useGo() {

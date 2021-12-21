@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "vite --mode sit",
     "build:s": "vite build --mode sit",
+    "build:so": "vite build --mode sit-outer",
     "build:u": "vite build --mode uat",
     "build:p": "vite build --mode production",
     "serve": "vite preview",

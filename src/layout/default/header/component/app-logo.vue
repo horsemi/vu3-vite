@@ -1,7 +1,7 @@
 <template>
   <div :class="[prefixCls]" style="color: rgb(255, 255, 255)">
     <SvgIcon size="100 24" name="logo-large"></SvgIcon>
-    <span :class="`${prefixCls}-logo-title__container`">订单调度中心</span>
+    <span :class="`${prefixCls}-logo-title__container`">4PL-ODS订单调度中心</span>
   </div>
 </template>
 

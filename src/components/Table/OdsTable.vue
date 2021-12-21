@@ -146,7 +146,8 @@
     DxTotalItem,
   } from 'devextreme-vue/data-grid';
   import Clipboard from 'clipboard';
-  import { useMessage } from '/@/hooks/web/useMessage';
+  import { odsMessage } from '/@/components/Message';
+
   import { getOdataQuery } from '/@/utils/odata';
   import CustomStore from 'devextreme/data/custom_store';
   import DataSource from 'devextreme/data/data_source';
@@ -262,11 +263,17 @@
       onMounted(() => {
         const clipboard = new Clipboard('.elementId');
         clipboard.on('success', function (e) {
-          useMessage('复制成功', 'success');
+          odsMessage({
+            type: 'success',
+            message: '复制成功',
+          });
           e.clearSelection();
         });
         clipboard.on('error', function () {
-          useMessage('复制失败', 'error');
+          odsMessage({
+            type: 'error',
+            message: '复制失败',
+          });
         });
       });
       onActivated(() => {

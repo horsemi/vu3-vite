@@ -89,7 +89,7 @@
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
-  import { useMessage } from '/@/hooks/web/useMessage';
+  import { odsMessage } from '/@/components/Message';
   import { SHIPPINGADVICE, SHIPPINGORDER, SHIPPINGRULE } from './constant';
   import QueryFrom from '/@/components/QueryPlan/component/form.vue';
   import Content from '/@/components/QueryPopup/content/index.vue';
@@ -169,7 +169,10 @@
           filterData.columns = JSON.parse(filterDataTextString.value).columns;
           filterData.fast = JSON.parse(filterDataTextString.value).fast;
         } catch {
-          useMessage('JSON格式存在问题', 'error');
+          odsMessage({
+            type: 'error',
+            message: 'JSON格式存在问题',
+          });
         }
       }
       function changefilterDataText() {
