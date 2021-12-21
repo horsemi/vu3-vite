@@ -4,25 +4,25 @@ import { getColumnList } from './common';
 
 export const customColumns: IColumnItem[] = [
   {
-    key: 'ShippingAdviceId',
+    key: 'shippingAdviceId',
     caption: 'ShippingAdviceId',
     hide: true,
   },
   {
-    key: 'MaterialCode',
+    key: 'materialCode',
     caption: '物料编码',
   },
   {
-    key: 'Material',
+    key: 'material',
     caption: '物料名称',
-    relationKey: 'MaterialCode',
+    relationKey: 'materialCode',
     foundationList: [
       {
-        key: 'Material_Name',
+        key: 'material_name',
         caption: '物料',
       },
       {
-        key: 'Material_GroupName',
+        key: 'material_groupName',
         caption: '物料分组',
       },
     ],
@@ -37,34 +37,34 @@ export const customColumns: IColumnItem[] = [
   //   caption: '小商品条码',
   // },
   {
-    key: 'DefaultAreaCode',
+    key: 'defaultAreaCode',
     caption: '默认区域',
     foundationList: [
       {
-        key: 'DefaultArea_Name',
+        key: 'defaultArea_name',
         caption: '默认区域',
       },
     ],
     datatypekeies: 'areas',
   },
   {
-    key: 'UnitCode',
+    key: 'unitCode',
     caption: '单位编码',
   },
   {
-    key: 'Unit',
+    key: 'unit',
     caption: '单位',
-    relationKey: 'UnitCode',
+    relationKey: 'unitCode',
     foundationList: [
       {
-        key: 'Unit_Name',
+        key: 'unit_name',
         caption: '单位',
       },
     ],
     datatypekeies: 'units',
   },
   {
-    key: 'Qty',
+    key: 'qty',
     caption: '数量',
   },
   // {
@@ -76,39 +76,39 @@ export const customColumns: IColumnItem[] = [
   //   caption: 'BOM版本',
   // },
   {
-    key: 'WarehouseCode',
+    key: 'warehouseCode',
     caption: '仓库编码',
   },
   {
-    key: 'DeliveryWarehouse',
+    key: 'deliveryWarehouse',
     caption: '仓库',
-    relationKey: 'WarehouseCode',
+    relationKey: 'warehouseCode',
     foundationList: [
       {
-        key: 'DeliveryWarehouse_Name',
+        key: 'deliveryWarehouse_name',
         caption: '仓库',
       },
       {
-        key: 'DeliveryWarehouse_GroupName',
+        key: 'deliveryWarehouse_groupName',
         caption: '仓库分组',
       },
     ],
     datatypekeies: 'stocks',
   },
   {
-    key: 'PackageQuantity',
+    key: 'packageQuantity',
     caption: '包件数',
   },
   {
-    key: 'PackageCount',
+    key: 'packageCount',
     caption: '总包件数',
   },
   {
-    key: 'VolumeQuantity',
+    key: 'volumeQuantity',
     caption: '体积',
   },
   {
-    key: 'VolumeCount',
+    key: 'volumeCount',
     caption: '总体积',
   },
   // {
@@ -120,23 +120,23 @@ export const customColumns: IColumnItem[] = [
   //   caption: '大理石',
   // },
   {
-    key: 'IsGaAllows',
+    key: 'isGaAllows',
     caption: '打木架',
   },
   {
-    key: 'ActualSalePrice',
+    key: 'actualSalePrice',
     caption: '实际售价',
   },
   {
-    key: 'Memo',
+    key: 'memo',
     caption: '备注',
   },
   {
-    key: 'TaoBaoCode',
+    key: 'taoBaoCode',
     caption: '平台单号',
   },
   {
-    key: 'TaoBaoSubCode',
+    key: 'taoBaoSubCode',
     caption: '平台子单号',
   },
   // {
@@ -144,7 +144,7 @@ export const customColumns: IColumnItem[] = [
   //   caption: '是否核销',
   // },
   {
-    key: 'Channel',
+    key: 'channel',
     caption: '渠道',
   },
   // {
@@ -164,51 +164,51 @@ export const customColumns: IColumnItem[] = [
   //   caption: '产品细类',
   // },
   {
-    key: 'Shop',
+    key: 'shop',
     caption: '店铺',
   },
   {
-    key: 'BuyShop',
+    key: 'buyShop',
     caption: '收入店铺',
   },
   {
-    key: 'ProvideSalePrice',
+    key: 'provideSalePrice',
     caption: '供货售价',
   },
   {
-    key: 'InWarehouseCode',
+    key: 'inWarehouseCode',
     caption: '进仓编号',
   },
   {
-    key: 'ProductName',
+    key: 'productName',
     caption: '品名',
   },
   {
-    key: 'Sku',
+    key: 'sku',
     caption: 'SKU',
   },
   {
-    key: 'SkuCode',
+    key: 'skuCode',
     caption: 'SKUID',
   },
   {
-    key: 'Texture',
+    key: 'texture',
     caption: '材质',
   },
   {
-    key: 'Area',
+    key: 'area',
     caption: '区域',
-    relationKey: 'AreaCode',
+    relationKey: 'areaCode',
     foundationList: [
       {
-        key: 'Area_Name',
+        key: 'area_name',
         caption: '区域',
       },
     ],
     datatypekeies: 'area',
   },
   {
-    key: 'AreaCode',
+    key: 'areaCode',
     caption: '区域编码',
     datatypekeies: 'area',
   },
