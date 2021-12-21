@@ -40,11 +40,11 @@ export function clearObsoleteStorage() {
 
 export function initGlobalEnumData() {
   const appStore = useAppStore();
-  AppConfigApi.getGlobalEnum().then((resolve) => {
+  AppConfigApi.getOdsEnum().then((resolve) => {
     appStore.setGlobalEnumData(resolve);
   });
 
-  AppConfigApi.getGlobalEnum('policy-manage').then((resolve) => {
+  AppConfigApi.getPolicyManageEnum().then((resolve) => {
     appStore.setGlobalEnumData(resolve);
   });
 }

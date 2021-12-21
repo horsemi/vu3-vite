@@ -8,60 +8,98 @@ export function useSearchDefinite(
   definiteCustomColumns: IColumnItem[],
   definiteScheme: Ref<ISchemeItem | undefined>
 ) {
-  const queryForm = ref();
-
-  const fast = [
-    {
-      requirement: 'Material',
-      operator: '=',
-      operatorList: [
-        {
-          key: '=',
-          name: 'equal',
-          value: '等于',
-        },
-        {
-          key: '<>',
-          name: 'notEqual',
-          value: '不等于',
-        },
-        {
-          key: 'isNull',
-          name: 'isNull',
-          value: '为空',
-        },
-        {
-          key: 'isNotNull',
-          name: 'isNotNull',
-          value: '不为空',
-        },
-      ],
-      value: '',
-      type: 'string',
-      datatypekeies: 'materials',
-      relationKey: 'MaterialCode',
-      logic: 'and',
-    },
-  ];
+  const schemeData = ref({
+    checkedIndex: 0,
+    scheme: [
+      {
+        fast: [
+          {
+            requirement: 'Material',
+            operator: '=',
+            operatorList: [
+              {
+                key: '=',
+                name: 'equal',
+                value: '等于',
+              },
+              {
+                key: '<>',
+                name: 'notEqual',
+                value: '不等于',
+              },
+              {
+                key: 'isNull',
+                name: 'isNull',
+                value: '为空',
+              },
+              {
+                key: 'isNotNull',
+                name: 'isNotNull',
+                value: '不为空',
+              },
+            ],
+            value: '',
+            type: 'string',
+            datatypekeies: 'materials',
+            relationKey: 'MaterialCode',
+            logic: 'and',
+          },
+        ],
+      },
+    ],
+  });
 
   function onSearch() {
-    const queryList = queryForm.value.queryList;
     definiteScheme.value = {
       id: '',
       title: '',
-      requirement: [...requirement, ...queryList],
+      requirement: [...requirement, ...schemeData.value.scheme[schemeData.value.checkedIndex].fast],
       orderBy: [],
       columns: definiteCustomColumns,
     };
+    console.log(definiteScheme.value);
   }
 
   function onReset() {
-    queryForm.value.changeQueryList(fast);
+    schemeData.value.scheme[schemeData.value.checkedIndex] = {
+      fast: [
+        {
+          requirement: 'Material',
+          operator: '=',
+          operatorList: [
+            {
+              key: '=',
+              name: 'equal',
+              value: '等于',
+            },
+            {
+              key: '<>',
+              name: 'notEqual',
+              value: '不等于',
+            },
+            {
+              key: 'isNull',
+              name: 'isNull',
+              value: '为空',
+            },
+            {
+              key: 'isNotNull',
+              name: 'isNotNull',
+              value: '不为空',
+            },
+          ],
+          value: '',
+          type: 'string',
+          datatypekeies: 'materials',
+          relationKey: 'MaterialCode',
+          logic: 'and',
+        },
+      ],
+    };
   }
 
   return {
-    queryForm,
-    fast,
+    schemeData,
     onSearch,
     onReset,
   };

@@ -7,7 +7,13 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
+  import type { ISchemeData } from '../types';
+  import type { ISchemeItem } from '../../QueryPopup/content/types';
+  import type { Ref } from 'vue';
+
+  import { defineComponent, inject } from 'vue';
+
+  import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -17,19 +23,34 @@
     components: {
       DxButton,
     },
-    emits: ['on-search', 'on-queryPlan', 'on-reset'],
+    emits: ['on-queryPlan'],
     setup(props, ctx) {
+      const schemeData = inject('schemeData') as Ref<ISchemeData>;
+      const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
+      const queryForm = inject('queryForm') as Ref<any>;
+      const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
+
       const { prefixCls } = useDesign('query-btn');
 
-      const onSearch = () => {
-        ctx.emit('on-search');
-      };
-      const onReset = () => {
-        ctx.emit('on-reset');
-      };
-      const onQueryPlan = () => {
+      function onSearch() {
+        const scheme = cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]);
+        queryForm.value.queryList.forEach((item) => {
+          if (item.requirement) {
+            scheme.requirement.push(item);
+          }
+        });
+        onChangeScheme(scheme);
+      }
+      function onReset() {
+        if (schemeData.value.checkedIndex < schemeDataTemp.value.scheme.length) {
+          const popupListTemp = schemeDataTemp.value.scheme[schemeData.value.checkedIndex];
+          schemeData.value.scheme[schemeData.value.checkedIndex] = cloneDeep(popupListTemp);
+          onSearch();
+        }
+      }
+      function onQueryPlan() {
         ctx.emit('on-queryPlan');
-      };
+      }
 
       return {
         prefixCls,

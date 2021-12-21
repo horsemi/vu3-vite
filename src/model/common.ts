@@ -5,11 +5,15 @@ import { getList } from '/@/api/ods/common';
 
 // columns的dataType 接受的类型有 'string' | 'number' | 'date' | 'boolean' | 'object' | 'datetime'
 
-export const getColumnList = async (
-  code: string,
-  customColumns: IColumnItem[],
-  systemCode = 'ods'
-): Promise<{ columnList: IColumnItem[]; key: string[]; keyType: IKeyType[] } | undefined> => {
+export const getColumnList = async ({
+  code,
+  customColumns,
+  systemCode = 'ods',
+}: {
+  code: string;
+  customColumns: IColumnItem[];
+  systemCode?: string;
+}): Promise<{ columnList: IColumnItem[]; key: string[]; keyType: IKeyType[] } | undefined> => {
   try {
     const res = await getList(code, systemCode);
     const fieldTypes = res.store.odata.fieldTypes as IFieldType[];

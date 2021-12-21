@@ -14,11 +14,13 @@
       :show-row-lines="options.showRowLines"
       :show-borders="options.showBorders"
       :row-alternation-enabled="options.rowAlternationEnabled"
-      :remote-operations="true"
+      :cache-enabled="false"
+      :remote-operations="remoteOperationValue"
       @selection-changed="onSelectionChanged"
       @option-changed="onOptionChanged"
       @cellClick="onCellClick"
     >
+      <DxLoadPanel :enabled="false" />
       <template v-for="(item, index) in tableColumns" :key="index">
         <DxColumn
           v-if="!item.hide"
@@ -68,11 +70,12 @@
         :mode="options.useScrolling ? 'virtual' : 'standard'"
         :row-rendering-mode="rowRenderingMode"
       />
-      <DxSummary v-if="summaryArray.length > 0">
+      <DxSummary v-if="summaryList.length > 0">
         <DxTotalItem
-          v-for="item in summaryArray"
+          v-for="item in summaryList"
           :key="item.columnName"
-          summary-type="custom"
+          :name="item.columnName"
+          :column="item.columnName"
           :show-in-column="item.columnName"
           :customize-text="item.showSummaryFn"
         >
@@ -107,9 +110,9 @@
 </template>
 
 <script lang="ts">
-  import type { ITableOptions } from './types';
+  import type { ITableOptions, ITableSummary } from './types';
   import type { IColumnItem, IKeyType } from '/@/model/types';
-  import type { ISchemeItem } from '../QueryPopup/content/types';
+  import type { ISchemeItem, ISummaryItem, SummaryType } from '../QueryPopup/content/types';
 
   import {
     defineComponent,
@@ -123,12 +126,13 @@
     onActivated,
   } from 'vue';
   import { cloneDeep, isEmpty } from 'lodash-es';
-
+  import { getOdataList } from '/@/api/ods/common';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { clientSummary, defaultTableOptions, getCompleteColumns } from './common';
   import { usePermissionStore } from '/@/store/modules/permission';
 
-  import { defaultTableOptions, getCompleteColumns, getTableDataSource } from './common';
   import { useAppStore } from '/@/store/modules/app';
+
   import { deepMerge } from '/@/utils';
   import DxContextMenu from 'devextreme-vue/context-menu';
   import DxDataGrid, {
@@ -138,12 +142,16 @@
     DxPager,
     DxLookup,
     DxScrolling,
+    DxLoadPanel,
     DxSummary,
     DxTotalItem,
   } from 'devextreme-vue/data-grid';
   import Clipboard from 'clipboard';
   import { odsMessage } from '/@/components/Message';
 
+  import { getOdataQuery } from '/@/utils/odata';
+  import CustomStore from 'devextreme/data/custom_store';
+  import DataSource from 'devextreme/data/data_source';
   export default defineComponent({
     components: {
       DxDataGrid,
@@ -154,6 +162,7 @@
       DxColumn,
       DxScrolling,
       DxContextMenu,
+      DxLoadPanel,
       DxSummary,
       DxTotalItem,
     },
@@ -204,12 +213,20 @@
         type: String,
         default: '',
       },
+      orderCode: {
+        type: String,
+        default: '',
+      },
+      systemCode: {
+        type: String,
+        default: '',
+      },
       queryListPermission: {
         type: String,
         default: '',
       },
       summaryArray: {
-        type: Array as PropType<{ columnName: string; showSummaryFn: (data: unknown) => void }[]>,
+        type: Array as PropType<{ columnName: string; summaryType: SummaryType }[]>,
         default: () => {
           return [];
         },
@@ -222,8 +239,10 @@
       const appStore = useAppStore();
       const dataGrid = ref();
       const pageIndex = ref(0);
+      const pageSize = ref(50);
       const pageSizes = [50, 100, 1000, 2000, 3000];
       const rowRenderingMode = ref('standard');
+      const remoteOperationValue = { paging: true, sorting: true, summary: true };
       const contentMenuTitle = [
         {
           text: '复制内容',
@@ -232,6 +251,7 @@
 
       const tableData = ref();
       const tableColumns = ref<IColumnItem[]>([]);
+      const summaryList = ref<ITableSummary[]>([]);
       const clipValue = ref('');
       const options = computed(() => {
         return deepMerge(cloneDeep(defaultTableOptions), props.tableOptions);
@@ -257,7 +277,6 @@
           });
         });
       });
-
       onActivated(() => {
         hiddenVirtualRow();
       });
@@ -305,6 +324,25 @@
         pageIndex.value = index >= 0 ? index : 0;
       };
 
+      // 处理汇总信息
+      const handleSummary = (summary: ISummaryItem[]) => {
+        const _summary: ITableSummary[] = [];
+        summary?.forEach((item) => {
+          item.mode === 'page' &&
+            _summary.push({
+              columnName: item.key,
+              showSummaryFn: () => {
+                return clientSummary({
+                  summary: { columnName: item.key, summaryType: item.type },
+                  source: tableData.value._items,
+                  allColumns: props.allColumns,
+                });
+              },
+            });
+        });
+        summaryList.value = _summary;
+      };
+
       const handleFilterScheme = (scheme: ISchemeItem) => {
         if (
           !isEmpty(scheme) &&
@@ -333,13 +371,10 @@
             tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
             if (SearchPermission.value) {
               // 重新 new datasource
-              tableData.value = getTableDataSource(
-                options.value,
-                scheme,
-                props.allColumns,
-                props.tableKey,
-                props.tableKeyType
-              );
+              getTableData();
+              nextTick(() => {
+                handleSummary(scheme?.summary);
+              });
             }
           });
         }
@@ -353,6 +388,45 @@
         }
       };
 
+      const getTableData = () => {
+        tableData.value = new DataSource({
+          store: new CustomStore({
+            key: 'id',
+            load: async (loadOptions) => {
+              if (Object.keys(loadOptions).length) {
+                const params = getOdataQuery({
+                  scheme: props.filterScheme,
+                  allColumns: props.allColumns,
+                  tableSort: loadOptions.sort,
+                });
+                const dataParams = { ...params, $top: pageSize.value };
+                pageIndex.value && (dataParams['$skip'] = pageIndex.value * pageSize.value);
+                const totalCountParams = { $aggregate: 'count(1)' };
+                params['$filter'] && (totalCountParams['$filter'] = params['$filter']);
+                params['$expand'] && (totalCountParams['$expand'] = params['$expand']);
+
+                const [data, totalCount] = await Promise.all([
+                  getOdataList(
+                    props.orderCode,
+                    dataParams,
+                    props.systemCode ? props.systemCode : undefined
+                  ),
+                  getOdataList(
+                    props.orderCode,
+                    totalCountParams,
+                    props.systemCode ? props.systemCode : undefined
+                  ),
+                ]);
+
+                return {
+                  data,
+                  totalCount: totalCount[0].count || 0,
+                };
+              }
+            },
+          }),
+        });
+      };
       const getSorting = (allowSort, expand, relationKey) => {
         if (expand && relationKey) {
           return false;
@@ -453,8 +527,12 @@
       }
 
       function onOptionChanged(e) {
+        if (e.fullName === 'paging.pageIndex') {
+          pageIndex.value = e.value;
+        }
         if (e.fullName === 'paging.pageSize') {
           // 切换页码也会有滚动条问题
+          pageSize.value = e.value;
           hiddenVirtualRow();
           rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
         }
@@ -473,6 +551,7 @@
         prefixCls,
         pageIndex,
         pageSizes,
+        summaryList,
         onSelectionChanged,
         handleJump,
         getGlobalEnumDataByCode,
@@ -491,6 +570,7 @@
         onOptionChanged,
         getTableDataSourceOption,
         onCellClick,
+        remoteOperationValue,
         SearchPermission,
       };
     },

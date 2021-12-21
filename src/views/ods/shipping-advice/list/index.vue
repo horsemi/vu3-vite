@@ -1,14 +1,6 @@
 <template>
   <div class="list">
-    <QueryPlan
-      ref="queryPlan"
-      :order-code="ORDER_CODE"
-      :all-columns="allColumns"
-      :query-list-permission="shippingAdviceType.shippingAdviceQueryList"
-      :scheme-data="schemeData"
-      :scheme-checked-index="schemeCheckedIndex"
-      @on-change-scheme="onChangeScheme"
-    />
+    <QueryPlan />
     <div v-loading="loading" class="example">
       <div class="btn__wrap">
         <div class="btn__box">
@@ -39,6 +31,7 @@
       <OdsTable
         ref="dataGrid"
         :table-options="options"
+        :order-code="ORDER_CODE"
         :data-source="dataSource"
         :columns="columns"
         :query-list-permission="shippingAdviceType.shippingAdviceQueryList"
@@ -59,13 +52,14 @@
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
 
-  import { defineComponent, ref, onMounted } from 'vue';
+  import { defineComponent, ref, provide } from 'vue';
   import { useRouter } from 'vue-router';
   import { usePermissionStore } from '/@/store/modules/permission';
   import { cloneDeep } from 'lodash-es';
   import { shippingAdviceType } from '/@/enums/actionPermission/shipping-advice';
 
   import { getColumns } from '/@/model/shipping-advices';
+  import { getDefiniteColumns } from '/@/model/shipping-advice-items';
   import { isArrayEmpty } from '/@/utils/bill/index';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
@@ -107,7 +101,11 @@
         scheme: [],
         checkedIndex: 0,
       });
-      const schemeCheckedIndex = ref<number>(0);
+      const schemeDataTemp = ref<ISchemeData>({
+        scheme: [],
+        checkedIndex: 0,
+      });
+      const schemeDefaultIndex = ref<number>(0);
 
       const onRefresh = () => {
         dataGrid.value.search();
@@ -163,7 +161,6 @@
 
       const onChangeScheme = (data: ISchemeItem) => {
         filterScheme.value = cloneDeep(data);
-        onRefresh();
       };
 
       const getTableData = async () => {
@@ -171,28 +168,43 @@
 
         schemeData.value.checkedIndex = schemeResult.checkedIndex;
         schemeData.value.scheme = schemeResult.scheme;
-        schemeCheckedIndex.value = schemeData.value.checkedIndex;
-        const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
+        schemeDataTemp.value = cloneDeep(schemeData.value);
+        schemeDefaultIndex.value = schemeData.value.checkedIndex;
+        const scheme = cloneDeep(schemeData.value.scheme[schemeDefaultIndex.value]);
 
         const fast = scheme.fast || [];
         if (fast.length > 0) {
           scheme.requirement.push(...fast);
         }
-        getColumns().then((res) => {
-          if (res) {
-            const { columnList, key, keyType } = res;
-            allColumns.value = columnList;
-            filterScheme.value = scheme;
+        Promise.all([getColumns(), getDefiniteColumns()]).then(([base, definite]) => {
+          let _allColumns: IColumnItem[] = [];
+          if (base) {
+            const { columnList, key, keyType } = base;
+            _allColumns.push(...columnList);
             tableKey.value = key;
             tableKeyType.value = keyType;
           }
+          if (definite) {
+            const { columnList } = definite;
+            _allColumns.push(...columnList);
+          }
+          const obj = {};
+          _allColumns = _allColumns.reduce((item, next) => {
+            obj[next.key] ? '' : (obj[next.key] = true && item.push(next));
+            return item;
+          }, [] as IColumnItem[]);
+          filterScheme.value = scheme;
+          allColumns.value = _allColumns;
         });
-        queryPlan.value.handleData();
       };
 
-      onMounted(() => {
-        getTableData();
-      });
+      getTableData();
+
+      provide('allColumns', allColumns);
+      provide('schemeData', schemeData);
+      provide('schemeDataTemp', schemeDataTemp);
+      provide('schemeDefaultIndex', schemeDefaultIndex);
+      provide('onChangeScheme', onChangeScheme);
 
       return {
         ORDER_CODE,
@@ -207,7 +219,6 @@
         allColumns,
         schemeData,
         filterScheme,
-        schemeCheckedIndex,
         handleBillCodeClick,
         onChangeScheme,
         onSubmitClick,

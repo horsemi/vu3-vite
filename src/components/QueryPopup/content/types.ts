@@ -1,6 +1,10 @@
 import type { IQueryItem } from '../../QueryPlan/types';
 
-type logicType = 'and' | 'or';
+type LogicType = 'and' | 'or';
+
+export type SummaryMode = 'page' | 'all';
+
+export type SummaryType = 'sum' | 'min' | 'max' | 'avg' | 'count';
 
 export interface IRequirementItem extends IQueryItem {
   /**
@@ -63,6 +67,28 @@ export interface ISchemeColumnsItem {
   mustKey?: boolean;
 }
 
+export interface ISummaryItem {
+  /**
+   * @description 字段
+   */
+  key: string;
+
+  /**
+   * @description 标题
+   */
+  caption: string;
+
+  /**
+   * @description 汇总方式
+   */
+  mode: SummaryMode;
+
+  /**
+   * @description 汇总类型
+   */
+  type: SummaryType;
+}
+
 export interface IFieldItem extends ISchemeColumnsItem {
   /**
    * @description 是否选中
@@ -117,6 +143,11 @@ export interface ISchemeItem {
   columns: ISchemeColumnsItem[];
 
   /**
+   * @description 汇总
+   */
+  summary: ISummaryItem[];
+
+  /**
    * @description 快速过滤
    */
   fast?: IQueryItem[];
@@ -125,6 +156,11 @@ export interface ISchemeItem {
    * @description 是否共享
    */
   isShare?: boolean;
+
+  /**
+   * @description 是否关联明细
+   */
+  isUseItems?: boolean;
 }
 
 export interface ISortOptions {
@@ -148,7 +184,7 @@ export interface ILogicOptions {
   /**
    * @description 值
    */
-  value: logicType;
+  value: LogicType;
 }
 
 export interface IMultiViewItem {

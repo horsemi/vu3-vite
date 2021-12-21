@@ -14,7 +14,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'material',
-    caption: '物料编码',
+    caption: '物料',
     relationKey: 'materialCode',
     foundationList: [
       {
@@ -26,7 +26,7 @@ export const customColumns: IColumnItem[] = [
         caption: '物料分组',
       },
     ],
-    datatypekeies: 'material',
+    datatypekeies: 'materials',
   },
   // {
   //   key: '',
@@ -46,7 +46,7 @@ export const customColumns: IColumnItem[] = [
         caption: '单位',
       },
     ],
-    datatypekeies: 'unit',
+    datatypekeies: 'units',
   },
   {
     key: 'qty',
@@ -167,5 +167,5 @@ export const customColumns: IColumnItem[] = [
 ];
 
 export const getDefiniteColumns = async () => {
-  return await getColumnList('shipping-order-items', customColumns);
+  return await getColumnList({ code: 'shipping-order-items', customColumns });
 };

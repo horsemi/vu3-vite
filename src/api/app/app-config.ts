@@ -3,11 +3,19 @@ import type { GlobalEnumType } from '/@/store/types';
 import { defHttp } from '/@/utils/http/axios';
 
 enum apiUrl {
-  getGlobalEnumUrl = '/api/odata/enums',
+  getOdsEnumUrl = '/api/scheme/enumerations',
+  getPpolicyManageEnumUrl = '/api/odata/enums',
 }
 
 export class AppConfigApi {
-  static getGlobalEnum(systemCode = 'ods') {
-    return defHttp.get<GlobalEnumType[]>({ url: `/${systemCode}${apiUrl.getGlobalEnumUrl}` });
+  static getOdsEnum() {
+    return defHttp.get<GlobalEnumType[]>({
+      url: `/ods${apiUrl.getOdsEnumUrl}`,
+    });
+  }
+  static getPolicyManageEnum() {
+    return defHttp.get<GlobalEnumType[]>({
+      url: `/policy-manage${apiUrl.getPpolicyManageEnumUrl}`,
+    });
   }
 }

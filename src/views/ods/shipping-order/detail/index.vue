@@ -98,6 +98,7 @@
       <div class="tab">
         <OdsTable
           :height="tableHeight"
+          :order-code="tableIndex === 0 ? 'shipping-order-items' : 'operation-records'"
           :query-list-permission="shippingOrderType.shippingOrderQueryItems"
           :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
           :filter-scheme="tableIndex === 0 ? definiteScheme : recordScheme"

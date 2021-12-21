@@ -14,11 +14,18 @@ export const getOdsListUrlByCode = (code: string, systemCode = 'ods'): string =>
 };
 
 export const getList = (code: string, systemCode = 'ods'): Promise<any> => {
-  return defHttp.get({ url: `/${systemCode}/api/odata/${code}/scheme/list` });
+  return defHttp.get({ url: `/${systemCode}/api/scheme/metadata?entity=${code}` });
 };
 
 export const getFilter = (code: string, systemCode = 'ods'): Promise<any> => {
   return defHttp.get({ url: `/${systemCode}/api/odata/${code}/scheme/filter` });
+};
+// 统一OdsTable接口
+export const getOdataList = (code: string, QueryParameters, systemCode = 'ods'): Promise<any> => {
+  return defHttp.post({
+    url: `/${systemCode}/api/search/${code}?flat=1`,
+    params: { ...QueryParameters },
+  });
 };
 
 export const getDataSource = (dataSource: IDataSource, oDataStore: IODataStore) => {

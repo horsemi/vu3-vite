@@ -64,6 +64,8 @@
         ref="dataGrid"
         :table-options="option"
         :data-source="dataSource"
+        :order-code="ORDER_CODE"
+        system-code="policy-manage"
         :columns="columns"
         :query-list-permission="shippingRuleType.shippingRuleQueryList"
         :all-columns="allColumns"
