@@ -93,6 +93,7 @@
         :loop="true"
         :animation-enabled="true"
         :focus-state-enabled="false"
+        @titleClick="onTableTitleClick"
       >
       </DxTabPanel>
       <div class="tab">
@@ -119,22 +120,15 @@
 
 <script lang="ts">
   import type { ITableOptions } from '/@/components/Table/types';
-  import type { IDetailItem } from '/@/utils/bill/types';
-  import type { IColumnItem } from '/@/model/types';
-  import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
+  import type { IRequirementItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch, reactive, nextTick } from 'vue';
+  import { defineComponent, ref, watch, nextTick } from 'vue';
   import { useRoute } from 'vue-router';
   import { usePermissionStore } from '/@/store/modules/permission';
   import { useThrottleFn } from '@vueuse/core';
-  import { getColumns } from '/@/model/shipping-orders';
-  import { getDefiniteColumns } from '/@/model/shipping-order-items';
-  import { getRecordColumns } from '/@/model/operation-record';
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
-  import { getDetailData, getDefiniteData, getRecordData } from './index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
-  import { isFoundationType } from '/@/model/common';
   import { shippingOrderType } from '/@/enums/actionPermission/shipping-order';
 
   import DxTabPanel from 'devextreme-vue/tab-panel';
@@ -142,6 +136,11 @@
   import DxButton from 'devextreme-vue/button';
 
   import DetailForm from '/@/components/DetailForm/index.vue';
+
+  import { useDetailForm } from './composables/useDetailForm';
+  import { useDefinite } from './composables/useDefinite';
+  import { useRecord } from './composables/useRecord';
+  import { useHeight } from './composables/useHeight';
 
   export default defineComponent({
     name: 'OdsShippingOrderDetail',
@@ -209,33 +208,66 @@
         ],
       };
       const opened = ref(false);
+      const route = useRoute();
+      const id = route.query.id as string;
+      const billCode = route.query.billCode as string;
       const selectedIndex = ref(0);
       const tableIndex = ref(0);
-      const tableHeight = ref('');
-      const rowSpan = 8;
-      const formRowHeight = 29;
-      const formRowPaddingTop = 12;
-      const overHeight = 330;
-      const arrowIconHeight = 26;
-      const defaultDefiniteHeight = `calc(100vh - ${overHeight}px)`;
-      const defaultRecordHeight = `calc(100vh - ${overHeight}px)`;
-
-      const route = useRoute();
-      const Id = route.query.Id as string;
-      const BillCode = route.query.BillCode as string;
-      const formData = ref();
-
-      const baseInformation = ref<IDetailItem[]>([]);
-      const receiverInformation = ref<IDetailItem[]>([]);
-      const logisticsInformation = ref<IDetailItem[]>([]);
-      const otherInformation = ref<IDetailItem[]>([]);
-
-      const baseFormData = ref<Record<string, unknown>>({});
-      const receiverFormData = ref<Record<string, unknown>>({});
-      const logisticsFormData = ref<Record<string, unknown>>({});
-      const otherFormData = ref<Record<string, unknown>>({});
-
       const isFixHeight = ref<boolean>(true);
+
+      const definiteRequirement: IRequirementItem[] = [
+        {
+          requirement: 'ShippingOrderId',
+          operator: '=',
+          value: id,
+          operatorList: [],
+          type: 'string',
+          relationKey: '',
+          datatypekeies: '',
+          logic: 'and',
+        },
+      ];
+
+      function detailFormCallBack() {
+        handleHeight(
+          multiViewItems.value[selectedIndex.value].rowCount,
+          tableIndex.value,
+          opened.value
+        );
+        nextTick(() => {
+          isFixHeight.value = false;
+        });
+      }
+
+      const {
+        formData,
+        baseFormData,
+        receiverFormData,
+        logisticsFormData,
+        otherFormData,
+        baseInformation,
+        receiverInformation,
+        logisticsInformation,
+        otherInformation,
+        refreshDetailForm,
+      } = useDetailForm(id, multiViewItems, detailFormCallBack);
+
+      const {
+        definiteScheme,
+        definiteAllColumns,
+        definiteCustomColumns,
+        refreshDefinite,
+      } = useDefinite(definiteRequirement);
+
+      const { recordScheme, recordAllColumns, refreshRecord } = useRecord(billCode);
+
+      const {
+        tableHeight,
+        defaultDefiniteHeight,
+        defaultRecordHeight,
+        handleHeight,
+        getColseHeight,
+      } = useHeight();
 
       const definiteOptions = ref<Partial<ITableOptions>>({
         height: defaultDefiniteHeight,
@@ -246,11 +278,7 @@
         },
         useScrolling: true,
       });
-      const definiteScheme = ref<ISchemeItem>();
-      const definiteAllColumns = ref<IColumnItem[]>([]);
-      let columnsData: any = reactive({});
-      let recordColumnsData: any = reactive({});
-      let definiteColumnsData: any = reactive({});
+
       const recordOptions = ref<Partial<ITableOptions>>({
         height: defaultRecordHeight,
         dataSourceOptions: {
@@ -260,73 +288,49 @@
         },
         useScrolling: true,
       });
-      const recordScheme = ref<ISchemeItem>();
-      const recordAllColumns = ref<IColumnItem[]>([]);
 
       const onRefresh = () => {
-        getData();
-        getDefinite();
-        getRecord();
+        refreshDetailForm(detailFormCallBack);
+        refreshDefinite();
+        refreshRecord();
       };
 
       const onSubmitClick = () => {
-        ShippingOrderApi.onShippingOrderSubmit([formData.value.GatheringParentCode])
-          .then(() => {
-            onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+        ShippingOrderApi.onShippingOrderSubmit([formData.value.GatheringParentCode]).finally(() => {
+          onRefresh();
+        });
       };
 
       const onApplyClick = () => {
-        ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode])
-          .then(() => {
-            onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+        ShippingOrderApi.onShippingOrderApply([formData.value.GatheringParentCode]).finally(() => {
+          onRefresh();
+        });
       };
 
       const onPushClick = () => {
-        ShippingOrderApi.onShippingOrderPush([formData.value.GatheringParentCode])
-          .then(() => {
-            onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+        ShippingOrderApi.onShippingOrderPush([formData.value.GatheringParentCode]).finally(() => {
+          onRefresh();
+        });
       };
 
       const onRedraftClick = () => {
-        ShippingOrderApi.onShippingOrderRedraft([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingOrderApi.onShippingOrderRedraft([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
 
       const onRevokeClick = () => {
-        ShippingOrderApi.onShippingOrderRevoke([formData.value.GatheringParentCode])
-          .then(() => {
-            onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+        ShippingOrderApi.onShippingOrderRevoke([formData.value.GatheringParentCode]).finally(() => {
+          onRefresh();
+        });
       };
 
       const onRecallClick = () => {
-        ShippingOrderApi.onShippingOrderRecall([formData.value.GatheringParentCode])
-          .then(() => {
-            onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+        ShippingOrderApi.onShippingOrderRecall([formData.value.GatheringParentCode]).finally(() => {
+          onRefresh();
+        });
       };
 
       const onItemButtonClick = (e) => {
@@ -346,177 +350,20 @@
         }
       };
 
+      const onTableTitleClick = () => {
+        handleHeight(
+          multiViewItems.value[selectedIndex.value].rowCount,
+          tableIndex.value,
+          opened.value
+        );
+      };
       const onChangeOpened = () => {
         opened.value = !opened.value;
-        handleHeight(selectedIndex.value);
-      };
-
-      const handleHeight = (sIndex: number) => {
-        // 表单行数
-        const rowCount = multiViewItems.value[sIndex].rowCount;
-        // 展开按钮高度，超出3行才会出现展开按钮
-        const iconHeight = rowCount > 3 ? arrowIconHeight : 0;
-        // 表格高度
-        let formHeight = 0;
-        if (opened.value || rowCount < 3) {
-          // 表格高度
-          formHeight = formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1);
-        } else {
-          formHeight = formRowHeight * 3 + formRowPaddingTop * 2;
-        }
-        // 总裁剪高度
-        const cutHeight = formHeight + iconHeight + overHeight;
-        tableHeight.value = `calc(100vh - ${cutHeight}px)`;
-      };
-
-      const getColseHeight = (rowCount) => {
-        if (rowCount >= 3) {
-          return `${formRowHeight * 3 + formRowPaddingTop * 2}px`;
-        } else {
-          return `${formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1)}px`;
-        }
-      };
-
-      const getRowCount = (data: IDetailItem[]) => {
-        let len = 0;
-        data.forEach((item) => {
-          if (!item.hide) {
-            if (item.colSpan) {
-              len += item.colSpan;
-            } else if (item.editorType === 'dxSwitch') {
-              len += 1;
-            } else {
-              len += 2;
-            }
-          }
-        });
-        return Math.ceil(len / rowSpan);
-      };
-
-      const getDetail = (columnsData: any) => {
-        getDetailData(['Id', '=', Id], columnsData).then((res) => {
-          if (res) {
-            const { baseList, receiverList, logisticsList, otherList, data } = res;
-
-            // 页面中业务操作需要使用的字段
-            formData.value = {
-              GatheringParentCode: (data as Record<string, unknown>).GatheringParentCode,
-            };
-
-            /** 实验性功能 */
-            baseList.forEach((item) => {
-              if (isFoundationType(item)) {
-                baseFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
-              }
-              baseFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            receiverList.forEach((item) => {
-              if (isFoundationType(item)) {
-                receiverFormData.value[item.expand!] = (data as Record<string, unknown>)[
-                  item.expand!
-                ];
-              }
-              receiverFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            logisticsList.forEach((item) => {
-              if (isFoundationType(item)) {
-                logisticsFormData.value[item.expand!] = (data as Record<string, unknown>)[
-                  item.expand!
-                ];
-              }
-              logisticsFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            otherList.forEach((item) => {
-              if (isFoundationType(item)) {
-                otherFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
-              }
-              otherFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            baseInformation.value = baseList;
-            receiverInformation.value = receiverList;
-            logisticsInformation.value = logisticsList;
-            otherInformation.value = otherList;
-            [
-              baseInformation.value,
-              receiverInformation.value,
-              logisticsInformation.value,
-              otherInformation.value,
-            ].forEach((data, index) => {
-              multiViewItems.value[index].rowCount = getRowCount(data);
-            });
-            handleHeight(selectedIndex.value);
-            nextTick(() => {
-              isFixHeight.value = false;
-            });
-          }
-        });
-      };
-
-      const getData = async () => {
-        if (JSON.stringify(columnsData) === '{}') {
-          columnsData = await getColumns();
-        }
-        getDetail(columnsData);
-      };
-
-      const getDefinite = async () => {
-        if (JSON.stringify(definiteColumnsData) === '{}') {
-          definiteColumnsData = await getDefiniteColumns();
-        }
-        getDefiniteData(definiteColumnsData).then((res) => {
-          if (res) {
-            definiteAllColumns.value = res.columnList;
-            definiteScheme.value = {
-              id: '',
-              title: '',
-              requirement: [
-                {
-                  requirement: 'ShippingOrderId',
-                  operator: '=',
-                  value: Id,
-                  operatorList: [],
-                  type: 'string',
-                  relationKey: '',
-                  datatypekeies: '',
-                },
-              ],
-              orderBy: [],
-              columns: res.definite,
-            };
-          }
-        });
-      };
-
-      const getRecord = async () => {
-        if (JSON.stringify(recordColumnsData) === '{}') {
-          recordColumnsData = await getRecordColumns();
-        }
-        getRecordData(recordColumnsData).then((res) => {
-          if (res) {
-            recordAllColumns.value = res.columnList;
-            recordScheme.value = {
-              id: '',
-              title: '',
-              requirement: [
-                {
-                  requirement: 'BillCode',
-                  operator: '=',
-                  value: BillCode,
-                  operatorList: [],
-                  type: 'string',
-                  relationKey: '',
-                  datatypekeies: '',
-                },
-              ],
-              orderBy: [],
-              columns: res.record,
-            };
-          }
-        });
+        handleHeight(
+          multiViewItems.value[selectedIndex.value].rowCount,
+          tableIndex.value,
+          opened.value
+        );
       };
 
       // 所有操作设置为节流
@@ -531,15 +378,13 @@
       const onItemButtonClickThrottleFn = useThrottleFn(onItemButtonClick, DEFAULT_THROTTLE_TIME);
 
       watch(selectedIndex, (sIndex) => {
-        handleHeight(sIndex);
+        handleHeight(multiViewItems.value[sIndex].rowCount, tableIndex.value, opened.value);
       });
 
       onRefresh();
 
       return {
         tableHeight,
-        formRowHeight,
-        formRowPaddingTop,
         definiteOptions,
         definiteScheme,
         definiteAllColumns,
@@ -572,6 +417,7 @@
         getDataThrottleFn,
         onChangeOpened,
         getColseHeight,
+        onTableTitleClick,
         dropDownButtonAttributes: {
           class: 'first-dropButton',
         },

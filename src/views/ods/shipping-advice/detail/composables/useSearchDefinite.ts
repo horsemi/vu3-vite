@@ -14,7 +14,7 @@ export function useSearchDefinite(
       {
         fast: [
           {
-            requirement: 'Material',
+            requirement: 'material',
             operator: '=',
             operatorList: [
               {
@@ -41,7 +41,7 @@ export function useSearchDefinite(
             value: '',
             type: 'string',
             datatypekeies: 'materials',
-            relationKey: 'MaterialCode',
+            relationKey: 'materialCode',
             logic: 'and',
           },
         ],
@@ -56,6 +56,7 @@ export function useSearchDefinite(
       requirement: [...requirement, ...schemeData.value.scheme[schemeData.value.checkedIndex].fast],
       orderBy: [],
       columns: definiteCustomColumns,
+      summary: [],
     };
     console.log(definiteScheme.value);
   }
@@ -64,7 +65,7 @@ export function useSearchDefinite(
     schemeData.value.scheme[schemeData.value.checkedIndex] = {
       fast: [
         {
-          requirement: 'Material',
+          requirement: 'material',
           operator: '=',
           operatorList: [
             {
@@ -91,7 +92,7 @@ export function useSearchDefinite(
           value: '',
           type: 'string',
           datatypekeies: 'materials',
-          relationKey: 'MaterialCode',
+          relationKey: 'materialCode',
           logic: 'and',
         },
       ],

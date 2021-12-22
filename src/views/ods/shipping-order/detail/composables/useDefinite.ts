@@ -7,9 +7,8 @@ import { getDefiniteColumns } from '/@/model/shipping-advice-items';
 export function useDefinite(requirement: IRequirementItem[]) {
   const definiteCustomColumns: IColumnItem[] = [
     {
-      key: 'shippingAdviceId',
-      caption: 'shippingAdviceId',
-      hide: true,
+      key: 'shippingOrderId',
+      caption: 'shippingOrderId',
     },
     {
       key: 'materialCode',
@@ -22,10 +21,8 @@ export function useDefinite(requirement: IRequirementItem[]) {
       relationKey: 'materialCode',
     },
     {
-      key: 'defaultArea_name',
-      caption: '默认区域',
-      expand: 'defaultArea',
-      relationKey: 'defaultAreaCode',
+      key: 'unitCode',
+      caption: '单位编码',
     },
     {
       key: 'unit_name',
@@ -46,8 +43,12 @@ export function useDefinite(requirement: IRequirementItem[]) {
       caption: 'BOM版本',
     },
     {
+      key: 'warehouseCode',
+      caption: '仓库编码',
+    },
+    {
       key: 'deliveryWarehouse_name',
-      caption: '仓库',
+      caption: '仓库名称',
       expand: 'deliveryWarehouse',
       relationKey: 'warehouseCode',
     },
@@ -72,8 +73,8 @@ export function useDefinite(requirement: IRequirementItem[]) {
       caption: '客户物料名称',
     },
     {
-      key: 'isMarble',
-      caption: '大理石',
+      key: 'parentMaterialCode',
+      caption: '父项物料编码',
     },
     {
       key: 'outSourceBillCode',
@@ -88,10 +89,6 @@ export function useDefinite(requirement: IRequirementItem[]) {
       caption: '备注',
     },
     {
-      key: 'outRowCode',
-      caption: '源单行号',
-    },
-    {
       key: 'taoBaoCode',
       caption: '平台单号',
     },
@@ -100,32 +97,16 @@ export function useDefinite(requirement: IRequirementItem[]) {
       caption: '平台子单号',
     },
     {
-      key: 'isVerification',
-      caption: '是否核销',
-    },
-    {
-      key: 'categoryLCode',
-      caption: '产品大类',
-    },
-    {
-      key: 'categoryMCode',
-      caption: '产品中类',
-    },
-    {
-      key: 'categorySCode',
-      caption: '产品小类',
-    },
-    {
-      key: 'categoryXSCode',
-      caption: '产品细类',
-    },
-    {
       key: 'shop',
       caption: '店铺',
     },
     {
       key: 'buyShop',
       caption: '收入店铺',
+    },
+    {
+      key: 'provideSalePrice',
+      caption: '供货售价',
     },
     {
       key: 'inWarehouseCode',
@@ -146,12 +127,6 @@ export function useDefinite(requirement: IRequirementItem[]) {
     {
       key: 'texture',
       caption: '材质',
-    },
-    {
-      key: 'area_Name',
-      caption: '区域',
-      expand: 'area',
-      relationKey: 'areaCode',
     },
     {
       key: 'sourceMaterialCode',
