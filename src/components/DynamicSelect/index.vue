@@ -197,14 +197,14 @@
       function initData(paramKey: string) {
         if (paramKey) {
           if (paramListComputed.value.length === 0) return;
-          let {
-            type,
-            operations,
-            datatypekeies,
-            relationKey,
-            expand,
-            filter,
-          } = (paramListComputed.value as IColumnItem[]).filter((item) => paramKey === item.key)[0];
+
+          const col = (paramListComputed.value as IColumnItem[]).find(
+            (item) => paramKey === item.key
+          );
+
+          if (!col) return;
+
+          let { type, operations, datatypekeies, relationKey, expand, filter } = col;
 
           paramFilter.value = filter;
 

@@ -17,7 +17,8 @@ export const defaultTableOptions: ITableOptions = {
     },
     sort: [
       {
-        selector: 'Id',
+        selector: 'id',
+        desc: true,
       },
     ],
   },

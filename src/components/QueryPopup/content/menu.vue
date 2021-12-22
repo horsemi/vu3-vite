@@ -99,14 +99,11 @@
           if (checkedIndex.value === 0) {
             onSaveScheme();
           } else {
-            saveSchemesData(schemeData.value.scheme[schemeData.value.checkedIndex]).then(
-              (resolve) => {
-                if (resolve) {
-                  schemeData.value.scheme[schemeData.value.checkedIndex] = resolve;
-                  schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(resolve);
-                }
-              }
-            );
+            saveSchemesData(schemeData.value.scheme[schemeData.value.checkedIndex]).then(() => {
+              schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(
+                schemeData.value.scheme[schemeData.value.checkedIndex]
+              );
+            });
           }
         }
       }

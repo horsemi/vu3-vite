@@ -58,7 +58,6 @@ export function useSearchDefinite(
       columns: definiteCustomColumns,
       summary: [],
     };
-    console.log(definiteScheme.value);
   }
 
   function onReset() {

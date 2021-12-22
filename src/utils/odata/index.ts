@@ -103,6 +103,13 @@ const getSelectAndExpand = (
             select.push(item.relationKey);
           }
         } else {
+          const keyArr = item.key.split('.');
+          if (keyArr.length > 1) {
+            const relationExpand = keyArr.slice(0, keyArr.length - 1).join('.');
+            if (!expand.includes(relationExpand)) {
+              expand.push(relationExpand);
+            }
+          }
           select.push(item.key);
         }
         break;
@@ -250,7 +257,7 @@ export const getOdataQuery = ({
   }
   const { columns, requirement } = scheme;
 
-  const { select, expand } = getSelectAndExpand(allColumns, columns, ['Id']);
+  const { select, expand } = getSelectAndExpand(allColumns, columns, ['id']);
   const filter = requirement?.length ? getFilter(requirement) : [];
   const orderby = orderBy?.length ? getSort(orderBy) : [];
   const $select = select.length ? select.join(',') : '';
