@@ -4,40 +4,40 @@ import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 import { ref } from 'vue';
 import { getRecordColumns } from '/@/model/operation-record';
 
-export function useRecord(billCode: string) {
+export function useRecord(BillCode: string) {
   const recordCustomColumns: IColumnItem[] = [
     {
-      key: 'billId',
+      key: 'BillId',
       caption: '单据ID',
     },
     {
-      key: 'billCode',
+      key: 'BillCode',
       caption: '单据编码',
     },
     {
-      key: 'billTypeCode',
+      key: 'BillTypeCode',
       caption: '单据类型',
     },
     {
-      key: 'documentStatus',
+      key: 'DocumentStatus',
       caption: '操作类型',
     },
     {
-      key: 'operatedTime',
+      key: 'OperatedTime',
       caption: '操作时间',
     },
     {
-      key: 'operator_accountName',
+      key: 'Operator_AccountName',
       caption: '操作人',
-      expand: 'operator',
-      relationKey: 'operatorId',
+      expand: 'Operator',
+      relationKey: 'OperatorId',
     },
     {
-      key: 'ipAddress',
+      key: 'IpAddress',
       caption: '操作IP',
     },
     {
-      key: 'description',
+      key: 'Description',
       caption: '操作描述',
     },
   ];
@@ -53,9 +53,9 @@ export function useRecord(billCode: string) {
         title: '',
         requirement: [
           {
-            requirement: 'billCode',
+            requirement: 'BillCode',
             operator: '=',
-            value: billCode,
+            value: BillCode,
             operatorList: [],
             type: 'string',
             relationKey: '',
@@ -75,9 +75,9 @@ export function useRecord(billCode: string) {
       title: '',
       requirement: [
         {
-          requirement: 'billCode',
+          requirement: 'BillCode',
           operator: '=',
-          value: billCode,
+          value: BillCode,
           operatorList: [],
           type: 'string',
           relationKey: '',

@@ -4,49 +4,49 @@ import { getColumnList } from './common';
 
 export const customColumns: IColumnItem[] = [
   {
-    key: 'billId',
+    key: 'BillId',
     caption: '单据ID',
     hide: true,
   },
   {
-    key: 'billCode',
+    key: 'BillCode',
     caption: '单据编码',
     hide: true,
   },
   {
-    key: 'billTypeCode',
+    key: 'BillTypeCode',
     caption: '单据类型',
   },
   {
-    key: 'documentStatus',
+    key: 'DocumentStatus',
     caption: '操作类型',
   },
   {
-    key: 'operatedTime',
+    key: 'OperatedTime',
     caption: '操作时间',
   },
   {
-    key: 'operatorId',
+    key: 'OperatorId',
     caption: '操作人ID',
   },
   {
-    key: 'operator',
+    key: 'Operator',
     caption: '操作人ID',
-    relationKey: 'operatorId',
+    relationKey: 'OperatorId',
     notAllowQuery: true,
     foundationList: [
       {
-        key: 'operator_accountName',
+        key: 'Operator_AccountName',
         caption: '操作人',
       },
     ],
   },
   {
-    key: 'ipAddress',
+    key: 'IpAddress',
     caption: '操作IP',
   },
   {
-    key: 'description',
+    key: 'Description',
     caption: '操作描述',
   },
 ];

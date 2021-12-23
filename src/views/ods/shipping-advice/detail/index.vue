@@ -243,8 +243,8 @@
 
       const opened = ref(false);
       const route = useRoute();
-      const id = route.query.id as string;
-      const billCode = route.query.billCode as string;
+      const Id = route.query.Id as string;
+      const BillCode = route.query.BillCode as string;
       const selectedIndex = ref(0);
       const tableIndex = ref(0);
       const isFixHeight = ref<boolean>(true);
@@ -253,7 +253,7 @@
         {
           requirement: 'ShippingAdviceId',
           operator: '=',
-          value: id,
+          value: Id,
           operatorList: [],
           type: 'string',
           relationKey: '',
@@ -288,7 +288,7 @@
         taskInformation,
         otherInformation,
         refreshDetailForm,
-      } = useDetailForm(id, multiViewItems, detailFormCallBack);
+      } = useDetailForm(Id, multiViewItems, detailFormCallBack);
 
       const {
         definiteScheme,
@@ -297,7 +297,7 @@
         refreshDefinite,
       } = useDefinite(definiteRequirement);
 
-      const { recordScheme, recordAllColumns, refreshRecord } = useRecord(billCode);
+      const { recordScheme, recordAllColumns, refreshRecord } = useRecord(BillCode);
       const { onSearch, onReset, schemeData } = useSearchDefinite(
         definiteRequirement,
         definiteCustomColumns,

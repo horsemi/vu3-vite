@@ -8,7 +8,7 @@ import { Ref, ref } from 'vue';
 import { getOdataList } from '/@/api/ods/common';
 
 export function useDetailForm(
-  id: string,
+  Id: string,
   multiViewItems: Ref<
     {
       title: string;
@@ -20,63 +20,63 @@ export function useDetailForm(
 ) {
   const base: IDetailItem[] = [
     {
-      key: 'billCode',
+      key: 'BillCode',
       caption: '单据编码',
     },
     {
-      key: 'billTypeCode',
+      key: 'BillTypeCode',
       caption: '单据类型',
     },
     {
-      key: 'deliveryWarehouseCode',
+      key: 'DeliveryWarehouseCode',
       caption: '发货仓库',
     },
     {
-      key: 'totalPackage',
+      key: 'TotalPackage',
       caption: '总包件数',
     },
     {
-      key: 'documentStatus',
+      key: 'DocumentStatus',
       caption: '单据状态',
     },
     {
-      key: 'billDate',
+      key: 'BillDate',
       caption: '单据日期',
     },
     {
-      key: 'batchCode',
+      key: 'BatchCode',
       caption: '发货批次',
     },
     {
-      key: 'totalPack',
+      key: 'TotalPack',
       caption: '总包裹数',
     },
     {
-      key: 'operationStatus',
+      key: 'OperationStatus',
       caption: '业务状态',
     },
     {
-      key: 'markStatus',
+      key: 'MarkStatus',
       caption: '标记状态',
     },
     {
-      key: 'totalOrderCount',
+      key: 'TotalOrderCount',
       caption: '总订单数',
     },
     {
-      key: 'totalVolume',
+      key: 'TotalVolume',
       caption: '总体积数',
     },
     {
-      key: 'isGatheringOrder',
+      key: 'IsGatheringOrder',
       caption: '集货订单',
     },
     {
-      key: 'isMergeLockOrder',
+      key: 'IsMergeLockOrder',
       caption: '合并锁单',
     },
     {
-      key: 'isAgencyOrder',
+      key: 'IsAgencyOrder',
       caption: '经销商订单',
       colSpan: 2,
     },
@@ -84,60 +84,60 @@ export function useDetailForm(
 
   const receiver: IDetailItem[] = [
     {
-      key: 'nickname',
+      key: 'Nickname',
       caption: '买家昵称',
     },
     {
-      key: 'receiver',
+      key: 'Receiver',
       caption: '收货人',
     },
     {
-      key: 'telephone',
+      key: 'Telephone',
       caption: '电话',
     },
     {
-      key: 'totalActualPrice',
+      key: 'TotalActualPrice',
       caption: '实际售价汇总',
     },
     {
-      key: 'provinceCode',
+      key: 'ProvinceCode',
       caption: '省',
     },
     {
-      key: 'cityCode',
+      key: 'CityCode',
       caption: '市',
     },
     {
-      key: 'districtCode',
+      key: 'DistrictCode',
       caption: '区',
     },
     {
-      key: 'streetCode',
+      key: 'StreetCode',
       caption: '街道',
     },
     {
-      key: 'agencyCode',
+      key: 'AgencyCode',
       caption: '经销商',
     },
     {
-      key: 'promisedDeliveryDate',
+      key: 'PromisedDeliveryDate',
       caption: '承诺发货时间',
     },
     {
-      key: 'detailAddress',
+      key: 'DetailAddress',
       caption: '详细地址',
       colSpan: 4,
     },
     {
-      key: 'showroomContacts',
+      key: 'ShowroomContacts',
       caption: '展厅联系人',
     },
     {
-      key: 'showroomTelephone',
+      key: 'ShowroomTelephone',
       caption: '展厅电话',
     },
     {
-      key: 'showroomAddress',
+      key: 'ShowroomAddress',
       caption: '展厅提货地址',
       colSpan: 4,
     },
@@ -146,7 +146,7 @@ export function useDetailForm(
     //   caption: '回收服务',
     // },
     {
-      key: 'memo',
+      key: 'Memo',
       caption: '备注',
       colSpan: 4,
     },
@@ -154,204 +154,204 @@ export function useDetailForm(
 
   const logistics: IDetailItem[] = [
     {
-      key: 'gatheringPointCode',
+      key: 'GatheringPointCode',
       caption: '集货点',
     },
     {
-      key: 'nonstopContractorCode',
+      key: 'NonstopContractorCode',
       caption: '直达承运商',
     },
     {
-      key: 'handCarLine',
+      key: 'HandCarLine',
       caption: '挂车路线',
     },
     {
-      key: 'trainCode',
+      key: 'TrainCode',
       caption: '车次',
     },
     {
-      key: 'deliveryPointCode',
+      key: 'DeliveryPointCode',
       caption: '提货点',
     },
     {
-      key: 'transitContractorCode',
+      key: 'TransitContractorCode',
       caption: '转运承运商',
     },
     {
-      key: 'smallCarLine',
+      key: 'SmallCarLine',
       caption: '小挂路线',
     },
     {
-      key: 'carModeCode',
+      key: 'CarModeCode',
       caption: '车型',
     },
     {
-      key: 'threeServicePointCode',
+      key: 'ThreeServicePointCode',
       caption: '三包点',
     },
     {
-      key: 'contractorCode',
+      key: 'ContractorCode',
       caption: '中转承运商',
     },
     {
-      key: 'handCarGroup',
+      key: 'HandCarGroup',
       caption: '挂车组合',
       showProperty: 'GroupName',
     },
     {
-      key: 'loadType',
+      key: 'LoadType',
       caption: '配载方式',
     },
     {
-      key: 'threeServiceCostPrice',
+      key: 'ThreeServiceCostPrice',
       caption: '三包成本',
     },
     {
-      key: 'threeServiceSupplierCode',
+      key: 'ThreeServiceSupplierCode',
       caption: '三包服务商',
     },
     {
-      key: 'smallCarGroup',
+      key: 'SmallCarGroup',
       caption: '小挂组合',
       showProperty: 'GroupName',
     },
     {
-      key: 'sendGoodsMode',
+      key: 'SendGoodsMode',
       caption: '发货模式',
     },
     {
-      key: 'serviceItemCode',
+      key: 'ServiceItemCode',
       caption: '服务项目',
     },
     {
-      key: 'logisticCode',
+      key: 'LogisticCode',
       caption: '物流单号',
     },
 
     {
-      key: 'lineAreaCode',
+      key: 'LineAreaCode',
       caption: '线路区域',
     },
     {
-      key: 'logisticsCostPrice',
+      key: 'LogisticsCostPrice',
       caption: '物流成本',
     },
     {
-      key: 'threeServiceFeeTypeCode',
+      key: 'ThreeServiceFeeTypeCode',
       caption: '三包费用类型',
     },
     {
-      key: 'branchLineType',
+      key: 'BranchLineType',
       caption: '支装类型',
     },
     {
-      key: 'logisticsLine',
+      key: 'LogisticsLine',
       caption: '物流专线',
     },
     {
-      key: 'freightTypeCode',
+      key: 'FreightTypeCode',
       caption: '运费类型',
     },
   ];
 
   const express: IDetailItem[] = [
     {
-      key: 'bagsCentralizeAddress',
+      key: 'BagsCentralizeAddress',
       caption: '集包地',
     },
     {
-      key: 'expressSiteName',
+      key: 'ExpressSiteName',
       caption: '快递点名称',
     },
     {
-      key: 'logisticNoMsg',
+      key: 'LogisticNoMsg',
       caption: '快递号信息',
     },
     {
-      key: 'logisticNoStatus',
+      key: 'LogisticNoStatus',
       caption: '快递号状态',
     },
     {
-      key: 'paintMarker',
+      key: 'PaintMarker',
       caption: '大头笔',
     },
     {
-      key: 'expressStandard',
+      key: 'ExpressStandard',
       caption: '快递规格',
     },
     {
-      key: 'paintMarkerMsg',
+      key: 'PaintMarkerMsg',
       caption: '大头笔信息',
     },
     {
-      key: 'paintMarkerStatus',
+      key: 'PaintMarkerStatus',
       caption: '大头笔状态',
     },
     {
-      key: 'totalWeight',
+      key: 'TotalWeight',
       caption: '重量',
     },
   ];
 
   const task: IDetailItem[] = [
     {
-      key: 'lockBatchTime',
+      key: 'LockBatchTime',
       caption: '锁定批次时间',
     },
     {
-      key: 'promisedDeliveryDate',
+      key: 'PromisedDeliveryDate',
       caption: '承诺发货时间',
     },
     {
-      key: 'sentDate',
+      key: 'SentDate',
       caption: '发送时间',
     },
     {
-      key: 'returnGoodsStatus',
+      key: 'ReturnGoodsStatus',
       caption: '退货状态',
     },
     {
-      key: 'lockBatchUserCode',
+      key: 'LockBatchUserCode',
       caption: '锁定批次人',
-      keyProperty: 'id',
-      showProperty: 'accountName',
+      keyProperty: 'Id',
+      showProperty: 'AccountName',
     },
     {
-      key: 'sendGoodsTimeOut',
+      key: 'SendGoodsTimeOut',
       caption: '发货超时时间',
     },
     {
-      key: 'cancelledTime',
+      key: 'CancelledTime',
       caption: '作废时间',
     },
     {
-      key: 'interceptReasonCode',
+      key: 'InterceptReasonCode',
       caption: '截货原因',
     },
     {
-      key: 'detailRowsCount',
+      key: 'DetailRowsCount',
       caption: '明细行数',
     },
     {
-      key: 'sendGoodsTime',
+      key: 'SendGoodsTime',
       caption: '发货时间',
     },
     {
-      key: 'cancellerId',
+      key: 'CancellerId',
       caption: '作废人',
-      keyProperty: 'id',
-      showProperty: 'accountName',
+      keyProperty: 'Id',
+      showProperty: 'AccountName',
     },
     {
-      key: 'interceptTypeCode',
+      key: 'InterceptTypeCode',
       caption: '截货类型',
     },
     {
-      key: 'areaName',
+      key: 'AreaName',
       caption: '区域',
     },
     {
-      key: 'isEntry',
+      key: 'IsEntry',
       caption: '进场',
       hide: true,
     },
@@ -366,93 +366,93 @@ export function useDetailForm(
     //   hide: true,
     // },
     {
-      key: 'isInstall',
+      key: 'IsInstall',
       caption: '上门服务',
     },
     {
-      key: 'isCancelled',
+      key: 'IsCancelled',
       caption: '作废状态',
     },
   ];
 
   const other: IDetailItem[] = [
     {
-      key: 'createdTime',
+      key: 'CreatedTime',
       caption: '创建时间',
     },
     {
-      key: 'creatorId',
+      key: 'CreatorId',
       caption: '创建人',
-      keyProperty: 'id',
-      showProperty: 'accountName',
+      keyProperty: 'Id',
+      showProperty: 'AccountName',
     },
     {
-      key: 'customerCode',
+      key: 'CustomerCode',
       caption: '客户',
     },
     {
-      key: 'gatheringParentCode',
+      key: 'GatheringParentCode',
       caption: '父单号',
     },
     {
-      key: 'updatedTime',
+      key: 'UpdatedTime',
       caption: '修改时间',
     },
     {
-      key: 'updaterId',
+      key: 'UpdaterId',
       caption: '修改人',
-      keyProperty: 'id',
-      showProperty: 'accountName',
+      keyProperty: 'Id',
+      showProperty: 'AccountName',
     },
     {
-      key: 'group',
+      key: 'Group',
       caption: '分组',
     },
     {
-      key: 'outSourceBillCode',
+      key: 'OutSourceBillCode',
       caption: '原单编号',
     },
     {
-      key: 'appliedTime',
+      key: 'AppliedTime',
       caption: '审核时间',
     },
     {
-      key: 'applierId',
+      key: 'ApplierId',
       caption: '审核人',
-      keyProperty: 'id',
-      showProperty: 'accountName',
+      keyProperty: 'Id',
+      showProperty: 'AccountName',
     },
     {
-      key: 'customerSalesman',
+      key: 'CustomerSalesman',
       caption: '业务员',
     },
     {
-      key: 'outSaleBillCode',
+      key: 'OutSaleBillCode',
       caption: '销售单号',
     },
     {
-      key: 'sentStatus',
+      key: 'SentStatus',
       caption: '发送状态',
     },
     {
-      key: 'totalMarble',
+      key: 'TotalMarble',
       caption: '大理石数量',
     },
     {
-      key: 'taoBaoCode',
+      key: 'TaoBaoCode',
       caption: '平台单号',
     },
     {
-      key: 'outBillFormCode',
+      key: 'OutBillFormCode',
       caption: '原单标识',
     },
     {
-      key: 'sentMemo',
+      key: 'SentMemo',
       caption: '发送备注',
       colSpan: 6,
     },
     {
-      key: 'outSourceBillType',
+      key: 'OutSourceBillType',
       caption: '原单类型',
     },
   ];
@@ -518,7 +518,7 @@ export function useDetailForm(
     const detailRes = await getOdataList('shipping-advices', {
       $select: select.join(','),
       $expand: expand.join(','),
-      $filter: `id eq '${id}'`,
+      $filter: `Id eq '${Id}'`,
     });
 
     const data = detailRes[0];

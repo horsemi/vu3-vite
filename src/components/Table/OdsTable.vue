@@ -385,7 +385,7 @@
       const getTableData = () => {
         tableData.value = new DataSource({
           store: new CustomStore({
-            key: 'id',
+            key: 'Id',
             load: async (loadOptions) => {
               if (Object.keys(loadOptions).length) {
                 const params = getOdataQuery({
@@ -416,7 +416,7 @@
 
                 return {
                   data,
-                  totalCount: totalCount[0].count || 0,
+                  totalCount: totalCount[0]['Count'] || 0,
                 };
               }
             },

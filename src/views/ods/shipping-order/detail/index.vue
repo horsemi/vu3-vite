@@ -209,8 +209,8 @@
       };
       const opened = ref(false);
       const route = useRoute();
-      const id = route.query.id as string;
-      const billCode = route.query.billCode as string;
+      const Id = route.query.Id as string;
+      const BillCode = route.query.BillCode as string;
       const selectedIndex = ref(0);
       const tableIndex = ref(0);
       const isFixHeight = ref<boolean>(true);
@@ -219,7 +219,7 @@
         {
           requirement: 'ShippingOrderId',
           operator: '=',
-          value: id,
+          value: Id,
           operatorList: [],
           type: 'string',
           relationKey: '',
@@ -250,16 +250,13 @@
         logisticsInformation,
         otherInformation,
         refreshDetailForm,
-      } = useDetailForm(id, multiViewItems, detailFormCallBack);
+      } = useDetailForm(Id, multiViewItems, detailFormCallBack);
 
-      const {
-        definiteScheme,
-        definiteAllColumns,
-        definiteCustomColumns,
-        refreshDefinite,
-      } = useDefinite(definiteRequirement);
+      const { definiteScheme, definiteAllColumns, refreshDefinite } = useDefinite(
+        definiteRequirement
+      );
 
-      const { recordScheme, recordAllColumns, refreshRecord } = useRecord(billCode);
+      const { recordScheme, recordAllColumns, refreshRecord } = useRecord(BillCode);
 
       const {
         tableHeight,

@@ -4,25 +4,25 @@ import { getColumnList } from './common';
 
 export const customColumns: IColumnItem[] = [
   {
-    key: 'shippingOrderId',
+    key: 'ShippingOrderId',
     caption: 'ShippingOrderId',
     hide: true,
   },
   {
-    key: 'materialCode',
+    key: 'MaterialCode',
     caption: '物料编码',
   },
   {
-    key: 'material',
+    key: 'Material',
     caption: '物料',
-    relationKey: 'materialCode',
+    relationKey: 'MaterialCode',
     foundationList: [
       {
-        key: 'material_name',
+        key: 'Material_Name',
         caption: '物料',
       },
       {
-        key: 'material_groupName',
+        key: 'Material_GroupName',
         caption: '物料分组',
       },
     ],
@@ -33,23 +33,23 @@ export const customColumns: IColumnItem[] = [
   //   caption: '规格描述',
   // },
   {
-    key: 'unitCode',
+    key: 'UnitCode',
     caption: '单位编码',
   },
   {
-    key: 'unit',
+    key: 'Unit',
     caption: '单位',
-    relationKey: 'unitCode',
+    relationKey: 'UnitCode',
     foundationList: [
       {
-        key: 'unit_name',
+        key: 'Unit_Name',
         caption: '单位',
       },
     ],
     datatypekeies: 'units',
   },
   {
-    key: 'qty',
+    key: 'Qty',
     caption: '数量',
   },
   // {
@@ -61,39 +61,39 @@ export const customColumns: IColumnItem[] = [
   //   caption: 'BOM版本',
   // },
   {
-    key: 'warehouseCode',
+    key: 'WarehouseCode',
     caption: '仓库编码',
   },
   {
-    key: 'deliveryWarehouse',
+    key: 'DeliveryWarehouse',
     caption: '仓库',
-    relationKey: 'warehouseCode',
+    relationKey: 'WarehouseCode',
     foundationList: [
       {
-        key: 'deliveryWarehouse_name',
+        key: 'DeliveryWarehouse_Name',
         caption: '仓库名称',
       },
       {
-        key: 'deliveryWarehouse_groupName',
+        key: 'DeliveryWarehouse_GroupName',
         caption: '仓库分组',
       },
     ],
     datatypekeies: 'stocks',
   },
   {
-    key: 'packageQuantity',
+    key: 'PackageQuantity',
     caption: '包件数',
   },
   {
-    key: 'packageCount',
+    key: 'PackageCount',
     caption: '总包件数',
   },
   {
-    key: 'volumeQuantity',
+    key: 'VolumeQuantity',
     caption: '体积',
   },
   {
-    key: 'volumeCount',
+    key: 'VolumeCount',
     caption: '总体积',
   },
   // {
@@ -105,51 +105,51 @@ export const customColumns: IColumnItem[] = [
   //   caption: '父项物料编码',
   // },
   {
-    key: 'actualSalePrice',
+    key: 'ActualSalePrice',
     caption: '实际售价',
   },
   {
-    key: 'memo',
+    key: 'Memo',
     caption: '备注',
   },
   {
-    key: 'taoBaoCode',
+    key: 'TaoBaoCode',
     caption: '平台单号',
   },
   {
-    key: 'taoBaoSubCode',
+    key: 'TaoBaoSubCode',
     caption: '平台子单号',
   },
   {
-    key: 'shop',
+    key: 'Shop',
     caption: '店铺',
   },
   {
-    key: 'buyShop',
+    key: 'BuyShop',
     caption: '收入店铺',
   },
   {
-    key: 'provideSalePrice',
+    key: 'ProvideSalePrice',
     caption: '供货售价',
   },
   {
-    key: 'inWarehouseCode',
+    key: 'InWarehouseCode',
     caption: '进仓编号',
   },
   {
-    key: 'productName',
+    key: 'ProductName',
     caption: '品名',
   },
   {
-    key: 'sku',
+    key: 'Sku',
     caption: 'SKU',
   },
   {
-    key: 'skuCode',
+    key: 'SkuCode',
     caption: 'SKUID',
   },
   {
-    key: 'texture',
+    key: 'Texture',
     caption: '材质',
   },
   // {

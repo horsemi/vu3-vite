@@ -127,8 +127,8 @@
         router.push({
           name: 'OdsShippingOrderDetail',
           query: {
-            id: data.data.id,
-            billCode: data.data.billCode,
+            Id: data.data.Id,
+            BillCode: data.data.BillCode,
           },
         });
       };

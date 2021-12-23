@@ -14,7 +14,7 @@ export const getFilter = (code: string, systemCode = 'ods'): Promise<any> => {
 // 统一OdsTable接口
 export const getOdataList = (code: string, QueryParameters, systemCode = 'ods'): Promise<any> => {
   return defHttp.post({
-    url: `/${systemCode}/api/search/${code}?flat=1`,
+    url: `/${systemCode}/api/search/${code}?flat=1&upper=1`,
     params: { ...QueryParameters },
   });
 };

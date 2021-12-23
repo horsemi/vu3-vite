@@ -14,7 +14,7 @@ export function useSearchDefinite(
       {
         fast: [
           {
-            requirement: 'material',
+            requirement: 'Material',
             operator: '=',
             operatorList: [
               {
@@ -41,7 +41,7 @@ export function useSearchDefinite(
             value: '',
             type: 'string',
             datatypekeies: 'materials',
-            relationKey: 'materialCode',
+            relationKey: 'MaterialCode',
             logic: 'and',
           },
         ],
@@ -64,7 +64,7 @@ export function useSearchDefinite(
     schemeData.value.scheme[schemeData.value.checkedIndex] = {
       fast: [
         {
-          requirement: 'material',
+          requirement: 'Material',
           operator: '=',
           operatorList: [
             {
@@ -91,7 +91,7 @@ export function useSearchDefinite(
           value: '',
           type: 'string',
           datatypekeies: 'materials',
-          relationKey: 'materialCode',
+          relationKey: 'MaterialCode',
           logic: 'and',
         },
       ],

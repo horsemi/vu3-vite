@@ -7,137 +7,137 @@ import { getDefiniteColumns } from '/@/model/shipping-advice-items';
 export function useDefinite(requirement: IRequirementItem[]) {
   const definiteCustomColumns: IColumnItem[] = [
     {
-      key: 'shippingOrderId',
-      caption: 'shippingOrderId',
+      key: 'ShippingOrderId',
+      caption: 'ShippingOrderId',
     },
     {
-      key: 'materialCode',
+      key: 'MaterialCode',
       caption: '物料编码',
     },
     {
-      key: 'material_name',
+      key: 'Material_Name',
       caption: '物料名称',
-      expand: 'material',
-      relationKey: 'materialCode',
+      expand: 'Material',
+      relationKey: 'MaterialCode',
     },
     {
-      key: 'unitCode',
+      key: 'UnitCode',
       caption: '单位编码',
     },
     {
-      key: 'unit_name',
+      key: 'Unit_Name',
       caption: '单位名称',
-      expand: 'unit',
-      relationKey: 'unitCode',
+      expand: 'Unit',
+      relationKey: 'UnitCode',
     },
     {
-      key: 'qty',
+      key: 'Qty',
       caption: '数量',
     },
     {
-      key: 'lotCode',
+      key: 'LotCode',
       caption: '批号',
     },
     {
-      key: 'bomCode',
+      key: 'BomCode',
       caption: 'BOM版本',
     },
     {
-      key: 'warehouseCode',
+      key: 'WarehouseCode',
       caption: '仓库编码',
     },
     {
-      key: 'deliveryWarehouse_name',
+      key: 'DeliveryWarehouse_Name',
       caption: '仓库名称',
-      expand: 'deliveryWarehouse',
-      relationKey: 'warehouseCode',
+      expand: 'DeliveryWarehouse',
+      relationKey: 'WarehouseCode',
     },
     {
-      key: 'packageQuantity',
+      key: 'PackageQuantity',
       caption: '包件数',
     },
     {
-      key: 'packageCount',
+      key: 'PackageCount',
       caption: '总包件数',
     },
     {
-      key: 'volumeQuantity',
+      key: 'VolumeQuantity',
       caption: '体积',
     },
     {
-      key: 'volumeCount',
+      key: 'VolumeCount',
       caption: '总体积',
     },
     {
-      key: 'customerMaterialName',
+      key: 'CustomerMaterialName',
       caption: '客户物料名称',
     },
     {
-      key: 'parentMaterialCode',
+      key: 'ParentMaterialCode',
       caption: '父项物料编码',
     },
     {
-      key: 'outSourceBillCode',
+      key: 'OutSourceBillCode',
       caption: '原单编号',
     },
     {
-      key: 'actualSalePrice',
+      key: 'ActualSalePrice',
       caption: '实际售价',
     },
     {
-      key: 'memo',
+      key: 'Memo',
       caption: '备注',
     },
     {
-      key: 'taoBaoCode',
+      key: 'TaoBaoCode',
       caption: '平台单号',
     },
     {
-      key: 'taoBaoSubCode',
+      key: 'TaoBaoSubCode',
       caption: '平台子单号',
     },
     {
-      key: 'shop',
+      key: 'Shop',
       caption: '店铺',
     },
     {
-      key: 'buyShop',
+      key: 'BuyShop',
       caption: '收入店铺',
     },
     {
-      key: 'provideSalePrice',
+      key: 'ProvideSalePrice',
       caption: '供货售价',
     },
     {
-      key: 'inWarehouseCode',
+      key: 'InWarehouseCode',
       caption: '进仓编号',
     },
     {
-      key: 'productName',
+      key: 'ProductName',
       caption: '品名',
     },
     {
-      key: 'sku',
+      key: 'Sku',
       caption: 'SKU',
     },
     {
-      key: 'skuCode',
+      key: 'SkuCode',
       caption: 'SKUID',
     },
     {
-      key: 'texture',
+      key: 'Texture',
       caption: '材质',
     },
     {
-      key: 'sourceMaterialCode',
+      key: 'SourceMaterialCode',
       caption: '来源商品编码',
     },
     {
-      key: 'sourceProductBomCode',
+      key: 'SourceProductBomCode',
       caption: '来源商品BOM',
     },
     {
-      key: 'sourceProductLotCode',
+      key: 'SourceProductLotCode',
       caption: '来源商品批号',
     },
   ];

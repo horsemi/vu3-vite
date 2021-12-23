@@ -257,7 +257,7 @@ export const getOdataQuery = ({
   }
   const { columns, requirement } = scheme;
 
-  const { select, expand } = getSelectAndExpand(allColumns, columns, ['id']);
+  const { select, expand } = getSelectAndExpand(allColumns, columns, ['Id']);
   const filter = requirement?.length ? getFilter(requirement) : [];
   const orderby = orderBy?.length ? getSort(orderBy) : [];
   const $select = select.length ? select.join(',') : '';

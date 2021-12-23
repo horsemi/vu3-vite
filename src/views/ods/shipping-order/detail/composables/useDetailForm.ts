@@ -8,7 +8,7 @@ import { Ref, ref } from 'vue';
 import { getOdataList } from '/@/api/ods/common';
 
 export function useDetailForm(
-  id: string,
+  Id: string,
   multiViewItems: Ref<
     {
       title: string;
@@ -20,55 +20,55 @@ export function useDetailForm(
 ) {
   const base: IDetailItem[] = [
     {
-      key: 'billCode',
+      key: 'BillCode',
       caption: '单据编号',
     },
     {
-      key: 'billTypeCode',
+      key: 'BillTypeCode',
       caption: '单据类型',
     },
     {
-      key: 'billDate',
+      key: 'BillDate',
       caption: '单据日期',
     },
     {
-      key: 'deliveryWarehouseCode',
+      key: 'DeliveryWarehouseCode',
       caption: '仓库',
     },
     {
-      key: 'documentStatus',
+      key: 'DocumentStatus',
       caption: '单据状态',
     },
     {
-      key: 'customerCode',
+      key: 'CustomerCode',
       caption: '客户',
     },
     {
-      key: 'totalOrderCount',
+      key: 'TotalOrderCount',
       caption: '订单总数',
     },
     {
-      key: 'totalPackage',
+      key: 'TotalPackage',
       caption: '总包件数',
     },
     {
-      key: 'operationStatus',
+      key: 'OperationStatus',
       caption: '业务状态',
     },
     {
-      key: 'customerSalesman',
+      key: 'CustomerSalesman',
       caption: '业务员',
     },
     {
-      key: 'detailRowsCount',
+      key: 'DetailRowsCount',
       caption: '明细行数',
     },
     {
-      key: 'totalVolume',
+      key: 'TotalVolume',
       caption: '总体积数',
     },
     {
-      key: 'isGatheringOrder',
+      key: 'IsGatheringOrder',
       caption: '集货订单',
     },
     // {
@@ -76,71 +76,71 @@ export function useDetailForm(
     //   caption: '回收服务',
     // },
     {
-      key: 'isAgencyOrder',
+      key: 'IsAgencyOrder',
       caption: '经销商订单',
     },
     {
-      key: 'pushDownStatus',
+      key: 'PushDownStatus',
       caption: '下推状态',
     },
   ];
 
   const receiver: IDetailItem[] = [
     {
-      key: 'nickname',
+      key: 'Nickname',
       caption: '买家昵称',
     },
     {
-      key: 'receiver',
+      key: 'Receiver',
       caption: '收货人',
     },
     {
-      key: 'telephone',
+      key: 'Telephone',
       caption: '电话',
     },
     {
-      key: 'group',
+      key: 'Group',
       caption: '分组',
     },
     {
-      key: 'provinceCode',
+      key: 'ProvinceCode',
       caption: '省',
     },
     {
-      key: 'cityCode',
+      key: 'CityCode',
       caption: '市',
     },
     {
-      key: 'districtCode',
+      key: 'DistrictCode',
       caption: '区',
     },
     {
-      key: 'streetCode',
+      key: 'StreetCode',
       caption: '街道',
     },
     {
-      key: 'agencyCode',
+      key: 'AgencyCode',
       caption: '经销商',
     },
     {
-      key: 'promisedDeliveryDate',
+      key: 'PromisedDeliveryDate',
       caption: '承诺发货时间',
     },
     {
-      key: 'detailAddress',
+      key: 'DetailAddress',
       caption: '详细地址',
       colSpan: 4,
     },
     {
-      key: 'showroomContacts',
+      key: 'ShowroomContacts',
       caption: '展厅联系人',
     },
     {
-      key: 'showroomTelephone',
+      key: 'ShowroomTelephone',
       caption: '展厅电话',
     },
     {
-      key: 'showroomAddress',
+      key: 'ShowroomAddress',
       caption: '展厅提货地址',
       colSpan: 4,
     },
@@ -148,130 +148,130 @@ export function useDetailForm(
 
   const logistics: IDetailItem[] = [
     {
-      key: 'gatheringPointCode',
+      key: 'GatheringPointCode',
       caption: '集货点',
     },
     {
-      key: 'lineAreaCode',
+      key: 'LineAreaCode',
       caption: '线路区域',
     },
     {
-      key: 'threeServiceCostPrice',
+      key: 'ThreeServiceCostPrice',
       caption: '三包成本',
     },
     {
-      key: 'serviceItemCode',
+      key: 'ServiceItemCode',
       caption: '服务项目',
     },
     {
-      key: 'deliveryPointCode',
+      key: 'DeliveryPointCode',
       caption: '提货点',
     },
     {
-      key: 'contractorCode',
+      key: 'ContractorCode',
       caption: '中转承运商',
     },
     {
-      key: 'logisticsCostPrice',
+      key: 'LogisticsCostPrice',
       caption: '物流成本',
     },
     {
-      key: 'threeServiceFeeTypeCode',
+      key: 'ThreeServiceFeeTypeCode',
       caption: '三包费用类型',
     },
     {
-      key: 'threeServicePointCode',
+      key: 'ThreeServicePointCode',
       caption: '三包点',
     },
     {
-      key: 'threeServiceSupplierCode',
+      key: 'ThreeServiceSupplierCode',
       caption: '三包服务商',
     },
     {
-      key: 'logisticCode',
+      key: 'LogisticCode',
       caption: '物流单号',
     },
     {
-      key: 'freightTypeCode',
+      key: 'FreightTypeCode',
       caption: '运费类型',
     },
   ];
 
   const other: IDetailItem[] = [
     {
-      key: 'createdTime',
+      key: 'CreatedTime',
       caption: '创建时间',
     },
     {
-      key: 'creatorId',
+      key: 'CreatorId',
       caption: '创建人',
-      keyProperty: 'id',
-      showProperty: 'accountName',
+      keyProperty: 'Id',
+      showProperty: 'AccountName',
     },
     {
-      key: 'customerTypeCode',
+      key: 'CustomerTypeCode',
       caption: '客户类型',
     },
     {
-      key: 'gatheringParentCode',
+      key: 'GatheringParentCode',
       caption: '父单号',
     },
     {
-      key: 'appliedTime',
+      key: 'AppliedTime',
       caption: '审核时间',
     },
     {
-      key: 'applierId',
+      key: 'ApplierId',
       caption: '审核人',
-      keyProperty: 'id',
-      showProperty: 'accountName',
+      keyProperty: 'Id',
+      showProperty: 'AccountName',
     },
     {
-      key: 'outBillFormCode',
+      key: 'OutBillFormCode',
       caption: '原单标识',
     },
     {
-      key: 'otSourceBillCode',
+      key: 'OutSourceBillCode',
       caption: '原单编号',
     },
     {
-      key: 'updatedTime',
+      key: 'UpdatedTime',
       caption: '修改时间',
     },
     {
-      key: 'updaterId',
+      key: 'UpdaterId',
       caption: '修改人',
-      keyProperty: 'id',
-      showProperty: 'accountName',
+      keyProperty: 'Id',
+      showProperty: 'AccountName',
     },
     {
-      key: 'pushDownTime',
+      key: 'PushDownTime',
       caption: '下推时间',
     },
     {
-      key: 'outSaleBillCode',
+      key: 'OutSaleBillCode',
       caption: '销售单号',
     },
     {
-      key: 'cancelledTime',
+      key: 'CancelledTime',
       caption: '作废时间',
     },
     {
-      key: 'cancellerId',
+      key: 'CancellerId',
       caption: '作废人',
-      keyProperty: 'id',
-      showProperty: 'accountName',
+      keyProperty: 'Id',
+      showProperty: 'AccountName',
     },
     {
-      key: 'markStatus',
+      key: 'MarkStatus',
       caption: '标记状态',
     },
     {
-      key: 'outSourceBillType',
+      key: 'OutSourceBillType',
       caption: '原单类型',
     },
     {
-      key: 'isCancelled',
+      key: 'IsCancelled',
       caption: '作废状态',
     },
   ];
@@ -331,7 +331,7 @@ export function useDetailForm(
     const detailRes = await getOdataList('shipping-orders', {
       $select: select.join(','),
       $expand: expand.join(','),
-      $filter: `id eq '${id}'`,
+      $filter: `Id eq '${Id}'`,
     });
 
     const data = detailRes[0];
