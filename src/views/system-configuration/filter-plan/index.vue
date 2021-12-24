@@ -219,7 +219,7 @@
         filterDataTextString.value = '';
         filterData.requirement = [
           {
-            requirement: '',
+            key: '',
             operator: '',
             operatorList: [],
             type: '',

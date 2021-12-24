@@ -6,6 +6,7 @@ import type {
 } from '/@/components/QueryPopup/content/types';
 import type { IColumnItem } from '/@/model/types';
 import type { ISortItem } from '/@/api/ods/types';
+import type { IOdataParams } from '/@/components/Table/types';
 
 import {
   formatToDateTime,
@@ -24,7 +25,7 @@ const getFilter = (requirements: IRequirementItem[]) => {
   let result = '';
 
   const requireData = requirements.filter((item) => {
-    return item.requirement;
+    return item.key;
   });
 
   for (let i = 0; i < requireData.length; i++) {
@@ -34,8 +35,8 @@ const getFilter = (requirements: IRequirementItem[]) => {
     }
 
     const requirement = requireData[i].relationKey
-      ? requireData[i].relationKey
-      : requireData[i].requirement;
+      ? requireData[i].relationKey.replaceAll('_', '.')
+      : requireData[i].key.replaceAll('_', '.');
 
     if (requireData[i].leftParenthesisCount && requireData[i].leftParenthesisCount! > 0) {
       for (let j = 0; j < requireData[i].leftParenthesisCount!; j++) {
@@ -101,9 +102,10 @@ const getSelectAndExpand = (
           }
           if (!select.includes(item.relationKey)) {
             select.push(item.relationKey);
+            select.push(item.key);
           }
         } else {
-          const keyArr = item.key.split('.');
+          const keyArr = item.key.split('_');
           if (keyArr.length > 1) {
             const relationExpand = keyArr.slice(0, keyArr.length - 1).join('.');
             if (!expand.includes(relationExpand)) {
@@ -224,57 +226,8 @@ const isValueNullOrUndef = (data: IRequirementItem): boolean => {
   }
 };
 
-// 获得odata请求参数
-export const getOdataQuery = ({
-  scheme,
-  allColumns,
-  tableSort,
-  defaultSort,
-}: {
-  scheme: ISchemeItem;
-  allColumns: IColumnItem[];
-  tableSort: ISortItem[];
-  defaultSort?: ISortItem[];
-}) => {
-  let orderBy: IOrderByItem[] = [];
-  if (tableSort) {
-    const sort = tableSort[0];
-    const column = allColumns.find((item) => item.key === sort.selector);
-    if (column) {
-      orderBy = [{ key: column.key, caption: column.caption, desc: sort.desc ?? false }];
-    }
-  } else if (scheme.orderBy && scheme.orderBy.length > 0) {
-    orderBy = scheme.orderBy;
-  } else {
-    orderBy =
-      defaultSort?.map((item) => {
-        return {
-          caption: '',
-          key: item.selector,
-          desc: item.desc ?? false,
-        };
-      }) || [];
-  }
-  const { columns, requirement } = scheme;
-
-  const { select, expand } = getSelectAndExpand(allColumns, columns, ['Id']);
-  const filter = requirement?.length ? getFilter(requirement) : [];
-  const orderby = orderBy?.length ? getSort(orderBy) : [];
-  const $select = select.length ? select.join(',') : '';
-  const $expand = expand.length ? expand.join(',') : '';
-  const $filter = filter.length ? getOdataFilter(filter) : '';
-  const $orderby = select.length ? orderby.join(',') : '';
-
-  const params = {};
-  $select && (params['$select'] = $select);
-  $filter && (params['$filter'] = $filter);
-  $orderby && (params['$orderby'] = $orderby);
-  $expand && (params['$expand'] = $expand);
-  return params;
-};
-
 // 转换后的filter转换成odata格式
-export const getOdataFilter = (filter: any[]) => {
+const getOdataFilter = (filter: any[]) => {
   return compileCore(filter);
 };
 
@@ -437,3 +390,78 @@ const compileCore = (criteria) => {
   }
   return compileBinary(criteria);
 };
+
+// 获得odata请求参数
+export const getOdataQuery = ({
+  scheme,
+  allColumns,
+  tableSort,
+  defaultSort,
+}: {
+  scheme: ISchemeItem;
+  allColumns: IColumnItem[];
+  tableSort: ISortItem[];
+  defaultSort?: ISortItem[];
+}) => {
+  let orderBy: IOrderByItem[] = [];
+  if (tableSort) {
+    const sort = tableSort[0];
+    const column = allColumns.find((item) => item.key === sort.selector);
+    if (column) {
+      orderBy = [{ key: column.key, caption: column.caption, desc: sort.desc ?? false }];
+    }
+  } else if (scheme.orderBy && scheme.orderBy.length > 0) {
+    orderBy = scheme.orderBy;
+  } else {
+    orderBy =
+      defaultSort?.map((item) => {
+        return {
+          caption: '',
+          key: item.selector,
+          desc: item.desc ?? false,
+        };
+      }) || [];
+  }
+  const { columns, requirement } = scheme;
+
+  const { select, expand } = getSelectAndExpand(allColumns, columns, ['Id']);
+  const filter = requirement?.length ? getFilter(requirement) : [];
+  const orderby = orderBy?.length ? getSort(orderBy) : [];
+  const $select = select.length ? select.join(',') : '';
+  const $expand = expand.length ? expand.join(',') : '';
+  const $filter = filter.length ? getOdataFilter(filter) : '';
+  const $orderby = select.length ? orderby.join(',') : '';
+
+  const params: Partial<IOdataParams> = {};
+  $select && (params['$select'] = $select.replaceAll('_', '.'));
+  $filter && (params['$filter'] = $filter);
+  $orderby && (params['$orderby'] = $orderby.replaceAll('_', '.'));
+  $expand && (params['$expand'] = $expand.replaceAll('_', '.'));
+  return params;
+};
+
+export function handleRelationColumnList(
+  arr: IColumnItem[],
+  options: { key?: string; caption?: string }
+) {
+  const data = arr.map((item) => {
+    const relationItem = { ...item };
+    options.caption && (relationItem.caption = `${options.caption}_${relationItem.caption}`);
+    options.key && (relationItem.key = `${options.key}_${relationItem.key}`);
+    options.key && item.expand && (relationItem['expand'] = `${options.key}_${item.expand}`);
+    options.key &&
+      item.relationKey &&
+      (relationItem['relationKey'] = `${options.key}_${item.relationKey}`);
+
+    item.foundationList &&
+      (relationItem['foundationList'] = item.foundationList.map((foundation) => {
+        const relationFoundation = { ...foundation };
+        options.caption &&
+          (relationFoundation.caption = `${options.caption}_${relationFoundation.caption}`);
+        options.key && (relationFoundation.key = `${options.key}_${relationFoundation.key}`);
+        return relationFoundation;
+      }));
+    return relationItem;
+  });
+  return data;
+}

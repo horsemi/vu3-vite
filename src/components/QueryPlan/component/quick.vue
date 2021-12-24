@@ -65,7 +65,7 @@
         schemeData.value.scheme[checkedIndex.value].fast = scheme.fast || [];
         scheme.fast &&
           scheme.fast.forEach((item) => {
-            if (item.requirement) {
+            if (item.key) {
               scheme.requirement.push(item);
             }
           });

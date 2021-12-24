@@ -112,7 +112,7 @@
       function onSubmit() {
         const scheme = cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]);
         queryForm.value.queryList.forEach((item) => {
-          if (item.requirement) {
+          if (item.key) {
             scheme.requirement.push(item);
           }
         });

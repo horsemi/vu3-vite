@@ -251,7 +251,7 @@
 
       const definiteRequirement: IRequirementItem[] = [
         {
-          requirement: 'ShippingAdviceId',
+          key: 'ShippingAdviceId',
           operator: '=',
           value: Id,
           operatorList: [],

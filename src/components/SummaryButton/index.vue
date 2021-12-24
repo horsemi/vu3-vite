@@ -26,6 +26,7 @@
   import type { PropType } from 'vue';
   import type { ISchemeItem, ISummaryItem, SummaryType } from '../QueryPopup/content/types';
   import type { IColumnItem } from '/@/model/types';
+  import type { IOdataParams } from '../Table/types';
 
   import { defineComponent, ref } from 'vue';
 
@@ -58,7 +59,7 @@
         default: '',
       },
       odataParams: {
-        type: Object,
+        type: Object as PropType<Partial<IOdataParams>>,
         default: () => {
           return {};
         },
@@ -88,13 +89,13 @@
         orderCode,
         systemCode,
         summary,
-        $filter,
+        odataParams,
         allColumns,
       }: {
         orderCode: string;
         systemCode?: string;
         summary: ISummaryItem[];
-        $filter: string;
+        odataParams: Partial<IOdataParams>;
         allColumns: IColumnItem[];
       }) => {
         const _aggregate = summary.map((item) => {
@@ -102,7 +103,8 @@
         });
         const $aggregate = _aggregate.join(',');
         const params = {};
-        $filter && (params['$filter'] = $filter);
+        odataParams.$filter && (params['$filter'] = odataParams.$filter);
+        odataParams.$expand && (params['$filter'] = odataParams.$expand);
         $aggregate && (params['$aggregate'] = $aggregate);
 
         const data = await getOdataList(orderCode, params, systemCode ? systemCode : undefined);
@@ -129,7 +131,7 @@
             orderCode: props.orderCode,
             systemCode: props.systemCode,
             summary: serverSummaryScheme,
-            $filter: props.odataParams.$filter,
+            odataParams: props.odataParams,
             allColumns: props.allColumns,
           }).then((res) => {
             list.value = res;

@@ -69,6 +69,7 @@
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { getSchemesData } from '/@/utils/scheme/index';
+  import { handleRelationColumnList } from '/@/utils/odata';
 
   import DxButton from 'devextreme-vue/button';
 
@@ -192,20 +193,15 @@
           let _allColumns: IColumnItem[] = [];
           if (base) {
             const { columnList, key, keyType } = base;
-            columnList?.forEach((item) => {
-              item.caption = `基本.${item.caption}`;
-            });
-            _allColumns.push(...columnList);
+            _allColumns.push(...handleRelationColumnList(columnList, { caption: '基本' }));
             tableKey.value = key;
             tableKeyType.value = keyType;
           }
           if (definite) {
             const { columnList } = definite;
-            columnList?.forEach((item) => {
-              item.caption = `明细.${item.caption}`;
-              item.key = `Items.${item.key}`;
-            });
-            _allColumns.push(...columnList);
+            _allColumns.push(
+              ...handleRelationColumnList(columnList, { key: 'Items', caption: '明细' })
+            );
           }
           allColumns.value = _allColumns;
           filterScheme.value = scheme;

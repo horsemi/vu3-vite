@@ -36,8 +36,8 @@
               : handleCustomizeText
           "
           :data-type="item.type"
-          :cell-template="getTemplate(item.cellTemplate, item.expand, item.relationKey)"
           :alignment="getAlignment(item)"
+          :cell-template="getTemplate(item)"
         >
           <DxLookup
             v-if="item.type === 'enum'"
@@ -90,9 +90,6 @@
           >{{ data.value }}</div
         >
       </template>
-      <template #foundation="{ data: rowInfo }">
-        <div>{{ getFoundationData(rowInfo) }}</div>
-      </template>
     </DxDataGrid>
     <DxContextMenu :data-source="contentMenuTitle" :width="200" target="#billcode">
       <template #item="{ data: e }">
@@ -110,7 +107,7 @@
 </template>
 
 <script lang="ts">
-  import type { ITableOptions, ITableSummary } from './types';
+  import type { IOdataParams, ITableOptions, ITableSummary } from './types';
   import type { IColumnItem, IKeyType } from '/@/model/types';
   import type { ISchemeItem, ISummaryItem } from '../QueryPopup/content/types';
 
@@ -231,7 +228,7 @@
       const permissionStore = usePermissionStore();
       const appStore = useAppStore();
       const dataGrid = ref();
-      const odataParams = ref();
+      const odataParams = ref<Partial<IOdataParams>>();
       const pageIndex = ref(0);
       const pageSize = ref(50);
       const pageSizes = [50, 100, 1000, 2000, 3000];
@@ -382,6 +379,19 @@
         }
       };
 
+      // 合并列
+      const handleSummaryColumns = (item) => {
+        const temp = {};
+        Object.entries(item).forEach(([key, value]) => {
+          if (key.indexOf('Items') === -1) {
+            temp[key] = '';
+          } else {
+            temp[key] = value;
+          }
+        });
+        return temp;
+      };
+
       const getTableData = () => {
         tableData.value = new DataSource({
           store: new CustomStore({
@@ -401,7 +411,7 @@
                 params['$filter'] && (totalCountParams['$filter'] = params['$filter']);
                 params['$expand'] && (totalCountParams['$expand'] = params['$expand']);
 
-                const [data, totalCount] = await Promise.all([
+                const [res, totalCount] = await Promise.all([
                   getOdataList(
                     props.orderCode,
                     dataParams,
@@ -414,6 +424,21 @@
                   ),
                 ]);
 
+                let data = [];
+
+                // 判断是否需要合并
+                if (params['$expand'] && params['$expand'].indexOf('Items') !== -1) {
+                  const obj = {};
+                  data = res.map((item) => {
+                    obj[item['Id']]
+                      ? (item = handleSummaryColumns(item))
+                      : (obj[item['Id']] = item['Id']);
+                    return item;
+                  });
+                } else {
+                  data = res;
+                }
+
                 return {
                   data,
                   totalCount: totalCount[0]['Count'] || 0,
@@ -423,6 +448,7 @@
           }),
         });
       };
+
       const getSorting = (allowSort, expand, relationKey) => {
         if (expand && relationKey) {
           return false;
@@ -433,11 +459,9 @@
         }
       };
 
-      const getTemplate = (template, expand, relationKey) => {
-        if (expand && relationKey) {
-          return 'foundation';
-        } else if (template) {
-          return template;
+      const getTemplate = (item) => {
+        if (item.cellTemplate) {
+          return item.cellTemplate;
         } else {
           return '';
         }
@@ -450,20 +474,6 @@
           return 'center';
         } else {
           return 'left';
-        }
-      };
-
-      const getFoundationData = (rowInfo) => {
-        // 获取基础数据列的key，并以_分割
-        const keyArr = rowInfo.column.name.split('_');
-        // 获取关联的实体名称
-        const expand = keyArr[0];
-        // 获取实体中指定的属性名称
-        const expandKey = keyArr[1];
-        if (rowInfo.data[expand]) {
-          return rowInfo.data[expand][expandKey];
-        } else {
-          return '—';
         }
       };
 
@@ -515,7 +525,7 @@
         clipValue.value = e.value;
       }
       function getGlobalEnumDataByCode(code: string | undefined) {
-        return code && appStore.getGlobalEnumDataByCode(code);
+        return code && appStore.getGlobalEnumDataByCode(code.toLowerCase());
       }
 
       function getSelectedRowsData() {
@@ -554,7 +564,6 @@
         getGlobalEnumDataByCode,
         search,
         getSelectedRowsData,
-        getFoundationData,
         getSorting,
         getTemplate,
         getAlignment,

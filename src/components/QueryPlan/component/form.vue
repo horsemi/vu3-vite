@@ -10,7 +10,7 @@
     >
       <DynamicSelect
         v-model:value="queryList[0].value"
-        v-model:paramKey="queryList[0].requirement"
+        v-model:paramKey="queryList[0].key"
         v-model:operation="queryList[0].operator"
         v-model:paramDataType="queryList[0].type"
         v-model:paramOperations="queryList[0].operatorList"
@@ -30,7 +30,7 @@
         <div v-for="(item, index) in queryList.slice(1)" :key="index" :class="`${prefixCls}__box`">
           <DynamicSelect
             v-model:value="item.value"
-            v-model:paramKey="item.requirement"
+            v-model:paramKey="item.key"
             v-model:operation="item.operator"
             v-model:paramDataType="item.type"
             v-model:paramOperations="item.operatorList"
@@ -101,7 +101,7 @@
           (schemeData.value.scheme[schemeData.value.checkedIndex] &&
             schemeData.value.scheme[schemeData.value.checkedIndex].fast) || [
             {
-              requirement: '',
+              key: '',
               operator: '=',
               operatorList: [],
               value: undefined,
@@ -119,7 +119,7 @@
 
       function onAddRequirement() {
         queryList.value.push({
-          requirement: '',
+          key: '',
           operator: '=',
           operatorList: [],
           value: undefined,
@@ -137,13 +137,13 @@
       function onSaveFast() {
         const temp: IRequirementItem[] = [];
         queryList.value.forEach((item) => {
-          if (item.requirement) {
+          if (item.key) {
             temp.push(item);
           }
         });
         if (temp.length === 0) {
           temp.push({
-            requirement: '',
+            key: '',
             operator: '=',
             operatorList: [],
             value: undefined,
@@ -186,7 +186,7 @@
       const onSearch = () => {
         const scheme = cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]);
         queryList.value.forEach((item) => {
-          if (item.requirement) {
+          if (item.key) {
             scheme.requirement.push(item);
           }
         });

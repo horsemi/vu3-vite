@@ -1,5 +1,5 @@
 import type { SummaryType } from '../QueryPopup/content/types';
-import type { IODataStore, ISortItem } from '/@/api/ods/types';
+import type { ISortItem } from '/@/api/ods/types';
 
 type allModeType = 'allPages' | 'page';
 
@@ -38,7 +38,7 @@ interface IDataSourceOptions {
   /**
    * @description oData配置
    */
-  oDataOptions: IODataStore;
+  oDataOptions: { url: string };
 
   /**
    * @description 是否分页
@@ -116,4 +116,11 @@ export interface ITableSummary {
 export interface IPropsSummary {
   columnName: string;
   summaryType: SummaryType;
+}
+
+export interface IOdataParams {
+  $select: string;
+  $filter: string;
+  $orderby: string;
+  $expand: string;
 }
