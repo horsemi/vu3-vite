@@ -44,9 +44,11 @@ export function useRecord(BillCode: string) {
 
   const recordScheme = ref<ISchemeItem>();
   const recordAllColumns = ref<IColumnItem[]>([]);
+  const recordTableKey = ref('');
 
   getRecordColumns().then((res) => {
     if (res) {
+      recordTableKey.value = res.key;
       recordAllColumns.value = res.columnList;
       recordScheme.value = {
         id: '',
@@ -92,6 +94,7 @@ export function useRecord(BillCode: string) {
 
   return {
     recordScheme,
+    recordTableKey,
     recordAllColumns,
     refreshRecord,
   };

@@ -144,8 +144,10 @@ export function useDefinite(requirement: IRequirementItem[]) {
 
   const definiteScheme = ref<ISchemeItem>();
   const definiteAllColumns = ref<IColumnItem[]>([]);
+  const definiteTableKey = ref('');
   getDefiniteColumns().then((res) => {
     if (res) {
+      definiteTableKey.value = res.key;
       definiteAllColumns.value = res.columnList;
       definiteScheme.value = {
         id: '',
@@ -173,6 +175,7 @@ export function useDefinite(requirement: IRequirementItem[]) {
     definiteScheme,
     definiteAllColumns,
     definiteCustomColumns,
+    definiteTableKey,
     refreshDefinite,
   };
 }

@@ -121,13 +121,7 @@
           :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
           :filter-scheme="tableIndex === 0 ? definiteScheme : recordScheme"
           :all-columns="tableIndex === 0 ? definiteAllColumns : recordAllColumns"
-          :table-key="['Id']"
-          :table-key-type="[
-            {
-              key: 'Id',
-              type: 'string',
-            },
-          ]"
+          :table-key="tableIndex === 0 ? definiteTableKey : recordTableKey"
         >
         </OdsTable>
       </div>
@@ -291,13 +285,14 @@
       } = useDetailForm(Id, multiViewItems, detailFormCallBack);
 
       const {
+        definiteTableKey,
         definiteScheme,
         definiteAllColumns,
         definiteCustomColumns,
         refreshDefinite,
       } = useDefinite(definiteRequirement);
 
-      const { recordScheme, recordAllColumns, refreshRecord } = useRecord(BillCode);
+      const { recordTableKey, recordScheme, recordAllColumns, refreshRecord } = useRecord(BillCode);
       const { onSearch, onReset, schemeData } = useSearchDefinite(
         definiteRequirement,
         definiteCustomColumns,
@@ -442,9 +437,11 @@
       return {
         tableHeight,
         definiteOptions,
+        definiteTableKey,
         definiteScheme,
         definiteAllColumns,
         recordOptions,
+        recordTableKey,
         recordScheme,
         recordAllColumns,
 

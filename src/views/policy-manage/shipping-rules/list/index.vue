@@ -71,7 +71,6 @@
         :all-columns="allColumns"
         :filter-scheme="filterScheme"
         :table-key="tableKey"
-        :table-key-type="tableKeyType"
         @handle-bill-code-click="handleBillCodeClick"
       >
       </OdsTable>
@@ -87,7 +86,7 @@
 </template>
 
 <script lang="ts">
-  import type { IColumnItem, IKeyType } from '/@/model/types';
+  import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
@@ -141,8 +140,7 @@
         return deepMerge(cloneDeep(defaultTableOptions), option);
       });
       const filterScheme = ref<ISchemeItem>();
-      const tableKey = ref<string[]>([]);
-      const tableKeyType = ref<IKeyType[]>([]);
+      const tableKey = ref<string>('');
       const dataSource = ref();
       const columns = ref<IColumnItem[]>([]);
       const allColumns = ref<IColumnItem[]>([]);
@@ -227,6 +225,7 @@
             scheme: filterScheme.value,
             allColumns: allColumns.value,
             defaultSort: options.value.dataSourceOptions.sort,
+            tableKey: 'Id',
           })
         ).then(() => {
           odsMessage({
@@ -283,11 +282,10 @@
         }
         getColumns().then((res) => {
           if (res) {
-            const { columnList, key, keyType } = res;
+            const { columnList, key } = res;
+            tableKey.value = key;
             allColumns.value = columnList;
             filterScheme.value = scheme;
-            tableKey.value = key;
-            tableKeyType.value = keyType;
           }
         });
         queryPlan.value.handleData();
@@ -310,7 +308,6 @@
         option,
         options,
         tableKey,
-        tableKeyType,
         dataSource,
         columns,
         allColumns,

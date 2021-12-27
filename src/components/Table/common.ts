@@ -15,12 +15,6 @@ export const defaultTableOptions: ITableOptions = {
     oDataOptions: {
       url: '',
     },
-    sort: [
-      {
-        selector: 'Id',
-        desc: true,
-      },
-    ],
   },
   useScrolling: false,
   height: '100%',

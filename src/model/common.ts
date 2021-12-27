@@ -1,4 +1,4 @@
-import type { IColumnItem, IFieldType, IKeyType } from './types';
+import type { IColumnItem, IFieldType } from './types';
 import type { IDetailItem } from '/@/utils/bill/types';
 
 import { getList } from '/@/api/ods/common';
@@ -13,12 +13,11 @@ export const getColumnList = async ({
   code: string;
   customColumns: IColumnItem[];
   systemCode?: string;
-}): Promise<{ columnList: IColumnItem[]; key: string[]; keyType: IKeyType[] } | undefined> => {
+}): Promise<{ columnList: IColumnItem[]; key: string } | undefined> => {
   try {
     const res = await getList(code, systemCode);
-    const fieldTypes = res.store.odata.fieldTypes as IFieldType[];
-    const key = res.store.odata.key as string[];
-    const keyType = res.store.odata.keyType as IKeyType[];
+    const fieldTypes = (res.store.odata.fieldTypes as IFieldType[]) || [];
+    const key = (res.store.odata.key[0] as string) || '';
     const columnList: IColumnItem[] = [];
     customColumns.forEach((column) => {
       const fieldType = fieldTypes.find(
@@ -35,7 +34,6 @@ export const getColumnList = async ({
     return {
       columnList,
       key,
-      keyType,
     };
   } catch (err) {
     Promise.reject(err);

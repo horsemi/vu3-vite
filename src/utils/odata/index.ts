@@ -83,12 +83,16 @@ const getSort = (orderBy: IOrderByItem[]) => {
 };
 
 // 获取格式化后的表字段
-const getSelectAndExpand = (
-  allColumns: IColumnItem[],
-  columns: ISchemeColumnsItem[],
-  key: string[] = []
-) => {
-  const select: string[] = [];
+const getSelectAndExpand = ({
+  allColumns,
+  columns,
+  tableKey,
+}: {
+  allColumns: IColumnItem[];
+  columns: ISchemeColumnsItem[];
+  tableKey: string;
+}) => {
+  const select: string[] = [tableKey];
   const expand: string[] = [];
 
   const allCol = handleAllCol(allColumns);
@@ -120,7 +124,7 @@ const getSelectAndExpand = (
   });
 
   return {
-    select: select.concat(key),
+    select: select,
     expand: expand,
   };
 };
@@ -397,11 +401,13 @@ export const getOdataQuery = ({
   allColumns,
   tableSort,
   defaultSort,
+  tableKey,
 }: {
   scheme?: ISchemeItem;
   allColumns?: IColumnItem[];
   tableSort?: ISortItem[];
   defaultSort?: ISortItem[];
+  tableKey: string;
 }) => {
   if (!scheme || !allColumns) return {};
   let orderBy: IOrderByItem[] = [];
@@ -412,9 +418,7 @@ export const getOdataQuery = ({
       orderBy = [{ key: column.key, caption: column.caption, desc: sort.desc ?? false }];
     }
   } else if (scheme.orderBy && scheme.orderBy.length > 0) {
-    orderBy = scheme.orderBy;
-  } else {
-    orderBy =
+    const defaultOrderBy =
       defaultSort?.map((item) => {
         return {
           caption: '',
@@ -422,10 +426,19 @@ export const getOdataQuery = ({
           desc: item.desc ?? false,
         };
       }) || [];
+    orderBy = scheme.orderBy.concat(defaultOrderBy);
+  } else {
+    orderBy = [
+      {
+        caption: '',
+        key: tableKey,
+        desc: true,
+      },
+    ];
   }
   const { columns, requirement } = scheme;
 
-  const { select, expand } = getSelectAndExpand(allColumns, columns, ['Id']);
+  const { select, expand } = getSelectAndExpand({ allColumns, columns, tableKey });
   const filter = requirement?.length ? getFilter(requirement) : [];
   const orderby = orderBy?.length ? getSort(orderBy) : [];
   const $select = select.length ? select.join(',') : '';

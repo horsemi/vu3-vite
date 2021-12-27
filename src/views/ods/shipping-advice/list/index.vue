@@ -38,7 +38,6 @@
         :all-columns="allColumns"
         :filter-scheme="filterScheme"
         :table-key="tableKey"
-        :table-key-type="tableKeyType"
         @handle-bill-code-click="handleBillCodeClick"
       >
       </OdsTable>
@@ -47,7 +46,7 @@
 </template>
 
 <script lang="ts">
-  import type { IColumnItem, IKeyType } from '/@/model/types';
+  import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
@@ -92,8 +91,7 @@
         },
       };
       const filterScheme = ref<ISchemeItem>();
-      const tableKey = ref<string[]>([]);
-      const tableKeyType = ref<IKeyType[]>([]);
+      const tableKey = ref<string>();
       const dataSource = ref();
       const columns = ref<IColumnItem[]>([]);
       const allColumns = ref<IColumnItem[]>([]);
@@ -179,10 +177,9 @@
         Promise.all([getColumns(), getDefiniteColumns()]).then(([base, definite]) => {
           let _allColumns: IColumnItem[] = [];
           if (base) {
-            const { columnList, key, keyType } = base;
+            const { columnList, key } = base;
             _allColumns.push(...columnList);
             tableKey.value = key;
-            tableKeyType.value = keyType;
           }
           if (definite) {
             const { columnList } = definite;
@@ -213,7 +210,6 @@
         queryPlan,
         options,
         tableKey,
-        tableKeyType,
         dataSource,
         columns,
         allColumns,

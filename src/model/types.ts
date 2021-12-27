@@ -99,9 +99,3 @@ export interface IFieldType {
   type: string;
   expand: string;
 }
-
-export interface IKeyType {
-  caption?: string;
-  key: string;
-  type: string;
-}

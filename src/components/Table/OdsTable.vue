@@ -108,7 +108,7 @@
 
 <script lang="ts">
   import type { IOdataParams, ITableOptions, ITableSummary } from './types';
-  import type { IColumnItem, IKeyType } from '/@/model/types';
+  import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem, ISummaryItem } from '../QueryPopup/content/types';
 
   import {
@@ -170,16 +170,8 @@
         },
       },
       tableKey: {
-        type: Array as PropType<string[]>,
-        default: () => {
-          return [];
-        },
-      },
-      tableKeyType: {
-        type: Array as PropType<IKeyType[]>,
-        default: () => {
-          return [];
-        },
+        type: String,
+        default: 'Id',
       },
       dataSource: {
         type: Object,
@@ -335,13 +327,7 @@
       };
 
       const handleFilterScheme = (scheme: ISchemeItem) => {
-        if (
-          !isEmpty(scheme) &&
-          !isEmpty(scheme.columns) &&
-          props.allColumns.length > 0 &&
-          props.tableKey.length > 0 &&
-          props.tableKeyType.length > 0
-        ) {
+        if (!isEmpty(scheme) && !isEmpty(scheme.columns) && props.allColumns.length > 0) {
           if (dataGrid.value && dataGrid.value.instance) {
             // 清空排序，处理相同字段desc失效
             dataGrid.value.instance.clearSorting();
@@ -395,7 +381,7 @@
       const getTableData = () => {
         tableData.value = new DataSource({
           store: new CustomStore({
-            key: 'Id',
+            key: props.tableKey,
             load: async (loadOptions) => {
               if (Object.keys(loadOptions).length) {
                 const params = getOdataQuery({
@@ -403,6 +389,7 @@
                   allColumns: props.allColumns,
                   tableSort: loadOptions.sort,
                   defaultSort: options.value.dataSourceOptions.sort,
+                  tableKey: props.tableKey,
                 });
                 odataParams.value = params;
                 const dataParams = { ...params, $top: pageSize.value };
@@ -430,9 +417,9 @@
                 if (params['$expand'] && params['$expand'].indexOf('Items') !== -1) {
                   const obj = {};
                   data = res.map((item) => {
-                    obj[item['Id']]
+                    obj[item[props.tableKey]]
                       ? (item = handleSummaryColumns(item))
-                      : (obj[item['Id']] = item['Id']);
+                      : (obj[item[props.tableKey]] = item[props.tableKey]);
                     return item;
                   });
                 } else {
