@@ -65,7 +65,7 @@
           <DxSelectBox
             v-model:value="data.data.type"
             style="padding: 0"
-            :data-source="summaryTypeOptions"
+            :data-source="data.data.options"
             display-expr="name"
             value-expr="type"
           />
@@ -80,7 +80,7 @@
 
 <script lang="ts">
   import type { IFieldItem, ISummaryItem } from './types';
-  import type { IColumnItem } from '/@/model/types';
+  import type { IColumnItem, SummaryType } from '/@/model/types';
   import type { ISchemeData } from '../../QueryPlan/types';
   import type { Ref } from 'vue';
 
@@ -91,6 +91,10 @@
   import { DxDataGrid, DxColumn, DxPaging, DxFilterRow } from 'devextreme-vue/data-grid';
   import { DxCheckBox } from 'devextreme-vue/check-box';
   import DxSelectBox from 'devextreme-vue/select-box';
+
+  interface ISummaryFieldItem extends IFieldItem {
+    options: { name: string; type: SummaryType }[];
+  }
 
   export default defineComponent({
     components: {
@@ -111,7 +115,7 @@
       let dataSourceTemp: ISummaryItem[] = [];
 
       // 全部字段数据
-      const fieldList = ref<IFieldItem[]>([]);
+      const fieldList = ref<ISummaryFieldItem[]>([]);
 
       // 汇总方式
       const summaryModeOptions = [
@@ -126,28 +130,13 @@
       ];
 
       // 汇总类型
-      const summaryTypeOptions = [
-        {
-          name: '总和',
-          type: 'sum',
-        },
-        {
-          name: '最小值',
-          type: 'min',
-        },
-        {
-          name: '最大值',
-          type: 'max',
-        },
-        {
-          name: '平均值',
-          type: 'avg',
-        },
-        {
-          name: '计数',
-          type: 'count',
-        },
-      ];
+      const summaryTypeMap = {
+        sum: '总和',
+        min: '最小值',
+        max: '最大值',
+        avg: '平均值',
+        count: '计数',
+      };
 
       // 点击全部字段行
       function onRowClick(e) {
@@ -159,8 +148,9 @@
             dataSourceTemp.push({
               key: item.key,
               caption: item.caption,
+              options: item.options,
               mode: 'page',
-              type: 'sum',
+              type: item.options[0].type,
             });
           }
         } else {
@@ -179,8 +169,9 @@
               dataSourceTemp.push({
                 key: item.key,
                 caption: item.caption,
+                options: item.options,
                 mode: 'page',
-                type: 'sum',
+                type: item.options[0].type,
               });
             }
           });
@@ -223,13 +214,19 @@
       }
 
       function getFieldList(allColumns: IColumnItem[]) {
-        const data: IFieldItem[] = [];
+        const data: ISummaryFieldItem[] = [];
         allColumns.forEach((item) => {
-          if (!item.hide && item.allowSummary) {
+          if (!item.hide && item.summaryList?.length) {
             data.push({
               ...item,
               caption: item.caption,
               checked: false,
+              options: item.summaryList.map((item) => {
+                return {
+                  name: summaryTypeMap[item],
+                  type: item,
+                };
+              }),
             });
           }
         });
@@ -277,7 +274,6 @@
         fieldList,
         schemeData,
         summaryModeOptions,
-        summaryTypeOptions,
         onAddCol,
         onDel,
         onRowClick,

@@ -51,6 +51,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'Qty',
     caption: '数量',
+    summaryList: ['sum', 'max', 'min'],
   },
   // {
   //   key: 'LotCode',
@@ -83,6 +84,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'PackageQuantity',
     caption: '包件数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'PackageCount',
@@ -91,6 +93,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'VolumeQuantity',
     caption: '体积',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'VolumeCount',

@@ -1,5 +1,5 @@
-import type { SummaryType } from '../QueryPopup/content/types';
 import type { ISortItem } from '/@/api/ods/types';
+import type { SummaryType } from '/@/model/types';
 
 type allModeType = 'allPages' | 'page';
 

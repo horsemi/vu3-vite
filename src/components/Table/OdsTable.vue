@@ -309,6 +309,7 @@
 
       // 处理汇总信息
       const handleClientSummary = (summary: ISummaryItem[]) => {
+        if (!summary || !summary.length) return;
         const _summary: ITableSummary[] = [];
         summary?.forEach((item) => {
           item.mode === 'page' &&

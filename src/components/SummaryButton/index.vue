@@ -3,7 +3,7 @@
     <DxButton id="summary-button" :width="122" icon="paste" text="汇总信息" @click="onSummary" />
     <DxPopover
       v-model:visible="showSummary"
-      :width="280"
+      :width="320"
       target="#summary-button"
       position="bottom"
     >
@@ -24,8 +24,8 @@
 
 <script lang="ts">
   import type { PropType } from 'vue';
-  import type { ISchemeItem, ISummaryItem, SummaryType } from '../QueryPopup/content/types';
-  import type { IColumnItem } from '/@/model/types';
+  import type { ISchemeItem, ISummaryItem } from '../QueryPopup/content/types';
+  import type { IColumnItem, SummaryType } from '/@/model/types';
   import type { IOdataParams } from '../Table/types';
 
   import { defineComponent, ref } from 'vue';
@@ -99,12 +99,12 @@
         allColumns: IColumnItem[];
       }) => {
         const _aggregate = summary.map((item) => {
-          return `${item.type}(${item.key})`;
+          return `${item.type}(${item.key.replaceAll('_', '.')})`;
         });
         const $aggregate = _aggregate.join(',');
         const params = {};
         odataParams.$filter && (params['$filter'] = odataParams.$filter);
-        odataParams.$expand && (params['$filter'] = odataParams.$expand);
+        odataParams.$expand && (params['$expand'] = odataParams.$expand.replaceAll('_', '.'));
         $aggregate && (params['$aggregate'] = $aggregate);
 
         const data = await getOdataList(orderCode, params, systemCode ? systemCode : undefined);
@@ -115,7 +115,7 @@
           const col = allColumns.find((col) => col.key === item.key);
           return {
             caption: col?.caption,
-            value: res[`${item.key}${upperFirst(item.type)}`],
+            value: res[`${item.key.replaceAll('_', '')}${upperFirst(item.type)}`],
             summaryType: item.type,
           };
         });
@@ -126,7 +126,7 @@
       const onSummary = () => {
         showSummary.value = true;
         const serverSummaryScheme = props.scheme.summary.filter((item) => item.mode === 'all');
-        if (serverSummaryScheme.length > 0 && props.odataParams) {
+        if (serverSummaryScheme.length > 0) {
           serverSummary({
             orderCode: props.orderCode,
             systemCode: props.systemCode,

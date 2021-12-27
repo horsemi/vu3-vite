@@ -18,6 +18,7 @@ export const customColumns: IColumnItem[] = [
     key: 'BillDate',
     caption: '单据日期',
     type: 'date',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'DocumentStatus',
@@ -85,7 +86,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalVolume',
     caption: '总体积数',
-    allowSummary: true,
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'MarkStatus',
@@ -133,7 +134,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalPackage',
     caption: '总包件数',
-    allowSummary: true,
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'Group',
@@ -142,7 +143,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalOrderCount',
     caption: '订单总数',
-    allowSummary: true,
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'CustomerSalesman',
@@ -159,7 +160,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'DetailRowsCount',
     caption: '明细行数',
-    allowSummary: true,
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'IsGatheringOrder',

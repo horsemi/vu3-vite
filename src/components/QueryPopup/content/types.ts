@@ -1,10 +1,9 @@
 import type { IQueryItem } from '../../QueryPlan/types';
+import type { SummaryType } from '/@/model/types';
 
 type LogicType = 'and' | 'or';
 
 export type SummaryMode = 'page' | 'all';
-
-export type SummaryType = 'sum' | 'min' | 'max' | 'avg' | 'count';
 
 export interface IRequirementItem extends IQueryItem {
   /**
@@ -87,6 +86,11 @@ export interface ISummaryItem {
    * @description 汇总类型
    */
   type: SummaryType;
+
+  /**
+   * @description 汇总配置
+   */
+  options: { name: string; type: SummaryType }[];
 }
 
 export interface IFieldItem extends ISchemeColumnsItem {

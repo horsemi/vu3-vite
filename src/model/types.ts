@@ -1,3 +1,5 @@
+export type SummaryType = 'sum' | 'min' | 'max' | 'avg' | 'count';
+
 type alignmentType = 'center' | 'left' | 'right';
 
 interface IFoundationItem {
@@ -74,9 +76,9 @@ export interface IColumnItem {
   allowSort?: boolean;
 
   /**
-   * @description 是否允许汇总
+   * @description 允许哪些类型的汇总
    */
-  allowSummary?: boolean;
+  summaryList?: SummaryType[];
 
   /**
    * @description 过滤类型 (基础数据必要的字段，用于指定请求哪个接口)

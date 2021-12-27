@@ -1,8 +1,10 @@
 import type { IPropsSummary, ITableOptions } from './types';
 import type { ISchemeColumnsItem } from '../QueryPopup/content/types';
 import type { IColumnItem } from '/@/model/types';
+import type { Moment } from 'moment';
 
 import { sum, min, max, mean } from 'lodash-es';
+import moment from 'moment';
 
 const defaultPaginate = true;
 
@@ -63,7 +65,7 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
       columnList.push({
         ...item,
         ...col,
-        caption: caption.length === 2 ? caption[1] : caption[0],
+        caption: caption[caption.length - 1],
       });
     }
   });
@@ -79,10 +81,6 @@ const summaryTypeMap = {
   count: '计数',
 };
 
-const isEnableValue = (val: any) => {
-  return val !== '' && (typeof val === 'number' || typeof val === 'string');
-};
-
 export const clientSummary = ({
   summary,
   source,
@@ -93,43 +91,98 @@ export const clientSummary = ({
   allColumns: IColumnItem[];
 }) => {
   const col = allColumns.find((item) => item.key === summary.columnName);
-  let res: unknown = '';
-  const valArr: unknown[] = [];
-  source &&
-    source.forEach((item) => {
-      isEnableValue(item[summary.columnName]) &&
-        valArr.push(
-          col && col.type === 'decimal'
-            ? parseInt(item[summary.columnName].toFixed(3).replace('.', ''))
-            : item[summary.columnName]
-        );
-    });
 
-  switch (summary.summaryType) {
-    case 'sum':
-      res = col && col.type === 'decimal' ? (sum(valArr) / 1000).toFixed(3) : sum(valArr);
-      break;
-    case 'min':
-      res =
-        col && col.type === 'decimal'
-          ? valArr.length && ((min(valArr) as number) / 1000).toFixed(3)
-          : max(valArr);
-      break;
-    case 'max':
-      res =
-        col && col.type === 'decimal'
-          ? valArr.length && ((max(valArr) as number) / 1000).toFixed(3)
-          : max(valArr);
-      break;
-    case 'avg':
-      res = col && col.type === 'decimal' ? (mean(valArr) / 1000).toFixed(3) : mean(valArr);
-      break;
-    case 'count':
-      res = valArr.length;
-      break;
-    default:
-      console.error(`${summary.columnName}的汇总类型错误`);
+  if (col) {
+    const { type } = col;
+    const { columnName, summaryType } = summary;
+    let res: unknown = '';
+
+    if (type === 'decimal') {
+      const valArr: number[] = [];
+      let temp: number | undefined = 0;
+      source &&
+        source.forEach((item) => {
+          typeof item[columnName] === 'number' &&
+            valArr.push(parseInt(item[columnName].toFixed(3).replace('.', '')));
+        });
+      switch (summaryType) {
+        case 'sum':
+          res = (sum(valArr) / 1000).toFixed(3);
+          break;
+        case 'min':
+          temp = min(valArr);
+          if (typeof temp === 'number') {
+            res = (temp / 1000).toFixed(3);
+          } else {
+            res = 0;
+          }
+          break;
+        case 'max':
+          temp = max(valArr);
+          if (typeof temp === 'number') {
+            res = (temp / 1000).toFixed(3);
+          } else {
+            res = 0;
+          }
+          break;
+        case 'avg':
+          res = (mean(valArr) / 1000).toFixed(3);
+          break;
+        case 'count':
+          res = valArr.length;
+          break;
+        default:
+          console.error(`${columnName}的汇总类型错误`);
+      }
+    } else if (type === 'int32' || type === 'int64') {
+      const valArr: number[] = [];
+      source &&
+        source.forEach((item) => {
+          typeof item[columnName] === 'number' && valArr.push(item[columnName]);
+        });
+      switch (summaryType) {
+        case 'sum':
+          res = sum(valArr);
+          break;
+        case 'min':
+          res = min(valArr) ?? 0;
+          break;
+        case 'max':
+          res = max(valArr) ?? 0;
+          break;
+        case 'avg':
+          res = mean(valArr);
+          break;
+        case 'count':
+          res = valArr.length;
+          break;
+        default:
+          console.error(`${columnName}的汇总类型错误`);
+      }
+    } else if (type === 'date' || type === 'datetime') {
+      const format = type === 'date' ? 'YYYY/MM/DD' : 'YYYY/MM/DD HH:mm:ss';
+      const valArr: Moment[] = [];
+      source &&
+        source.forEach((item) => {
+          item[columnName] && valArr.push(moment(item[columnName]));
+        });
+      switch (summaryType) {
+        case 'min':
+          res = moment.min(valArr).format(format);
+          break;
+        case 'max':
+          res = moment.max(valArr).format(format);
+          break;
+        case 'count':
+          res = valArr.length;
+          break;
+        default:
+          console.error(`${columnName}的汇总类型错误`);
+      }
+    }
+
+    return `${summaryTypeMap[summaryType]}: ${res}`;
+  } else {
+    return '';
   }
-
-  return `${summaryTypeMap[summary.summaryType]}: ${res}`;
 };
