@@ -1,5 +1,5 @@
+import type { IOdataParams } from '/@/components/Table/types';
 import { defHttp } from '/@/utils/http/axios';
-import type { OdataQuery } from '../policy-manage/type';
 
 enum apiUrl {
   onShippingOrderSearchUrl = '/ods/api/odata/shipping-orders/$query',
@@ -12,7 +12,7 @@ enum apiUrl {
 }
 
 export class ShippingOrderApi {
-  static onShippingOrderSearch(QueryParameters: OdataQuery) {
+  static onShippingOrderSearch(QueryParameters: Partial<IOdataParams>) {
     return defHttp.post({
       url: apiUrl.onShippingOrderSearchUrl,
       params: { ...QueryParameters },

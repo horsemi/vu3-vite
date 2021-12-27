@@ -1,7 +1,7 @@
 import { defHttp } from '/@/utils/http/axios';
 
 import type { UploadFileParams } from '/@/utils/http/axios/types';
-import type { OdataQuery } from './type';
+import type { IOdataParams } from '/@/components/Table/types';
 
 enum apiUrl {
   onShippingRulesCreateUrl = '/policy-manage/api/v1/manage/shipping-rules/create',
@@ -41,7 +41,7 @@ export class ShippingRulesApi {
     });
   }
 
-  static onShippingRulesExport(QueryParameter: OdataQuery) {
+  static onShippingRulesExport(QueryParameter: Partial<IOdataParams>) {
     return defHttp.post({
       url: apiUrl.onShippingRulesExportUrl,
       params: { QueryParameter },

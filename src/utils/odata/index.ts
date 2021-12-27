@@ -398,11 +398,12 @@ export const getOdataQuery = ({
   tableSort,
   defaultSort,
 }: {
-  scheme: ISchemeItem;
-  allColumns: IColumnItem[];
-  tableSort: ISortItem[];
+  scheme?: ISchemeItem;
+  allColumns?: IColumnItem[];
+  tableSort?: ISortItem[];
   defaultSort?: ISortItem[];
 }) => {
+  if (!scheme || !allColumns) return {};
   let orderBy: IOrderByItem[] = [];
   if (tableSort) {
     const sort = tableSort[0];

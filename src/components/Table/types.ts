@@ -123,4 +123,7 @@ export interface IOdataParams {
   $filter: string;
   $orderby: string;
   $expand: string;
+  $count: string;
+  $top: number;
+  $skip: string | number;
 }

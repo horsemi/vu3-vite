@@ -223,12 +223,11 @@
 
       const onExportClick = () => {
         ShippingRulesApi.onShippingRulesExport(
-          getOdataQuery(
-            options.value,
-            filterScheme.value as ISchemeItem,
-            allColumns.value,
-            tableKey.value
-          )
+          getOdataQuery({
+            scheme: filterScheme.value,
+            allColumns: allColumns.value,
+            defaultSort: options.value.dataSourceOptions.sort,
+          })
         ).then(() => {
           odsMessage({
             type: 'success',
