@@ -1,6 +1,21 @@
-import type { IColumnItem } from './types';
+import type { IColumnItem } from '../types';
 
-import { getColumnList } from './common';
+import { getColumnList } from '../common';
+
+export const relationShips = [
+  {
+    key: '',
+    entityCode: 'shipping-orders',
+    caption: '基本',
+    isMainEntity: true,
+  },
+  {
+    key: 'Items',
+    entityCode: 'shipping-order-items',
+    caption: '明细',
+    isMainEntity: false,
+  },
+];
 
 export const customColumns: IColumnItem[] = [
   {
@@ -538,3 +553,5 @@ export const customColumns: IColumnItem[] = [
 export const getColumns = async () => {
   return await getColumnList({ code: 'shipping-orders', customColumns });
 };
+
+export default getColumns;

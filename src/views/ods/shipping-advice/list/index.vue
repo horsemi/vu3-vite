@@ -58,8 +58,8 @@
   import { cloneDeep } from 'lodash-es';
   import { shippingAdviceType } from '/@/enums/actionPermission/shipping-advice';
 
-  import { getColumns } from '/@/model/shipping-advices';
-  import { getDefiniteColumns } from '/@/model/shipping-advice-items';
+  import { getColumns } from '/@/model/entity/shipping-advices';
+  import { getDefiniteColumns } from '/@/model/entity/shipping-advice-items';
   import { isArrayEmpty } from '/@/utils/bill/index';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { getOdsListUrlByCode } from '/@/api/ods/common';

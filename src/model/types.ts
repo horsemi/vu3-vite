@@ -49,6 +49,11 @@ export interface IColumnItem {
   relationKey?: string;
 
   /**
+   * @description 实体名称
+   */
+  entityKey?: string;
+
+  /**
    * @description 指定基础数据中的字段 （基础数据可选的字段，用于指定使用基础数据中的哪些属性）
    */
   foundationList?: IFoundationItem[];
@@ -92,6 +97,25 @@ export interface IColumnItem {
    * @description 用于基础资料字段默认筛选条件
    */
   filter?: Array<Record<string, unknown>>;
+}
+
+export interface IRelationShipItem {
+  /**
+   * @description 关联标识
+   */
+  key: string;
+  /**
+   * @description 实体编码
+   */
+  entityCode: string;
+  /**
+   * @description 实体名称
+   */
+  caption: string;
+  /**
+   * @description 是否为主要实体(是为不可编辑)
+   */
+  isMainEntity: boolean;
 }
 
 export interface IFieldType {

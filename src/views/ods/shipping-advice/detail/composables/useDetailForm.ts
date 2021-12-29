@@ -3,7 +3,7 @@ import type { IDetailItem } from '/@/utils/bill/types';
 
 import { getFormList } from '/@/utils/bill';
 import { isFoundationType } from '/@/model/common';
-import { getColumns } from '/@/model/shipping-advices';
+import { getColumns } from '/@/model/entity/shipping-advices';
 import { Ref, ref } from 'vue';
 import { getOdataList } from '/@/api/ods/common';
 

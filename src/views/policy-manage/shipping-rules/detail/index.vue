@@ -33,7 +33,7 @@
 
   import { usePermissionStore } from '/@/store/modules/permission';
   import { shippingRuleType } from '/@/enums/actionPermission/shipping-rules';
-  import { getColumns } from '/@/model/shipping-rules';
+  import { getColumns } from '/@/model/entity/shipping-rules';
   import { ShippingRulesApi } from '/@/api/policy-manage/shipping-rules';
   import { getDetailData, getDetailColumn } from './index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';

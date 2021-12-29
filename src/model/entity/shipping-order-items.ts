@@ -1,6 +1,6 @@
-import type { IColumnItem } from './types';
+import type { IColumnItem } from '../types';
 
-import { getColumnList } from './common';
+import { getColumnList } from '../common';
 
 export const customColumns: IColumnItem[] = [
   {
@@ -169,3 +169,5 @@ export const customColumns: IColumnItem[] = [
 export const getDefiniteColumns = async () => {
   return await getColumnList({ code: 'shipping-order-items', customColumns });
 };
+
+export default getDefiniteColumns;
