@@ -209,6 +209,14 @@
                       tableKeyType.value = resolve[relationItem.entityCode]!.keyType;
                     } else {
                       item.key = `${relationItem.key}_${item.key}`;
+                      item.expand && (item.expand = `${relationItem.key}_${item.expand}`);
+                      item.relationKey &&
+                        (item.relationKey = `${relationItem.key}_${item.relationKey}`);
+                      item.foundationList &&
+                        item.foundationList.forEach((foundationItem) => {
+                          foundationItem.caption = `${relationItem.caption}_${foundationItem.caption}`;
+                          foundationItem.key = `${relationItem.key}_${foundationItem.key}`;
+                        });
                     }
 
                     return item;

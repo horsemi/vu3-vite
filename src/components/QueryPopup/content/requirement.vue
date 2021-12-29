@@ -34,7 +34,7 @@
           ></DxSelectBox>
           <DynamicSelect
             v-model:value="item.value"
-            v-model:paramKey="item.requirement"
+            v-model:paramKey="item.key"
             v-model:operation="item.operator"
             v-model:paramDataType="item.type"
             v-model:paramOperations="item.operatorList"
@@ -165,8 +165,8 @@
         schemeData.value.scheme[schemeData.value.checkedIndex].requirement.splice(index, 0, {
           leftParenthesisCount: undefined,
           rightParenthesisCount: undefined,
-          requirement: '',
           entityKey: '',
+          key: '',
           operator: '',
           operatorList: [],
           value: undefined,
@@ -181,8 +181,8 @@
         schemeData.value.scheme[schemeData.value.checkedIndex].requirement.splice(index + 1, 0, {
           leftParenthesisCount: undefined,
           rightParenthesisCount: undefined,
-          requirement: '',
           entityKey: '',
+          key: '',
           operator: '',
           operatorList: [],
           value: undefined,
@@ -202,7 +202,7 @@
         }
       };
 
-      const onRelationShipChangeHandle = (value) => {
+      const onRelationShipChangeHandle = () => {
         initEntityColumnHandle!();
       };
 

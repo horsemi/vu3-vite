@@ -53,7 +53,7 @@ export function useRecord(BillCode: string) {
         title: '',
         requirement: [
           {
-            requirement: 'BillCode',
+            key: 'BillCode',
             operator: '=',
             value: BillCode,
             operatorList: [],
@@ -77,7 +77,7 @@ export function useRecord(BillCode: string) {
       title: '',
       requirement: [
         {
-          requirement: 'BillCode',
+          key: 'BillCode',
           operator: '=',
           value: BillCode,
           operatorList: [],

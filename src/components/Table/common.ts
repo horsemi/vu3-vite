@@ -65,7 +65,7 @@ export const getCompleteColumns = (allColumns: IColumnItem[], columns: ISchemeCo
   columns.forEach((item) => {
     const col = allCol.find((col) => item.key === col.key);
     if (col) {
-      const caption = col.caption.split('.');
+      const caption = col.caption.split('_');
       columnList.push({
         ...item,
         ...col,

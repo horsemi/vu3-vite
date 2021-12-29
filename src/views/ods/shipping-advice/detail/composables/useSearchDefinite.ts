@@ -14,7 +14,7 @@ export function useSearchDefinite(
       {
         fast: [
           {
-            requirement: 'Material',
+            key: 'Material',
             operator: '=',
             operatorList: [
               {
@@ -64,7 +64,7 @@ export function useSearchDefinite(
     schemeData.value.scheme[schemeData.value.checkedIndex] = {
       fast: [
         {
-          requirement: 'Material',
+          key: 'Material',
           operator: '=',
           operatorList: [
             {
