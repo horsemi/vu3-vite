@@ -2,6 +2,7 @@
   <div :class="prefixCls">
     <div :class="`${prefixCls}__field`">
       <DxDataGrid
+        ref="fieldTable"
         height="100%"
         :data-source="fieldList"
         :hover-state-enabled="true"
@@ -91,6 +92,8 @@
       // 全部字段数据
       const fieldList = ref<IFieldItem[]>([]);
 
+      const fieldTable = ref();
+
       function getRowIndex(data) {
         const curIndex = schemeData.value.scheme[schemeData.value.checkedIndex].columns.indexOf(
           data.data
@@ -126,27 +129,30 @@
       // 全选字段
       function onChangeCheckAll(e) {
         const { value } = e;
-        if (value) {
-          fieldList.value.forEach((item) => {
-            if (!item.checked) {
+        const dataItems = fieldTable.value.instance.getDataSource().items();
+        if (dataItems && dataItems.length) {
+          if (value) {
+            dataItems.forEach((item) => {
               item.checked = true;
-              dataSourceTemp.push({
-                key: item.key,
-                caption: item.caption,
-                expand: item.expand,
-                relationKey: item.relationKey,
-                mustKey: item.mustKey,
-              });
-            }
-          });
-        } else {
-          fieldList.value.forEach((item) => {
-            if (item.checked && !item.mustKey) {
-              item.checked = false;
-              const index = dataSourceTemp.findIndex((el) => item.key === el.key);
-              dataSourceTemp.splice(index, 1);
-            }
-          });
+              const colIndex = dataSourceTemp.findIndex((el) => el.key === item.key);
+              colIndex === -1 &&
+                dataSourceTemp.push({
+                  key: item.key,
+                  caption: item.caption,
+                  expand: item.expand,
+                  relationKey: item.relationKey,
+                  mustKey: item.mustKey,
+                });
+            });
+          } else {
+            dataItems.forEach((item) => {
+              if (!item.mustKey) {
+                item.checked = false;
+                const colIndex = dataSourceTemp.findIndex((el) => item.key === el.key);
+                colIndex !== -1 && dataSourceTemp.splice(colIndex, 1);
+              }
+            });
+          }
         }
       }
 
@@ -243,6 +249,7 @@
         allColumns,
         prefixCls,
         fieldList,
+        fieldTable,
         schemeData,
         getRowIndex,
         onAddCol,

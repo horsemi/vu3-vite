@@ -22,7 +22,9 @@ export const getFormList = (columnList: IColumnItem[], list: IDetailItem[][]) =>
   list.forEach((el) => {
     const newEl: IDetailItem[] = [];
     el.forEach((item) => {
-      const col = columnList.find((col) => item.key === col.key);
+      const col = columnList.find(
+        (col) => item.key === col.key || (item.key === col.expand && col.relationKey)
+      );
       if (col) {
         newEl.push({
           ...item,

@@ -493,7 +493,8 @@
       padding-top: 12px;
     }
 
-    .dx-texteditor-input {
+    .dx-texteditor-input,
+    .dx-placeholder::before {
       min-height: 0;
       padding: 4px 8px 4px;
     }

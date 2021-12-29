@@ -18,12 +18,14 @@
     >
       <template #content>
         <DxDataGrid
+          ref="foundationSelectTable"
           v-model:selected-row-keys="gridValueComputed"
           :data-source="options"
           :hover-state-enabled="true"
           height="100%"
           :on-initialized="onInitialized"
           @row-click="onDataGridRowClick"
+          @contentReady="onContentReady"
         >
           <DxColumn caption="名称" data-field="name"> </DxColumn>
           <DxColumn caption="编码" data-field="code"> </DxColumn>
@@ -105,6 +107,8 @@
 
       const dataGrid = ref();
 
+      const foundationSelectTable = ref();
+
       // 下拉框组件文本框绑定的文本
       const dropDownValue = ref('');
 
@@ -183,7 +187,7 @@
             getFoundationByCode(
               {
                 top: 10,
-                isall: props.filter && props.filter.length > 0 ? false : true,
+                isall: props.filter && props.filter.length > 0 ? true : false,
               },
               value
             );
@@ -195,11 +199,11 @@
 
       // 该方法是从两个watch中拆分出来
       function initFoundationList() {
+        if (props.defaultOptions && Object.keys(props.defaultOptions).length) return;
         if (props.foundationCode && isUnDef(props.defaultOptions)) {
           getFoundationByCode(
             {
               top: 10,
-              isall: props.filter && props.filter.length > 0 ? false : true,
             },
             props.foundationCode
           );
@@ -264,6 +268,23 @@
           });
       }
 
+      function handleIsNotEnabled() {
+        if (options.value && options.value.length) {
+          options.value.forEach((item, index) => {
+            if (item.isEnabled === false) {
+              const rowEl = foundationSelectTable.value.instance.getRowElement(index);
+              rowEl &&
+                rowEl.length === 1 &&
+                (rowEl[0].className += ' foundation-select-table-is-not-enabled');
+            }
+          });
+        }
+      }
+
+      function onContentReady() {
+        handleIsNotEnabled();
+      }
+
       function onFocusIn() {
         isGridBoxOpened.value = true;
       }
@@ -293,6 +314,7 @@
               names: [value],
               codes: [value],
               isPrecised: false,
+              allowDisabled: true,
             },
             props.foundationCode
           );
@@ -300,7 +322,7 @@
           getFoundationByCode(
             {
               top: 10,
-              isall: props.filter && props.filter.length > 0 ? false : true,
+              isall: true,
             },
             props.foundationCode
           );
@@ -340,6 +362,7 @@
       return {
         prefixCls,
         options,
+        foundationSelectTable,
         dropDownBox,
         isGridBoxOpened,
         dropDownValue,
@@ -353,16 +376,21 @@
         onDataGridRowClick,
         onFocusIn,
         onInput,
+        onContentReady,
       };
     },
   });
 </script>
 
-<style lang="less" scoped>
+<style lang="less">
   @prefix-cls: ~'@{namespace}-foundation-select';
 
   .@{prefix-cls} {
     display: inline-block;
     width: 100%;
+    .foundation-select-table-is-not-enabled {
+      pointer-events: none;
+      background-color: @disabled-color;
+    }
   }
 </style>

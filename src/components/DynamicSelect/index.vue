@@ -235,7 +235,7 @@
         options.value.splice(0, options.value.length);
         dataType.value = type;
         if (type === 'enum' && expand) {
-          options.value.push(...appStore.getGlobalEnumDataByCode(expand));
+          options.value.push(...appStore.getGlobalEnumDataByCode(expand.toLowerCase()));
         }
 
         operatorOptions.value = getOperatorByType(datatypekeies ? 'foundation' : type);

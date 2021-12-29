@@ -107,7 +107,12 @@
       >
       </DxTabPanel>
       <div v-if="tableIndex === 0" class="search-box">
-        <QueryForm ref="queryForm" class="query-form" :save-fast="false" @on-search="onSearch" />
+        <QueryForm
+          ref="queryForm"
+          class="query-form"
+          :show-save-fast="false"
+          @on-search="onSearch"
+        />
         <div class="search-btn">
           <DxButton text="查询" type="default" @click="onSearch" />
           <DxButton text="重置" @click="onReset" />
@@ -539,10 +544,6 @@
           .vue3-vite-query-form__box {
             padding-left: 16px;
           }
-
-          &.dx-texteditor-input {
-            min-height: 34px;
-          }
         }
 
         .search-btn {
@@ -566,11 +567,6 @@
     }
     .form-box {
       overflow: hidden;
-
-      .dx-texteditor-input {
-        min-height: 0;
-        padding: 4px 8px 4px;
-      }
     }
     .icon-box {
       display: flex;
@@ -589,6 +585,12 @@
 
     .dx-layout-manager .dx-field-item:not(.dx-first-row) {
       padding-top: 12px;
+    }
+
+    .dx-texteditor-input,
+    .dx-placeholder::before {
+      min-height: 0;
+      padding: 4px 8px 4px;
     }
   }
 </style>

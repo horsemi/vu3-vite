@@ -101,13 +101,9 @@ const getSelectAndExpand = ({
     for (let i = 0; i < allCol.length; i++) {
       if (item.key === allCol[i].key) {
         if (item.expand && item.relationKey) {
-          if (!expand.includes(item.expand)) {
-            expand.push(item.expand);
-          }
-          if (!select.includes(item.relationKey)) {
-            select.push(item.relationKey);
-            select.push(item.key);
-          }
+          !expand.includes(item.expand) && expand.push(item.expand);
+          !select.includes(item.relationKey) && select.push(item.relationKey);
+          select.push(item.key);
         } else {
           const keyArr = item.key.split('_');
           if (keyArr.length > 1) {
@@ -143,7 +139,7 @@ const initValueData = (item: IRequirementItem, requirement) => {
         result += ',"=",null]';
       } else if (item.operator === operatorMap.isNotNull.key) {
         result += ',"<>",null]';
-      } else if (!value) {
+      } else if (isNullOrUnDef(value)) {
         result = '';
       } else {
         result += `,"${item.operator}",${value}]`;
@@ -200,7 +196,7 @@ const initValueData = (item: IRequirementItem, requirement) => {
         result += ',"=",null]';
       } else if (item.operator === operatorMap.isNotNull.key) {
         result += ',"<>",null]';
-      } else if (!value) {
+      } else if (isNullOrUnDef(value)) {
         result = '';
       } else {
         result += `,"${item.operator}","${value}"]`;

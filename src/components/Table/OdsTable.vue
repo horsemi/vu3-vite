@@ -587,7 +587,7 @@
     .dx-header-row
       > td
       > .dx-datagrid-text-content:not(.dx-sort-indicator):not(.dx-header-filter-indicator) {
-      max-width: 102%;
+      max-width: 110%;
     }
     // 给表头单元格加上左右边框
     .dx-datagrid .dx-datagrid-headers .dx-header-filter,

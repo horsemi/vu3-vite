@@ -2,7 +2,7 @@ import type { IColumnItem } from '/@/model/types';
 import type { ISchemeItem, IRequirementItem } from '/@/components/QueryPopup/content/types';
 
 import { ref } from 'vue';
-import { getDefiniteColumns } from '/@/model/shipping-advice-items';
+import { getDefiniteColumns } from '/@/model/shipping-order-items';
 
 export function useDefinite(requirement: IRequirementItem[]) {
   const definiteCustomColumns: IColumnItem[] = [
