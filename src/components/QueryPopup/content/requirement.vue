@@ -1,6 +1,17 @@
 <template>
   <DxScrollView direction="both">
     <div :class="prefixCls">
+      <div v-if="relationShipsCpt.length > 0" class="entity-list__container">
+        <DxCheckBox
+          v-for="(item, index) in relationShipsCpt"
+          :key="index"
+          v-model:value="item.value"
+          class="entity-item__container"
+          :text="item.caption"
+          :disabled="item.isMainEntity"
+          @valueChanged="onRelationShipChangeHandle"
+        />
+      </div>
       <div :class="`${prefixCls}__header`">
         <span style="width: 100px">(</span>
         <span style="width: 180px">字段</span>
@@ -29,6 +40,7 @@
             v-model:paramOperations="item.operatorList"
             v-model:paramDatatypekeies="item.datatypekeies"
             v-model:paramRelationKey="item.relationKey"
+            v-model:entity-key="item.entityKey"
             :param-list="allColumns"
           />
           <DxSelectBox
@@ -63,6 +75,7 @@
   import type { ILogicOptions } from './types';
   import type { IColumnItem } from '/@/model/types';
   import type { ISchemeData } from '../../QueryPlan/types';
+
   import type { Ref } from 'vue';
 
   import { defineComponent, computed, inject } from 'vue';
@@ -70,6 +83,7 @@
   import { useDesign } from '/@/hooks/web/useDesign';
 
   import DxSelectBox from 'devextreme-vue/select-box';
+  import { DxCheckBox } from 'devextreme-vue/check-box';
   import { DxScrollView } from 'devextreme-vue/scroll-view';
 
   import DynamicSelect from '/@/components/DynamicSelect/index.vue';
@@ -78,16 +92,34 @@
     components: {
       DynamicSelect,
       DxSelectBox,
+      DxCheckBox,
       DxScrollView,
     },
     setup() {
       const allColumns = inject('allColumns') as Ref<IColumnItem[]>;
+      const initRelationHandle = inject<() => void>('initRelationHandle');
+      const initEntityColumnHandle = inject<() => void>('initEntityColumnHandle');
       const schemeData = inject('schemeData') as Ref<ISchemeData>;
 
       const requirement = computed(() => {
-        const scheme = schemeData.value.scheme[schemeData.value.checkedIndex];
-        if (scheme && scheme.requirement) {
-          return scheme.requirement;
+        if (
+          schemeData.value.scheme[schemeData.value.checkedIndex] &&
+          schemeData.value.scheme[schemeData.value.checkedIndex].requirement
+        ) {
+          return schemeData.value.scheme[schemeData.value.checkedIndex].requirement;
+        } else {
+          return [];
+        }
+      });
+
+      const relationShipsCpt = computed(() => {
+        if (schemeData.value.scheme[schemeData.value.checkedIndex]) {
+          if (
+            !Array.isArray(schemeData.value.scheme[schemeData.value.checkedIndex].relationShips)
+          ) {
+            initRelationHandle!();
+          }
+          return schemeData.value.scheme[schemeData.value.checkedIndex].relationShips;
         } else {
           return [];
         }
@@ -133,6 +165,7 @@
         schemeData.value.scheme[schemeData.value.checkedIndex].requirement.splice(index, 0, {
           leftParenthesisCount: undefined,
           rightParenthesisCount: undefined,
+          entityKey: '',
           key: '',
           operator: '',
           operatorList: [],
@@ -148,6 +181,7 @@
         schemeData.value.scheme[schemeData.value.checkedIndex].requirement.splice(index + 1, 0, {
           leftParenthesisCount: undefined,
           rightParenthesisCount: undefined,
+          entityKey: '',
           key: '',
           operator: '',
           operatorList: [],
@@ -168,8 +202,13 @@
         }
       };
 
+      const onRelationShipChangeHandle = () => {
+        initEntityColumnHandle!();
+      };
+
       return {
         requirement,
+        relationShipsCpt,
         allColumns,
         prefixCls,
         logicOptions,
@@ -178,6 +217,7 @@
         onUpAdd,
         onDownAdd,
         onDel,
+        onRelationShipChangeHandle,
       };
     },
   });
@@ -188,6 +228,14 @@
 
   .@{prefix-cls} {
     height: 100%;
+
+    .entity-list__container {
+      padding-bottom: 10px;
+      border-bottom: 1px #e4e7ed solid;
+      .entity-item__container {
+        margin-right: 10px;
+      }
+    }
 
     &__header {
       display: flex;

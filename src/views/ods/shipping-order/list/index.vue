@@ -53,7 +53,7 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
+  import type { ISchemeItem, IRelationShip } from '/@/components/QueryPopup/content/types';
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
 
@@ -62,13 +62,12 @@
   import { cloneDeep } from 'lodash-es';
   import { usePermissionStore } from '/@/store/modules/permission';
   import { shippingOrderType } from '/@/enums/actionPermission/shipping-order';
-  import { getColumns } from '/@/model/shipping-orders';
-  import { getDefiniteColumns } from '/@/model/shipping-order-items';
+  import { relationShips } from '/@/model/entity/shipping-orders';
   import { isArrayEmpty } from '/@/utils/bill/index';
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { getSchemesData } from '/@/utils/scheme/index';
-  import { handleRelationColumnList } from '/@/utils/odata';
+  import { getColumnListByEntityCode } from '/@/model/index';
 
   import DxButton from 'devextreme-vue/button';
 
@@ -174,6 +173,72 @@
         filterScheme.value = cloneDeep(data);
       };
 
+      const initRelationShip = () => {
+        const _relationShips: IRelationShip[] = [];
+
+        relationShips.forEach((item) => {
+          _relationShips.push({
+            value: item.isMainEntity ? true : false,
+            ...item,
+          });
+        });
+
+        schemeData.value.scheme[schemeData.value.checkedIndex].relationShips = _relationShips;
+      };
+
+      const initEntityColumn = (
+        scheme: ISchemeItem = schemeData.value.scheme[schemeData.value.checkedIndex]
+      ) => {
+        getColumnListByEntityCode(
+          scheme.relationShips.map((item) => (item.value ? item.entityCode : ''))
+        ).then((resolve) => {
+          let _allColumns: IColumnItem[] = [];
+
+          schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.forEach(
+            (relationItem) => {
+              if (relationItem.isMainEntity) {
+                tableKey.value = resolve[relationItem.entityCode]!.key;
+              }
+              if (resolve[relationItem.entityCode]) {
+                if (relationItem.isMainEntity) {
+                  _allColumns.push(
+                    ...resolve[relationItem.entityCode]!.columnList.map<IColumnItem>((item) => {
+                      item.caption = `${relationItem.caption}_${item.caption}`;
+                      item.entityKey = relationItem.entityCode;
+                      item.foundationList &&
+                        item.foundationList.forEach((foundationItem) => {
+                          foundationItem.caption = `${relationItem.caption}_${foundationItem.caption}`;
+                        });
+                      return item;
+                    })
+                  );
+                } else {
+                  _allColumns.push(
+                    ...resolve[relationItem.entityCode]!.columnList.map<IColumnItem>((item) => {
+                      item.caption = `${relationItem.caption}_${item.caption}`;
+                      item.entityKey = relationItem.entityCode;
+                      item.key = `${relationItem.key}_${item.key}`;
+                      item.expand && (item.expand = `${relationItem.key}_${item.expand}`);
+                      item.relationKey &&
+                        (item.relationKey = `${relationItem.key}_${item.relationKey}`);
+                      item.foundationList &&
+                        item.foundationList.forEach((foundationItem) => {
+                          foundationItem.caption = `${relationItem.caption}_${foundationItem.caption}`;
+                          foundationItem.key = `${relationItem.key}_${foundationItem.key}`;
+                        });
+                      return item;
+                    })
+                  );
+                }
+              }
+            }
+          );
+
+          allColumns.value = _allColumns;
+          filterScheme.value = scheme;
+        });
+      };
+
       const getTableData = async () => {
         const schemeResult = await getSchemesData(ORDER_CODE);
 
@@ -181,28 +246,19 @@
         schemeData.value.scheme = schemeResult.scheme;
         schemeDataTemp.value = cloneDeep(schemeData.value);
         schemeDefaultIndex.value = schemeData.value.checkedIndex;
+
+        if (!Array.isArray(schemeData.value.scheme[schemeDefaultIndex.value].relationShips)) {
+          initRelationShip();
+        }
+
         const scheme = cloneDeep(schemeData.value.scheme[schemeDefaultIndex.value]);
 
-        const fast = scheme.fast || [];
-        if (fast.length > 0) {
-          scheme.requirement.push(...fast);
+        const _fast = scheme.fast || [];
+        if (_fast.length > 0) {
+          scheme.requirement.push(..._fast);
         }
-        Promise.all([getColumns(), getDefiniteColumns()]).then(([base, definite]) => {
-          let _allColumns: IColumnItem[] = [];
-          if (base) {
-            const { columnList, key } = base;
-            _allColumns.push(...handleRelationColumnList(columnList, { caption: '基本' }));
-            tableKey.value = key;
-          }
-          if (definite) {
-            const { columnList } = definite;
-            _allColumns.push(
-              ...handleRelationColumnList(columnList, { key: 'Items', caption: '明细' })
-            );
-          }
-          allColumns.value = _allColumns;
-          filterScheme.value = scheme;
-        });
+
+        initEntityColumn(scheme);
       };
 
       getTableData();
@@ -212,6 +268,8 @@
       provide('schemeDataTemp', schemeDataTemp);
       provide('schemeDefaultIndex', schemeDefaultIndex);
       provide('onChangeScheme', onChangeScheme);
+      provide('initRelationHandle', initRelationShip);
+      provide('initEntityColumnHandle', initEntityColumn);
 
       return {
         ORDER_CODE,

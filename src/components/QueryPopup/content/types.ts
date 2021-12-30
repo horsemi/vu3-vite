@@ -1,5 +1,6 @@
-import type { IQueryItem } from '../../QueryPlan/types';
 import type { SummaryType } from '/@/model/types';
+import type { IQueryItem } from '/@/components/QueryPlan/types';
+import type { IRelationShipItem } from '/@/model/types';
 
 type LogicType = 'and' | 'or';
 
@@ -162,9 +163,16 @@ export interface ISchemeItem {
   isShare?: boolean;
 
   /**
-   * @description 是否关联明细
+   * @description 关联关系
    */
-  isUseItems?: boolean;
+  relationShips: IRelationShip[];
+}
+
+export interface IRelationShip extends IRelationShipItem {
+  /**
+   * @description 值
+   */
+  value?: boolean;
 }
 
 export interface ISortOptions {

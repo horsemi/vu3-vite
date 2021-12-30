@@ -1,5 +1,6 @@
 import type {
   IOrderByItem,
+  IRelationShip,
   IRequirementItem,
   ISchemeColumnsItem,
   ISchemeItem,
@@ -86,16 +87,24 @@ const getSort = (orderBy: IOrderByItem[]) => {
 const getSelectAndExpand = ({
   allColumns,
   columns,
+  relationShips,
   tableKey,
 }: {
   allColumns: IColumnItem[];
   columns: ISchemeColumnsItem[];
+  relationShips: IRelationShip[];
   tableKey: string;
 }) => {
   const select: string[] = [tableKey];
   const expand: string[] = [];
 
   const allCol = handleAllCol(allColumns);
+
+  relationShips.forEach((item) => {
+    if (item.key) {
+      expand.push(item.key);
+    }
+  });
 
   columns?.forEach((item) => {
     for (let i = 0; i < allCol.length; i++) {
@@ -105,13 +114,6 @@ const getSelectAndExpand = ({
           !select.includes(item.relationKey) && select.push(item.relationKey);
           select.push(item.key);
         } else {
-          const keyArr = item.key.split('_');
-          if (keyArr.length > 1) {
-            const relationExpand = keyArr.slice(0, keyArr.length - 1).join('.');
-            if (!expand.includes(relationExpand)) {
-              expand.push(relationExpand);
-            }
-          }
           select.push(item.key);
         }
         break;
@@ -432,9 +434,9 @@ export const getOdataQuery = ({
       },
     ];
   }
-  const { columns, requirement } = scheme;
+  const { columns, requirement, relationShips } = scheme;
 
-  const { select, expand } = getSelectAndExpand({ allColumns, columns, tableKey });
+  const { select, expand } = getSelectAndExpand({ allColumns, columns, relationShips, tableKey });
   const filter = requirement?.length ? getFilter(requirement) : [];
   const orderby = orderBy?.length ? getSort(orderBy) : [];
   const $select = select.length ? select.join(',') : '';

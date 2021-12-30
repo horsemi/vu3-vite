@@ -76,9 +76,9 @@
     ISchemeColumnsItem,
   } from '/@/components/QueryPopup/content/types';
   import type { IQueryItem } from '/@/components/QueryPlan/types';
-  import { getColumns as getAdvicesColumns } from '/@/model/shipping-advices';
-  import { getColumns as getOrdersColumns } from '/@/model/shipping-orders';
-  import { getColumns as getRulesColumns } from '/@/model/shipping-rules';
+  import { getColumns as getAdvicesColumns } from '/@/model/entity/shipping-advices';
+  import { getColumns as getOrdersColumns } from '/@/model/entity/shipping-orders';
+  import { getColumns as getRulesColumns } from '/@/model/entity/shipping-rules';
 
   import { defineComponent, ref, reactive } from 'vue';
   import DxTabPanel from 'devextreme-vue/tab-panel';
@@ -227,6 +227,7 @@
             relationKey: '',
             logic: 'and',
             value: '',
+            entityKey: '',
           },
         ];
         filterData.orderBy = [];

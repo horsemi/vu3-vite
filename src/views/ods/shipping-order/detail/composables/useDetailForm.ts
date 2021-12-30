@@ -2,7 +2,7 @@ import type { IColumnItem } from '/@/model/types';
 import type { IDetailItem } from '/@/utils/bill/types';
 
 import { getFormList } from '/@/utils/bill';
-import { getColumns } from '/@/model/shipping-orders';
+import { getColumns } from '/@/model/entity/shipping-orders';
 import { Ref, ref } from 'vue';
 import { getOdataList } from '/@/api/ods/common';
 

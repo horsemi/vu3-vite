@@ -2,7 +2,7 @@ import type { IColumnItem } from '/@/model/types';
 import type { ISchemeItem, IRequirementItem } from '/@/components/QueryPopup/content/types';
 
 import { ref } from 'vue';
-import { getDefiniteColumns } from '/@/model/shipping-order-items';
+import { getDefiniteColumns } from '/@/model/entity/shipping-order-items';
 
 export function useDefinite(requirement: IRequirementItem[]) {
   const definiteCustomColumns: IColumnItem[] = [
@@ -156,6 +156,7 @@ export function useDefinite(requirement: IRequirementItem[]) {
         orderBy: [],
         columns: definiteCustomColumns,
         summary: [],
+        relationShips: [],
       };
     }
   });
@@ -168,6 +169,7 @@ export function useDefinite(requirement: IRequirementItem[]) {
       orderBy: [],
       columns: definiteCustomColumns,
       summary: [],
+      relationShips: [],
     };
   }
 

@@ -15,7 +15,9 @@ export async function getSchemesData(orderCode: string) {
   });
 
   const scheme = schemesData.map((item, index) => {
-    const { requirement, orderBy, columns, summary, fast } = JSON.parse(item.queryData);
+    const { requirement, orderBy, columns, summary, fast, relationShips } = JSON.parse(
+      item.queryData
+    );
     if (item.isUseScheme) {
       checkedIndex = index;
     }
@@ -30,6 +32,7 @@ export async function getSchemesData(orderCode: string) {
       isUseScheme: item.isUseScheme,
       isShare: item.isShare,
       requirement,
+      relationShips,
       orderBy,
       columns,
       summary,
@@ -54,6 +57,7 @@ export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem 
       columns: scheme.columns,
       summary: scheme.summary,
       fast: scheme.fast,
+      relationShips: scheme.relationShips,
     });
 
     const schemeData = {
@@ -83,6 +87,7 @@ export async function saveSchemesData(scheme: ISchemeItem): Promise<ISchemeItem 
         columns: queryData.columns,
         summary: queryData.summary,
         fast: queryData.fast,
+        relationShips: queryData.relationShips,
       };
 
       return result;

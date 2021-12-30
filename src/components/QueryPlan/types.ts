@@ -8,6 +8,7 @@ export interface IQueryItem {
   type: string;
   relationKey: string;
   datatypekeies: string;
+  entityKey: string;
 }
 
 export interface ISchemeData {

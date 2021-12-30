@@ -151,6 +151,10 @@
         type: Array as PropType<string[]>,
         default: () => [] as PropType<string[]>,
       },
+      entitykey: {
+        type: String,
+        default: '',
+      },
     },
     emits: [
       'update:value',
@@ -160,6 +164,7 @@
       'update:paramOperations',
       'update:paramRelationKey',
       'update:paramDatatypekeies',
+      'update:entityKey',
     ],
     setup(props, context) {
       const appStore = useAppStore();
@@ -204,7 +209,7 @@
 
           if (!col) return;
 
-          let { type, operations, datatypekeies, relationKey, expand, filter } = col;
+          let { type, operations, datatypekeies, relationKey, expand, filter, entityKey } = col;
 
           paramFilter.value = filter;
 
@@ -213,6 +218,7 @@
             context.emit('update:paramOperations', operatorOptions.value);
           }
 
+          context.emit('update:entityKey', entityKey);
           context.emit('update:paramDataType', type);
           context.emit('update:paramDatatypekeies', datatypekeies);
           context.emit('update:paramRelationKey', relationKey);
@@ -228,6 +234,7 @@
           context.emit('update:paramDatatypekeies', '');
           context.emit('update:paramRelationKey', '');
           context.emit('update:value', undefined);
+          context.emit('update:entityKey', '');
         }
       }
 

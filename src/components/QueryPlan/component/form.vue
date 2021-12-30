@@ -109,6 +109,7 @@
               datatypekeies: '',
               relationKey: '',
               logic: 'and',
+              entityKey: '',
             },
           ]
         );
@@ -127,6 +128,7 @@
           datatypekeies: '',
           relationKey: '',
           logic: 'and',
+          entityKey: '',
         });
       }
 
@@ -151,6 +153,7 @@
             datatypekeies: '',
             relationKey: '',
             logic: 'and',
+            entityKey: '',
           });
         }
         if (schemeData.value.checkedIndex === 0) {

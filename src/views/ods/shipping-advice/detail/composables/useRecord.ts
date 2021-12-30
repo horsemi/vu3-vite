@@ -2,7 +2,7 @@ import type { IColumnItem } from '/@/model/types';
 import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 
 import { ref } from 'vue';
-import { getRecordColumns } from '/@/model/operation-record';
+import { getRecordColumns } from '/@/model/entity/operation-record';
 
 export function useRecord(BillCode: string) {
   const recordCustomColumns: IColumnItem[] = [
@@ -62,9 +62,11 @@ export function useRecord(BillCode: string) {
             type: 'string',
             relationKey: '',
             datatypekeies: '',
+            entityKey: '',
           },
         ],
         orderBy: [],
+        relationShips: [],
         columns: recordCustomColumns,
         summary: [],
       };
@@ -84,9 +86,11 @@ export function useRecord(BillCode: string) {
           type: 'string',
           relationKey: '',
           datatypekeies: '',
+          entityKey: '',
         },
       ],
       orderBy: [],
+      relationShips: [],
       columns: recordCustomColumns,
       summary: [],
     };
