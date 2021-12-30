@@ -20,6 +20,7 @@
   import zhMessages from 'devextreme/localization/messages/zh.json';
   import { locale, loadMessages } from 'devextreme/localization';
   import Toast from '/@/components/Toast/index.vue';
+  import IndexedDBService from '/@/utils/indexedDB/index';
 
   export default defineComponent({
     name: 'App',
@@ -28,8 +29,8 @@
       Toast,
     },
     setup() {
+      IndexedDBService.openConnect();
       const appStore = useAppStore();
-
       const toast = ref();
       const visibleData = computed(() => appStore.toastData);
       const showToast = () => {
