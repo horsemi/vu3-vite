@@ -100,7 +100,7 @@ const getSelectAndExpand = ({
 
   const allCol = handleAllCol(allColumns);
 
-  relationShips.forEach((item) => {
+  relationShips?.forEach((item) => {
     if (item.value && item.key) {
       expand.push(item.key);
     }

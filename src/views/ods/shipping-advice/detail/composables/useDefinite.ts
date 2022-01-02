@@ -181,6 +181,7 @@ export function useDefinite(requirement: IRequirementItem[]) {
         orderBy: [],
         columns: definiteCustomColumns,
         summary: [],
+        relationShips: [],
       };
     }
   });
@@ -193,6 +194,7 @@ export function useDefinite(requirement: IRequirementItem[]) {
       orderBy: [],
       columns: definiteCustomColumns,
       summary: [],
+      relationShips: [],
     };
   }
 

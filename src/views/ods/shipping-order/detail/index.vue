@@ -219,6 +219,7 @@
           relationKey: '',
           datatypekeies: '',
           logic: 'and',
+          entityKey: '',
         },
       ];
 
