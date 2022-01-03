@@ -202,8 +202,11 @@
         }
       };
 
-      const onRelationShipChangeHandle = () => {
-        initEntityColumnHandle!();
+      const onRelationShipChangeHandle = (e) => {
+        if (e.event) {
+          // 只有点击行为才执行更新全部列
+          initEntityColumnHandle!();
+        }
       };
 
       return {

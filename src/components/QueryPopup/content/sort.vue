@@ -176,12 +176,14 @@
 
       function getFieldList(allColumns: IColumnItem[]) {
         const data: IFieldItem[] = [];
+        const orderBy = schemeData.value.scheme[schemeData.value.checkedIndex].orderBy;
         allColumns.forEach((item) => {
           if (item.allowSort !== false && !item.relationKey && !item.hide) {
+            const index = orderBy.findIndex((col) => col.key === item.key);
             data.push({
               key: item.key,
               caption: item.caption,
-              checked: false,
+              checked: index !== -1 ? true : false,
             });
           }
         });

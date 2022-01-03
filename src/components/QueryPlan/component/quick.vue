@@ -12,7 +12,7 @@
         <span
           :class="[
             `${prefixCls}__span`,
-            checkedIndex === index ? `${prefixCls}__span--active` : '',
+            schemeQuickIndex === index ? `${prefixCls}__span--active` : '',
           ]"
           @click="onActive(index)"
           >{{ item.title }}</span
@@ -43,14 +43,14 @@
     setup() {
       const schemeData = inject('schemeData') as Ref<ISchemeData>;
       const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
+      const schemeQuickIndex = inject('schemeQuickIndex') as Ref<number>;
       const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
+      const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
+        'initEntityColumnHandle'
+      );
 
       const schemeListTemp = computed(() => {
         return (schemeDataTemp.value && schemeDataTemp.value.scheme) || [];
-      });
-
-      const checkedIndex = computed(() => {
-        return schemeData.value.checkedIndex;
       });
 
       const { prefixCls } = useDesign('query-quick');
@@ -59,17 +59,22 @@
 
       const onActive = (index: number): void => {
         schemeData.value.checkedIndex = index;
+        schemeQuickIndex.value = index;
 
-        // 共享方案状态更新
-        const scheme = cloneDeep(schemeListTemp.value[checkedIndex.value]);
-        schemeData.value.scheme[checkedIndex.value].fast = scheme.fast || [];
+        // 把快速过滤加到条件上
+        const scheme = cloneDeep(schemeListTemp.value[index]);
+        schemeData.value.scheme[index].fast = scheme.fast || [];
         scheme.fast &&
           scheme.fast.forEach((item) => {
             if (item.key) {
               scheme.requirement.push(item);
             }
           });
-        onChangeScheme(scheme);
+
+        // 切换过滤方案前需要获取最新的全部列
+        initEntityColumnHandle!(scheme).then((resolve) => {
+          onChangeScheme(resolve);
+        });
       };
 
       const closePopup = () => {
@@ -81,7 +86,7 @@
         quick,
         opened,
         schemeListTemp,
-        checkedIndex,
+        schemeQuickIndex,
         onActive,
         closePopup,
       };

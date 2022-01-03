@@ -187,23 +187,26 @@
 
       function getFieldList(allColumns: IColumnItem[]) {
         const data: IFieldItem[] = [];
+        const columns = schemeData.value.scheme[schemeData.value.checkedIndex].columns;
         allColumns.forEach((item) => {
           if (item.foundationList && item.foundationList.length > 0) {
             item.foundationList.forEach((field) => {
+              const index = columns.findIndex((col) => col.key === field.key);
               data.push({
                 ...field,
                 caption: field.caption,
                 expand: item.expand,
                 relationKey: item.relationKey,
                 mustKey: item.mustKey,
-                checked: item.mustKey ?? false,
+                checked: item.mustKey ?? index !== -1 ? true : false,
               });
             });
           } else if (!item.hide) {
+            const index = columns.findIndex((col) => item.key === col.key);
             data.push({
               ...item,
               caption: item.caption,
-              checked: item.mustKey ?? false,
+              checked: item.mustKey ?? index !== -1 ? true : false,
             });
           }
         });

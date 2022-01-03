@@ -41,10 +41,14 @@
     emits: ['on-close-popup', 'on-submit', 'on-submit-checked-default'],
     setup(props, ctx) {
       const schemeDefaultIndex = inject('schemeDefaultIndex') as Ref<number>;
+      const schemeQuickIndex = inject('schemeQuickIndex') as Ref<number>;
       const schemeData = inject('schemeData') as Ref<ISchemeData>;
       const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
       const queryForm = inject('queryForm') as Ref<any>;
       const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
+      const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
+        'initEntityColumnHandle'
+      );
 
       const currentSchemeItem = computed(() => {
         const _currentSchemeItem = {
@@ -111,12 +115,15 @@
 
       function onSubmit() {
         const scheme = cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]);
+        schemeQuickIndex.value = schemeData.value.checkedIndex;
         queryForm.value.queryList.forEach((item) => {
           if (item.key) {
             scheme.requirement.push(item);
           }
         });
-        onChangeScheme(scheme);
+        initEntityColumnHandle!(scheme).then((resolve) => {
+          onChangeScheme(resolve);
+        });
         onClosePopup();
       }
       const onClosePopup = () => {
