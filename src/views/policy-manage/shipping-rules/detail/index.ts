@@ -1,6 +1,6 @@
 import type { IDetailItem } from '/@/utils/bill/types';
 
-import { getDetailDataSource } from '/@/api/ods/detail';
+import { getOdataList } from '/@/api/ods/common';
 import { getFormList } from '/@/utils/bill';
 import { isFoundationType } from '/@/model/common';
 
@@ -61,7 +61,15 @@ export const getDetailData = async (filter: any[], columnsData: any) => {
     });
   });
 
-  const data = await getDetailDataSource('shipping-rules', select, expand, filter, 'policy-manage');
+  const data = await getOdataList(
+    'shipping-rules',
+    {
+      $select: select.join(','),
+      $expand: expand.join(','),
+      $filter: filter,
+    },
+    'policy-manage'
+  );
 
   return data[0];
 };

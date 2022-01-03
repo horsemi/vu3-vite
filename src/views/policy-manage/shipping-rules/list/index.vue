@@ -103,7 +103,7 @@
   import { defaultTableOptions } from '/@/components/Table/common';
   import { getOdataQuery } from '/@/utils/odata';
   import { shippingRuleType } from '/@/enums/actionPermission/shipping-rules';
-  import { getColumns } from '/@/model/shipping-rules';
+  import { getColumns } from '/@/model/entity/shipping-rules';
   import { isArrayEmpty } from '/@/utils/bill/index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { getSchemesData } from '/@/utils/scheme/index';
