@@ -1,4 +1,14 @@
-class IndexedDB {
+interface IIndexedDB {
+  openConnect: (success?: () => void, fail?: () => void) => void;
+  add: (tableName: string, data: Record<string, unknown>) => Promise<unknown>;
+  read: (tableName: string, key: string) => Promise<any>;
+  readAll: (tableName: string) => Promise<any>;
+  update: (tableName: string, data: Record<string, unknown>) => Promise<unknown>;
+  remove: (tableName: string, key: string) => Promise<unknown>;
+  clear: (tableName: string) => Promise<unknown>;
+}
+
+class IndexedDB implements IIndexedDB {
   private db;
 
   openConnect(success?: () => void, fail?: () => void) {
@@ -49,7 +59,7 @@ class IndexedDB {
   }
 
   // 新增数据
-  add(tableName, data) {
+  add(tableName: string, data: Record<string, unknown>) {
     return new Promise((resolve, reject) => {
       const request = this.db
         .transaction([tableName], 'readwrite')
@@ -67,7 +77,7 @@ class IndexedDB {
   }
 
   // 读取数据
-  read(tableName, key): Promise<any> {
+  read(tableName: string, key: string): Promise<any> {
     return new Promise((resolve, reject) => {
       const transaction = this.db.transaction([tableName]);
       const objectStore = transaction.objectStore(tableName);
@@ -88,7 +98,7 @@ class IndexedDB {
   }
 
   // 遍历数据
-  readAll(tableName) {
+  readAll(tableName: string): Promise<any> {
     return new Promise((resolve) => {
       const objectStore = this.db.transaction(tableName).objectStore(tableName);
 
@@ -105,7 +115,7 @@ class IndexedDB {
   }
 
   // 更新数据
-  update(tableName, data) {
+  update(tableName: string, data: Record<string, unknown>) {
     return new Promise((resolve, reject) => {
       const request = this.db
         .transaction([tableName], 'readwrite')
@@ -123,7 +133,7 @@ class IndexedDB {
   }
 
   // 删除数据
-  remove(tableName, key) {
+  remove(tableName: string, key: string) {
     return new Promise((resolve) => {
       const request = this.db
         .transaction([tableName], 'readwrite')
@@ -137,7 +147,7 @@ class IndexedDB {
   }
 
   // 清除数据
-  clear(tableName) {
+  clear(tableName: string) {
     return new Promise((resolve) => {
       const request = this.db.transaction([tableName], 'readwrite').objectStore(tableName).clear();
 

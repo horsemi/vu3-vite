@@ -382,15 +382,18 @@
   });
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
   @prefix-cls: ~'@{namespace}-foundation-select';
 
   .@{prefix-cls} {
     display: inline-block;
     width: 100%;
-    .foundation-select-table-is-not-enabled {
-      pointer-events: none;
-      background-color: @disabled-color;
-    }
+  }
+</style>
+
+<style lang="less">
+  .foundation-select-table-is-not-enabled {
+    pointer-events: none;
+    background-color: @disabled-color;
   }
 </style>

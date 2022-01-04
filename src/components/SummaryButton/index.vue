@@ -13,7 +13,7 @@
             <div :class="`${prefixCls}-item-name`"
               >{{ item.caption }}_{{ summaryTypeMap[item.summaryType] }}</div
             >
-            <div :class="`${prefixCls}-item-value`">{{ item.value }}</div>
+            <div :class="`${prefixCls}-item-value`">{{ getValue(item) }}</div>
           </div>
         </div>
         <div v-else :class="`${prefixCls}-empty`"> 暂无汇总信息 </div>
@@ -36,6 +36,7 @@
   import DxButton from 'devextreme-vue/button';
   import { DxPopover } from 'devextreme-vue/popover';
   import { upperFirst } from 'lodash-es';
+  import { formatToDate } from '/@/utils/date';
 
   export default defineComponent({
     name: 'SummaryButton',
@@ -75,7 +76,14 @@
       const { prefixCls } = useDesign('summary-button');
       const showSummary = ref(false);
 
-      const list = ref<{ caption: string | undefined; value: any; summaryType: SummaryType }[]>([]);
+      const list = ref<
+        {
+          caption: string | undefined;
+          value: any;
+          summaryType: SummaryType;
+          fieldType: string | undefined;
+        }[]
+      >([]);
 
       const summaryTypeMap = {
         sum: '总和',
@@ -117,6 +125,7 @@
             caption: col?.caption,
             value: res[`${item.key.replaceAll('_', '')}${upperFirst(item.type)}`],
             summaryType: item.type,
+            fieldType: col?.type,
           };
         });
 
@@ -141,12 +150,21 @@
         }
       };
 
+      const getValue = (item) => {
+        if (item.fieldType === 'date') {
+          return formatToDate(item.value);
+        } else {
+          return item.value;
+        }
+      };
+
       return {
         showSummary,
         prefixCls,
         list,
         summaryTypeMap,
         onSummary,
+        getValue,
       };
     },
   });

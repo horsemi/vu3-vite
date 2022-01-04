@@ -102,7 +102,7 @@
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
 
-  import { defineComponent, watch, PropType, computed, ref } from 'vue';
+  import { defineComponent, watch, PropType, computed, ref, nextTick } from 'vue';
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -222,10 +222,17 @@
           context.emit('update:paramDataType', type);
           context.emit('update:paramDatatypekeies', datatypekeies);
           context.emit('update:paramRelationKey', relationKey);
-          if (!props.operation) {
-            context.emit('update:operation', '=');
-          }
           initOption(type!, datatypekeies!, expand!);
+
+          // 初始化运算符，取运算符列表第一个
+          nextTick(() => {
+            if (
+              !props.operation ||
+              operatorOptions.value.findIndex((item) => item.key === props.operation) === -1
+            ) {
+              context.emit('update:operation', operatorOptions.value[0].key);
+            }
+          });
         } else {
           operatorOptions.value = [];
           context.emit('update:paramOperations', operatorOptions.value);

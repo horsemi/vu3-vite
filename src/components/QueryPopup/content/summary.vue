@@ -224,12 +224,14 @@
 
       function getFieldList(allColumns: IColumnItem[]) {
         const data: ISummaryFieldItem[] = [];
+        const summary = schemeData.value.scheme[schemeData.value.checkedIndex].summary;
         allColumns.forEach((item) => {
           if (!item.hide && item.summaryList?.length) {
+            const index = summary.findIndex((col) => col.key === item.key);
             data.push({
               ...item,
               caption: item.caption,
-              checked: false,
+              checked: index !== -1 ? true : false,
               entityKey: item.entityKey || '',
               options: item.summaryList.map((item) => {
                 return {
@@ -249,7 +251,7 @@
           const index = summary.findIndex((item) => item.key === field.key);
           if (index !== -1) {
             field.checked = true;
-          } else if (!field.mustKey) {
+          } else {
             field.checked = false;
           }
         });

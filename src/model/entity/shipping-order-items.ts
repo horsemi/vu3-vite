@@ -89,6 +89,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'PackageCount',
     caption: '总包件数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'VolumeQuantity',
@@ -98,6 +99,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'VolumeCount',
     caption: '总体积',
+    summaryList: ['sum', 'max', 'min'],
   },
   // {
   //   key: 'CustomerMaterialName',
