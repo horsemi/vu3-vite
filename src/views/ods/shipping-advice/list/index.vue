@@ -54,6 +54,8 @@
   import { defineComponent, ref, provide } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
+
+  import { exceptSpareCriteriaFn } from '/@/utils/odata/index';
   import { usePermissionStore } from '/@/store/modules/permission';
   import { shippingAdviceType } from '/@/enums/actionPermission/shipping-advice';
   import { relationShips } from '/@/model/entity/shipping-advices';
@@ -185,6 +187,8 @@
         scheme: ISchemeItem = schemeData.value.scheme[schemeData.value.checkedIndex]
       ): Promise<ISchemeItem> => {
         return new Promise((resolve) => {
+          exceptSpareCriteriaFn(scheme);
+
           getColumnListByEntityCode(
             // 根据过滤方案中的关联实体获取字段
             scheme.relationShips.map((item) => (item.value ? item.entityCode : ''))

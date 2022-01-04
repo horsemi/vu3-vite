@@ -154,6 +154,7 @@
               options: item.options,
               mode: 'page',
               type: item.options[0].type,
+              entityKey: item.entityKey || '',
             });
           }
         } else {
@@ -178,6 +179,7 @@
                   options: item.options,
                   mode: 'page',
                   type: item.options[0].type,
+                  entityKey: item.entityKey || '',
                 });
             });
           } else {
@@ -206,6 +208,7 @@
             columns.push({
               key: sum.key,
               caption: sum.caption,
+              entityKey: sum.entityKey || '',
             });
             schemeData.value.scheme[schemeData.value.checkedIndex].columns = columns;
           }
@@ -229,6 +232,7 @@
               ...item,
               caption: item.caption,
               checked: index !== -1 ? true : false,
+              entityKey: item.entityKey || '',
               options: item.summaryList.map((item) => {
                 return {
                   name: summaryTypeMap[item],

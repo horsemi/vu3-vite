@@ -96,14 +96,14 @@
       DxScrollView,
     },
     setup() {
-      const allColumns = inject('allColumns') as Ref<IColumnItem[]>;
+      const allColumns = inject<Ref<IColumnItem[]>>('allColumns');
       const initRelationHandle = inject<() => void>('initRelationHandle');
       const initEntityColumnHandle = inject<() => void>('initEntityColumnHandle');
-      const schemeData = inject('schemeData') as Ref<ISchemeData>;
+      const schemeData = inject<Ref<ISchemeData>>('schemeData');
 
       const requirement = computed(() => {
         if (
-          schemeData.value.scheme[schemeData.value.checkedIndex] &&
+          schemeData?.value.scheme[schemeData.value.checkedIndex] &&
           schemeData.value.scheme[schemeData.value.checkedIndex].requirement
         ) {
           return schemeData.value.scheme[schemeData.value.checkedIndex].requirement;
@@ -113,7 +113,7 @@
       });
 
       const relationShipsCpt = computed(() => {
-        if (schemeData.value.scheme[schemeData.value.checkedIndex]) {
+        if (schemeData?.value.scheme[schemeData.value.checkedIndex]) {
           if (
             !Array.isArray(schemeData.value.scheme[schemeData.value.checkedIndex].relationShips)
           ) {
@@ -162,7 +162,7 @@
 
       // 点击上加触发
       const onUpAdd = (index) => {
-        schemeData.value.scheme[schemeData.value.checkedIndex].requirement.splice(index, 0, {
+        schemeData?.value.scheme[schemeData.value.checkedIndex].requirement.splice(index, 0, {
           leftParenthesisCount: undefined,
           rightParenthesisCount: undefined,
           entityKey: '',
@@ -178,7 +178,7 @@
       };
       // 点击下加触发
       const onDownAdd = (index) => {
-        schemeData.value.scheme[schemeData.value.checkedIndex].requirement.splice(index + 1, 0, {
+        schemeData?.value.scheme[schemeData.value.checkedIndex].requirement.splice(index + 1, 0, {
           leftParenthesisCount: undefined,
           rightParenthesisCount: undefined,
           entityKey: '',
@@ -195,10 +195,10 @@
       // 点击删除触发
       const onDel = (index) => {
         // 删除到只剩下一个不能删除
-        const temp = [...schemeData.value.scheme[schemeData.value.checkedIndex].requirement];
+        const temp = [...schemeData!.value.scheme[schemeData!.value.checkedIndex].requirement];
         if (temp.length > 1) {
           temp.splice(index, 1);
-          schemeData.value.scheme[schemeData.value.checkedIndex].requirement = temp;
+          schemeData!.value.scheme[schemeData!.value.checkedIndex].requirement = temp;
         }
       };
 

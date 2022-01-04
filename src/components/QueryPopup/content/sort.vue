@@ -131,6 +131,7 @@
               key: item.key,
               caption: item.caption,
               desc: false,
+              entityKey: item.entityKey || '',
             });
           }
         } else {
@@ -153,6 +154,7 @@
             columns.push({
               key: sort.key,
               caption: sort.caption,
+              entityKey: sort.entityKey || '',
             });
             schemeData.value.scheme[schemeData.value.checkedIndex].columns = columns;
           }
@@ -184,6 +186,7 @@
               key: item.key,
               caption: item.caption,
               checked: index !== -1 ? true : false,
+              entityKey: item.entityKey || '',
             });
           }
         });

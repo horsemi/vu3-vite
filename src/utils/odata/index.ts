@@ -4,8 +4,10 @@ import type {
   IRequirementItem,
   ISchemeColumnsItem,
   ISchemeItem,
+  ISummaryItem,
 } from '/@/components/QueryPopup/content/types';
-import type { IColumnItem } from '/@/model/types';
+import type { IQueryItem } from '/@/components/QueryPlan/types';
+import type { IColumnItem, IColumnItemBase } from '/@/model/types';
 import type { ISortItem } from '/@/api/ods/types';
 import type { IOdataParams } from '/@/components/Table/types';
 
@@ -413,7 +415,14 @@ export const getOdataQuery = ({
     const sort = tableSort[0];
     const column = allColumns.find((item) => item.key === sort.selector);
     if (column) {
-      orderBy = [{ key: column.key, caption: column.caption, desc: sort.desc ?? false }];
+      orderBy = [
+        {
+          key: column.key,
+          caption: column.caption,
+          desc: sort.desc ?? false,
+          entityKey: column.entityKey || '',
+        },
+      ];
     }
   } else if (scheme.orderBy && scheme.orderBy.length > 0) {
     const defaultOrderBy =
@@ -422,6 +431,7 @@ export const getOdataQuery = ({
           caption: '',
           key: item.selector,
           desc: item.desc ?? false,
+          entityKey: '',
         };
       }) || [];
     orderBy = scheme.orderBy.concat(defaultOrderBy);
@@ -431,6 +441,7 @@ export const getOdataQuery = ({
         caption: '',
         key: tableKey,
         desc: true,
+        entityKey: '',
       },
     ];
   }
@@ -452,28 +463,52 @@ export const getOdataQuery = ({
   return params;
 };
 
-export function handleRelationColumnList(
-  arr: IColumnItem[],
-  options: { key?: string; caption?: string }
-) {
-  const data = arr.map((item) => {
-    const relationItem = { ...item };
-    options.caption && (relationItem.caption = `${options.caption}_${relationItem.caption}`);
-    options.key && (relationItem.key = `${options.key}_${relationItem.key}`);
-    options.key && item.expand && (relationItem['expand'] = `${options.key}_${item.expand}`);
-    options.key &&
-      item.relationKey &&
-      (relationItem['relationKey'] = `${options.key}_${item.relationKey}`);
+/**
+ * @description 去除多余搜索条件
+ * @param scheme
+ * @returns
+ */
+export function exceptSpareCriteriaFn(scheme: ISchemeItem) {
+  const exceptRelationShipList = scheme.relationShips
+    .filter((item) => !item.value)
+    .map((item) => item.entityCode);
 
-    item.foundationList &&
-      (relationItem['foundationList'] = item.foundationList.map((foundation) => {
-        const relationFoundation = { ...foundation };
-        options.caption &&
-          (relationFoundation.caption = `${options.caption}_${relationFoundation.caption}`);
-        options.key && (relationFoundation.key = `${options.key}_${relationFoundation.key}`);
-        return relationFoundation;
-      }));
-    return relationItem;
-  });
-  return data;
+  if (exceptRelationShipList.length == 0) {
+    return;
+  }
+  scheme.fast =
+    scheme.fast && exceptCriteriaHandle<IQueryItem>(scheme.fast, exceptRelationShipList);
+  scheme.requirement = exceptCriteriaHandle<IRequirementItem>(
+    scheme.requirement,
+    exceptRelationShipList
+  );
+  scheme.orderBy = exceptCriteriaHandle<IOrderByItem>(scheme.orderBy, exceptRelationShipList);
+  scheme.summary = exceptCriteriaHandle<ISummaryItem>(scheme.summary, exceptRelationShipList);
+  scheme.columns = exceptCriteriaHandle<ISchemeColumnsItem>(scheme.columns, exceptRelationShipList);
+}
+
+function exceptCriteriaHandle<T extends IColumnItemBase>(
+  criteriaList: T[],
+  exceptRelationShipList: string[]
+) {
+  if (criteriaList && Array.isArray(criteriaList) && criteriaList.length > 0) {
+    const _criteriaListTemp = [...criteriaList];
+
+    let criteriaListLength = _criteriaListTemp.length;
+
+    for (let i = 0; i < criteriaListLength; i++) {
+      const isSpare =
+        _criteriaListTemp[i].entityKey &&
+        exceptRelationShipList.includes(_criteriaListTemp[i].entityKey!);
+
+      if (isSpare) {
+        criteriaListLength -= 1;
+        _criteriaListTemp.splice(i, 1);
+        i -= 1;
+      }
+    }
+    return _criteriaListTemp;
+  } else {
+    return criteriaList;
+  }
 }

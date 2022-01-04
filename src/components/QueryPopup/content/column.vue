@@ -118,6 +118,7 @@
               expand: item.expand,
               relationKey: item.relationKey,
               mustKey: item.mustKey,
+              entityKey: item.entityKey || '',
             });
           }
         } else {
@@ -142,6 +143,7 @@
                   expand: item.expand,
                   relationKey: item.relationKey,
                   mustKey: item.mustKey,
+                  entityKey: item.entityKey || '',
                 });
             });
           } else {
@@ -211,12 +213,14 @@
                 relationKey: item.relationKey,
                 mustKey: item.mustKey,
                 checked: item.mustKey ?? index !== -1 ? true : false,
+                entityKey: item.entityKey || '',
               });
             });
           } else if (!item.hide) {
             const index = columns.findIndex((col) => item.key === col.key);
             data.push({
               ...item,
+              entityKey: item.entityKey || '',
               caption: item.caption,
               checked: item.mustKey ?? index !== -1 ? true : false,
             });

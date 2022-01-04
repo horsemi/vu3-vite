@@ -57,6 +57,7 @@ export function useSearchDefinite(
       orderBy: [],
       columns: definiteCustomColumns,
       summary: [],
+      relationShips: [],
     };
   }
 

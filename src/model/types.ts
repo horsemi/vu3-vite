@@ -2,6 +2,18 @@ export type SummaryType = 'sum' | 'min' | 'max' | 'avg' | 'count';
 
 type alignmentType = 'center' | 'left' | 'right';
 
+export interface IColumnItemBase {
+  /**
+   * @description 列的字段 （如果是基础数据，这个key要和后端返回的expand字段一致，用于和后端字段匹配）
+   */
+  key: string;
+
+  /**
+   * @description 所属实体
+   */
+  entityKey?: string;
+}
+
 interface IFoundationItem {
   /**
    * @description 基础数据属性的列的字段 格式： 基础数据的expand_基础数据中的属性 例子： DeliveryWarehouse_Name
@@ -14,14 +26,9 @@ interface IFoundationItem {
   caption: string;
 }
 
-export interface IColumnItem {
+export interface IColumnItem extends IColumnItemBase {
   /**
-   * @description 列的字段 （如果是基础数据，这个key要和后端返回的expand字段一致，用于和后端字段匹配）
-   */
-  key: string;
-
-  /**
-   * @description 列的标题
+   * @description 标题
    */
   caption: string;
 
@@ -49,11 +56,6 @@ export interface IColumnItem {
    * @description 关联字段必要的key （基础数据必要的字段，用于查询时使用的key）
    */
   relationKey?: string;
-
-  /**
-   * @description 实体名称
-   */
-  entityKey?: string;
 
   /**
    * @description 指定基础数据中的字段 （基础数据可选的字段，用于指定使用基础数据中的哪些属性）

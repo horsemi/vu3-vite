@@ -1,4 +1,4 @@
-import type { SummaryType } from '/@/model/types';
+import type { IColumnItemBase, SummaryType } from '/@/model/types';
 import type { IQueryItem } from '/@/components/QueryPlan/types';
 import type { IRelationShipItem } from '/@/model/types';
 
@@ -23,12 +23,7 @@ export interface IRequirementItem extends IQueryItem {
   logic?: string;
 }
 
-export interface IOrderByItem {
-  /**
-   * @description 字段
-   */
-  key: string;
-
+export interface IOrderByItem extends IColumnItemBase {
   /**
    * @description 标题
    */
@@ -40,12 +35,7 @@ export interface IOrderByItem {
   desc: boolean;
 }
 
-export interface ISchemeColumnsItem {
-  /**
-   * @description 字段
-   */
-  key: string;
-
+export interface ISchemeColumnsItem extends IColumnItemBase {
   /**
    * @description 标题
    */
@@ -67,12 +57,7 @@ export interface ISchemeColumnsItem {
   mustKey?: boolean;
 }
 
-export interface ISummaryItem {
-  /**
-   * @description 字段
-   */
-  key: string;
-
+export interface ISummaryItem extends IColumnItemBase {
   /**
    * @description 标题
    */
