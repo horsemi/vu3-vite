@@ -16,6 +16,7 @@
         v-model:paramOperations="queryList[0].operatorList"
         v-model:paramDatatypekeies="queryList[0].datatypekeies"
         v-model:paramRelationKey="queryList[0].relationKey"
+        v-model:entity-key="queryList[0].entityKey"
         :param-list="allColumns"
       />
       <SvgIcon
@@ -36,6 +37,7 @@
             v-model:paramOperations="item.operatorList"
             v-model:paramDatatypekeies="item.datatypekeies"
             v-model:paramRelationKey="item.relationKey"
+            v-model:entity-key="item.entityKey"
             :param-list="allColumns"
           />
           <SvgIcon

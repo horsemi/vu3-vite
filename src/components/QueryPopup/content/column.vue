@@ -118,6 +118,7 @@
               expand: item.expand,
               relationKey: item.relationKey,
               mustKey: item.mustKey,
+              entityKey: item.entityKey || '',
             });
           }
         } else {
@@ -142,6 +143,7 @@
                   expand: item.expand,
                   relationKey: item.relationKey,
                   mustKey: item.mustKey,
+                  entityKey: item.entityKey || '',
                 });
             });
           } else {
@@ -197,11 +199,13 @@
                 relationKey: item.relationKey,
                 mustKey: item.mustKey,
                 checked: item.mustKey ?? false,
+                entityKey: item.entityKey || '',
               });
             });
           } else if (!item.hide) {
             data.push({
               ...item,
+              entityKey: item.entityKey || '',
               caption: item.caption,
               checked: item.mustKey ?? false,
             });

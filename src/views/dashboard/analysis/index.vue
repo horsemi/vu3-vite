@@ -47,21 +47,25 @@
           key: 'id',
           caption: 'id',
           type: 'int32',
+          entityKey: 'shipping-orders',
         },
         {
           key: 'name',
           caption: 'name',
           type: 'string',
+          entityKey: 'shipping-orders',
         },
         {
           key: 'number',
           caption: 'number',
           type: 'decimal',
+          entityKey: 'shipping-orders',
         },
         {
           key: 'date',
           caption: 'date',
           type: 'datetime',
+          entityKey: 'shipping-orders',
         },
         {
           key: 'foundationData',
@@ -70,6 +74,7 @@
           datatypekeies: 'bill-types',
           relationKey: 'BillTypeCode',
           expand: 'bill-types',
+          entityKey: 'shipping-orders',
         },
       ];
 

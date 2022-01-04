@@ -1,14 +1,12 @@
 import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
-
-export interface IQueryItem {
-  key: string;
+import type { IColumnItemBase } from '/@/model/types';
+export interface IQueryItem extends IColumnItemBase {
   operator: string;
   operatorList: { key: string; value: string; name: string }[];
   value: string | number | boolean | Date | undefined;
   type: string;
   relationKey: string;
   datatypekeies: string;
-  entityKey: string;
 }
 
 export interface ISchemeData {
