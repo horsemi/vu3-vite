@@ -399,7 +399,7 @@
                 });
                 odataParams.value = params;
                 const dataParams = { ...params, $top: pageSize.value };
-                pageIndex.value && (dataParams['$skip'] = pageIndex.value * pageSize.value);
+                dataParams['$skip'] = loadOptions.skip;
                 const totalCountParams = { $aggregate: 'count(1)' };
                 params['$filter'] && (totalCountParams['$filter'] = params['$filter']);
                 params['$expand'] && (totalCountParams['$expand'] = params['$expand']);

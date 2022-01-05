@@ -3,6 +3,16 @@
  */
 import moment from 'moment';
 
+moment.updateLocale('zh-cn', {
+  meridiem: function (hour) {
+    if (hour < 12) {
+      return '上午';
+    } else {
+      return '下午';
+    }
+  },
+});
+
 const DATE_TIME_FORMAT = 'YYYY/MM/DD HH:mm:ss';
 const DATE_FORMAT = 'YYYY/MM/DD';
 

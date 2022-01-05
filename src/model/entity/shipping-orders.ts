@@ -276,6 +276,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'PromisedDeliveryDate',
     caption: '承诺发货时间',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'DetailAddress',
@@ -410,6 +411,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CreatedTime',
     caption: '创建时间',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'CreatorId',
@@ -448,6 +450,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'AppliedTime',
     caption: '审核时间',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'ApplierId',
@@ -490,6 +493,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'UpdatedTime',
     caption: '修改时间',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'UpdaterId',
@@ -519,6 +523,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CancelledTime',
     caption: '作废时间',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'CancellerId',
@@ -552,6 +557,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'PushDownTime',
     caption: '下推时间',
+    summaryList: ['max', 'min'],
   },
 ];
 

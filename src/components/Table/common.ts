@@ -160,7 +160,7 @@ export const clientSummary = ({
           console.error(`${columnName}的汇总类型错误`);
       }
     } else if (type === 'date' || type === 'datetime') {
-      const format = type === 'date' ? 'YYYY/MM/DD' : 'YYYY/MM/DD HH:mm:ss';
+      const format = type === 'date' ? 'YYYY/MM/DD' : 'YYYY/MM/DD Ah:mm';
       const valArr: Moment[] = [];
       source &&
         source.forEach((item) => {

@@ -102,10 +102,11 @@
           if (checkedIndex.value === 0) {
             onSaveScheme();
           } else {
-            saveSchemesData(schemeData.value.scheme[schemeData.value.checkedIndex]).then(() => {
-              schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(
-                schemeData.value.scheme[schemeData.value.checkedIndex]
-              );
+            saveSchemesData(schemeData.value.scheme[schemeData.value.checkedIndex]).then((data) => {
+              if (data) {
+                schemeData.value.scheme[schemeData.value.checkedIndex] = cloneDeep(data);
+                schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(data);
+              }
             });
           }
         }
@@ -118,6 +119,7 @@
             title: '',
             id: '0',
             creatorId: userStore.getUserInfo.accountId,
+            isShare: false,
           });
           schemeData.value.checkedIndex = schemeData.value.scheme.length - 1;
           edit.value = true;
@@ -173,7 +175,6 @@
         if (title) {
           schemeData.value.scheme[checkedIndex.value].title = title;
           edit.value = false;
-          onSubmitScheme();
         }
       };
       // 失去焦点触发

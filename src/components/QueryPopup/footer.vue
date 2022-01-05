@@ -106,10 +106,11 @@
 
       function updateSchemeIsShareState(value: boolean) {
         schemeData.value.scheme[schemeData.value.checkedIndex].isShare = value;
-        saveSchemesData(schemeData.value.scheme[schemeData.value.checkedIndex]).then(() => {
-          schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(
-            schemeData.value.scheme[schemeData.value.checkedIndex]
-          );
+        saveSchemesData(schemeData.value.scheme[schemeData.value.checkedIndex]).then((data) => {
+          if (data) {
+            schemeData.value.scheme[schemeData.value.checkedIndex] = cloneDeep(data);
+            schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(data);
+          }
         });
       }
 
