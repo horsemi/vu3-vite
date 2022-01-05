@@ -2,7 +2,6 @@ import type { IColumnItem } from '/@/model/types';
 import type { IDetailItem } from '/@/utils/bill/types';
 
 import { getFormList } from '/@/utils/bill';
-import { isFoundationType } from '/@/model/common';
 import { getColumns } from '/@/model/entity/shipping-advices';
 import { Ref, ref } from 'vue';
 import { getOdataList } from '/@/api/ods/common';
@@ -24,11 +23,11 @@ export function useDetailForm(
       caption: '单据编码',
     },
     {
-      key: 'BillTypeCode',
+      key: 'BillType',
       caption: '单据类型',
     },
     {
-      key: 'DeliveryWarehouseCode',
+      key: 'DeliveryWarehouse',
       caption: '发货仓库',
     },
     {
@@ -100,15 +99,15 @@ export function useDetailForm(
       caption: '实际售价汇总',
     },
     {
-      key: 'ProvinceCode',
+      key: 'Province',
       caption: '省',
     },
     {
-      key: 'CityCode',
+      key: 'City',
       caption: '市',
     },
     {
-      key: 'DistrictCode',
+      key: 'District',
       caption: '区',
     },
     {
@@ -116,7 +115,7 @@ export function useDetailForm(
       caption: '街道',
     },
     {
-      key: 'AgencyCode',
+      key: 'Agency',
       caption: '经销商',
     },
     {
@@ -154,11 +153,11 @@ export function useDetailForm(
 
   const logistics: IDetailItem[] = [
     {
-      key: 'GatheringPointCode',
+      key: 'GatheringPoint',
       caption: '集货点',
     },
     {
-      key: 'NonstopContractorCode',
+      key: 'NonstopContractor',
       caption: '直达承运商',
     },
     {
@@ -170,11 +169,11 @@ export function useDetailForm(
       caption: '车次',
     },
     {
-      key: 'DeliveryPointCode',
+      key: 'DeliveryPoint',
       caption: '提货点',
     },
     {
-      key: 'TransitContractorCode',
+      key: 'TransitContractor',
       caption: '转运承运商',
     },
     {
@@ -186,11 +185,11 @@ export function useDetailForm(
       caption: '车型',
     },
     {
-      key: 'ThreeServicePointCode',
+      key: 'ThreeServicePoint',
       caption: '三包点',
     },
     {
-      key: 'ContractorCode',
+      key: 'Contractor',
       caption: '中转承运商',
     },
     {
@@ -207,7 +206,7 @@ export function useDetailForm(
       caption: '三包成本',
     },
     {
-      key: 'ThreeServiceSupplierCode',
+      key: 'ThreeServiceSupplier',
       caption: '三包服务商',
     },
     {
@@ -220,16 +219,15 @@ export function useDetailForm(
       caption: '发货模式',
     },
     {
-      key: 'ServiceItemCode',
+      key: 'ServiceContent', // 原为 ServiceItemCode 但是 expand 为 ServiceContent
       caption: '服务项目',
     },
     {
       key: 'LogisticCode',
       caption: '物流单号',
     },
-
     {
-      key: 'LineAreaCode',
+      key: 'LineArea',
       caption: '线路区域',
     },
     {
@@ -237,7 +235,7 @@ export function useDetailForm(
       caption: '物流成本',
     },
     {
-      key: 'ThreeServiceFeeTypeCode',
+      key: 'ThreeServiceCostType', // 原为 ThreeServiceFeeType 但是 expand 为 ThreeServiceCostType
       caption: '三包费用类型',
     },
     {
@@ -249,7 +247,7 @@ export function useDetailForm(
       caption: '物流专线',
     },
     {
-      key: 'FreightTypeCode',
+      key: 'FreightType',
       caption: '运费类型',
     },
   ];
@@ -311,7 +309,7 @@ export function useDetailForm(
       caption: '退货状态',
     },
     {
-      key: 'LockBatchUserCode',
+      key: 'LockBatchUser',
       caption: '锁定批次人',
       keyProperty: 'Id',
       showProperty: 'AccountName',
@@ -337,7 +335,7 @@ export function useDetailForm(
       caption: '发货时间',
     },
     {
-      key: 'CancellerId',
+      key: 'Canceller',
       caption: '作废人',
       keyProperty: 'Id',
       showProperty: 'AccountName',
@@ -381,13 +379,13 @@ export function useDetailForm(
       caption: '创建时间',
     },
     {
-      key: 'CreatorId',
+      key: 'Creator',
       caption: '创建人',
       keyProperty: 'Id',
       showProperty: 'AccountName',
     },
     {
-      key: 'CustomerCode',
+      key: 'Customer',
       caption: '客户',
     },
     {
@@ -399,7 +397,7 @@ export function useDetailForm(
       caption: '修改时间',
     },
     {
-      key: 'UpdaterId',
+      key: 'Updater',
       caption: '修改人',
       keyProperty: 'Id',
       showProperty: 'AccountName',
@@ -417,7 +415,7 @@ export function useDetailForm(
       caption: '审核时间',
     },
     {
-      key: 'ApplierId',
+      key: 'Applier',
       caption: '审核人',
       keyProperty: 'Id',
       showProperty: 'AccountName',
@@ -508,10 +506,16 @@ export function useDetailForm(
 
     [baseList, receiverList, logisticsList, expressList, taskList, otherList].forEach((list) => {
       list.forEach((item) => {
-        if (isFoundationType(item)) {
-          expand.push(item.expand as string);
+        if (item.expand && item.expand === item.key) {
+          const { key, keyProperty, showProperty } = item;
+          const _keyProperty = keyProperty ?? 'Code';
+          const _showProperty = showProperty ?? 'Name';
+          expand.push(key);
+          select.push(`${key}.${_keyProperty}`);
+          select.push(`${key}.${_showProperty}`);
+        } else {
+          select.push(item.key);
         }
-        select.push(item.key);
       });
     });
 
@@ -537,8 +541,18 @@ export function useDetailForm(
       { list: otherList, refData: otherFormData },
     ].forEach(({ list, refData }) => {
       list.forEach((item) => {
-        if (isFoundationType(item)) {
-          refData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
+        if (item.expand && item.expand === item.key) {
+          const { key, keyProperty, showProperty } = item;
+          const _keyProperty = keyProperty ?? 'Code';
+          const _showProperty = showProperty ?? 'Name';
+          refData.value[`${key}_${_keyProperty}`] = (data as Record<string, unknown>)[
+            `${key}_${_keyProperty}`
+          ];
+          refData.value[`${key}_${_showProperty}`] = (data as Record<string, unknown>)[
+            `${key}_${_showProperty}`
+          ];
+        } else {
+          refData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
         }
         refData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
       });
