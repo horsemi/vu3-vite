@@ -166,6 +166,7 @@
 
       // 点击删除触发
       function onDel(data) {
+        // 如果排序中有，则删除
         const orderIndex = schemeData.value.scheme[schemeData.value.checkedIndex].orderBy.findIndex(
           (item) => item.key === data.data.key
         );
@@ -174,6 +175,17 @@
           temp.splice(orderIndex, 1);
           schemeData.value.scheme[schemeData.value.checkedIndex].orderBy = temp;
         }
+
+        // 如果汇总中有，则删除
+        const summaryIndex = schemeData.value.scheme[
+          schemeData.value.checkedIndex
+        ].summary.findIndex((item) => item.key === data.data.key);
+        if (summaryIndex >= 0) {
+          const temp = [...schemeData.value.scheme[schemeData.value.checkedIndex].summary];
+          temp.splice(summaryIndex, 1);
+          schemeData.value.scheme[schemeData.value.checkedIndex].summary = temp;
+        }
+
         const temp = [...schemeData.value.scheme[schemeData.value.checkedIndex].columns];
         temp.splice(data.rowIndex, 1);
         schemeData.value.scheme[schemeData.value.checkedIndex].columns = temp;

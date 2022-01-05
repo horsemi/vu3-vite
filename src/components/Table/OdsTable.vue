@@ -121,6 +121,7 @@
     computed,
     onMounted,
     onActivated,
+    onDeactivated,
   } from 'vue';
   import { cloneDeep, isEmpty, merge } from 'lodash-es';
   import { getOdataList } from '/@/api/ods/common';
@@ -231,6 +232,11 @@
           text: '复制内容',
         },
       ];
+      // 记录滚动条位置
+      const tableScrollable = {
+        top: 0,
+        left: 0,
+      };
 
       const tableData = ref();
       const tableColumns = ref<IColumnItem[]>([]);
@@ -261,23 +267,22 @@
         });
       });
       onActivated(() => {
-        hiddenVirtualRow();
+        scrollToTable();
+      });
+      onDeactivated(() => {
+        resetTableScrollable();
       });
 
+      const resetTableScrollable = () => {
+        const { instance } = dataGrid.value;
+        tableScrollable.top = instance.getScrollable().scrollTop();
+        tableScrollable.left = instance.getScrollable().scrollLeft();
+      };
+
       // 处理keep-alive等情况下骨架屏遮挡列表数据，滚动条位置错误问题
-      const hiddenVirtualRow = () => {
-        const { dataSource, instance } = dataGrid.value;
-        if (dataSource && dataSource.key && instance) {
-          const key = dataSource.key();
-          const items = dataSource.items();
-          if (items.length > 1) {
-            const preItem = { [key]: items[0][key] };
-            const nextItem = { [key]: items[1][key] };
-            // 滚动到第二条数据的位置，再回到第一条，刷新滚动状态
-            instance.navigateToRow(nextItem);
-            instance.navigateToRow(preItem);
-          }
-        }
+      const scrollToTable = () => {
+        const { instance } = dataGrid.value;
+        instance.getScrollable().scrollTo(tableScrollable);
       };
 
       const handleCustomizeDecimal = (cellInfo) => {
@@ -526,8 +531,13 @@
         }
         if (e.fullName === 'paging.pageSize') {
           // 切换页码也会有滚动条问题
+          tableScrollable.top = 0;
+          tableScrollable.left = 0;
+          scrollToTable();
+
           pageSize.value = e.value;
-          hiddenVirtualRow();
+          // 切换页码时，切到第一页
+          pageIndex.value = 0;
           rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
         }
         ctx.emit('optionChanged', e);
@@ -573,6 +583,10 @@
 
 <style lang="less">
   @prefix-cls: ~'@{namespace}-ods-table';
+
+  .is-not-virtual-row {
+    display: none;
+  }
 
   .@{prefix-cls} {
     position: relative;

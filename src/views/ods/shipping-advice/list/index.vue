@@ -106,6 +106,7 @@
         checkedIndex: 0,
       });
       const schemeDefaultIndex = ref<number>(0);
+      const schemeQuickIndex = ref<number>(0);
 
       const onRefresh = () => {
         dataGrid.value.search();
@@ -253,6 +254,7 @@
         schemeData.value.scheme = schemeResult.scheme;
         schemeDataTemp.value = cloneDeep(schemeData.value);
         schemeDefaultIndex.value = schemeData.value.checkedIndex;
+        schemeQuickIndex.value = schemeData.value.checkedIndex;
 
         if (!Array.isArray(schemeData.value.scheme[schemeDefaultIndex.value].relationShips)) {
           initRelationShip();
@@ -276,6 +278,7 @@
       provide('schemeData', schemeData);
       provide('schemeDataTemp', schemeDataTemp);
       provide('schemeDefaultIndex', schemeDefaultIndex);
+      provide('schemeQuickIndex', schemeQuickIndex);
       provide('onChangeScheme', onChangeScheme);
       provide('initRelationHandle', initRelationShip);
       provide('initEntityColumnHandle', initEntityColumn);
