@@ -1,19 +1,25 @@
 <template>
   <div :class="prefixCls">
-    <DxButton id="summary-button" :width="122" icon="paste" text="汇总信息" @click="onSummary" />
+    <DxButton id="summaryButton" :width="122" icon="paste" text="汇总信息" @click="onSummary" />
     <DxPopover
+      ref="summaryPopover"
       v-model:visible="showSummary"
-      :width="320"
-      target="#summary-button"
+      target="#summaryButton"
       position="bottom"
+      min-width="340px"
+      @hiding="list = []"
     >
       <div>
-        <div v-if="list.length > 0">
-          <div v-for="(item, index) in list" :key="index" :class="`${prefixCls}-item`">
-            <div :class="`${prefixCls}-item-name`"
-              >{{ item.caption }}_{{ summaryTypeMap[item.summaryType] }}</div
-            >
-            <div :class="`${prefixCls}-item-value`">{{ getValue(item) }}</div>
+        <div v-if="list.length > 0" :class="`${prefixCls}-list`">
+          <div>
+            <div v-for="(item, index) in list" :key="index" :class="`${prefixCls}-name`">
+              {{ item.caption }}_{{ summaryTypeMap[item.summaryType] }}
+            </div>
+          </div>
+          <div>
+            <div v-for="(item, index) in list" :key="index" :class="`${prefixCls}-value`">
+              {{ getValue(item) }}
+            </div>
           </div>
         </div>
         <div v-else :class="`${prefixCls}-empty`"> 暂无汇总信息 </div>
@@ -28,15 +34,16 @@
   import type { IColumnItem, SummaryType } from '/@/model/types';
   import type { IOdataParams } from '../Table/types';
 
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, nextTick } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { getOdataList } from '/@/api/ods/common';
+  import { formatToDate, formatToDateTime } from '/@/utils/date';
+  import { isNullOrUnDef } from '/@/utils/is';
 
   import DxButton from 'devextreme-vue/button';
   import { DxPopover } from 'devextreme-vue/popover';
   import { upperFirst } from 'lodash-es';
-  import { formatToDate } from '/@/utils/date';
 
   export default defineComponent({
     name: 'SummaryButton',
@@ -75,6 +82,7 @@
     setup(props) {
       const { prefixCls } = useDesign('summary-button');
       const showSummary = ref(false);
+      const summaryPopover = ref();
 
       const list = ref<
         {
@@ -133,6 +141,7 @@
       };
 
       const onSummary = () => {
+        list.value = [];
         showSummary.value = true;
         const serverSummaryScheme = props.scheme.summary.filter((item) => item.mode === 'all');
         if (serverSummaryScheme.length > 0) {
@@ -144,15 +153,23 @@
             allColumns: props.allColumns,
           }).then((res) => {
             list.value = res;
+
+            // 解决自动充满导致弹窗部分在视口外
+            nextTick(() => {
+              // 重新计算弹窗大小和位置
+              summaryPopover.value.instance.repaint();
+            });
           });
-        } else {
-          list.value = [];
         }
       };
 
       const getValue = (item) => {
-        if (item.fieldType === 'date') {
+        if (isNullOrUnDef(item.value)) {
+          return '无';
+        } else if (item.fieldType === 'date') {
           return formatToDate(item.value);
+        } else if (item.fieldType === 'datetime') {
+          return formatToDateTime(item.value, 'YYYY/MM/DD Ah:mm');
         } else {
           return item.value;
         }
@@ -160,6 +177,7 @@
 
       return {
         showSummary,
+        summaryPopover,
         prefixCls,
         list,
         summaryTypeMap,
@@ -175,18 +193,29 @@
   .@{prefix-cls} {
     display: inline-block;
 
-    &-item {
+    &-list {
       display: flex;
+      justify-content: center;
+    }
+
+    &-name {
+      margin-right: 14px;
       margin-bottom: 10px;
+      color: #757575;
+      text-align: right;
 
       &:last-child {
         margin-bottom: 0;
       }
+    }
 
-      &-name {
-        width: 60%;
-        margin-right: 14px;
-        text-align: right;
+    &-value {
+      margin-bottom: 10px;
+      color: #333;
+      text-align: left;
+
+      &:last-child {
+        margin-bottom: 0;
       }
     }
 
