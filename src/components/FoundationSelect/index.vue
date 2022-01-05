@@ -200,16 +200,6 @@
       // 该方法是从两个watch中拆分出来
       function initFoundationList() {
         if (props.defaultOptions && Object.keys(props.defaultOptions).length) return;
-        if (props.foundationCode && isUnDef(props.defaultOptions)) {
-          getFoundationByCode(
-            {
-              top: 10,
-            },
-            props.foundationCode
-          );
-        } else {
-          options.value = [];
-        }
 
         if (props.value) {
           // 若为下拉框点击或默认下拉列为空，则不执行
@@ -217,7 +207,6 @@
             getFoundationByCode(
               {
                 codes: [props.value as string],
-                names: [props.value as string],
               },
               props.foundationCode,
               true
@@ -226,6 +215,17 @@
           isDropDownBoxClick.value = false;
         } else {
           dropDownValueComputed.value = '';
+
+          if (props.foundationCode && isUnDef(props.defaultOptions)) {
+            getFoundationByCode(
+              {
+                top: 10,
+              },
+              props.foundationCode
+            );
+          } else {
+            options.value = [];
+          }
         }
       }
 
