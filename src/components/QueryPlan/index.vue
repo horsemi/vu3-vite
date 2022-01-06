@@ -1,6 +1,6 @@
 <template>
   <div :class="prefixCls">
-    <QueryFrom ref="queryForm" />
+    <QueryFrom />
     <QueryButton @on-queryPlan="onQueryPlan" />
     <QueryQuick />
     <QueryPopup ref="popup" />
@@ -8,7 +8,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, provide, ref } from 'vue';
+  import { defineComponent, ref } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -29,10 +29,6 @@
 
       // 弹窗的dom
       const popup = ref();
-      // 左侧搜索组件
-      const queryForm = ref();
-
-      provide('queryForm', queryForm);
 
       const onQueryPlan = () => {
         popup.value.openPopup();
@@ -41,7 +37,6 @@
       return {
         prefixCls,
         popup,
-        queryForm,
         onQueryPlan,
       };
     },

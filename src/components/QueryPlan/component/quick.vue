@@ -61,18 +61,8 @@
         schemeData.value.checkedIndex = index;
         schemeQuickIndex.value = index;
 
-        // 把快速过滤加到条件上
-        const scheme = cloneDeep(schemeListTemp.value[index]);
-        schemeData.value.scheme[index].fast = scheme.fast || [];
-        scheme.fast &&
-          scheme.fast.forEach((item) => {
-            if (item.key) {
-              scheme.requirement.push(item);
-            }
-          });
-
         // 切换过滤方案前需要获取最新的全部列
-        initEntityColumnHandle!(scheme).then((resolve) => {
+        initEntityColumnHandle!(schemeListTemp.value[index]).then((resolve) => {
           onChangeScheme(resolve);
         });
       };

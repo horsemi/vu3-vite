@@ -276,10 +276,6 @@
         schemeCheckedIndex.value = schemeData.value.checkedIndex;
         const scheme = cloneDeep(schemeData.value.scheme[schemeCheckedIndex.value]);
 
-        const fast = scheme && scheme.fast ? scheme.fast : [];
-        if (fast.length > 0) {
-          scheme.requirement.push(...fast);
-        }
         getColumns().then((res) => {
           if (res) {
             const { columnList, key } = res;

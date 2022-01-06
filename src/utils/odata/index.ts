@@ -445,10 +445,10 @@ export const getOdataQuery = ({
       },
     ];
   }
-  const { columns, requirement, relationShips } = scheme;
+  const { columns, requirement, fast, relationShips } = scheme;
 
   const { select, expand } = getSelectAndExpand({ allColumns, columns, relationShips, tableKey });
-  const filter = requirement?.length ? getFilter(requirement) : [];
+  const filter = fast?.length && requirement?.length ? getFilter([...fast, ...requirement]) : [];
   const orderby = orderBy?.length ? getSort(orderBy) : [];
   const $select = select.length ? select.join(',') : '';
   const $expand = expand.length ? expand.join(',') : '';

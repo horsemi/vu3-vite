@@ -44,7 +44,6 @@
       const schemeQuickIndex = inject('schemeQuickIndex') as Ref<number>;
       const schemeData = inject('schemeData') as Ref<ISchemeData>;
       const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
-      const queryForm = inject('queryForm') as Ref<any>;
       const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
       const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
         'initEntityColumnHandle'
@@ -117,11 +116,6 @@
       function onSubmit() {
         const scheme = cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]);
         schemeQuickIndex.value = schemeData.value.checkedIndex;
-        queryForm.value.queryList.forEach((item) => {
-          if (item.key) {
-            scheme.requirement.push(item);
-          }
-        });
         initEntityColumnHandle!(scheme).then((resolve) => {
           onChangeScheme(resolve);
         });

@@ -189,13 +189,7 @@
       };
 
       const onSearch = () => {
-        const scheme = cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]);
-        queryList.value.forEach((item) => {
-          if (item.key) {
-            scheme.requirement.push(item);
-          }
-        });
-        onChangeScheme(scheme);
+        onChangeScheme(schemeData.value.scheme[schemeData.value.checkedIndex]);
       };
 
       return {

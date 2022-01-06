@@ -262,11 +262,6 @@
 
         const scheme = cloneDeep(schemeData.value.scheme[schemeDefaultIndex.value]);
 
-        const _fast = scheme.fast || [];
-        if (_fast.length > 0) {
-          scheme.requirement.push(..._fast);
-        }
-
         initEntityColumn(scheme).then((resolve) => {
           filterScheme.value = resolve;
         });
