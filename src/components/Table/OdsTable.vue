@@ -171,8 +171,10 @@
         },
       },
       tableKey: {
-        type: String,
-        default: 'Id',
+        type: Array as PropType<string[]>,
+        default: () => {
+          return ['Id'];
+        },
       },
       dataSource: {
         type: Object,
@@ -248,6 +250,14 @@
 
       const SearchPermission = computed(() => {
         return permissionStore.hasPermission(props.queryListPermission);
+      });
+
+      const mainKey = computed(() => {
+        return props.tableKey[0];
+      });
+
+      const dataGridKey = computed(() => {
+        return props.tableKey[props.tableKey.length - 1];
       });
 
       onMounted(() => {
@@ -371,13 +381,46 @@
         }
       };
 
+      const handleTableData = (res) => {
+        let data = [];
+        const { relationShips } = props.filterScheme;
+        // 判断是否需要合并
+        const mergeFlag =
+          relationShips.findIndex((item) => !item.isMainEntity && item.value) !== -1;
+        if (mergeFlag) {
+          const { columns } = props.filterScheme;
+          const isMainEntityCode = relationShips.find((item) => item.isMainEntity)?.entityCode;
+          const mergeKeyArr: string[] = [];
+          // 查找哪些key需要合并 = 哪些key的属性值要清空
+          columns.forEach((item) => {
+            if (!item.entityKey || item.entityKey === isMainEntityCode) {
+              mergeKeyArr.push(item.key);
+            }
+          });
+          // 用主键判断数据是否需要合并列
+          // 一般来说第一条不需要合并，第一条以后主键重复的需要合并
+          const obj = {};
+          data = res.map((item) => {
+            obj[item[mainKey.value]]
+              ? (item = handleMergeColumns(item, mergeKeyArr))
+              : (obj[item[mainKey.value]] = item[mainKey.value]);
+            return item;
+          });
+        } else {
+          data = res;
+        }
+        return data;
+      };
+
       // 合并列
-      const handleSummaryColumns = (item) => {
+      const handleMergeColumns = (item: Record<string, unknown>, mergeKeyArr: string[]) => {
         const temp = {};
         Object.entries(item).forEach(([key, value]) => {
-          if (key.indexOf('Items') === -1) {
+          if (mergeKeyArr.includes(key)) {
+            // 主实体属性值都清空
             temp[key] = '';
           } else {
+            // 非主实体拿原来的值
             temp[key] = value;
           }
         });
@@ -387,7 +430,7 @@
       const getTableData = () => {
         tableData.value = new DataSource({
           store: new CustomStore({
-            key: props.tableKey,
+            key: dataGridKey.value,
             load: async (loadOptions) => {
               if (Object.keys(loadOptions).length) {
                 const params = getOdataQuery({
@@ -398,8 +441,10 @@
                   tableKey: props.tableKey,
                 });
                 odataParams.value = params;
+
                 const dataParams = { ...params, $top: pageSize.value };
                 dataParams['$skip'] = loadOptions.skip;
+
                 const totalCountParams = { $aggregate: 'count(1)' };
                 params['$filter'] && (totalCountParams['$filter'] = params['$filter']);
                 params['$expand'] && (totalCountParams['$expand'] = params['$expand']);
@@ -417,23 +462,8 @@
                   ),
                 ]);
 
-                let data = [];
-
-                // 判断是否需要合并
-                if (params['$expand'] && params['$expand'].indexOf('Items') !== -1) {
-                  const obj = {};
-                  data = res.map((item) => {
-                    obj[item[props.tableKey]]
-                      ? (item = handleSummaryColumns(item))
-                      : (obj[item[props.tableKey]] = item[props.tableKey]);
-                    return item;
-                  });
-                } else {
-                  data = res;
-                }
-
                 return {
-                  data,
+                  data: handleTableData(res),
                   totalCount: totalCount[0]['Count'] || 0,
                 };
               }

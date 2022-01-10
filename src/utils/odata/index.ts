@@ -18,7 +18,7 @@ import {
   getNextDayBeginTime,
   getCurrentDate,
 } from '/@/utils/date';
-import { useMessage } from '/@/hooks/web/useMessage';
+import { odsMessage } from '/@/components/Message/index';
 import { isNullOrUnDef } from '/@/utils/is';
 import { operatorMap, isDisabedSelect } from '/@/model/global-operator';
 import { handleAllCol } from '/@/components/Table/common';
@@ -33,7 +33,7 @@ const getFilter = (requirements: IRequirementItem[]) => {
 
   for (let i = 0; i < requireData.length; i++) {
     // 判断是否为第一条搜索条件 参数是否不为null与undef
-    if (i !== 0 && !isValueNullOrUndef(requireData[i])) {
+    if (result !== '' && !isValueNullOrUndef(requireData[i])) {
       result += `,"${requireData[i - 1].logic}",`;
     }
 
@@ -57,7 +57,11 @@ const getFilter = (requirements: IRequirementItem[]) => {
   try {
     filter = JSON.parse(`[${result}]`);
   } catch (e) {
-    useMessage(`请检查是否格式有误，如左右括号是否对等 \n ${result}`, 'error', '搜索条件无法解析');
+    odsMessage({
+      type: 'error',
+      title: '搜索条件无法解析',
+      message: `请检查是否格式有误，如左右括号是否对等 \n ${result}`,
+    });
   }
   // 获取解析后的搜索条件
   // console.info(
@@ -95,9 +99,9 @@ const getSelectAndExpand = ({
   allColumns: IColumnItem[];
   columns: ISchemeColumnsItem[];
   relationShips: IRelationShip[];
-  tableKey: string;
+  tableKey: string[];
 }) => {
-  const select: string[] = [tableKey];
+  const select: string[] = [...tableKey];
   const expand: string[] = [];
 
   const allCol = handleAllCol(allColumns);
@@ -407,7 +411,7 @@ export const getOdataQuery = ({
   allColumns?: IColumnItem[];
   tableSort?: ISortItem[];
   defaultSort?: ISortItem[];
-  tableKey: string;
+  tableKey: string[];
 }) => {
   if (!scheme || !allColumns) return {};
   let orderBy: IOrderByItem[] = [];
@@ -439,7 +443,7 @@ export const getOdataQuery = ({
     orderBy = [
       {
         caption: '',
-        key: tableKey,
+        key: tableKey[0],
         desc: true,
         entityKey: '',
       },

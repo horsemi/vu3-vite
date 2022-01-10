@@ -28,12 +28,15 @@
     </div>
     <div :class="`${prefixCls}__table`">
       <DxDataGrid
+        ref="summaryTable"
+        key-expr="key"
         height="100%"
         :data-source="schemeData.scheme[schemeData.checkedIndex]['summary']"
         :hover-state-enabled="true"
         :show-borders="true"
         :show-column-lines="false"
         :show-row-lines="true"
+        :editing="{ confirmDelete: false }"
       >
         <DxFilterRow :visible="true" />
         <DxPaging :enabled="false" />
@@ -119,6 +122,8 @@
       const fieldList = ref<ISummaryFieldItem[]>([]);
 
       const fieldTable = ref();
+
+      const summaryTable = ref();
 
       // 汇总方式
       const summaryModeOptions = [
@@ -217,14 +222,12 @@
 
       // 点击删除触发
       function onDel(data) {
-        const temp = [...schemeData.value.scheme[schemeData.value.checkedIndex].summary];
-        temp.splice(data.rowIndex, 1);
-        schemeData.value.scheme[schemeData.value.checkedIndex].summary = temp;
+        summaryTable.value.instance.deleteRow(data.rowIndex);
       }
 
       function getFieldList(allColumns: IColumnItem[]) {
         const data: ISummaryFieldItem[] = [];
-        const summary = schemeData.value.scheme[schemeData.value.checkedIndex].summary;
+        const summary = schemeData.value.scheme[schemeData.value.checkedIndex].summary || [];
         allColumns.forEach((item) => {
           if (!item.hide && item.summaryList?.length) {
             const index = summary.findIndex((col) => col.key === item.key);
@@ -285,6 +288,7 @@
         prefixCls,
         fieldList,
         fieldTable,
+        summaryTable,
         schemeData,
         summaryModeOptions,
         onAddCol,

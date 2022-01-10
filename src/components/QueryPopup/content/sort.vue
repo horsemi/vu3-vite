@@ -24,12 +24,15 @@
     </div>
     <div :class="`${prefixCls}__table`">
       <DxDataGrid
+        ref="sortTable"
+        key-expr="key"
         height="100%"
         :data-source="schemeData.scheme[schemeData.checkedIndex]['orderBy']"
         :hover-state-enabled="true"
         :show-borders="false"
         :show-column-lines="false"
         :show-row-lines="true"
+        :editing="{ confirmDelete: false }"
       >
         <DxFilterRow :visible="true" />
         <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" />
@@ -114,6 +117,8 @@
       // 左侧选择框字段数据
       const fieldList = ref<IFieldItem[]>([]);
 
+      const sortTable = ref();
+
       // 右侧排序列表数据副本，用于记录点击箭头前的数据
       let dataSourceTemp: IOrderByItem[] = [];
 
@@ -171,9 +176,7 @@
 
       // 点击删除触发
       function onDel(data) {
-        const temp = [...schemeData.value.scheme[schemeData.value.checkedIndex].orderBy];
-        temp.splice(data.rowIndex, 1);
-        schemeData.value.scheme[schemeData.value.checkedIndex].orderBy = temp;
+        sortTable.value.instance.deleteRow(data.rowIndex);
       }
 
       function getFieldList(allColumns: IColumnItem[]) {
@@ -231,6 +234,7 @@
       return {
         prefixCls,
         fieldList,
+        sortTable,
         schemeData,
         sortOptions,
         onRowClick,

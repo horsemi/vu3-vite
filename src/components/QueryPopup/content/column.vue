@@ -28,12 +28,15 @@
     </div>
     <div :class="`${prefixCls}__table`">
       <DxDataGrid
+        ref="columnTable"
+        key-expr="key"
         height="100%"
         :data-source="schemeData.scheme[schemeData.checkedIndex]['columns']"
         :hover-state-enabled="true"
         :show-borders="true"
         :show-column-lines="false"
         :show-row-lines="true"
+        :editing="{ confirmDelete: false }"
       >
         <DxFilterRow :visible="true" />
         <DxRowDragging :allow-reordering="true" :on-reorder="onReorder" />
@@ -93,6 +96,8 @@
       const fieldList = ref<IFieldItem[]>([]);
 
       const fieldTable = ref();
+
+      const columnTable = ref();
 
       function getRowIndex(data) {
         const curIndex = schemeData.value.scheme[schemeData.value.checkedIndex].columns.indexOf(
@@ -186,9 +191,7 @@
           schemeData.value.scheme[schemeData.value.checkedIndex].summary = temp;
         }
 
-        const temp = [...schemeData.value.scheme[schemeData.value.checkedIndex].columns];
-        temp.splice(data.rowIndex, 1);
-        schemeData.value.scheme[schemeData.value.checkedIndex].columns = temp;
+        columnTable.value.instance.deleteRow(data.rowIndex);
       }
 
       // 拖动位置触发
@@ -269,6 +272,7 @@
         prefixCls,
         fieldList,
         fieldTable,
+        columnTable,
         schemeData,
         getRowIndex,
         onAddCol,

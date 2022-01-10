@@ -89,7 +89,7 @@
 
       const ORDER_CODE = 'shipping-orders';
       const filterScheme = ref<ISchemeItem>();
-      const tableKey = ref<string>('');
+      const tableKey = ref<string[]>([]);
       const columns = ref<IColumnItem[]>([]);
       const allColumns = ref<IColumnItem[]>([]);
 
@@ -165,42 +165,33 @@
       };
 
       /**
-       * @description 过滤方案关联条件初始化
-       */
-      const initRelationShip = () => {
-        const _relationShips: IRelationShip[] = [];
-
-        relationShips.forEach((item) => {
-          _relationShips.push({
-            value: item.isMainEntity ? true : false,
-            ...item,
-          });
-        });
-
-        schemeData.value.scheme[schemeData.value.checkedIndex].relationShips = _relationShips;
-      };
-
-      /**
        * @description 根据关联实体获取字段
        */
-      const initEntityColumn = (
-        scheme: ISchemeItem = schemeData.value.scheme[schemeData.value.checkedIndex]
-      ): Promise<ISchemeItem> => {
+      const initEntityColumn = (scheme: ISchemeItem): Promise<ISchemeItem> => {
         return new Promise((resolve) => {
+          if (!Array.isArray(scheme.relationShips)) {
+            scheme.relationShips = relationShips.filter((item) => {
+              return item.isMainEntity;
+            });
+          }
           exceptSpareCriteriaFn(scheme);
-
           getColumnListByEntityCode(
             // 根据过滤方案中的关联实体获取字段
-            scheme.relationShips.map((item) => (item.value ? item.entityCode : ''))
+            scheme.relationShips.map((item) =>
+              item.value || item.isMainEntity ? item.entityCode : ''
+            )
           ).then((relationShipsResolve) => {
-            let _allColumns: IColumnItem[] = [];
+            const _allColumns: IColumnItem[] = [];
+            const _tableKey: string[] = [];
 
             // 组装实体字段，把实体名称与key组装到字段的名字与key当中
             scheme.relationShips.forEach((relationItem) => {
-              if (relationItem.isMainEntity) {
-                tableKey.value = relationShipsResolve[relationItem.entityCode]!.key;
-              }
               if (relationShipsResolve[relationItem.entityCode]) {
+                relationItem.isMainEntity
+                  ? _tableKey.unshift(relationShipsResolve[relationItem.entityCode]!.key)
+                  : _tableKey.push(
+                      `${relationItem.key}_${relationShipsResolve[relationItem.entityCode]!.key}`
+                    );
                 // 主实体字段不需要对key与expand进行实体名组装
                 if (relationItem.isMainEntity) {
                   _allColumns.push(
@@ -239,6 +230,7 @@
               }
             });
 
+            tableKey.value = _tableKey;
             allColumns.value = _allColumns;
             resolve(scheme);
           });
@@ -247,23 +239,7 @@
 
       const getTableData = async () => {
         const schemeResult = await getSchemesData(ORDER_CODE);
-
-        if (!Array.isArray(schemeResult.scheme[schemeResult.checkedIndex].relationShips)) {
-          const _relationShips: IRelationShip[] = [];
-
-          relationShips.forEach((item) => {
-            _relationShips.push({
-              value: item.isMainEntity ? true : false,
-              ...item,
-            });
-          });
-
-          schemeResult.scheme[schemeResult.checkedIndex].relationShips = _relationShips;
-        }
-
-        const scheme = cloneDeep(schemeResult.scheme[schemeResult.checkedIndex]);
-
-        initEntityColumn(scheme).then((resolve) => {
+        initEntityColumn(schemeResult.scheme[schemeResult.checkedIndex]).then((resolve) => {
           filterScheme.value = resolve;
           schemeData.value.checkedIndex = schemeResult.checkedIndex;
           schemeData.value.scheme = schemeResult.scheme;
@@ -281,8 +257,8 @@
       provide('schemeDefaultIndex', schemeDefaultIndex);
       provide('schemeQuickIndex', schemeQuickIndex);
       provide('onChangeScheme', onChangeScheme);
-      provide('initRelationHandle', initRelationShip);
       provide('initEntityColumnHandle', initEntityColumn);
+      provide('relationShips', relationShips);
 
       return {
         ORDER_CODE,

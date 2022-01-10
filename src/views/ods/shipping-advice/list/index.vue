@@ -92,7 +92,7 @@
         },
       };
       const filterScheme = ref<ISchemeItem>();
-      const tableKey = ref<string>('');
+      const tableKey = ref<string[]>([]);
       const dataSource = ref();
       const columns = ref<IColumnItem[]>([]);
       const allColumns = ref<IColumnItem[]>([]);
@@ -193,15 +193,18 @@
             // 根据过滤方案中的关联实体获取字段
             scheme.relationShips.map((item) => (item.value ? item.entityCode : ''))
           ).then((relationShipsResolve) => {
-            let _allColumns: IColumnItem[] = [];
+            const _allColumns: IColumnItem[] = [];
+            const _tableKey: string[] = [];
 
             // 组装实体字段，把实体名称与key组装到字段的名字与key当中
             schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.forEach(
               (relationItem) => {
-                if (relationItem.isMainEntity) {
-                  tableKey.value = relationShipsResolve[relationItem.entityCode]!.key;
-                }
                 if (relationShipsResolve[relationItem.entityCode]) {
+                  relationItem.isMainEntity
+                    ? _tableKey.unshift(relationShipsResolve[relationItem.entityCode]!.key)
+                    : _tableKey.push(
+                        `${relationItem.key}_${relationShipsResolve[relationItem.entityCode]!.key}`
+                      );
                   // 主实体字段不需要对key与expand进行实体名组装
                   if (relationItem.isMainEntity) {
                     _allColumns.push(
@@ -241,6 +244,7 @@
               }
             );
 
+            tableKey.value = _tableKey;
             allColumns.value = _allColumns;
             resolve(scheme);
           });
@@ -277,6 +281,7 @@
       provide('onChangeScheme', onChangeScheme);
       provide('initRelationHandle', initRelationShip);
       provide('initEntityColumnHandle', initEntityColumn);
+      provide('relationShips', relationShips);
 
       return {
         ORDER_CODE,

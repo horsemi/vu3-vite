@@ -144,10 +144,10 @@ export function useDefinite(requirement: IRequirementItem[]) {
 
   const definiteScheme = ref<ISchemeItem>();
   const definiteAllColumns = ref<IColumnItem[]>([]);
-  const definiteTableKey = ref('');
+  const definiteTableKey = ref<string[]>([]);
   getDefiniteColumns().then((res) => {
     if (res) {
-      definiteTableKey.value = res.key;
+      definiteTableKey.value = [res.key];
       definiteAllColumns.value = res.columnList;
       definiteScheme.value = {
         id: '',

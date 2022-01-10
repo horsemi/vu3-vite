@@ -62,7 +62,9 @@
       const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
       const schemeQuickIndex = inject('schemeQuickIndex') as Ref<number>;
       const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
-      const initEntityColumnHandle = inject<() => void>('initEntityColumnHandle');
+      const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
+        'initEntityColumnHandle'
+      );
 
       // 标题列表数据
       const menuList = computed(() => {
@@ -93,7 +95,7 @@
         if (menuList.value[checkedIndex.value]) {
           // ctx.emit('on-change-checked-index', index);
           schemeData.value.checkedIndex = index;
-          initEntityColumnHandle!();
+          initEntityColumnHandle!(schemeData.value.scheme[schemeData.value.checkedIndex]);
         }
       }
       // 点击保存触发
@@ -134,7 +136,9 @@
           if (popupListTemp) {
             schemeQuickIndex.value = checkedIndex.value;
             schemeData.value.scheme[checkedIndex.value] = cloneDeep(popupListTemp);
-            onChangeScheme(schemeData.value.scheme[checkedIndex.value]);
+            initEntityColumnHandle!(schemeData.value.scheme[checkedIndex.value]).then((scheme) => {
+              onChangeScheme(scheme);
+            });
           }
         }
       };

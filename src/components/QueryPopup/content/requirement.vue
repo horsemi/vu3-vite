@@ -9,7 +9,7 @@
           class="entity-item__container"
           :text="item.caption"
           :disabled="item.isMainEntity"
-          @valueChanged="onRelationShipChangeHandle"
+          @valueChanged="onRelationShipChangeHandle($event, item)"
         />
       </div>
       <div :class="`${prefixCls}__header`">
@@ -72,7 +72,7 @@
 </template>
 
 <script lang="ts">
-  import type { ILogicOptions } from './types';
+  import type { ILogicOptions, IRelationShip, ISchemeItem } from './types';
   import type { IColumnItem } from '/@/model/types';
   import type { ISchemeData } from '../../QueryPlan/types';
 
@@ -97,9 +97,11 @@
     },
     setup() {
       const allColumns = inject<Ref<IColumnItem[]>>('allColumns');
-      const initRelationHandle = inject<() => void>('initRelationHandle');
-      const initEntityColumnHandle = inject<() => void>('initEntityColumnHandle');
+      const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
+        'initEntityColumnHandle'
+      );
       const schemeData = inject<Ref<ISchemeData>>('schemeData');
+      const relationShips = inject<IRelationShip[]>('relationShips');
 
       const requirement = computed(() => {
         if (
@@ -113,13 +115,20 @@
       });
 
       const relationShipsCpt = computed(() => {
-        if (schemeData?.value.scheme[schemeData.value.checkedIndex]) {
-          if (
-            !Array.isArray(schemeData.value.scheme[schemeData.value.checkedIndex].relationShips)
-          ) {
-            initRelationHandle!();
-          }
-          return schemeData.value.scheme[schemeData.value.checkedIndex].relationShips;
+        if (
+          schemeData?.value.scheme[schemeData.value.checkedIndex] &&
+          schemeData.value.scheme[schemeData.value.checkedIndex].relationShips &&
+          relationShips
+        ) {
+          return relationShips.map((item) => {
+            const value = schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.find(
+              (rel) => rel.key === item.key && rel.entityCode === item.entityCode
+            )?.value;
+            return {
+              ...item,
+              value: value ?? false,
+            };
+          });
         } else {
           return [];
         }
@@ -202,10 +211,22 @@
         }
       };
 
-      const onRelationShipChangeHandle = (e) => {
-        if (e.event) {
+      const onRelationShipChangeHandle = (e, item: IRelationShip) => {
+        if (e.event && schemeData) {
+          if (!schemeData.value.scheme[schemeData.value.checkedIndex].relationShips) {
+            schemeData.value.scheme[schemeData.value.checkedIndex].relationShips = [item];
+          } else if (schemeData.value.scheme[schemeData.value.checkedIndex].relationShips) {
+            const relationShipsItem = schemeData.value.scheme[
+              schemeData.value.checkedIndex
+            ].relationShips.find(
+              (rel) => rel.key === item.key && rel.entityCode === item.entityCode
+            );
+            relationShipsItem
+              ? (relationShipsItem.value = item.value)
+              : schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.push(item);
+          }
           // 只有点击行为才执行更新全部列
-          initEntityColumnHandle!();
+          initEntityColumnHandle!(schemeData.value.scheme[schemeData.value.checkedIndex]);
         }
       };
 
