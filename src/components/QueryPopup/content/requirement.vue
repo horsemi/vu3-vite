@@ -97,7 +97,7 @@
     },
     setup() {
       const allColumns = inject<Ref<IColumnItem[]>>('allColumns');
-      const initRelationHandle = inject<() => void>('initRelationHandle');
+      const initRelationShipHandle = inject<() => void>('initRelationShipHandle');
       const initEntityColumnHandle = inject<() => void>('initEntityColumnHandle');
       const schemeData = inject<Ref<ISchemeData>>('schemeData');
 
@@ -117,7 +117,7 @@
           if (
             !Array.isArray(schemeData.value.scheme[schemeData.value.checkedIndex].relationShips)
           ) {
-            initRelationHandle!();
+            initRelationShipHandle!();
           }
           return schemeData.value.scheme[schemeData.value.checkedIndex].relationShips;
         } else {
