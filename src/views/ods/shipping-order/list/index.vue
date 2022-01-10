@@ -1,9 +1,9 @@
 <template>
-  <div class="list">
+  <div :class="prefixCls">
     <QueryPlan />
-    <div v-loading="loading" class="example">
-      <div class="btn__wrap">
-        <div class="btn__box">
+    <div v-loading="loading" class="table__container">
+      <div class="operation-btn__container">
+        <div class="operation-btn__inner">
           <DxButton
             :width="76"
             text="提交"
@@ -18,7 +18,7 @@
             @click="onApplyClick"
           />
         </div>
-        <div class="btn__box">
+        <div class="operation-btn__inner">
           <SummaryButton
             :order-code="ORDER_CODE"
             :all-columns="allColumns"
@@ -52,18 +52,20 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { ISchemeItem, IRelationShip } from '/@/components/QueryPopup/content/types';
+  import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
 
   import { defineComponent, ref, provide, computed } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
 
+  import { useDesign } from '/@/hooks/web/useDesign';
   import { exceptSpareCriteriaFn } from '/@/utils/odata/index';
   import { usePermissionStore } from '/@/store/modules/permission';
   import { shippingOrderType } from '/@/enums/actionPermission/shipping-order';
   import { relationShips } from '/@/model/entity/shipping-orders';
   import { isArrayEmpty } from '/@/utils/bill/index';
+  import { initRelationShip } from '/@/utils/bill/relationship';
   import { ShippingOrderApi } from '/@/api/ods/shipping-orders';
   import { getSchemesData } from '/@/utils/scheme/index';
   import { getColumnListByEntityCode } from '/@/model/index';
@@ -81,6 +83,7 @@
       DxButton,
     },
     setup() {
+      const { prefixCls } = useDesign('ods-shipping-order-list');
       const router = useRouter();
       const permissionStore = usePermissionStore();
 
@@ -261,6 +264,7 @@
       provide('relationShips', relationShips);
 
       return {
+        prefixCls,
         ORDER_CODE,
         loading,
         dataGrid,
@@ -283,26 +287,30 @@
 </script>
 
 <style lang="less" scoped>
-  .list {
-    overflow: hidden;
-  }
+  @prefix-cls: ~'@{namespace}-ods-shipping-order-list';
 
-  .example {
-    width: 100%;
-    padding: 16px;
-    padding-bottom: 0;
-    background-color: #fff;
-    .btn__wrap {
-      display: flex;
-      justify-content: space-between;
+  .@{prefix-cls} {
+    overflow: hidden;
+
+    .table__container {
       width: 100%;
-      margin-bottom: 16px;
-      .btn__box {
-        & > * {
-          margin-right: 8px;
-        }
-        :nth-last-child(1) {
-          margin-right: 0;
+      padding: 16px;
+      padding-bottom: 0;
+      background-color: #fff;
+
+      .operation-btn__container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 16px;
+
+        .operation-btn__inner {
+          & > * {
+            margin-right: 8px;
+          }
+          :nth-last-child(1) {
+            margin-right: 0;
+          }
         }
       }
     }

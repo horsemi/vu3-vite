@@ -1,9 +1,9 @@
 <template>
-  <div class="list">
+  <div :class="prefixCls">
     <QueryPlan />
-    <div v-loading="loading" class="example">
-      <div class="btn__wrap">
-        <div class="btn__box">
+    <div v-loading="loading" class="table__container">
+      <div class="operation-btn__container">
+        <div class="operation-btn__inner">
           <DxButton
             :width="76"
             text="提交"
@@ -18,7 +18,7 @@
             @click="onApplyClick"
           />
         </div>
-        <div class="btn__box">
+        <div class="operation-btn__inner">
           <DxButton
             :width="100"
             icon="refresh"
@@ -47,7 +47,7 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { ISchemeItem, IRelationShip } from '/@/components/QueryPopup/content/types';
+  import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
   import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
 
@@ -55,11 +55,13 @@
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
 
+  import { useDesign } from '/@/hooks/web/useDesign';
   import { exceptSpareCriteriaFn } from '/@/utils/odata/index';
   import { usePermissionStore } from '/@/store/modules/permission';
   import { shippingAdviceType } from '/@/enums/actionPermission/shipping-advice';
   import { relationShips } from '/@/model/entity/shipping-advices';
   import { isArrayEmpty } from '/@/utils/bill/index';
+  import { initRelationShip } from '/@/utils/bill/relationship';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { getSchemesData } from '/@/utils/scheme/index';
@@ -76,6 +78,7 @@
       DxButton,
     },
     setup() {
+      const { prefixCls } = useDesign('ods-shipping-advice-list');
       const router = useRouter();
       const permissionStore = usePermissionStore();
 
@@ -167,17 +170,8 @@
       /**
        * @description 过滤方案关联条件初始化
        */
-      const initRelationShip = () => {
-        const _relationShips: IRelationShip[] = [];
-
-        relationShips.forEach((item) => {
-          _relationShips.push({
-            value: item.isMainEntity ? true : false,
-            ...item,
-          });
-        });
-
-        schemeData.value.scheme[schemeData.value.checkedIndex].relationShips = _relationShips;
+      const initRelationShipHandle = () => {
+        initRelationShip(relationShips, schemeData);
       };
 
       /**
@@ -261,7 +255,7 @@
         schemeQuickIndex.value = schemeData.value.checkedIndex;
 
         if (!Array.isArray(schemeData.value.scheme[schemeDefaultIndex.value].relationShips)) {
-          initRelationShip();
+          initRelationShipHandle();
         }
 
         const scheme = cloneDeep(schemeData.value.scheme[schemeDefaultIndex.value]);
@@ -279,11 +273,12 @@
       provide('schemeDefaultIndex', schemeDefaultIndex);
       provide('schemeQuickIndex', schemeQuickIndex);
       provide('onChangeScheme', onChangeScheme);
-      provide('initRelationHandle', initRelationShip);
+      provide('initRelationShipHandle', initRelationShipHandle);
       provide('initEntityColumnHandle', initEntityColumn);
       provide('relationShips', relationShips);
 
       return {
+        prefixCls,
         ORDER_CODE,
         loading,
         dataGrid,
@@ -307,26 +302,30 @@
 </script>
 
 <style lang="less" scoped>
-  .list {
-    overflow: hidden;
-  }
+  @prefix-cls: ~'@{namespace}-ods-shipping-advice-list';
 
-  .example {
-    width: 100%;
-    padding: 16px;
-    padding-bottom: 0;
-    background-color: #fff;
-    .btn__wrap {
-      display: flex;
-      justify-content: space-between;
+  .@{prefix-cls} {
+    overflow: hidden;
+
+    .table__container {
       width: 100%;
-      margin-bottom: 16px;
-      .btn__box {
-        & > * {
-          margin-right: 8px;
-        }
-        :nth-last-child(1) {
-          margin-right: 0;
+      padding: 16px;
+      padding-bottom: 0;
+      background-color: #fff;
+
+      .operation-btn__container {
+        display: flex;
+        justify-content: space-between;
+        width: 100%;
+        margin-bottom: 16px;
+
+        .operation-btn__inner {
+          & > * {
+            margin-right: 8px;
+          }
+          :nth-last-child(1) {
+            margin-right: 0;
+          }
         }
       }
     }
