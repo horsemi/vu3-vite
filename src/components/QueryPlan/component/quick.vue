@@ -62,8 +62,8 @@
         schemeQuickIndex.value = index;
 
         // 切换过滤方案前需要获取最新的全部列
-        initEntityColumnHandle!(schemeListTemp.value[index]).then((resolve) => {
-          onChangeScheme(resolve);
+        initEntityColumnHandle!(schemeListTemp.value[index]).then(() => {
+          onChangeScheme(schemeListTemp.value[index]);
         });
       };
 

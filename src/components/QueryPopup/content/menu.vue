@@ -136,8 +136,8 @@
           if (popupListTemp) {
             schemeQuickIndex.value = checkedIndex.value;
             schemeData.value.scheme[checkedIndex.value] = cloneDeep(popupListTemp);
-            initEntityColumnHandle!(schemeData.value.scheme[checkedIndex.value]).then((scheme) => {
-              onChangeScheme(scheme);
+            initEntityColumnHandle!(schemeData.value.scheme[checkedIndex.value]).then(() => {
+              onChangeScheme(schemeData.value.scheme[checkedIndex.value]);
             });
           }
         }

@@ -55,17 +55,15 @@
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
 
-  import { useDesign } from '/@/hooks/web/useDesign';
-  import { exceptSpareCriteriaFn } from '/@/utils/odata/index';
   import { usePermissionStore } from '/@/store/modules/permission';
+  import { useDesign } from '/@/hooks/web/useDesign';
   import { shippingAdviceType } from '/@/enums/actionPermission/shipping-advice';
   import { relationShips } from '/@/model/entity/shipping-advices';
   import { isArrayEmpty } from '/@/utils/bill/index';
-  import { initRelationShip } from '/@/utils/bill/relationship';
+  import { initEntityColumn } from '/@/utils/bill/relationship';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { getSchemesData } from '/@/utils/scheme/index';
-  import { getColumnListByEntityCode } from '/@/model/index';
 
   import DxButton from 'devextreme-vue/button';
 
@@ -168,100 +166,29 @@
       };
 
       /**
-       * @description 过滤方案关联条件初始化
-       */
-      const initRelationShipHandle = () => {
-        initRelationShip(relationShips, schemeData);
-      };
-
-      /**
        * @description 根据关联实体获取字段
        */
-      const initEntityColumn = (
+      const initEntityColumnHandle = (
         scheme: ISchemeItem = schemeData.value.scheme[schemeData.value.checkedIndex]
-      ): Promise<ISchemeItem> => {
+      ): Promise<void> => {
         return new Promise((resolve) => {
-          exceptSpareCriteriaFn(scheme);
-
-          getColumnListByEntityCode(
-            // 根据过滤方案中的关联实体获取字段
-            scheme.relationShips.map((item) => (item.value ? item.entityCode : ''))
-          ).then((relationShipsResolve) => {
-            const _allColumns: IColumnItem[] = [];
-            const _tableKey: string[] = [];
-
-            // 组装实体字段，把实体名称与key组装到字段的名字与key当中
-            schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.forEach(
-              (relationItem) => {
-                if (relationShipsResolve[relationItem.entityCode]) {
-                  relationItem.isMainEntity
-                    ? _tableKey.unshift(relationShipsResolve[relationItem.entityCode]!.key)
-                    : _tableKey.push(
-                        `${relationItem.key}_${relationShipsResolve[relationItem.entityCode]!.key}`
-                      );
-                  // 主实体字段不需要对key与expand进行实体名组装
-                  if (relationItem.isMainEntity) {
-                    _allColumns.push(
-                      ...relationShipsResolve[relationItem.entityCode]!.columnList.map<IColumnItem>(
-                        (item) => {
-                          item.caption = `${relationItem.caption}_${item.caption}`;
-                          item.entityKey = relationItem.entityCode;
-                          item.foundationList &&
-                            item.foundationList.forEach((foundationItem) => {
-                              foundationItem.caption = `${relationItem.caption}_${foundationItem.caption}`;
-                            });
-                          return item;
-                        }
-                      )
-                    );
-                  } else {
-                    _allColumns.push(
-                      ...relationShipsResolve[relationItem.entityCode]!.columnList.map<IColumnItem>(
-                        (item) => {
-                          item.caption = `${relationItem.caption}_${item.caption}`;
-                          item.entityKey = relationItem.entityCode;
-                          item.key = `${relationItem.key}_${item.key}`;
-                          item.expand && (item.expand = `${relationItem.key}_${item.expand}`);
-                          item.relationKey &&
-                            (item.relationKey = `${relationItem.key}_${item.relationKey}`);
-                          item.foundationList &&
-                            item.foundationList.forEach((foundationItem) => {
-                              foundationItem.caption = `${relationItem.caption}_${foundationItem.caption}`;
-                              foundationItem.key = `${relationItem.key}_${foundationItem.key}`;
-                            });
-                          return item;
-                        }
-                      )
-                    );
-                  }
-                }
-              }
-            );
-
+          initEntityColumn(scheme, relationShips).then(({ _allColumns, _tableKey }) => {
             tableKey.value = _tableKey;
             allColumns.value = _allColumns;
-            resolve(scheme);
+            resolve();
           });
         });
       };
 
       const getTableData = async () => {
         const schemeResult = await getSchemesData(ORDER_CODE);
-
-        schemeData.value.checkedIndex = schemeResult.checkedIndex;
-        schemeData.value.scheme = schemeResult.scheme;
-        schemeDataTemp.value = cloneDeep(schemeData.value);
-        schemeDefaultIndex.value = schemeData.value.checkedIndex;
-        schemeQuickIndex.value = schemeData.value.checkedIndex;
-
-        if (!Array.isArray(schemeData.value.scheme[schemeDefaultIndex.value].relationShips)) {
-          initRelationShipHandle();
-        }
-
-        const scheme = cloneDeep(schemeData.value.scheme[schemeDefaultIndex.value]);
-
-        initEntityColumn(scheme).then((resolve) => {
-          filterScheme.value = resolve;
+        initEntityColumnHandle(schemeResult.scheme[schemeResult.checkedIndex]).then(() => {
+          schemeData.value.checkedIndex = schemeResult.checkedIndex;
+          schemeData.value.scheme = schemeResult.scheme;
+          schemeDataTemp.value = cloneDeep(schemeData.value);
+          schemeDefaultIndex.value = schemeData.value.checkedIndex;
+          schemeQuickIndex.value = schemeData.value.checkedIndex;
+          filterScheme.value = schemeData.value.scheme[schemeData.value.checkedIndex];
         });
       };
 
@@ -273,8 +200,7 @@
       provide('schemeDefaultIndex', schemeDefaultIndex);
       provide('schemeQuickIndex', schemeQuickIndex);
       provide('onChangeScheme', onChangeScheme);
-      provide('initRelationShipHandle', initRelationShipHandle);
-      provide('initEntityColumnHandle', initEntityColumn);
+      provide('initEntityColumnHandle', initEntityColumnHandle);
       provide('relationShips', relationShips);
 
       return {

@@ -114,10 +114,9 @@
       }
 
       function onSubmit() {
-        const scheme = cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]);
         schemeQuickIndex.value = schemeData.value.checkedIndex;
-        initEntityColumnHandle!(scheme).then((resolve) => {
-          onChangeScheme(resolve);
+        initEntityColumnHandle!(schemeData.value.scheme[schemeData.value.checkedIndex]).then(() => {
+          onChangeScheme(schemeData.value.scheme[schemeData.value.checkedIndex]);
         });
         onClosePopup();
       }
