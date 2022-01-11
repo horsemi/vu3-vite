@@ -21,7 +21,6 @@ import {
 import { odsMessage } from '/@/components/Message/index';
 import { isNullOrUnDef } from '/@/utils/is';
 import { operatorMap, isDisabedSelect } from '/@/model/global-operator';
-import { handleAllCol } from '/@/components/Table/common';
 
 // 获取格式化后的过滤条件
 const getFilter = (requirements: IRequirementItem[]) => {
@@ -77,9 +76,53 @@ const getFilter = (requirements: IRequirementItem[]) => {
 };
 
 // 获取格式化后的排序
-const getSort = (orderBy: IOrderByItem[]) => {
+const getSort = ({
+  tableSort,
+  defaultSort,
+  orderBy,
+  tableKey,
+}: {
+  tableSort?: ISortItem[];
+  defaultSort?: ISortItem[];
+  orderBy: IOrderByItem[];
+  tableKey: string[];
+}) => {
+  let _orderBy: IOrderByItem[] = [];
+  if (tableSort) {
+    const _tableSort = tableSort[0];
+    _orderBy = [
+      {
+        key: _tableSort.selector,
+        desc: _tableSort.desc ?? false,
+        caption: '',
+        entityKey: '',
+      },
+    ];
+  } else if (orderBy && orderBy.length > 0) {
+    _orderBy = orderBy;
+  } else if (defaultSort && defaultSort.length > 0) {
+    _orderBy =
+      defaultSort.map((item) => {
+        return {
+          caption: '',
+          key: item.selector,
+          desc: item.desc ?? false,
+          entityKey: '',
+        };
+      }) || [];
+  } else {
+    _orderBy = [
+      {
+        caption: '',
+        key: tableKey[0],
+        desc: true,
+        entityKey: '',
+      },
+    ];
+  }
+
   const sort: string[] = [];
-  orderBy?.forEach((item) => {
+  _orderBy?.forEach((item) => {
     if (item.desc) {
       sort.push(item.key + ' ' + 'desc');
     } else {
@@ -104,7 +147,15 @@ const getSelectAndExpand = ({
   const select: string[] = [...tableKey];
   const expand: string[] = [];
 
-  const allCol = handleAllCol(allColumns);
+  const allObj = {};
+  allColumns.forEach((item) => {
+    allObj[item.key] = true;
+    if (item.foundationList) {
+      item.foundationList.forEach((foun) => {
+        allObj[foun.key] = true;
+      });
+    }
+  });
 
   relationShips?.forEach((item) => {
     if (item.value && item.key) {
@@ -113,23 +164,18 @@ const getSelectAndExpand = ({
   });
 
   columns?.forEach((item) => {
-    for (let i = 0; i < allCol.length; i++) {
-      if (item.key === allCol[i].key) {
-        if (item.expand && item.relationKey) {
-          !expand.includes(item.expand) && expand.push(item.expand);
-          !select.includes(item.relationKey) && select.push(item.relationKey);
-          select.push(item.key);
-        } else {
-          select.push(item.key);
-        }
-        break;
+    if (allObj[item.key]) {
+      if (item.expand && item.relationKey) {
+        expand.push(item.expand);
+        select.push(item.relationKey);
       }
+      select.push(item.key);
     }
   });
 
   return {
-    select: select,
-    expand: expand,
+    select: Array.from(new Set(select)),
+    expand: Array.from(new Set(expand)),
   };
 };
 
@@ -414,50 +460,16 @@ export const getOdataQuery = ({
   tableKey: string[];
 }) => {
   if (!scheme || !allColumns) return {};
-  let orderBy: IOrderByItem[] = [];
-  if (tableSort) {
-    const sort = tableSort[0];
-    const column = allColumns.find((item) => item.key === sort.selector);
-    if (column) {
-      orderBy = [
-        {
-          key: column.key,
-          caption: column.caption,
-          desc: sort.desc ?? false,
-          entityKey: column.entityKey || '',
-        },
-      ];
-    }
-  } else if (scheme.orderBy && scheme.orderBy.length > 0) {
-    const defaultOrderBy =
-      defaultSort?.map((item) => {
-        return {
-          caption: '',
-          key: item.selector,
-          desc: item.desc ?? false,
-          entityKey: '',
-        };
-      }) || [];
-    orderBy = scheme.orderBy.concat(defaultOrderBy);
-  } else {
-    orderBy = [
-      {
-        caption: '',
-        key: tableKey[0],
-        desc: true,
-        entityKey: '',
-      },
-    ];
-  }
-  const { columns, requirement, fast, relationShips } = scheme;
+
+  const { columns, orderBy, requirement, fast, relationShips } = scheme;
 
   const { select, expand } = getSelectAndExpand({ allColumns, columns, relationShips, tableKey });
+  const orderby = getSort({ tableSort, defaultSort, orderBy, tableKey });
   const filter = fast?.length && requirement?.length ? getFilter([...fast, ...requirement]) : [];
-  const orderby = orderBy?.length ? getSort(orderBy) : [];
   const $select = select.length ? select.join(',') : '';
   const $expand = expand.length ? expand.join(',') : '';
   const $filter = filter.length ? getOdataFilter(filter) : '';
-  const $orderby = select.length ? orderby.join(',') : '';
+  const $orderby = orderby.length ? orderby.join(',') : '';
 
   const params: Partial<IOdataParams> = {};
   $select && (params['$select'] = $select.replaceAll('_', '.'));

@@ -343,7 +343,7 @@
       };
 
       const handleFilterScheme = (scheme: ISchemeItem) => {
-        if (!isEmpty(scheme) && !isEmpty(scheme.columns) && props.allColumns.length > 0) {
+        if (scheme.columns && props.allColumns.length > 0) {
           if (dataGrid.value && dataGrid.value.instance) {
             // 清空排序，处理相同字段desc失效
             dataGrid.value.instance.clearSorting();
@@ -359,12 +359,13 @@
           // 获取数据前，清空列数据，解决列数据引起的排序和显示隐藏列问题
           tableColumns.value = [];
           // 等列数据渲染完后再去获取表格数据，还是解决列数据引起的排序和显示隐藏列问题
+          // 此处nextTick导致getTableData晚了300ms左右
           nextTick(() => {
-            // 重新 获取列数据
-            tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
             if (SearchPermission.value) {
               // 重新 new datasource
               getTableData();
+              // 重新 获取列数据
+              tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
               nextTick(() => {
                 handleClientSummary(scheme?.summary);
               });
