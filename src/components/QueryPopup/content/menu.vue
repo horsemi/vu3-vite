@@ -61,7 +61,6 @@
       const schemeData = inject('schemeData') as Ref<ISchemeData>;
       const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
       const schemeQuickIndex = inject('schemeQuickIndex') as Ref<number>;
-      const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
       const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
         'initEntityColumnHandle'
       );
