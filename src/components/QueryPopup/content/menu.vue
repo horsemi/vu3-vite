@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <div :class="`${prefixCls}__btn`">
-      <span :class="{ notClick: !isDisabledComputed }" @click="onSubmitScheme">保存</span>
+      <span :class="{ notClick: !isDisabledComputed || edit }" @click="onSubmitScheme">保存</span>
       <span @click="onSaveScheme">另存</span>
       <span @click="onResetScheme">重置</span>
       <span :class="{ notClick: !isDisabledComputed }" @click="onEditScheme">修改</span>
@@ -176,6 +176,7 @@
         if (title) {
           schemeData.value.scheme[checkedIndex.value].title = title;
           edit.value = false;
+          onSubmitScheme();
         }
       };
       // 失去焦点触发

@@ -38,7 +38,6 @@
         ref="dataGrid"
         height="calc(100vh - 276px)"
         :order-code="ORDER_CODE"
-        :columns="columns"
         :query-list-permission="shippingOrderType.shippingOrderQueryList"
         :all-columns="allColumns"
         :filter-scheme="filterScheme"
@@ -91,7 +90,6 @@
       const ORDER_CODE = 'shipping-orders';
       const filterScheme = ref<ISchemeItem>();
       const tableKey = ref<string[]>([]);
-      const columns = ref<IColumnItem[]>([]);
       const allColumns = ref<IColumnItem[]>([]);
 
       const schemeData = ref<ISchemeData>({
@@ -209,7 +207,6 @@
         loading,
         dataGrid,
         tableKey,
-        columns,
         allColumns,
         schemeData,
         filterScheme,
