@@ -78,7 +78,7 @@
 
   import type { Ref } from 'vue';
 
-  import { defineComponent, computed, inject } from 'vue';
+  import { defineComponent, unref, computed, inject } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -120,7 +120,7 @@
           schemeData.value.scheme[schemeData.value.checkedIndex].relationShips &&
           relationShips
         ) {
-          return relationShips.map((item) => {
+          return unref(relationShips).map((item) => {
             const value = schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.find(
               (rel) => rel.key === item.key && rel.entityCode === item.entityCode
             )?.value;
