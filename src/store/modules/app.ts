@@ -85,7 +85,14 @@ export const useAppStore = defineStore({
       this.globalEnumData.push(...globalEnumData);
     },
     getGlobalEnumDataByCode(code: string) {
-      const enumResult = this.globalEnumData.filter((item) => item.name === code);
+      const viewStore = useViewStore();
+      let systemName = 'ods';
+      if (viewStore.getCurrentView.path.includes('policy-manage')) {
+        systemName = 'policy';
+      }
+      const enumResult = this.globalEnumData.filter(
+        (item) => item.name === `${systemName}-${code}`
+      );
       if (enumResult.length < 1) {
         return [];
       }

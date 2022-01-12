@@ -22,7 +22,7 @@
   import type { ISchemeData } from '../QueryPlan/types';
   import type { ISchemeItem } from './content/types';
 
-  import { defineComponent, ref, inject, computed } from 'vue';
+  import { defineComponent, inject, computed } from 'vue';
 
   import { saveSchemesData, saveDefaultScheme } from '/@/utils/scheme/index';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -49,23 +49,8 @@
         'initEntityColumnHandle'
       );
 
-      const currentSchemeItem = computed(() => {
-        const _currentSchemeItem = {
-          creatorId:
-            (schemeData.value.scheme[schemeData.value.checkedIndex] &&
-              schemeData.value.scheme[schemeData.value.checkedIndex].creatorId) ||
-            '',
-          isShare:
-            (schemeData.value.scheme[schemeData.value.checkedIndex] &&
-              schemeData.value.scheme[schemeData.value.checkedIndex].isShare) ||
-            false,
-        };
-        return _currentSchemeItem;
-      });
-
       const { prefixCls } = useDesign('popup-footer');
       const userStore = useUserStore();
-      const checkDefault = ref(false);
 
       const schemeDefaultIndexComputed = computed({
         get: () => {
@@ -78,14 +63,22 @@
 
       const schemeShareComputed = computed({
         get: () => {
-          return currentSchemeItem.value.isShare;
+          return (
+            (schemeData.value.scheme[schemeData.value.checkedIndex] &&
+              schemeData.value.scheme[schemeData.value.checkedIndex].isShare) ||
+            false
+          );
         },
         set: (value: boolean) => {
-          updateSchemeIsShareState && updateSchemeIsShareState(value);
+          updateSchemeIsShareState(value);
         },
       });
       const isDisabledComputer = computed(() => {
-        return currentSchemeItem.value.creatorId === userStore.getUserInfo.accountId;
+        return (
+          schemeData.value.scheme[schemeData.value.checkedIndex] &&
+          schemeData.value.scheme[schemeData.value.checkedIndex].creatorId ===
+            userStore.getUserInfo.accountId
+        );
       });
 
       const isDisabledDefaultIndex = computed(() => {
@@ -120,13 +113,13 @@
         });
         onClosePopup();
       }
-      const onClosePopup = () => {
+
+      function onClosePopup() {
         ctx.emit('on-close-popup');
-      };
+      }
 
       return {
         prefixCls,
-        checkDefault,
         schemeDefaultIndex,
         schemeDefaultIndexComputed,
         schemeShareComputed,

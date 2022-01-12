@@ -206,18 +206,22 @@
 
         const columns = [...schemeData.value.scheme[schemeData.value.checkedIndex].columns];
 
+        const colObj: Record<string, boolean> = {};
+        columns.forEach((col) => {
+          colObj[col.key] = true;
+        });
+
         // 处理字段有汇总但是没有显示的情况
         schemeData.value.scheme[schemeData.value.checkedIndex].summary.forEach((sum) => {
-          const index = columns.findIndex((item) => item.key === sum.key);
-          if (index === -1) {
+          if (!colObj[sum.key]) {
             columns.push({
               key: sum.key,
               caption: sum.caption,
               entityKey: sum.entityKey || '',
             });
-            schemeData.value.scheme[schemeData.value.checkedIndex].columns = columns;
           }
         });
+        schemeData.value.scheme[schemeData.value.checkedIndex].columns = columns;
       }
 
       // 点击删除触发
@@ -228,13 +232,16 @@
       function getFieldList(allColumns: IColumnItem[]) {
         const data: ISummaryFieldItem[] = [];
         const summary = schemeData.value.scheme[schemeData.value.checkedIndex].summary || [];
+        const summaryObj: Record<string, boolean> = {};
+        summary.forEach((sum) => {
+          summaryObj[sum.key] = true;
+        });
         allColumns.forEach((item) => {
           if (!item.hide && item.summaryList?.length) {
-            const index = summary.findIndex((col) => col.key === item.key);
             data.push({
               ...item,
               caption: item.caption,
-              checked: index !== -1 ? true : false,
+              checked: summaryObj[item.key] ? true : false,
               entityKey: item.entityKey || '',
               options: item.summaryList.map((item) => {
                 return {
@@ -250,9 +257,12 @@
 
       function handleColumnsChange(summary: ISummaryItem[]) {
         dataSourceTemp = [...summary];
+        const summaryObj: Record<string, boolean> = {};
+        summary.forEach((sum) => {
+          summaryObj[sum.key] = true;
+        });
         fieldList.value.forEach((field) => {
-          const index = summary.findIndex((item) => item.key === field.key);
-          if (index !== -1) {
+          if (summaryObj[field.key]) {
             field.checked = true;
           } else {
             field.checked = false;

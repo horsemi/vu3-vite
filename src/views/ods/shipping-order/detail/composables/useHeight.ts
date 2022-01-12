@@ -27,6 +27,10 @@ export function useHeight() {
     tableHeight.value = `calc(100vh - ${cutHeight}px)`;
   };
 
+  const getOpenedHeight = (rowCount) => {
+    return `${formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1)}px`;
+  };
+
   const getColseHeight = (rowCount) => {
     if (rowCount >= 3) {
       return `${formRowHeight * 3 + formRowPaddingTop * 2}px`;
@@ -40,6 +44,7 @@ export function useHeight() {
     defaultDefiniteHeight,
     defaultRecordHeight,
     handleHeight,
+    getOpenedHeight,
     getColseHeight,
   };
 }

@@ -120,13 +120,14 @@
           schemeData.value.scheme[schemeData.value.checkedIndex].relationShips &&
           relationShips
         ) {
+          const relationObj: Record<string, boolean | undefined> = {};
+          schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.forEach((rel) => {
+            relationObj[rel.entityCode] = rel.value;
+          });
           return relationShips.map((item) => {
-            const value = schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.find(
-              (rel) => rel.key === item.key && rel.entityCode === item.entityCode
-            )?.value;
             return {
               ...item,
-              value: value ?? false,
+              value: relationObj[item.entityCode] ?? false,
             };
           });
         } else {
@@ -204,23 +205,17 @@
       // 点击删除触发
       const onDel = (index) => {
         // 删除到只剩下一个不能删除
-        const temp = [...schemeData!.value.scheme[schemeData!.value.checkedIndex].requirement];
-        if (temp.length > 1) {
-          temp.splice(index, 1);
-          schemeData!.value.scheme[schemeData!.value.checkedIndex].requirement = temp;
+        if (schemeData!.value.scheme[schemeData!.value.checkedIndex].requirement.length > 1) {
+          schemeData!.value.scheme[schemeData!.value.checkedIndex].requirement.splice(index, 1);
         }
       };
 
       const onRelationShipChangeHandle = (e, item: IRelationShip) => {
         if (e.event && schemeData) {
-          if (!schemeData.value.scheme[schemeData.value.checkedIndex].relationShips) {
-            schemeData.value.scheme[schemeData.value.checkedIndex].relationShips = [item];
-          } else if (schemeData.value.scheme[schemeData.value.checkedIndex].relationShips) {
+          if (schemeData.value.scheme[schemeData.value.checkedIndex].relationShips) {
             const relationShipsItem = schemeData.value.scheme[
               schemeData.value.checkedIndex
-            ].relationShips.find(
-              (rel) => rel.key === item.key && rel.entityCode === item.entityCode
-            );
+            ].relationShips.find((rel) => rel.entityCode === item.entityCode);
             relationShipsItem
               ? (relationShipsItem.value = item.value)
               : schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.push(item);

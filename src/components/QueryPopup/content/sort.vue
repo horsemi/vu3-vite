@@ -152,18 +152,22 @@
 
         const columns = [...schemeData.value.scheme[schemeData.value.checkedIndex].columns];
 
+        const colObj: Record<string, boolean> = {};
+        columns.forEach((col) => {
+          colObj[col.key] = true;
+        });
+
         // 处理字段有排序但是没有显示的情况
         schemeData.value.scheme[schemeData.value.checkedIndex].orderBy.forEach((sort) => {
-          const index = columns.findIndex((item) => item.key === sort.key);
-          if (index === -1) {
+          if (!colObj[sort.key]) {
             columns.push({
               key: sort.key,
               caption: sort.caption,
               entityKey: sort.entityKey || '',
             });
-            schemeData.value.scheme[schemeData.value.checkedIndex].columns = columns;
           }
         });
+        schemeData.value.scheme[schemeData.value.checkedIndex].columns = columns;
       }
 
       // 拖动位置触发
@@ -182,13 +186,16 @@
       function getFieldList(allColumns: IColumnItem[]) {
         const data: IFieldItem[] = [];
         const orderBy = schemeData.value.scheme[schemeData.value.checkedIndex].orderBy;
+        const orderByObj: Record<string, boolean> = {};
+        orderBy.forEach((order) => {
+          orderByObj[order.key] = true;
+        });
         allColumns.forEach((item) => {
           if (item.allowSort !== false && !item.relationKey && !item.hide) {
-            const index = orderBy.findIndex((col) => col.key === item.key);
             data.push({
               key: item.key,
               caption: item.caption,
-              checked: index !== -1 ? true : false,
+              checked: orderByObj[item.key] ? true : false,
               entityKey: item.entityKey || '',
             });
           }
@@ -198,9 +205,12 @@
 
       function handleOrderByChange(orderBy: IOrderByItem[]) {
         dataSourceTemp = [...orderBy];
+        const orderByObj: Record<string, boolean> = {};
+        orderBy.forEach((order) => {
+          orderByObj[order.key] = true;
+        });
         fieldList.value.forEach((field) => {
-          const index = orderBy.findIndex((item) => item.key === field.key);
-          if (index !== -1) {
+          if (orderByObj[field.key]) {
             field.checked = true;
           } else {
             field.checked = false;

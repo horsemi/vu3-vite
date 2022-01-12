@@ -51,7 +51,12 @@
       >
         <template #item="{ data }">
           <div class="tab">
-            <div class="form-box" :style="{ height: opened ? '' : getColseHeight(data.rowCount) }">
+            <div
+              class="form-box"
+              :style="{
+                height: opened ? getOpenedHeight(data.rowCount) : getColseHeight(data.rowCount),
+              }"
+            >
               <DetailForm
                 :read-only="true"
                 :form-data="
@@ -258,6 +263,7 @@
         defaultDefiniteHeight,
         defaultRecordHeight,
         handleHeight,
+        getOpenedHeight,
         getColseHeight,
       } = useHeight();
 
@@ -410,6 +416,7 @@
         onItemButtonClickThrottleFn,
         getDataThrottleFn,
         onChangeOpened,
+        getOpenedHeight,
         getColseHeight,
         onTableTitleClick,
         dropDownButtonAttributes: {
@@ -464,6 +471,11 @@
       .tab {
         padding: 12px 16px;
         background-color: #fff;
+
+        .dx-visibility-change-handler {
+          transition: height 300ms;
+        }
+
         .tab-btn {
           padding-bottom: 12px;
           & > * {
@@ -474,6 +486,7 @@
     }
     .form-box {
       overflow: hidden;
+      transition: height 300ms;
     }
     .icon-box {
       display: flex;

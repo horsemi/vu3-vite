@@ -205,27 +205,29 @@
       function getFieldList(allColumns: IColumnItem[]) {
         const data: IFieldItem[] = [];
         const columns = schemeData.value.scheme[schemeData.value.checkedIndex].columns;
+        const colObj: Record<string, boolean> = {};
+        columns.forEach((col) => {
+          colObj[col.key] = true;
+        });
         allColumns.forEach((item) => {
           if (item.foundationList && item.foundationList.length > 0) {
             item.foundationList.forEach((field) => {
-              const index = columns.findIndex((col) => col.key === field.key);
               data.push({
                 ...field,
                 caption: field.caption,
                 expand: item.expand,
                 relationKey: item.relationKey,
                 mustKey: item.mustKey,
-                checked: item.mustKey ?? index !== -1 ? true : false,
+                checked: item.mustKey ?? colObj[field.key] ? true : false,
                 entityKey: item.entityKey || '',
               });
             });
           } else if (!item.hide) {
-            const index = columns.findIndex((col) => item.key === col.key);
             data.push({
               ...item,
               entityKey: item.entityKey || '',
               caption: item.caption,
-              checked: item.mustKey ?? index !== -1 ? true : false,
+              checked: item.mustKey ?? colObj[item.key] ? true : false,
             });
           }
         });
@@ -234,9 +236,12 @@
 
       function handleColumnsChange(columns: IColumnItem[]) {
         dataSourceTemp = [...columns];
+        const colObj: Record<string, boolean> = {};
+        columns.forEach((col) => {
+          colObj[col.key] = true;
+        });
         fieldList.value.forEach((field) => {
-          const index = columns.findIndex((item) => item.key === field.key);
-          if (index !== -1) {
+          if (colObj[field.key]) {
             field.checked = true;
           } else if (!field.mustKey) {
             field.checked = false;
