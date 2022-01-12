@@ -61,7 +61,6 @@
       const schemeData = inject('schemeData') as Ref<ISchemeData>;
       const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
       const schemeQuickIndex = inject('schemeQuickIndex') as Ref<number>;
-      const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
       const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
         'initEntityColumnHandle'
       );
@@ -136,9 +135,7 @@
           if (popupListTemp) {
             schemeQuickIndex.value = checkedIndex.value;
             schemeData.value.scheme[checkedIndex.value] = cloneDeep(popupListTemp);
-            initEntityColumnHandle!(schemeData.value.scheme[checkedIndex.value]).then(() => {
-              onChangeScheme(schemeData.value.scheme[checkedIndex.value]);
-            });
+            initEntityColumnHandle!(schemeData.value.scheme[checkedIndex.value]);
           }
         }
       };

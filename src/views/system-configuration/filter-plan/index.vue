@@ -3,9 +3,9 @@
     <div :class="prefixCls">
       <div :class="`${prefixCls}__left`">
         <DxSelectBox
+          v-model:value="targetBill"
           :items="billType"
-          placeholder="单据类型"
-          value=""
+          placeholder="目标单据"
           @ValueChanged="changeSelectValue"
         />
         <DxTextArea
@@ -16,13 +16,7 @@
         />
       </div>
       <div :class="`${prefixCls}__right`">
-        <QueryFrom
-          ref="queryForm"
-          :columns="allColumns"
-          :fast="filterData.fast"
-          :show-save-fast="false"
-          @on-save-fast="onSaveFast"
-        />
+        <QueryFrom />
         <DxTabPanel
           style="display: flex; flex-direction: column; margin-bottom: 5px"
           height="100%"
@@ -33,17 +27,7 @@
         >
           <template #item="{ data }">
             <div>
-              <component
-                :is="data.component"
-                :ref="data.component"
-                :requirement="filterData.requirement"
-                :order-by="filterData.orderBy"
-                :columns="filterData.columns"
-                :all-columns="allColumns"
-                @on-change-requirement="onChangeRequirement"
-                @on-change-sort="onChangeSort"
-                @on-change-column="onChangeColumn"
-              />
+              <component :is="data.component" />
             </div>
           </template>
         </DxTabPanel>
@@ -69,18 +53,14 @@
 </template>
 <script lang="ts">
   import type { IMultiViewItem } from '/@/components/QueryPopup/content/types';
-  import type { IColumnItem } from '/@/model/types';
-  import type {
-    IOrderByItem,
-    IRequirementItem,
-    ISchemeColumnsItem,
-  } from '/@/components/QueryPopup/content/types';
-  import type { IQueryItem } from '/@/components/QueryPlan/types';
-  import { getColumns as getAdvicesColumns } from '/@/model/entity/shipping-advices';
-  import { getColumns as getOrdersColumns } from '/@/model/entity/shipping-orders';
-  import { getColumns as getRulesColumns } from '/@/model/entity/shipping-rules';
+  import type { IColumnItem, IRelationShipItem } from '/@/model/types';
+  import type { ISchemeItem, IRequirementItem } from '/@/components/QueryPopup/content/types';
+  import type { ISchemeData } from '/@/components/QueryPlan/types';
 
-  import { defineComponent, ref, reactive } from 'vue';
+  import { relationShips as getAdvicesRelationShips } from '/@/model/entity/shipping-advices';
+  import { relationShips as getOrdersRelationShips } from '/@/model/entity/shipping-orders';
+
+  import { defineComponent, ref, provide } from 'vue';
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxButton from 'devextreme-vue/button';
   import DxTextArea from 'devextreme-vue/text-area';
@@ -88,6 +68,7 @@
   import { DxScrollView } from 'devextreme-vue/scroll-view';
 
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { initEntityColumn } from '/@/utils/bill/relationship';
 
   import { odsMessage } from '/@/components/Message';
   import { SHIPPINGADVICE, SHIPPINGORDER, SHIPPINGRULE } from './constant';
@@ -96,13 +77,7 @@
   import Requirement from '/@/components/QueryPopup/content/requirement.vue';
   import Sort from '/@/components/QueryPopup/content/sort.vue';
   import Column from '/@/components/QueryPopup/content/column.vue';
-
-  interface FilterData {
-    requirement?: IRequirementItem[];
-    orderBy?: IOrderByItem[];
-    columns?: ISchemeColumnsItem[];
-    fast?: IQueryItem[];
-  }
+  import Summary from '/@/components/QueryPopup/content/summary.vue';
 
   export default defineComponent({
     name: 'FilterPlan',
@@ -112,6 +87,7 @@
       Requirement,
       Sort,
       Column,
+      Summary,
       DxTabPanel,
       DxButton,
       DxTextArea,
@@ -120,13 +96,9 @@
     },
     setup() {
       const { prefixCls } = useDesign('filter-plan');
-
-      const queryForm = ref();
+      const targetBill = ref('');
       const allColumns = ref<IColumnItem[]>([]);
-      let filterData: FilterData = reactive({});
-      let filterDataTextString = Object.keys(filterData).length
-        ? ref<string>(JSON.stringify(filterData))
-        : ref<string>('');
+
       const fast = ref<IRequirementItem[]>([]);
       // tabs标签页数据
       const multiViewItems: IMultiViewItem[] = [
@@ -139,35 +111,67 @@
           component: 'sort',
         },
         {
+          title: '汇总',
+          component: 'summary',
+        },
+        {
           title: '显示隐藏列',
           component: 'column',
         },
       ];
 
-      const billType = [SHIPPINGORDER, SHIPPINGADVICE, SHIPPINGRULE];
+      const billType = [SHIPPINGORDER, SHIPPINGADVICE];
 
-      function onChangeRequirement(data: IRequirementItem[]) {
-        filterData.requirement = data;
-      }
+      const schemeData = ref<ISchemeData>({
+        scheme: [
+          {
+            id: '0',
+            title: '默认过滤方案',
+            requirement: [],
+            orderBy: [],
+            columns: [],
+            summary: [],
+            relationShips: [],
+          },
+        ],
+        checkedIndex: 0,
+      });
+      const schemeDataTemp = ref<ISchemeData>({
+        scheme: [],
+        checkedIndex: 0,
+      });
 
-      function onChangeSort(data: IOrderByItem[]) {
-        filterData.orderBy = data;
-      }
+      let filterDataTextString = Object.keys(schemeData.value.scheme[schemeData.value.checkedIndex])
+        .length
+        ? ref<string>(JSON.stringify(schemeData.value.scheme[schemeData.value.checkedIndex]))
+        : ref<string>('');
 
-      function onChangeColumn(data: ISchemeColumnsItem[]) {
-        filterData.columns = data;
-      }
+      const relationShips = ref<IRelationShipItem[]>([]);
 
-      function onSaveFast(data: IRequirementItem[]) {
-        filterData.fast = data;
+      function onChangeScheme(data: IRequirementItem[]) {
+        schemeData.value.scheme[schemeData.value.checkedIndex].fast = data;
       }
 
       function changefilterData() {
+        if (!targetBill.value) {
+          odsMessage({
+            type: 'error',
+            message: '请选择目标单据',
+          });
+          return;
+        }
         try {
-          filterData.requirement = JSON.parse(filterDataTextString.value).requirement;
-          filterData.orderBy = JSON.parse(filterDataTextString.value).orderBy;
-          filterData.columns = JSON.parse(filterDataTextString.value).columns;
-          filterData.fast = JSON.parse(filterDataTextString.value).fast;
+          const _data = JSON.parse(filterDataTextString.value);
+
+          schemeData.value.scheme[schemeData.value.checkedIndex].relationShips =
+            _data.relationShips;
+          initEntityColumnHandle().then(() => {
+            schemeData.value.scheme[schemeData.value.checkedIndex].requirement = _data.requirement;
+            schemeData.value.scheme[schemeData.value.checkedIndex].orderBy = _data.orderBy;
+            schemeData.value.scheme[schemeData.value.checkedIndex].columns = _data.columns;
+            schemeData.value.scheme[schemeData.value.checkedIndex].fast = _data.fast;
+            schemeData.value.scheme[schemeData.value.checkedIndex].summary = _data.summary;
+          });
         } catch {
           odsMessage({
             type: 'error',
@@ -176,8 +180,9 @@
         }
       }
       function changefilterDataText() {
-        queryForm.value && queryForm.value.onSaveFast();
-        filterDataTextString.value = JSON.stringify(filterData);
+        filterDataTextString.value = JSON.stringify(
+          schemeData.value.scheme[schemeData.value.checkedIndex]
+        );
       }
 
       function changeTextAreaValue(e) {
@@ -187,69 +192,87 @@
       function changeSelectValue(e) {
         switch (e.event.target.innerText) {
           case SHIPPINGORDER:
-            getOrdersColumns().then((res) => {
-              if (res) {
-                const { columnList } = res;
-                allColumns.value = columnList;
-              }
-              resetFilterValue();
-            });
+            relationShips.value = getOrdersRelationShips;
+            resetFilterValue();
+            initEntityColumnHandle();
             break;
           case SHIPPINGADVICE:
-            getAdvicesColumns().then((res) => {
-              if (res) {
-                const { columnList } = res;
-                allColumns.value = columnList;
-              }
-              resetFilterValue();
-            });
-            break;
-          case SHIPPINGRULE:
-            getRulesColumns().then((res) => {
-              if (res) {
-                const { columnList } = res;
-                allColumns.value = columnList;
-              }
-              resetFilterValue();
-            });
+            relationShips.value = getAdvicesRelationShips;
+            resetFilterValue();
+            initEntityColumnHandle();
             break;
         }
       }
+
+      /**
+       * @description
+       */
       function resetFilterValue() {
         filterDataTextString.value = '';
-        filterData.requirement = [
+        schemeData.value.scheme[schemeData.value.checkedIndex].requirement = [
           {
             key: '',
-            operator: '',
+            operator: '=',
             operatorList: [],
+            value: undefined,
             type: '',
             datatypekeies: '',
             relationKey: '',
             logic: 'and',
-            value: '',
             entityKey: '',
           },
         ];
-        filterData.orderBy = [];
-        filterData.columns = allColumns.value.filter((item) => item.mustKey);
-        filterData.fast = [];
+        schemeData.value.scheme[schemeData.value.checkedIndex].orderBy = [];
+        schemeData.value.scheme[schemeData.value.checkedIndex].columns = allColumns.value.filter(
+          (item) => item.mustKey
+        );
+        schemeData.value.scheme[schemeData.value.checkedIndex].relationShips = [];
+        schemeData.value.scheme[schemeData.value.checkedIndex].fast = [
+          {
+            key: '',
+            operator: '=',
+            operatorList: [],
+            value: undefined,
+            type: '',
+            datatypekeies: '',
+            relationKey: '',
+            entityKey: '',
+          },
+        ];
       }
 
+      /**
+       * @description 根据关联实体获取字段
+       */
+      const initEntityColumnHandle = (
+        scheme: ISchemeItem = schemeData.value.scheme[schemeData.value.checkedIndex]
+      ): Promise<void> => {
+        return new Promise((resolve) => {
+          initEntityColumn(scheme, relationShips.value).then(({ _allColumns, _tableKey }) => {
+            allColumns.value = _allColumns;
+            resolve();
+          });
+        });
+      };
+
+      provide('allColumns', allColumns);
+      provide('schemeData', schemeData);
+      provide('schemeDataTemp', schemeDataTemp);
+      provide('onChangeScheme', onChangeScheme);
+      provide('initEntityColumnHandle', initEntityColumnHandle);
+      provide('relationShips', relationShips);
+
       return {
-        queryForm,
         multiViewItems,
         billType,
         prefixCls,
         allColumns,
         fast,
-        filterData,
+        targetBill,
         filterDataTextString,
-        onChangeRequirement,
-        onChangeSort,
-        onChangeColumn,
         changefilterData,
         changefilterDataText,
-        onSaveFast,
+        onChangeScheme,
         changeTextAreaValue,
         changeSelectValue,
         resetFilterValue,

@@ -78,7 +78,7 @@
 
   import type { Ref } from 'vue';
 
-  import { defineComponent, computed, inject } from 'vue';
+  import { defineComponent, unref, computed, inject } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -124,7 +124,7 @@
           schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.forEach((rel) => {
             relationObj[rel.entityCode] = rel.value;
           });
-          return relationShips.map((item) => {
+          return unref(relationShips).map((item) => {
             return {
               ...item,
               value: relationObj[item.entityCode] ?? false,

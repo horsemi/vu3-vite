@@ -205,12 +205,12 @@ export const customColumns: IColumnItem[] = [
         caption: '区域',
       },
     ],
-    datatypekeies: 'area',
+    datatypekeies: 'areas',
   },
   {
     key: 'AreaCode',
     caption: '区域编码',
-    datatypekeies: 'area',
+    datatypekeies: 'areas',
   },
   // {
   //   key: 'SourceMaterialCode',

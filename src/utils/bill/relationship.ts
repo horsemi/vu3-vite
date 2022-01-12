@@ -8,7 +8,7 @@ import { getColumnListByEntityCode } from '/@/model/index';
  * @description 过滤方案关联条件初始化
  */
 export function initRelationShip(relationShips: IRelationShipItem[], scheme: ISchemeItem) {
-  if (!Array.isArray(scheme.relationShips)) {
+  if (!Array.isArray(scheme.relationShips) || scheme.relationShips.length < 1) {
     const _relationShips: IRelationShip[] = [];
 
     relationShips.forEach((item) => {
