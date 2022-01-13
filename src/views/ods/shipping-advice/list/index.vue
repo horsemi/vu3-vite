@@ -19,6 +19,12 @@
           />
         </div>
         <div class="operation-btn__inner">
+          <SummaryButton
+            :order-code="ORDER_CODE"
+            :all-columns="allColumns"
+            :scheme="filterScheme"
+            :odata-params="odataParams"
+          />
           <DxButton
             :width="100"
             icon="refresh"
@@ -30,10 +36,8 @@
       </div>
       <OdsTable
         ref="dataGrid"
-        :table-options="options"
+        height="calc(100vh - 276px)"
         :order-code="ORDER_CODE"
-        :data-source="dataSource"
-        :columns="columns"
         :query-list-permission="shippingAdviceType.shippingAdviceQueryList"
         :all-columns="allColumns"
         :filter-scheme="filterScheme"
@@ -48,31 +52,31 @@
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
-  import type { ITableOptions } from '/@/components/Table/types';
   import type { ISchemeData } from '/@/components/QueryPlan/types';
 
-  import { defineComponent, ref, provide } from 'vue';
+  import { defineComponent, ref, provide, computed } from 'vue';
   import { useRouter } from 'vue-router';
   import { cloneDeep } from 'lodash-es';
 
-  import { usePermissionStore } from '/@/store/modules/permission';
   import { useDesign } from '/@/hooks/web/useDesign';
+  import { usePermissionStore } from '/@/store/modules/permission';
   import { shippingAdviceType } from '/@/enums/actionPermission/shipping-advice';
   import { relationShips } from '/@/model/entity/shipping-advices';
   import { isArrayEmpty } from '/@/utils/bill/index';
   import { initEntityColumn } from '/@/utils/bill/relationship';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
-  import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { getSchemesData } from '/@/utils/scheme/index';
 
   import DxButton from 'devextreme-vue/button';
 
   import QueryPlan from '/@/components/QueryPlan/index.vue';
+  import SummaryButton from '/@/components/SummaryButton/index.vue';
 
   export default defineComponent({
     name: 'OdsShippingAdviceList',
     components: {
       QueryPlan,
+      SummaryButton,
       DxButton,
     },
     setup() {
@@ -84,18 +88,8 @@
       const loading = ref(false);
 
       const ORDER_CODE = 'shipping-advices';
-      const options: Partial<ITableOptions> = {
-        height: 'calc(100vh - 276px)',
-        dataSourceOptions: {
-          oDataOptions: {
-            url: getOdsListUrlByCode(ORDER_CODE),
-          },
-        },
-      };
       const filterScheme = ref<ISchemeItem>();
       const tableKey = ref<string[]>([]);
-      const dataSource = ref();
-      const columns = ref<IColumnItem[]>([]);
       const allColumns = ref<IColumnItem[]>([]);
 
       const schemeData = ref<ISchemeData>({
@@ -108,6 +102,10 @@
       });
       const schemeDefaultIndex = ref<number>(0);
       const schemeQuickIndex = ref<number>(0);
+
+      const odataParams = computed(() => {
+        return dataGrid.value && dataGrid.value.odataParams;
+      });
 
       const onRefresh = () => {
         dataGrid.value.search();
@@ -208,13 +206,11 @@
         ORDER_CODE,
         loading,
         dataGrid,
-        options,
         tableKey,
-        dataSource,
-        columns,
         allColumns,
         schemeData,
         filterScheme,
+        odataParams,
         handleBillCodeClick,
         onChangeScheme,
         onSubmitClick,
