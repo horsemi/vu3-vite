@@ -2,6 +2,7 @@ import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 
 import { useUserStore } from '/@/store/modules/user';
 import { SchemeApi } from '/@/api/user/schemes';
+import { isArray } from 'lodash';
 
 export async function getSchemesData(orderCode: string) {
   const userStore = useUserStore();
@@ -102,7 +103,44 @@ export async function deleteSchemes(id: string, creatorId: string) {
   return await SchemeApi.deleteSchemes(id, creatorId);
 }
 
-export async function saveDefaultScheme(schemeData: ISchemeItem, checkedStatue: boolean) {
+export async function saveDefaultSchemes(scheme: ISchemeItem) {
+  if (scheme) {
+    const userStore = useUserStore();
+    const userInfo = userStore.getUserInfo;
+
+    const queryData = JSON.stringify({
+      requirement: scheme.requirement,
+      orderBy: scheme.orderBy,
+      columns: scheme.columns,
+      summary: scheme.summary,
+      fast: scheme.fast,
+      relationShips: scheme.relationShips,
+    });
+
+    const schemeData = {
+      id: scheme.id,
+      title: scheme.title,
+      businessCode: scheme.businessCode as string,
+      applicationId: userInfo.applicationId,
+      creatorId: '0',
+      isShare: true,
+      queryData: queryData,
+    };
+
+    const schemeResult = await getSchemesData(scheme.businessCode!);
+
+    if (schemeResult.scheme && isArray(schemeResult.scheme) && schemeResult.scheme.length > 0) {
+      schemeData.id = schemeResult.scheme.filter((item) => item.creatorId === '0')[0].id;
+      SchemeApi.updateDefaultSchemes(schemeData);
+      return;
+    } else {
+      SchemeApi.addDefaultSchemes(schemeData);
+      return;
+    }
+  }
+}
+
+export async function setDefaultScheme(schemeData: ISchemeItem, checkedStatue: boolean) {
   const userStore = useUserStore();
   const userInfo = userStore.getUserInfo;
 
@@ -114,5 +152,5 @@ export async function saveDefaultScheme(schemeData: ISchemeItem, checkedStatue: 
     isUseScheme: checkedStatue,
   };
 
-  SchemeApi.saveDefaultSchemes(data);
+  SchemeApi.setDefaultScheme(data);
 }

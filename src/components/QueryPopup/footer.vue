@@ -24,7 +24,7 @@
 
   import { defineComponent, inject, computed } from 'vue';
 
-  import { saveSchemesData, saveDefaultScheme } from '/@/utils/scheme/index';
+  import { saveSchemesData, setDefaultScheme } from '/@/utils/scheme/index';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
 
@@ -92,7 +92,7 @@
           schemeDefaultIndex.value = 0;
         }
         if (schemeDataTemp.value.scheme[schemeData.value.checkedIndex]) {
-          saveDefaultScheme(schemeData.value.scheme[schemeData.value.checkedIndex], value);
+          setDefaultScheme(schemeData.value.scheme[schemeData.value.checkedIndex], value);
         }
       }
 
