@@ -4,15 +4,33 @@
       <div :class="`${prefixCls}__left`">
         <DxSelectBox
           v-model:value="targetBill"
-          :items="billType"
+          value-expr="key"
+          display-expr="caption"
+          :items="BILL_CODE"
           placeholder="目标单据"
           @ValueChanged="changeSelectValue"
+        />
+        <DxButton
+          style="margin-top: 10px"
+          width="100%"
+          text="加载默认过滤方案"
+          type="normal"
+          styling-mode="contained"
+          @click="onLoadDefaultScheme"
         />
         <DxTextArea
           v-model:value="filterDataTextString"
           :class="`${prefixCls}__left__textArea`"
-          height="calc(100% - 46px)"
+          height="calc(100% - 138px)"
           @change="changeTextAreaValue"
+        />
+        <DxButton
+          style="margin-top: 10px"
+          width="100%"
+          text="保存为默认过滤方案"
+          type="danger"
+          styling-mode="contained"
+          @click="onSaveDefaultScheme"
         />
       </div>
       <div :class="`${prefixCls}__right`">
@@ -69,9 +87,10 @@
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { initEntityColumn } from '/@/utils/bill/relationship';
+  import { getSchemesData, saveDefaultSchemes } from '/@/utils/scheme/index';
 
   import { odsMessage } from '/@/components/Message';
-  import { SHIPPINGADVICE, SHIPPINGORDER, SHIPPINGRULE } from './constant';
+  import { BILL_CODE } from './constant';
   import QueryFrom from '/@/components/QueryPlan/component/form.vue';
   import Content from '/@/components/QueryPopup/content/index.vue';
   import Requirement from '/@/components/QueryPopup/content/requirement.vue';
@@ -120,8 +139,6 @@
         },
       ];
 
-      const billType = [SHIPPINGORDER, SHIPPINGADVICE];
-
       const schemeData = ref<ISchemeData>({
         scheme: [
           {
@@ -131,6 +148,7 @@
             orderBy: [],
             columns: [],
             summary: [],
+            businessCode: '',
             relationShips: [],
           },
         ],
@@ -191,12 +209,12 @@
 
       function changeSelectValue(e) {
         switch (e.event.target.innerText) {
-          case SHIPPINGORDER:
+          case '发货单':
             relationShips.value = getOrdersRelationShips;
             resetFilterValue();
             initEntityColumnHandle();
             break;
-          case SHIPPINGADVICE:
+          case '发货通知单':
             relationShips.value = getAdvicesRelationShips;
             resetFilterValue();
             initEntityColumnHandle();
@@ -204,11 +222,44 @@
         }
       }
 
+      function onLoadDefaultScheme() {
+        getSchemesData(targetBill.value).then((resolve) => {
+          if (Array.isArray(resolve.scheme) && resolve.scheme.length > 0) {
+            const schemeResult = resolve.scheme.filter((item) => item.creatorId === '0');
+
+            if (schemeResult.length === 0) {
+              odsMessage({
+                type: 'warning',
+                message: '无法加载该单据的默认过滤方案',
+              });
+            } else {
+              schemeData.value.scheme[schemeData.value.checkedIndex] = schemeResult[0];
+              changefilterDataText();
+              odsMessage({
+                type: 'success',
+                message: '加载成功',
+              });
+            }
+          } else {
+            odsMessage({
+              type: 'warning',
+              message: '无法加载该单据的默认过滤方案',
+            });
+          }
+        });
+      }
+
+      function onSaveDefaultScheme() {
+        schemeData.value.scheme[schemeData.value.checkedIndex].businessCode = targetBill.value;
+        saveDefaultSchemes(schemeData.value.scheme[schemeData.value.checkedIndex]);
+      }
+
       /**
-       * @description
+       * @description 重置过滤方案
        */
       function resetFilterValue() {
         filterDataTextString.value = '';
+        schemeData.value.scheme[schemeData.value.checkedIndex].businessCode = '';
         schemeData.value.scheme[schemeData.value.checkedIndex].requirement = [
           {
             key: '',
@@ -264,7 +315,7 @@
 
       return {
         multiViewItems,
-        billType,
+        BILL_CODE,
         prefixCls,
         allColumns,
         fast,
@@ -273,6 +324,8 @@
         changefilterData,
         changefilterDataText,
         onChangeScheme,
+        onSaveDefaultScheme,
+        onLoadDefaultScheme,
         changeTextAreaValue,
         changeSelectValue,
         resetFilterValue,

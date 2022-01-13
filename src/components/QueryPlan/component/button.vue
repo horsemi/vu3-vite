@@ -2,7 +2,7 @@
   <div :class="prefixCls">
     <DxButton :width="76" text="查询" type="default" @click="onSearch" />
     <DxButton :width="76" text="重置" @click="onReset" />
-    <DxButton :width="100" text="查询方案" @click="onQueryPlan" />
+    <DxButton :width="100" text="过滤方案" @click="onQueryPlan" />
   </div>
 </template>
 

@@ -20,6 +20,9 @@ enum apiUrl {
   schemeUpdate = '/permission/api/schemes/update',
   schemeDelete = '/permission/api/schemes/delete',
 
+  schemeDefaultSave = '/permission/api/schemes/default/save',
+  schemeDefaultUpdate = '/permission/api/schemes/default/update',
+
   defaultSchemeSave = '/permission/api/schemes/user/save',
 }
 
@@ -52,7 +55,21 @@ export class SchemeApi {
     });
   }
 
-  static saveDefaultSchemes(data: {
+  static addDefaultSchemes(data: ISchemeData) {
+    return defHttp.post<ISchemeData[]>({
+      url: apiUrl.schemeDefaultSave,
+      params: data,
+    });
+  }
+
+  static updateDefaultSchemes(data: ISchemeData) {
+    return defHttp.post<ISchemeData[]>({
+      url: apiUrl.schemeDefaultUpdate,
+      params: data,
+    });
+  }
+
+  static setDefaultScheme(data: {
     id: string;
     applicationId: string;
     businessCode: string;

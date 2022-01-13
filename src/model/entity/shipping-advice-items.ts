@@ -66,6 +66,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'Qty',
     caption: '数量',
+    summaryList: ['sum', 'max', 'min'],
   },
   // {
   //   key: 'LotCode',
@@ -98,18 +99,22 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'PackageQuantity',
     caption: '包件数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'PackageCount',
     caption: '总包件数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'VolumeQuantity',
     caption: '体积',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'VolumeCount',
     caption: '总体积',
+    summaryList: ['sum', 'max', 'min'],
   },
   // {
   //   key: 'CustomerMaterialName',
@@ -126,6 +131,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ActualSalePrice',
     caption: '实际售价',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'Memo',
@@ -174,6 +180,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ProvideSalePrice',
     caption: '供货售价',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'InWarehouseCode',

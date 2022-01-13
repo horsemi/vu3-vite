@@ -1,5 +1,14 @@
-export const SHIPPINGADVICE = '发货通知单';
-
-export const SHIPPINGORDER = '发货单';
-
-export const SHIPPINGRULE = '发运策略';
+export const BILL_CODE = [
+  {
+    key: 'shipping-advices',
+    caption: '发货通知单',
+  },
+  {
+    key: 'shipping-orders',
+    caption: '发货单',
+  },
+  {
+    key: 'shipping-rules',
+    caption: '发运策略',
+  },
+];
