@@ -120,7 +120,9 @@
     components: { DxSelectBox, DxTextBox, DxNumberBox, DxDateBox, FoundationSelect },
     props: {
       value: {
-        type: [String, Number, Boolean, Date],
+        type: [String, Number, Boolean, Date] as PropType<
+          string | number | boolean | Date | undefined
+        >,
         default: undefined,
       },
       paramKey: {
@@ -148,8 +150,8 @@
         default: '',
       },
       paramOperations: {
-        type: Array as PropType<string[]>,
-        default: () => [] as PropType<string[]>,
+        type: Array as PropType<{ key: string; value: string; name: string }[]>,
+        default: () => [] as PropType<{ key: string; value: string; name: string }[]>,
       },
       entitykey: {
         type: String,

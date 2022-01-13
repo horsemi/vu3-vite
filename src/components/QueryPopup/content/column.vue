@@ -152,12 +152,23 @@
                 });
             });
           } else {
+            const checkedArr: IFieldItem[] = [];
             dataItems.forEach((item) => {
               if (!item.mustKey) {
                 item.checked = false;
-                const colIndex = dataSourceTemp.findIndex((el) => item.key === el.key);
-                colIndex !== -1 && dataSourceTemp.splice(colIndex, 1);
+              } else {
+                checkedArr.push(item);
               }
+            });
+            dataSourceTemp = checkedArr.map((item) => {
+              return {
+                key: item.key,
+                caption: item.caption,
+                expand: item.expand,
+                relationKey: item.relationKey,
+                mustKey: item.mustKey,
+                entityKey: item.entityKey || '',
+              };
             });
           }
         }

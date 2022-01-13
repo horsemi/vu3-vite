@@ -34,8 +34,6 @@
 
   import { defineComponent, inject, ref, computed } from 'vue';
 
-  import { cloneDeep } from 'lodash-es';
-
   import { useDesign } from '/@/hooks/web/useDesign';
 
   export default defineComponent({

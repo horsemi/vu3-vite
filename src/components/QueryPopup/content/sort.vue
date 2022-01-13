@@ -127,10 +127,6 @@
         e.data.checked = !e.data.checked;
         if (e.data.checked) {
           const item = fieldList.value.find((item) => item.key === e.data.key);
-          // 后端设置了最多只能5个排序字段，理论上前端不管有多少个
-          if (dataSourceTemp.length >= 5) {
-            return;
-          }
           if (item) {
             dataSourceTemp.push({
               key: item.key,
@@ -148,7 +144,10 @@
       // 点击中间箭头触发
       function onAddCol() {
         // 更新排序列表数据
-        schemeData.value.scheme[schemeData.value.checkedIndex].orderBy = [...dataSourceTemp];
+        // 后端设置了最多只能5个排序字段，理论上前端不管有多少个
+        schemeData.value.scheme[schemeData.value.checkedIndex].orderBy = [
+          ...dataSourceTemp.slice(0, 5),
+        ];
 
         const columns = [...schemeData.value.scheme[schemeData.value.checkedIndex].columns];
 

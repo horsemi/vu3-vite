@@ -54,7 +54,7 @@
             <div
               class="form-box"
               :style="{
-                height: opened ? getOpenedHeight(data.rowCount) : getColseHeight(data.rowCount),
+                height: opened ? '' : getColseHeight(data.rowCount),
               }"
             >
               <DetailForm
@@ -263,7 +263,6 @@
         defaultDefiniteHeight,
         defaultRecordHeight,
         handleHeight,
-        getOpenedHeight,
         getColseHeight,
       } = useHeight();
 
@@ -416,7 +415,6 @@
         onItemButtonClickThrottleFn,
         getDataThrottleFn,
         onChangeOpened,
-        getOpenedHeight,
         getColseHeight,
         onTableTitleClick,
         dropDownButtonAttributes: {
@@ -472,10 +470,6 @@
         padding: 12px 16px;
         background-color: #fff;
 
-        .dx-visibility-change-handler {
-          transition: height 300ms;
-        }
-
         .tab-btn {
           padding-bottom: 12px;
           & > * {
@@ -486,7 +480,6 @@
     }
     .form-box {
       overflow: hidden;
-      transition: height 300ms;
     }
     .icon-box {
       display: flex;

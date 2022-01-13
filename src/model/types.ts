@@ -48,6 +48,16 @@ export interface IColumnItem extends IColumnItemBase {
   type?: string;
 
   /**
+   * @description 自定义表头样式class
+   */
+  cssClass?: string;
+
+  /**
+   * @description 自定义文本
+   */
+  customizeText?: (cellInfo: any) => string;
+
+  /**
    * @description 关联字段
    */
   expand?: string;

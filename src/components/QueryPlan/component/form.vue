@@ -139,45 +139,18 @@
       }
 
       function onSaveFast() {
-        const temp: IRequirementItem[] = [];
-        queryList.value.forEach((item) => {
-          if (item.key) {
-            temp.push(item);
-          }
-        });
-        if (temp.length === 0) {
-          temp.push({
-            key: '',
-            operator: '=',
-            operatorList: [],
-            value: undefined,
-            type: '',
-            datatypekeies: '',
-            relationKey: '',
-            logic: 'and',
-            entityKey: '',
-          });
-        }
         if (schemeData.value.checkedIndex === 0) {
           schemeData.value.scheme.push({
             ...cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]),
             title: '缺省方案（个人）',
             id: '0',
-            fast: temp,
           });
           schemeData.value.checkedIndex = schemeData.value.scheme.length - 1;
         }
-        let scheme = cloneDeep(schemeData.value.scheme[schemeData.value.checkedIndex]);
-        scheme.fast = temp;
-        schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = scheme;
-
-        saveSchemesData(schemeDataTemp.value.scheme[schemeData.value.checkedIndex]).then(
-          (resolve) => {
-            if (resolve) {
-              schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = resolve;
-            }
-          }
+        schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(
+          schemeData.value.scheme[schemeData.value.checkedIndex]
         );
+        saveSchemesData(schemeDataTemp.value.scheme[schemeData.value.checkedIndex]);
       }
 
       const closePopup = () => {

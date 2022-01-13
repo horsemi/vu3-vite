@@ -41,20 +41,10 @@ export function clearObsoleteStorage() {
 export function initGlobalEnumData() {
   const appStore = useAppStore();
   AppConfigApi.getOdsEnum().then((resolve) => {
-    appStore.setGlobalEnumData(
-      resolve.map((item) => {
-        item.name = 'ods-' + item.name;
-        return item;
-      })
-    );
+    appStore.setGlobalEnumData(resolve);
   });
 
   AppConfigApi.getPolicyManageEnum().then((resolve) => {
-    appStore.setGlobalEnumData(
-      resolve.map((item) => {
-        item.name = 'policy-' + item.name;
-        return item;
-      })
-    );
+    appStore.setGlobalEnumData(resolve);
   });
 }
