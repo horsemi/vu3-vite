@@ -106,8 +106,10 @@
             saveSchemesData(schemeData.value.scheme[schemeData.value.checkedIndex]).then((data) => {
               if (data) {
                 schemeData.value.scheme[schemeData.value.checkedIndex] = cloneDeep(data);
-                schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(data);
               }
+              schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(
+                schemeData.value.scheme[schemeData.value.checkedIndex]
+              );
             });
           }
         }

@@ -64,7 +64,7 @@
     components: { DxDropDownBox, DxDataGrid, DxColumn, DxSelection, DxScrolling },
     props: {
       value: {
-        type: [String, Number, Boolean],
+        type: [String, Number, Boolean, Date] as PropType<string | number | boolean | Date>,
         default: '',
       },
       width: {

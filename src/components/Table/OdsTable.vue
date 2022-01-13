@@ -387,7 +387,7 @@
         const { relationShips } = props.filterScheme;
         // 判断是否需要合并
         const mergeFlag =
-          relationShips.findIndex((item) => !item.isMainEntity && item.value) !== -1;
+          relationShips?.findIndex((item) => !item.isMainEntity && item.value) !== -1;
         if (mergeFlag) {
           const { columns } = props.filterScheme;
           const isMainEntityCode = relationShips.find((item) => item.isMainEntity)?.entityCode;

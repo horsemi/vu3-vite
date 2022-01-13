@@ -465,7 +465,7 @@ export const getOdataQuery = ({
 
   const { select, expand } = getSelectAndExpand({ allColumns, columns, relationShips, tableKey });
   const orderby = getSort({ tableSort, defaultSort, orderBy, tableKey });
-  const filter = fast?.length && requirement?.length ? getFilter([...fast, ...requirement]) : [];
+  const filter = getFilter(fast ? [...fast, ...requirement] : requirement);
   const $select = select.length ? select.join(',') : '';
   const $expand = expand.length ? expand.join(',') : '';
   const $filter = filter.length ? getOdataFilter(filter) : '';
