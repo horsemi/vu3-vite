@@ -1,0 +1,73 @@
+.page-loading {
+  position: absolute;
+  top: 112px;
+  left: 216px;
+  z-index: 2000;
+  width: calc(100vw - 232px);
+  height: calc(100vh - 128px);
+  background-color: #fff;
+}
+
+.page-loading-spinner {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  margin-top: -21px;
+  text-align: center;
+}
+
+.page-loading-circular {
+  display: inline;
+  width: 42px;
+  height: 42px;
+  animation: loading-rotate 2s linear infinite;
+}
+
+.page-loading-path {
+  animation: loading-dash 1.5s ease-in-out infinite;
+  stroke-dasharray: 90, 150;
+  stroke-dashoffset: 0;
+  stroke-width: 2;
+  stroke: #409eff;
+  stroke-linecap: round;
+}
+
+.page-loading-text {
+  margin: 3px 0;
+  font-size: 14px;
+  color: #409eff;
+}
+
+
+.full-screen-loading {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 2000;
+  width: 100vw;
+  height: 100vh;
+  background-color: #fff;
+}
+
+@keyframes loading-rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes loading-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -40px;
+  }
+  100% {
+    stroke-dasharray: 90, 150;
+    stroke-dashoffset: -120px;
+  }
+}

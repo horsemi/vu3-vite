@@ -277,6 +277,8 @@ export function useDetailForm(
 
   const formData = ref();
 
+  const formLoading = ref(true);
+
   const baseFormData = ref<Record<string, unknown>>({});
   const receiverFormData = ref<Record<string, unknown>>({});
   const logisticsFormData = ref<Record<string, unknown>>({});
@@ -307,6 +309,7 @@ export function useDetailForm(
   }
 
   const refreshDetailForm = async (callback) => {
+    formLoading.value = true;
     if (!columnList || columnList.length === 0) return;
     const [baseList, receiverList, logisticsList, otherList] = getFormList(columnList, [
       base,
@@ -382,6 +385,7 @@ export function useDetailForm(
       multiViewItems.value[index].rowCount = getRowCount(data);
     });
     callback();
+    formLoading.value = false;
   };
 
   getColumns().then((res) => {
@@ -393,6 +397,7 @@ export function useDetailForm(
 
   return {
     formData,
+    formLoading,
     baseFormData,
     receiverFormData,
     logisticsFormData,

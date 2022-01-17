@@ -9,7 +9,7 @@
       min-width="340px"
       @hiding="list = []"
     >
-      <div>
+      <div v-loading="loading">
         <div v-if="list.length > 0" :class="`${prefixCls}-list`">
           <div>
             <div v-for="(item, index) in list" :key="index" :class="`${prefixCls}-name`">
@@ -82,6 +82,7 @@
     setup(props) {
       const { prefixCls } = useDesign('summary-button');
       const showSummary = ref(false);
+      const loading = ref(false);
       const summaryPopover = ref();
 
       const list = ref<
@@ -145,21 +146,27 @@
         showSummary.value = true;
         const serverSummaryScheme = props.scheme.summary?.filter((item) => item.mode === 'all');
         if (serverSummaryScheme?.length > 0) {
+          loading.value = true;
           serverSummary({
             orderCode: props.orderCode,
             systemCode: props.systemCode,
             summary: serverSummaryScheme,
             odataParams: props.odataParams,
             allColumns: props.allColumns,
-          }).then((res) => {
-            list.value = res;
+          })
+            .then((res) => {
+              list.value = res;
 
-            // 解决自动充满导致弹窗部分在视口外
-            nextTick(() => {
-              // 重新计算弹窗大小和位置
-              summaryPopover.value.instance.repaint();
+              // 解决自动充满导致弹窗部分在视口外
+              nextTick(() => {
+                // 重新计算弹窗大小和位置
+                summaryPopover.value.instance.repaint();
+                loading.value = false;
+              });
+            })
+            .catch(() => {
+              loading.value = false;
             });
-          });
         }
       };
 
@@ -181,6 +188,7 @@
         prefixCls,
         list,
         summaryTypeMap,
+        loading,
         onSummary,
         getValue,
       };
@@ -220,6 +228,7 @@
     }
 
     &-empty {
+      padding: 10px 0;
       color: #909193;
       text-align: center;
     }

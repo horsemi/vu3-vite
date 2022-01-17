@@ -22,6 +22,9 @@ export default function renderPopper(props, children: VNode[]) {
               'div',
               {
                 ref: 'popperRef',
+                style: {
+                  zIndex: 2000,
+                },
               },
               children
             ),

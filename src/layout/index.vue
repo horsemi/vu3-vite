@@ -40,19 +40,10 @@
       </template>
     </DxDrawer>
   </div>
-  <DxLoadPanel
-    v-model:visible="getPageLoading"
-    :position="position"
-    :show-indicator="true"
-    :show-pane="true"
-    :shading="true"
-    message="正在加载"
-    shading-color="transparent"
-  />
 </template>
 
 <script lang="ts">
-  import { defineComponent, computed, ref, onMounted, onUnmounted } from 'vue';
+  import { defineComponent, computed, onMounted, onUnmounted } from 'vue';
 
   import LayoutContent from './default/content/index.vue';
   import LayoutHeader from './default/header/index.vue';
@@ -61,10 +52,8 @@
 
   import DxDrawer from 'devextreme-vue/drawer';
   import DxScrollView from 'devextreme-vue/scroll-view';
-  import { DxLoadPanel } from 'devextreme-vue/load-panel';
 
   import { useRouter } from 'vue-router';
-  import { useViewStore } from '/@/store/modules/view';
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
   import { initGlobalEnumData } from '/@/logics/initAppConfig';
@@ -78,7 +67,6 @@
       MultipleTabs,
       DxDrawer,
       DxScrollView,
-      DxLoadPanel,
     },
     setup() {
       const menuSize = {
@@ -86,12 +74,10 @@
         min: 54,
       };
       initGlobalEnumData();
-      const viewStore = useViewStore();
       const appStore = useAppStore();
       const router = useRouter();
       const { prefixCls } = useDesign('layout');
 
-      const viewState = computed(() => viewStore.getViewList);
       const openState = computed({
         get: () => appStore.getMenuOpenState,
         set: (value: boolean) => {
@@ -102,7 +88,6 @@
       const toggleMenu = () => {
         openState.value = !openState.value;
       };
-      const getPageLoading = computed(() => viewStore.getLoadingTimes > 0);
 
       // iframe 通讯监听方法
       function reciveMessage(e) {
@@ -121,14 +106,10 @@
       });
 
       return {
-        viewState,
         openState,
         prefixCls,
         toggleMenu,
         menuSize,
-        reciveMessage,
-        getPageLoading,
-        position: { of: '#layout_content' },
       };
     },
   });

@@ -21,7 +21,7 @@
       @cellClick="onCellClick"
     >
       <DxLoadPanel :enabled="false" />
-      <template v-for="(item, index) in tableColumns" :key="index">
+      <template v-for="item in tableColumns" :key="item.key">
         <DxColumn
           v-if="!item.hide"
           :css-class="`${item.cssClass || ''} header-bold`"
@@ -217,7 +217,13 @@
         default: '',
       },
     },
-    emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],
+    emits: [
+      'handleBillCodeClick',
+      'handleSelectionClick',
+      'optionChanged',
+      'cellClick',
+      'onLoaded',
+    ],
     setup(props, ctx) {
       const { prefixCls } = useDesign('ods-table');
       const permissionStore = usePermissionStore();
@@ -463,6 +469,8 @@
                   ),
                 ]);
 
+                ctx.emit('onLoaded');
+
                 return {
                   data: handleTableData(res),
                   totalCount: totalCount[0]['Count'] || 0,
@@ -605,6 +613,8 @@
         onOptionChanged,
         getTableDataSourceOption,
         onCellClick,
+        scrollToTable,
+        resetTableScrollable,
         remoteOperationValue,
         SearchPermission,
       };

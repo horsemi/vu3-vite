@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-    <div :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
+    <div v-loading="formLoading" :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
       <div class="btn-box">
         <DxDropDownButton
           :element-attr="dropDownButtonAttributes"
@@ -100,19 +100,26 @@
         :focus-state-enabled="false"
         @titleClick="onTableTitleClick"
       >
+        <template #item="{ data }">
+          <div class="tab">
+            <OdsTable
+              ref="dataGrid"
+              v-loading="data.key === 'definite' ? definiteLoading : recordLoading"
+              :height="tableHeight"
+              :order-code="data.key === 'definite' ? 'shipping-order-items' : 'operation-records'"
+              :query-list-permission="shippingOrderType.shippingOrderQueryItems"
+              :table-options="data.key === 'definite' ? definiteOptions : recordOptions"
+              :filter-scheme="data.key === 'definite' ? definiteScheme : recordScheme"
+              :all-columns="data.key === 'definite' ? definiteAllColumns : recordAllColumns"
+              :table-key="data.key === 'definite' ? definiteTableKey : recordTableKey"
+              @onLoaded="
+                data.key === 'definite' ? (definiteLoading = false) : (recordLoading = false)
+              "
+            >
+            </OdsTable>
+          </div>
+        </template>
       </DxTabPanel>
-      <div class="tab">
-        <OdsTable
-          :height="tableHeight"
-          :order-code="tableIndex === 0 ? 'shipping-order-items' : 'operation-records'"
-          :query-list-permission="shippingOrderType.shippingOrderQueryItems"
-          :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
-          :filter-scheme="tableIndex === 0 ? definiteScheme : recordScheme"
-          :all-columns="tableIndex === 0 ? definiteAllColumns : recordAllColumns"
-          :table-key="tableIndex === 0 ? definiteTableKey : recordTableKey"
-        >
-        </OdsTable>
-      </div>
     </div>
   </div>
 </template>
@@ -121,7 +128,7 @@
   import type { ITableOptions } from '/@/components/Table/types';
   import type { IRequirementItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch, nextTick } from 'vue';
+  import { defineComponent, ref, watch, nextTick, onActivated, onDeactivated } from 'vue';
   import { useRoute } from 'vue-router';
   import { usePermissionStore } from '/@/store/modules/permission';
   import { useThrottleFn } from '@vueuse/core';
@@ -241,6 +248,7 @@
 
       const {
         formData,
+        formLoading,
         baseFormData,
         receiverFormData,
         logisticsFormData,
@@ -252,11 +260,21 @@
         refreshDetailForm,
       } = useDetailForm(Id, multiViewItems, detailFormCallBack);
 
-      const { definiteScheme, definiteTableKey, definiteAllColumns, refreshDefinite } = useDefinite(
-        definiteRequirement
-      );
+      const {
+        definiteScheme,
+        definiteLoading,
+        definiteTableKey,
+        definiteAllColumns,
+        refreshDefinite,
+      } = useDefinite(definiteRequirement);
 
-      const { recordScheme, recordTableKey, recordAllColumns, refreshRecord } = useRecord(BillCode);
+      const {
+        recordScheme,
+        recordLoading,
+        recordTableKey,
+        recordAllColumns,
+        refreshRecord,
+      } = useRecord(BillCode);
 
       const {
         tableHeight,
@@ -378,9 +396,19 @@
         handleHeight(multiViewItems.value[sIndex].rowCount, tableIndex.value, opened.value);
       });
 
+      const dataGrid = ref();
+
       onRefresh();
 
+      onActivated(() => {
+        dataGrid.value?.scrollToTable();
+      });
+      onDeactivated(() => {
+        dataGrid.value?.resetTableScrollable();
+      });
+
       return {
+        dataGrid,
         tableHeight,
         definiteOptions,
         definiteTableKey,
@@ -400,6 +428,10 @@
         receiverFormData,
         logisticsFormData,
         otherFormData,
+
+        formLoading,
+        definiteLoading,
+        recordLoading,
 
         selectedIndex,
         tableIndex,

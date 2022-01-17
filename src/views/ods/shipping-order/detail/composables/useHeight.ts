@@ -1,7 +1,7 @@
 import { ref } from 'vue';
 
 export function useHeight() {
-  const tableHeight = ref('');
+  const tableHeight = ref('calc(100vh - 467px)');
   const formRowHeight = 29;
   const formRowPaddingTop = 12;
   const recordOverHeight = 330;
