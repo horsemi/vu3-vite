@@ -2,7 +2,7 @@
   position: absolute;
   top: 112px;
   left: 216px;
-  z-index: 2000;
+  z-index: 1000;
   width: calc(100vw - 232px);
   height: calc(100vh - 128px);
   background-color: #fff;
@@ -45,7 +45,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  z-index: 2000;
+  z-index: 1000;
   width: 100vw;
   height: 100vh;
   background-color: #fff;

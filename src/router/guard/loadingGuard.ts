@@ -8,7 +8,7 @@ export function createLoadingGuard(router: Router) {
   router.beforeEach((to) => {
     const viewStore = useViewWithOutStore();
     // 跳转页面
-    if (viewStore.getCacheList?.length > 0 && !viewStore.getCacheList?.includes(to.path)) {
+    if (viewStore.getViewList?.length > 0 && !viewStore.getCacheList?.includes(to.path)) {
       maskLoading.showLoading('page');
     }
     // 刚初始化

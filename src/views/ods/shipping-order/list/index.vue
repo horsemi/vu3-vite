@@ -110,6 +110,7 @@
       });
 
       const onRefresh = () => {
+        tableLoading.value = true;
         dataGrid.value.search();
       };
 

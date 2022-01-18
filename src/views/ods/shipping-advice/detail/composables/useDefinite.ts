@@ -167,6 +167,8 @@ export function useDefinite(requirement: IRequirementItem[]) {
     },
   ];
 
+  const definiteLoading = ref(true);
+
   const definiteScheme = ref<ISchemeItem>();
   const definiteAllColumns = ref<IColumnItem[]>([]);
   const definiteTableKey = ref<string[]>([]);
@@ -187,6 +189,7 @@ export function useDefinite(requirement: IRequirementItem[]) {
   });
 
   function refreshDefinite() {
+    definiteLoading.value = true;
     definiteScheme.value = {
       id: '',
       title: '',
@@ -200,6 +203,7 @@ export function useDefinite(requirement: IRequirementItem[]) {
 
   return {
     definiteScheme,
+    definiteLoading,
     definiteAllColumns,
     definiteCustomColumns,
     definiteTableKey,

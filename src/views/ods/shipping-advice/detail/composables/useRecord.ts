@@ -42,6 +42,8 @@ export function useRecord(BillCode: string) {
     },
   ];
 
+  const recordLoading = ref(true);
+
   const recordScheme = ref<ISchemeItem>();
   const recordAllColumns = ref<IColumnItem[]>([]);
   const recordTableKey = ref<string[]>([]);
@@ -74,6 +76,7 @@ export function useRecord(BillCode: string) {
   });
 
   function refreshRecord() {
+    recordLoading.value = true;
     recordScheme.value = {
       id: '',
       title: '',
@@ -98,6 +101,7 @@ export function useRecord(BillCode: string) {
 
   return {
     recordScheme,
+    recordLoading,
     recordTableKey,
     recordAllColumns,
     refreshRecord,

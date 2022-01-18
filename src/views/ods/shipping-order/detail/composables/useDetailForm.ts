@@ -309,8 +309,8 @@ export function useDetailForm(
   }
 
   const refreshDetailForm = async (callback) => {
-    formLoading.value = true;
     if (!columnList || columnList.length === 0) return;
+    formLoading.value = true;
     const [baseList, receiverList, logisticsList, otherList] = getFormList(columnList, [
       base,
       receiver,

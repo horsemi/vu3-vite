@@ -398,8 +398,6 @@
 
       const dataGrid = ref();
 
-      onRefresh();
-
       onActivated(() => {
         dataGrid.value?.scrollToTable();
       });

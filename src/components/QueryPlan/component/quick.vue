@@ -5,6 +5,7 @@
       :style="{
         boxShadow: opened ? '0 10px 12px 0 rgb(0 0 0 / 10%)' : '',
         height: opened ? 'auto' : '64px',
+        zIndex: opened ? 1500 : 1,
       }"
     >
       <span :class="`${prefixCls}__title`">快捷过滤：</span>
@@ -52,7 +53,6 @@
       });
 
       const { prefixCls } = useDesign('query-quick');
-      const quick = ref();
       const opened = ref<boolean>(false);
 
       const onActive = (index: number): void => {
@@ -71,7 +71,6 @@
 
       return {
         prefixCls,
-        quick,
         opened,
         schemeListTemp,
         schemeQuickIndex,
@@ -95,7 +94,6 @@
       position: absolute;
       top: -32px;
       right: 0;
-      z-index: @page-popup-z-index;
       display: flex;
       align-items: center;
       flex-wrap: wrap;

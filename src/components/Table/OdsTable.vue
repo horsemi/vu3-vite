@@ -19,6 +19,7 @@
       @selection-changed="onSelectionChanged"
       @option-changed="onOptionChanged"
       @cellClick="onCellClick"
+      @dataErrorOccurred="onDataErrorOccurred"
     >
       <DxLoadPanel :enabled="false" />
       <template v-for="item in tableColumns" :key="item.key">
@@ -370,6 +371,7 @@
             if (SearchPermission.value) {
               // 重新 new datasource
               getTableData();
+
               // 重新 获取列数据
               tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
               nextTick(() => {
@@ -396,7 +398,7 @@
           relationShips?.findIndex((item) => !item.isMainEntity && item.value) !== -1;
         if (mergeFlag) {
           const { columns } = props.filterScheme;
-          const isMainEntityCode = relationShips.find((item) => item.isMainEntity)?.entityCode;
+          const isMainEntityCode = relationShips?.find((item) => item.isMainEntity)?.entityCode;
           const mergeKeyArr: string[] = [];
           // 查找哪些key需要合并 = 哪些key的属性值要清空
           columns.forEach((item) => {
@@ -469,13 +471,14 @@
                   ),
                 ]);
 
-                ctx.emit('onLoaded');
-
                 return {
                   data: handleTableData(res),
                   totalCount: totalCount[0]['Count'] || 0,
                 };
               }
+            },
+            onLoaded() {
+              ctx.emit('onLoaded');
             },
           }),
         });
@@ -586,6 +589,11 @@
         ctx.emit('cellClick', e);
       }
 
+      // 数据发生错误时，把loading取消
+      function onDataErrorOccurred() {
+        ctx.emit('onLoaded');
+      }
+
       return {
         dataGrid,
         options,
@@ -613,6 +621,7 @@
         onOptionChanged,
         getTableDataSourceOption,
         onCellClick,
+        onDataErrorOccurred,
         scrollToTable,
         resetTableScrollable,
         remoteOperationValue,
