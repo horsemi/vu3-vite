@@ -130,6 +130,7 @@
           if (val === null) {
             dataGrid.value.clearSelection();
             options.value = [];
+            ctx.emit('update:value', null);
           }
         },
       });

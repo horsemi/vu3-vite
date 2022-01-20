@@ -20,6 +20,7 @@
       @option-changed="onOptionChanged"
       @cellClick="onCellClick"
       @dataErrorOccurred="onDataErrorOccurred"
+      @cellPrepared="onCellPrepared"
     >
       <DxLoadPanel :enabled="false" />
       <template v-for="item in tableColumns" :key="item.key">
@@ -224,6 +225,7 @@
       'optionChanged',
       'cellClick',
       'onLoaded',
+      'onLoad',
     ],
     setup(props, ctx) {
       const { prefixCls } = useDesign('ods-table');
@@ -245,6 +247,11 @@
       const tableScrollable = {
         top: 0,
         left: 0,
+      };
+
+      const mergeData: { cols: string[]; rows: number[] } = {
+        cols: [],
+        rows: [],
       };
 
       const tableData = ref();
@@ -390,50 +397,33 @@
         }
       };
 
-      const handleTableData = (res) => {
-        let data = [];
+      // 初始化合并列数据
+      const initMergeData = (res) => {
         const { relationShips } = props.filterScheme;
         // 判断是否需要合并
         const mergeFlag =
           relationShips?.findIndex((item) => !item.isMainEntity && item.value) !== -1;
+        mergeData.cols = [];
+        mergeData.rows = [];
         if (mergeFlag) {
           const { columns } = props.filterScheme;
           const isMainEntityCode = relationShips?.find((item) => item.isMainEntity)?.entityCode;
-          const mergeKeyArr: string[] = [];
           // 查找哪些key需要合并 = 哪些key的属性值要清空
           columns.forEach((item) => {
             if (!item.entityKey || item.entityKey === isMainEntityCode) {
-              mergeKeyArr.push(item.key);
+              mergeData.cols.push(item.key);
             }
           });
-          // 用主键判断数据是否需要合并列
+          // 查找哪些行需要合并
           // 一般来说第一条不需要合并，第一条以后主键重复的需要合并
           const obj = {};
-          data = res.map((item) => {
+          res.map((item, index) => {
             obj[item[mainKey.value]]
-              ? (item = handleMergeColumns(item, mergeKeyArr))
+              ? mergeData.rows.push(index)
               : (obj[item[mainKey.value]] = item[mainKey.value]);
             return item;
           });
-        } else {
-          data = res;
         }
-        return data;
-      };
-
-      // 合并列
-      const handleMergeColumns = (item: Record<string, unknown>, mergeKeyArr: string[]) => {
-        const temp = {};
-        Object.entries(item).forEach(([key, value]) => {
-          if (mergeKeyArr.includes(key)) {
-            // 主实体属性值都清空
-            temp[key] = '';
-          } else {
-            // 非主实体拿原来的值
-            temp[key] = value;
-          }
-        });
-        return temp;
       };
 
       const getTableData = () => {
@@ -471,8 +461,10 @@
                   ),
                 ]);
 
+                initMergeData(res);
+
                 return {
-                  data: handleTableData(res),
+                  data: res,
                   totalCount: totalCount[0]['Count'] || 0,
                 };
               }
@@ -582,6 +574,13 @@
           pageIndex.value = 0;
           rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
         }
+        if (
+          e.fullName.includes('sortOrder') ||
+          e.fullName === 'paging.pageIndex' ||
+          e.fullName === 'paging.pageSize'
+        ) {
+          ctx.emit('onLoad');
+        }
         ctx.emit('optionChanged', e);
       }
 
@@ -592,6 +591,19 @@
       // 数据发生错误时，把loading取消
       function onDataErrorOccurred() {
         ctx.emit('onLoaded');
+      }
+
+      // 合并单元格
+      function onCellPrepared(e) {
+        if (
+          e.rowIndex >= 0 &&
+          mergeData.cols.length &&
+          mergeData.rows.length &&
+          mergeData.cols.includes(e.column.dataField) &&
+          mergeData.rows.includes(e.rowIndex)
+        ) {
+          e.cellElement.innerHTML = '—';
+        }
       }
 
       return {
@@ -624,6 +636,7 @@
         onDataErrorOccurred,
         scrollToTable,
         resetTableScrollable,
+        onCellPrepared,
         remoteOperationValue,
         SearchPermission,
       };

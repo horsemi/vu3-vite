@@ -112,6 +112,7 @@
               :filter-scheme="data.key === 'definite' ? definiteScheme : recordScheme"
               :all-columns="data.key === 'definite' ? definiteAllColumns : recordAllColumns"
               :table-key="data.key === 'definite' ? definiteTableKey : recordTableKey"
+              @onLoad="data.key === 'definite' ? (definiteLoading = true) : (recordLoading = true)"
               @onLoaded="
                 data.key === 'definite' ? (definiteLoading = false) : (recordLoading = false)
               "

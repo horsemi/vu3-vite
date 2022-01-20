@@ -43,6 +43,7 @@
         :filter-scheme="filterScheme"
         :table-key="tableKey"
         @handle-bill-code-click="handleBillCodeClick"
+        @onLoad="tableLoading = true"
         @onLoaded="tableLoading = false"
       >
       </OdsTable>

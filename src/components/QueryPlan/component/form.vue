@@ -157,10 +157,6 @@
         opened.value = false;
       };
 
-      const changeQueryList = (data: IRequirementItem[]) => {
-        schemeData.value.scheme[schemeData.value.checkedIndex].fast = cloneDeep(data);
-      };
-
       const onSearch = () => {
         onChangeScheme(schemeData.value.scheme[schemeData.value.checkedIndex]);
       };
@@ -173,7 +169,6 @@
         onAddRequirement,
         onDelRequirement,
         onSaveFast,
-        changeQueryList,
         closePopup,
         onSearch,
       };

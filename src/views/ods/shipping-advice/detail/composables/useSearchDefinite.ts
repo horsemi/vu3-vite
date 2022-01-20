@@ -6,7 +6,8 @@ import { Ref, ref } from 'vue';
 export function useSearchDefinite(
   requirement: IRequirementItem[],
   definiteCustomColumns: IColumnItem[],
-  definiteScheme: Ref<ISchemeItem | undefined>
+  definiteScheme: Ref<ISchemeItem | undefined>,
+  definiteLoading: Ref<boolean>
 ) {
   const schemeData = ref({
     checkedIndex: 0,
@@ -50,6 +51,7 @@ export function useSearchDefinite(
   });
 
   function onSearch() {
+    definiteLoading.value = true;
     definiteScheme.value = {
       id: '',
       title: '',
@@ -62,6 +64,7 @@ export function useSearchDefinite(
   }
 
   function onReset() {
+    definiteLoading.value = true;
     schemeData.value.scheme[schemeData.value.checkedIndex] = {
       fast: [
         {

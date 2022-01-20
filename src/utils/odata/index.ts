@@ -250,7 +250,7 @@ const initValueData = (item: IRequirementItem, requirement) => {
         result += ',"=",null]';
       } else if (item.operator === operatorMap.isNotNull.key) {
         result += ',"<>",null]';
-      } else if (isNullOrUnDef(value)) {
+      } else if (isNullOrUnDef(value) || value === '') {
         result = '';
       } else {
         result += `,"${item.operator}","${value}"]`;

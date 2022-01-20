@@ -107,13 +107,8 @@
       >
         <template #item="{ data }">
           <div>
-            <div v-if="data.key === 'definite'" class="search-box">
-              <QueryForm
-                ref="queryForm"
-                class="query-form"
-                :show-save-fast="false"
-                @on-search="onSearch"
-              />
+            <div v-if="data.key === 'definite'" v-loading="queryFormLoading" class="search-box">
+              <QueryForm class="query-form" :show-save-fast="false" />
               <div class="search-btn">
                 <DxButton text="查询" type="default" @click="onSearch" />
                 <DxButton text="重置" @click="onReset" />
@@ -132,6 +127,9 @@
                 :filter-scheme="data.key === 'definite' ? definiteScheme : recordScheme"
                 :all-columns="data.key === 'definite' ? definiteAllColumns : recordAllColumns"
                 :table-key="data.key === 'definite' ? definiteTableKey : recordTableKey"
+                @onLoad="
+                  data.key === 'definite' ? (definiteLoading = true) : (recordLoading = true)
+                "
                 @onLoaded="
                   data.key === 'definite' ? (definiteLoading = false) : (recordLoading = false)
                 "
@@ -305,6 +303,7 @@
       const {
         definiteTableKey,
         definiteLoading,
+        queryFormLoading,
         definiteScheme,
         definiteAllColumns,
         definiteCustomColumns,
@@ -321,7 +320,8 @@
       const { onSearch, onReset, schemeData } = useSearchDefinite(
         definiteRequirement,
         definiteCustomColumns,
-        definiteScheme
+        definiteScheme,
+        definiteLoading
       );
       provide('allColumns', definiteAllColumns);
       provide('schemeData', schemeData);
@@ -496,6 +496,7 @@
 
         formLoading,
         definiteLoading,
+        queryFormLoading,
         recordLoading,
 
         selectedIndex,
