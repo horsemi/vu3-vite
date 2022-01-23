@@ -326,7 +326,7 @@
       provide('allColumns', definiteAllColumns);
       provide('schemeData', schemeData);
       provide('onChangeScheme', onSearch);
-      provide('schemeDataTemp', ref({}));
+      provide('schemeDataTemp', schemeData);
 
       const {
         tableHeight,

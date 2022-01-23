@@ -143,9 +143,9 @@
 
       const onSummary = () => {
         list.value = [];
-        showSummary.value = true;
+        showSummary.value = !showSummary.value;
         const serverSummaryScheme = props.scheme.summary?.filter((item) => item.mode === 'all');
-        if (serverSummaryScheme?.length > 0) {
+        if (showSummary.value && serverSummaryScheme?.length > 0) {
           loading.value = true;
           serverSummary({
             orderCode: props.orderCode,

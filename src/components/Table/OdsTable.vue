@@ -266,10 +266,23 @@
         return permissionStore.hasPermission(props.queryListPermission);
       });
 
+      const summaryData = computed(() => {
+        return tableData.value.items().map((item, index) => {
+          const temp = { ...item };
+          if (mergeData.rows.includes(index)) {
+            mergeData.cols.forEach((col) => {
+              temp[col] = '';
+            });
+          }
+          return temp;
+        });
+      });
+
       const mainKey = computed(() => {
         return props.tableKey[0];
       });
 
+      // TODO: 表格key待定
       const dataGridKey = computed(() => {
         return props.tableKey[props.tableKey.length - 1];
       });
@@ -327,6 +340,7 @@
         }
       };
 
+      // TODO: 明细可勾选后，数据重复问题
       const onSelectionChanged = ({ selectedRowKeys, selectedRowsData }) => {
         ctx.emit('handleSelectionClick', selectedRowsData);
       };
@@ -336,6 +350,7 @@
         pageIndex.value = index >= 0 ? index : 0;
       };
 
+      // TODO: 是否可精简
       // 处理汇总信息
       const handleClientSummary = (summary: ISummaryItem[]) => {
         if (!summary || !summary.length) return;
@@ -347,7 +362,7 @@
               showSummaryFn: () => {
                 return clientSummary({
                   summary: { columnName: item.key, summaryType: item.type },
-                  source: tableData.value._items,
+                  source: summaryData.value,
                   allColumns: props.allColumns,
                 });
               },
@@ -360,7 +375,7 @@
         if (scheme.columns && props.allColumns.length > 0) {
           if (dataGrid.value && dataGrid.value.instance) {
             // 清空排序，处理相同字段desc失效
-            dataGrid.value.instance.clearSorting();
+            // dataGrid.value.instance.clearSorting();
             // 回到第一页
             dataGrid.value.instance.pageIndex(0);
             // 刷新表格，解决 tableColumns.value = [] 的时候 表头显示key
@@ -373,7 +388,6 @@
           // 获取数据前，清空列数据，解决列数据引起的排序和显示隐藏列问题
           tableColumns.value = [];
           // 等列数据渲染完后再去获取表格数据，还是解决列数据引起的排序和显示隐藏列问题
-          // 此处nextTick导致getTableData晚了300ms左右
           nextTick(() => {
             if (SearchPermission.value) {
               // 重新 new datasource

@@ -68,7 +68,7 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IRequirementItem, ISchemeItem } from '../../QueryPopup/content/types';
+  import type { ISchemeItem } from '../../QueryPopup/content/types';
   import type { ISchemeData } from '../types';
   import { computed, Ref } from 'vue';
 
