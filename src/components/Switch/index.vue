@@ -29,11 +29,11 @@
         type: String,
         default: '否',
       },
-      activeColor: {
+      activecolor: {
         type: String,
         default: '#3694fd',
       },
-      inactiveColor: {
+      inactivecolor: {
         type: String,
         default: '#00000040',
       },
@@ -42,7 +42,7 @@
     setup(props, ctx) {
       const { prefixCls } = useDesign('ods-switch');
 
-      const opacityVal = computed(() => {
+      const opacityval = computed(() => {
         return props.readOnly ? 0.6 : 1;
       });
 
@@ -53,7 +53,7 @@
 
       return {
         prefixCls,
-        opacityVal,
+        opacityval,
         onChange,
       };
     },
