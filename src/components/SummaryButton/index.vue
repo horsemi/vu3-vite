@@ -1,19 +1,22 @@
 <template>
   <div :class="prefixCls">
-    <DxButton id="summaryButton" :width="122" icon="paste" text="汇总信息" @click="onSummary" />
+    <DxButton id="summaryButton" :width="122" icon="datafield" text="汇总信息" @click="onSummary" />
     <DxPopover
       ref="summaryPopover"
       v-model:visible="showSummary"
       target="#summaryButton"
       position="bottom"
-      min-width="340px"
+      min-width="240px"
       @hiding="list = []"
     >
       <div>
         <div v-if="list.length > 0" :class="`${prefixCls}-list`">
           <div>
             <div v-for="(item, index) in list" :key="index" :class="`${prefixCls}-name`">
-              {{ item.caption }}_{{ summaryTypeMap[item.summaryType] }}
+              <span style="margin-right: 10px">{{ item.caption }}</span
+              ><span style="width: 50px"
+                ><SvgIcon :name="`mathematic-${summaryTypeMap[item.summaryType]}`"
+              /></span>
             </div>
           </div>
           <div>
@@ -94,11 +97,11 @@
       >([]);
 
       const summaryTypeMap = {
-        sum: '总和',
-        min: '最小值',
-        max: '最大值',
-        avg: '平均值',
-        count: '计数',
+        sum: 'sum',
+        min: 'min',
+        max: 'max',
+        avg: 'mean',
+        count: 'count',
       };
 
       const serverSummary = async ({
@@ -129,9 +132,10 @@
 
         const list = summary.map((item) => {
           const col = allColumns.find((col) => col.key === item.key);
+
           return {
-            caption: col?.caption,
-            value: res[`${item.key.replaceAll('_', '')}${upperFirst(item.type)}`],
+            caption: col?.caption.slice(col?.caption.indexOf('_') + 1),
+            value: res[`${item.key.replace(/_/g, '')}${upperFirst(item.type)}`],
             summaryType: item.type,
             fieldType: col?.type,
           };
@@ -199,8 +203,9 @@
     }
 
     &-name {
-      margin-right: 14px;
+      margin-right: 10px;
       margin-bottom: 10px;
+      font-size: 15px;
       color: #757575;
       text-align: right;
 
@@ -211,6 +216,8 @@
 
     &-value {
       margin-bottom: 10px;
+      font-size: 15px;
+      font-weight: 700;
       color: #333;
       text-align: left;
 

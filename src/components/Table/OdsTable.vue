@@ -676,6 +676,12 @@
       border: none !important;
     }
 
+    .dx-datagrid-total-footer > .dx-datagrid-content {
+      padding-top: 0;
+      padding-bottom: 0;
+      background: #f5f5f5;
+    }
+
     // 分页器样式
     .dx-datagrid-pager {
       display: flex;
