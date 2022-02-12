@@ -71,7 +71,6 @@
     padding: 0;
     margin: 0;
     font-size: 14px;
-    line-height: 1.5715;
     line-height: 22px;
     color: #000000d9;
     vertical-align: middle;
@@ -118,7 +117,7 @@
     &-inner {
       display: block;
       margin: 0 7px 0 25px;
-      font-size: 12px;
+      font-size: 14px;
       color: #fff;
       transition: margin 0.2s;
     }

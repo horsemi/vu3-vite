@@ -31,7 +31,7 @@
       </template>
       <template #OdsSwitch="{ data }">
         <Switch
-          style="margin: 2.5px 0"
+          style="margin-bottom: 3px"
           :read-only="readOnly"
           :value="formData[data.dataField]"
           @update:value="onChangeData($event, data.dataField)"
