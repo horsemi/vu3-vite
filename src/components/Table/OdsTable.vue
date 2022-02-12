@@ -82,22 +82,23 @@
         </DxTotalItem>
       </DxSummary>
       <template #billCode="{ data }">
-        <div
-          id="billcode"
-          :class="`${prefixCls}__table-billno-column__wrap`"
-          @click="$emit('handleBillCodeClick', data)"
-          @mouseenter="getRowData(data)"
-          >{{ data.value }}</div
-        >
+        <ContextMenu>
+          <template #default>
+            <div
+              id="billcode"
+              :class="`${prefixCls}__table-billno-column__wrap`"
+              @click="$emit('handleBillCodeClick', data)"
+              @mouseenter="getRowData(data)"
+              >{{ data.value }}</div
+            >
+          </template>
+          <template #content>
+            <div class="elementId" :data-clipboard-text="clipValue">复制内容</div>
+          </template>
+        </ContextMenu>
       </template>
     </DxDataGrid>
-    <DxContextMenu :data-source="contentMenuTitle" :width="200" target="#billcode">
-      <template #item="{ data: e }">
-        <div class="elementId" :data-clipboard-text="clipValue">
-          {{ e.text }}
-        </div>
-      </template>
-    </DxContextMenu>
+
     <div
       v-if="options.dataSourceOptions.paginate && !options.useScrolling && tableData"
       :class="`${prefixCls}__jump`"
@@ -119,7 +120,6 @@
     watch,
     nextTick,
     computed,
-    onMounted,
     onActivated,
     onDeactivated,
   } from 'vue';
@@ -149,6 +149,8 @@
   import { getOdataQuery } from '/@/utils/odata';
   import CustomStore from 'devextreme/data/custom_store';
   import DataSource from 'devextreme/data/data_source';
+
+  import ContextMenu from '/@/components/ContextMenu/index.vue';
   export default defineComponent({
     components: {
       DxDataGrid,
@@ -158,10 +160,10 @@
       DxLookup,
       DxColumn,
       DxScrolling,
-      DxContextMenu,
       DxLoadPanel,
       DxSummary,
       DxTotalItem,
+      ContextMenu,
     },
     props: {
       tableOptions: {
@@ -229,11 +231,7 @@
       const pageSizes = [50, 100, 1000, 2000, 3000];
       const rowRenderingMode = ref('standard');
       const remoteOperationValue = { paging: true, sorting: true, summary: true };
-      const contentMenuTitle = [
-        {
-          text: '复制内容',
-        },
-      ];
+      let clipboard: any = null;
       // 记录滚动条位置
       const tableScrollable = {
         top: 0,
@@ -260,8 +258,8 @@
         return props.tableKey[props.tableKey.length - 1];
       });
 
-      onMounted(() => {
-        const clipboard = new Clipboard('.elementId');
+      onActivated(() => {
+        clipboard = new Clipboard('.elementId');
         clipboard.on('success', function (e) {
           odsMessage({
             type: 'success',
@@ -275,11 +273,11 @@
             message: '复制失败',
           });
         });
-      });
-      onActivated(() => {
         scrollToTable();
       });
       onDeactivated(() => {
+        (clipboard as any).destroy();
+        clipboard = null;
         resetTableScrollable();
       });
 
@@ -600,7 +598,6 @@
         handleCustomizeText,
         getRowData,
         clipValue,
-        contentMenuTitle,
         rowRenderingMode,
         onOptionChanged,
         getTableDataSourceOption,
