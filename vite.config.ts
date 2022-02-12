@@ -62,10 +62,7 @@ export default defineConfig(
             changeOrigin: true,
           },
           '/ods/api': {
-            target: 'http://10.20.4.249:33333',
-            rewrite: (path: string) => {
-              return path.replace('/ods', '');
-            },
+            target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
           },
           '/api/exportation': {

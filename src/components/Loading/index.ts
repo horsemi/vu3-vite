@@ -7,6 +7,8 @@ import { addClass, getStyle, removeClass } from '/@/utils/dom';
 const defaults: ILoadingOptions = {
   parent: null,
   background: '',
+  svg: null,
+  svgViewBox: null,
   spinner: false,
   text: null,
   fullscreen: true,

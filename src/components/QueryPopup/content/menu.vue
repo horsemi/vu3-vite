@@ -49,18 +49,11 @@
     components: {
       DxScrollView,
     },
-    emits: [
-      'on-submit-scheme',
-      'on-save-scheme',
-      'on-reset-scheme',
-      'on-title-change',
-      'on-del-scheme',
-      'on-change-checked-index',
-    ],
     setup() {
       const schemeData = inject('schemeData') as Ref<ISchemeData>;
       const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
       const schemeQuickIndex = inject('schemeQuickIndex') as Ref<number>;
+      const popupLoading = inject('popupLoading') as Ref<boolean>;
       const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
         'initEntityColumnHandle'
       );
@@ -103,14 +96,19 @@
           if (checkedIndex.value === 0) {
             onSaveScheme();
           } else {
-            saveSchemesData(schemeData.value.scheme[schemeData.value.checkedIndex]).then((data) => {
-              if (data) {
-                schemeData.value.scheme[schemeData.value.checkedIndex] = cloneDeep(data);
-              }
-              schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(
-                schemeData.value.scheme[schemeData.value.checkedIndex]
-              );
-            });
+            popupLoading.value = true;
+            saveSchemesData(schemeData.value.scheme[schemeData.value.checkedIndex])
+              .then((data) => {
+                if (data) {
+                  schemeData.value.scheme[schemeData.value.checkedIndex] = cloneDeep(data);
+                }
+                schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(
+                  schemeData.value.scheme[schemeData.value.checkedIndex]
+                );
+              })
+              .finally(() => {
+                popupLoading.value = false;
+              });
           }
         }
       }
@@ -146,7 +144,10 @@
         if (checkedIndex.value !== 0) {
           const id = schemeData.value.scheme[checkedIndex.value].id;
           if (id !== '0') {
-            deleteSchemes(id, userStore.getUserInfo.accountId);
+            popupLoading.value = true;
+            deleteSchemes(id, userStore.getUserInfo.accountId).finally(() => {
+              popupLoading.value = false;
+            });
           }
 
           // 两个数据都需要删除

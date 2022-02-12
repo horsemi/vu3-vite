@@ -31,6 +31,7 @@
   import { useUserStore } from '/@/store/modules/user';
   import { useAppStore } from '/@/store/modules/app';
   import PasswordModal from '/@/components/PasswordModal/index.vue';
+  import Loading from '/@/components/Loading/index';
 
   export default defineComponent({
     components: {
@@ -71,7 +72,10 @@
         {
           name: '退出登录',
           onClick: () => {
-            userStore.logout();
+            const loadingInstance = Loading({ text: '登出中' });
+            userStore.logout().finally(() => {
+              loadingInstance.close();
+            });
           },
           template: () => {
             return '<div style="text-align: center;">退出登录</div>';

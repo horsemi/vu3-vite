@@ -19,9 +19,11 @@
       @selection-changed="onSelectionChanged"
       @option-changed="onOptionChanged"
       @cellClick="onCellClick"
+      @dataErrorOccurred="onDataErrorOccurred"
+      @cellPrepared="onCellPrepared"
     >
       <DxLoadPanel :enabled="false" />
-      <template v-for="(item, index) in tableColumns" :key="index">
+      <template v-for="item in tableColumns" :key="item.key">
         <DxColumn
           v-if="!item.hide"
           :css-class="`${item.cssClass || ''} header-bold`"
@@ -219,7 +221,14 @@
         default: '',
       },
     },
-    emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],
+    emits: [
+      'handleBillCodeClick',
+      'handleSelectionClick',
+      'optionChanged',
+      'cellClick',
+      'onLoaded',
+      'onLoad',
+    ],
     setup(props, ctx) {
       const { prefixCls } = useDesign('ods-table');
       const permissionStore = usePermissionStore();
@@ -238,6 +247,11 @@
         left: 0,
       };
 
+      const mergeData: { cols: string[]; rows: number[] } = {
+        cols: [],
+        rows: [],
+      };
+
       const tableData = ref();
       const tableColumns = ref<IColumnItem[]>([]);
       const summaryList = ref<ITableSummary[]>([]);
@@ -250,10 +264,23 @@
         return permissionStore.hasPermission(props.queryListPermission);
       });
 
+      const summaryData = computed(() => {
+        return tableData.value.items().map((item, index) => {
+          const temp = { ...item };
+          if (mergeData.rows.includes(index)) {
+            mergeData.cols.forEach((col) => {
+              temp[col] = '';
+            });
+          }
+          return temp;
+        });
+      });
+
       const mainKey = computed(() => {
         return props.tableKey[0];
       });
 
+      // TODO: 表格key待定
       const dataGridKey = computed(() => {
         return props.tableKey[props.tableKey.length - 1];
       });
@@ -311,6 +338,7 @@
         }
       };
 
+      // TODO: 明细可勾选后，数据重复问题
       const onSelectionChanged = ({ selectedRowKeys, selectedRowsData }) => {
         ctx.emit('handleSelectionClick', selectedRowsData);
       };
@@ -320,6 +348,7 @@
         pageIndex.value = index >= 0 ? index : 0;
       };
 
+      // TODO: 是否可精简
       // 处理汇总信息
       const handleClientSummary = (summary: ISummaryItem[]) => {
         if (!summary || !summary.length) return;
@@ -331,7 +360,7 @@
               showSummaryFn: () => {
                 return clientSummary({
                   summary: { columnName: item.key, summaryType: item.type },
-                  source: tableData.value._items,
+                  source: summaryData.value,
                   allColumns: props.allColumns,
                 });
               },
@@ -344,7 +373,7 @@
         if (scheme.columns && props.allColumns.length > 0) {
           if (dataGrid.value && dataGrid.value.instance) {
             // 清空排序，处理相同字段desc失效
-            dataGrid.value.instance.clearSorting();
+            // dataGrid.value.instance.clearSorting();
             // 回到第一页
             dataGrid.value.instance.pageIndex(0);
             // 刷新表格，解决 tableColumns.value = [] 的时候 表头显示key
@@ -357,11 +386,11 @@
           // 获取数据前，清空列数据，解决列数据引起的排序和显示隐藏列问题
           tableColumns.value = [];
           // 等列数据渲染完后再去获取表格数据，还是解决列数据引起的排序和显示隐藏列问题
-          // 此处nextTick导致getTableData晚了300ms左右
           nextTick(() => {
             if (SearchPermission.value) {
               // 重新 new datasource
               getTableData();
+
               // 重新 获取列数据
               tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
               nextTick(() => {
@@ -380,50 +409,33 @@
         }
       };
 
-      const handleTableData = (res) => {
-        let data = [];
+      // 初始化合并列数据
+      const initMergeData = (res) => {
         const { relationShips } = props.filterScheme;
         // 判断是否需要合并
         const mergeFlag =
           relationShips?.findIndex((item) => !item.isMainEntity && item.value) !== -1;
+        mergeData.cols = [];
+        mergeData.rows = [];
         if (mergeFlag) {
           const { columns } = props.filterScheme;
-          const isMainEntityCode = relationShips.find((item) => item.isMainEntity)?.entityCode;
-          const mergeKeyArr: string[] = [];
+          const isMainEntityCode = relationShips?.find((item) => item.isMainEntity)?.entityCode;
           // 查找哪些key需要合并 = 哪些key的属性值要清空
           columns.forEach((item) => {
             if (!item.entityKey || item.entityKey === isMainEntityCode) {
-              mergeKeyArr.push(item.key);
+              mergeData.cols.push(item.key);
             }
           });
-          // 用主键判断数据是否需要合并列
+          // 查找哪些行需要合并
           // 一般来说第一条不需要合并，第一条以后主键重复的需要合并
           const obj = {};
-          data = res.map((item) => {
+          res.map((item, index) => {
             obj[item[mainKey.value]]
-              ? (item = handleMergeColumns(item, mergeKeyArr))
+              ? mergeData.rows.push(index)
               : (obj[item[mainKey.value]] = item[mainKey.value]);
             return item;
           });
-        } else {
-          data = res;
         }
-        return data;
-      };
-
-      // 合并列
-      const handleMergeColumns = (item: Record<string, unknown>, mergeKeyArr: string[]) => {
-        const temp = {};
-        Object.entries(item).forEach(([key, value]) => {
-          if (mergeKeyArr.includes(key)) {
-            // 主实体属性值都清空
-            temp[key] = '';
-          } else {
-            // 非主实体拿原来的值
-            temp[key] = value;
-          }
-        });
-        return temp;
       };
 
       const getTableData = () => {
@@ -461,11 +473,16 @@
                   ),
                 ]);
 
+                initMergeData(res);
+
                 return {
-                  data: handleTableData(res),
+                  data: res,
                   totalCount: totalCount[0]['Count'] || 0,
                 };
               }
+            },
+            onLoaded() {
+              ctx.emit('onLoaded');
             },
           }),
         });
@@ -569,11 +586,36 @@
           pageIndex.value = 0;
           rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
         }
+        if (
+          e.fullName.includes('sortOrder') ||
+          e.fullName === 'paging.pageIndex' ||
+          e.fullName === 'paging.pageSize'
+        ) {
+          ctx.emit('onLoad');
+        }
         ctx.emit('optionChanged', e);
       }
 
       function onCellClick(e) {
         ctx.emit('cellClick', e);
+      }
+
+      // 数据发生错误时，把loading取消
+      function onDataErrorOccurred() {
+        ctx.emit('onLoaded');
+      }
+
+      // 合并单元格
+      function onCellPrepared(e) {
+        if (
+          e.rowIndex >= 0 &&
+          mergeData.cols.length &&
+          mergeData.rows.length &&
+          mergeData.cols.includes(e.column.dataField) &&
+          mergeData.rows.includes(e.rowIndex)
+        ) {
+          e.cellElement.innerHTML = '—';
+        }
       }
 
       return {
@@ -602,6 +644,10 @@
         onOptionChanged,
         getTableDataSourceOption,
         onCellClick,
+        onDataErrorOccurred,
+        scrollToTable,
+        resetTableScrollable,
+        onCellPrepared,
         remoteOperationValue,
         SearchPermission,
       };
