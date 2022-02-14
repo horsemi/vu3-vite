@@ -12,6 +12,12 @@ export interface IUpdatePassword {
 export interface ISumbitPassword extends IUpdatePassword {
   userName: string;
 }
+export interface INoticeData {
+  Application: string;
+  PageIndex: number;
+  PageSize: number;
+}
+
 enum apiUrl {
   login = '/passport/api/login',
   logout = '/passport/api/logout',
@@ -20,6 +26,7 @@ enum apiUrl {
   queryPasswordPolicy = '/passport/api/password-policy/search',
   changePassword = '/passport/api/change-password-cipher',
   passwordPolicy = '/passport/api/password-policy',
+  noticeList = '/noticication/api/message/list/v1',
 }
 export class UserApi {
   static login(data: IUserData) {
@@ -57,6 +64,13 @@ export class UserApi {
   static checkPassword(data: IUserData) {
     return defHttp.post({
       url: apiUrl.passwordPolicy,
+      params: data,
+    });
+  }
+
+  static getNoticeList(data: INoticeData) {
+    return defHttp.get({
+      url: apiUrl.noticeList,
       params: data,
     });
   }

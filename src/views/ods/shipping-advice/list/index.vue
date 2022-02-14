@@ -17,6 +17,7 @@
             :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceApply)"
             @click="onApplyClick"
           />
+          <!-- <DxButton text="导出" icon="download" @click="onDownload" /> -->
         </div>
         <div class="operation-btn__inner">
           <SummaryButton
@@ -26,7 +27,6 @@
             :odata-params="odataParams"
           />
           <DxButton
-            :width="100"
             icon="refresh"
             :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceQueryList)"
             text="刷新"
@@ -114,6 +114,10 @@
         tableLoading.value = true;
         dataGrid.value.search();
       };
+
+      // const onDownload = () => {
+      //   console.log('onDownload');
+      // };
 
       const handleBillCodeClick = (data) => {
         router.push({
@@ -215,13 +219,13 @@
         dataGrid,
         tableKey,
         allColumns,
-        schemeData,
         filterScheme,
         odataParams,
         handleBillCodeClick,
         onSubmitClick,
         onApplyClick,
         onRefresh,
+        // onDownload,
         shippingAdviceType,
         permissionStore,
       };

@@ -15,9 +15,12 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onActivated, onBeforeUnmount, onDeactivated, ref } from 'vue';
+  import { defineComponent, onActivated, ref } from 'vue';
   import { ExportApi } from '/@/api/export';
   import DxButton from 'devextreme-vue/button';
+  import websocketService from '/@/utils/websocket/index';
+  import { useRoute } from 'vue-router';
+  import { useThrottle } from '/@/hooks/core/useThrottle';
 
   export default defineComponent({
     name: 'Export',
@@ -69,12 +72,14 @@
         },
       ];
 
-      let intervalId: any = null;
       let pageIndex = 1;
       let pageSize = 50;
+      let activatedRefresh = false;
       const dataSource = ref();
+      const route = useRoute();
 
       function onSearch() {
+        pageIndex = 1;
         ExportApi.exprotList({
           Application: ['OrderServerApi', 'ExpressesApi', 'BmsApi'],
           pageIndex,
@@ -83,6 +88,13 @@
           dataSource.value = res.records;
         });
       }
+
+      function throttleSearch() {
+        useThrottle(() => {
+          onSearch();
+        }, 5000);
+      }
+
       function onOptionChanged(e) {
         const { fullName, value } = e;
         if (fullName === 'paging.pageSize') {
@@ -105,33 +117,24 @@
           }
         }
       }
-      function createInterval() {
-        if (intervalId !== null) {
-          clearInterval(intervalId);
-          intervalId = null;
-        }
-        intervalId = setInterval(onSearch, 5000);
-      }
-      function removeInterval() {
-        if (intervalId !== null) {
-          clearInterval(intervalId);
-          intervalId = null;
-        }
+
+      function handleExporting() {
+        websocketService.receiveMessages((res) => {
+          if (res && (res.event === 'Exporting' || res.event === 'ExportStatusUpdate')) {
+            if (route.name === 'ExportList') {
+              throttleSearch();
+            } else {
+              !activatedRefresh && (activatedRefresh = true);
+            }
+          }
+        });
       }
 
       onSearch();
-      createInterval();
+      handleExporting();
 
       onActivated(() => {
-        createInterval();
-      });
-
-      onDeactivated(() => {
-        removeInterval();
-      });
-
-      onBeforeUnmount(() => {
-        removeInterval();
+        activatedRefresh && onSearch();
       });
 
       return {

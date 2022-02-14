@@ -73,6 +73,14 @@ export default defineConfig(
             target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
           },
+          '/noticication': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
+            changeOrigin: true,
+          },
+          '/hubs': {
+            target: 'http://10.10.14.164:30039',
+            changeOrigin: true,
+          },
         },
         cors: true,
       },

@@ -19,6 +19,8 @@
     "test": "jest"
   },
   "dependencies": {
+    "@microsoft/signalr": "^6.0.2",
+    "@microsoft/signalr-protocol-msgpack": "^6.0.2",
     "@popperjs/core": "^2.10.1",
     "@types/lodash-es": "^4.17.4",
     "@types/qs": "^6.9.6",
