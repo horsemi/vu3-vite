@@ -1,23 +1,36 @@
 <template>
   <div :class="prefixCls">
-    <DxButton id="summaryButton" :width="122" icon="paste" text="汇总信息" @click="onSummary" />
+    <DxButton id="summaryButton" :width="122" icon="datafield" text="汇总信息" @click="onSummary" />
     <DxPopover
       ref="summaryPopover"
       v-model:visible="showSummary"
       target="#summaryButton"
       position="bottom"
-      min-width="340px"
+      min-width="240px"
       @hiding="list = []"
     >
       <div v-loading="loading">
         <div v-if="list.length > 0" :class="`${prefixCls}-list`">
           <div>
-            <div v-for="(item, index) in list" :key="index" :class="`${prefixCls}-name`">
-              {{ item.caption }}_{{ summaryTypeMap[item.summaryType] }}
+            <div
+              v-for="(item, index) in list"
+              :key="index"
+              :class="`${prefixCls}-name`"
+              :style="index % 2 === 0 ? '' : 'background: #FAFAFA;'"
+            >
+              <div style="display: inline-block; margin-right: 10px">{{ item.caption }}</div
+              ><div style="display: inline-block; width: 25px; font-style: italic">
+                {{ summaryTypeMap[item.summaryType] }}
+              </div>
             </div>
           </div>
           <div>
-            <div v-for="(item, index) in list" :key="index" :class="`${prefixCls}-value`">
+            <div
+              v-for="(item, index) in list"
+              :key="index"
+              :class="`${prefixCls}-value`"
+              :style="index % 2 === 0 ? '' : 'background: #FAFAFA;'"
+            >
               {{ getValue(item) }}
             </div>
           </div>
@@ -95,11 +108,11 @@
       >([]);
 
       const summaryTypeMap = {
-        sum: '总和',
-        min: '最小值',
-        max: '最大值',
-        avg: '平均值',
-        count: '计数',
+        sum: 'Sum',
+        min: 'Min',
+        max: 'Max',
+        avg: 'Avg',
+        count: 'Cnt',
       };
 
       const serverSummary = async ({
@@ -130,9 +143,10 @@
 
         const list = summary.map((item) => {
           const col = allColumns.find((col) => col.key === item.key);
+
           return {
-            caption: col?.caption,
-            value: res[`${item.key.replaceAll('_', '')}${upperFirst(item.type)}`],
+            caption: col?.caption.slice(col?.caption.indexOf('_') + 1),
+            value: res[`${item.key.replace(/_/g, '')}${upperFirst(item.type)}`],
             summaryType: item.type,
             fieldType: col?.type,
           };
@@ -207,9 +221,9 @@
     }
 
     &-name {
-      margin-right: 14px;
-      margin-bottom: 10px;
-      color: #757575;
+      padding: 5px 10px;
+      font-size: 15px;
+      color: #666;
       text-align: right;
 
       &:last-child {
@@ -218,7 +232,9 @@
     }
 
     &-value {
-      margin-bottom: 10px;
+      padding: 5px 10px 5px 0;
+      font-size: 15px;
+      font-weight: 700;
       color: #333;
       text-align: left;
 
