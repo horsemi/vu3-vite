@@ -33,7 +33,7 @@ const getFilter = (requirements: IRequirementItem[]) => {
   for (let i = 0; i < requireData.length; i++) {
     // 判断是否为第一条搜索条件 参数是否不为null与undef
     if (result !== '' && !isValueNullOrUndef(requireData[i])) {
-      result += `,"${requireData[i - 1].logic}",`;
+      result += `,"${requireData[i - 1].logic || 'and'}",`;
     }
 
     const requirement = requireData[i].relationKey
@@ -54,7 +54,7 @@ const getFilter = (requirements: IRequirementItem[]) => {
   }
   let filter = [];
   try {
-    filter = JSON.parse(`[${result}]`);
+    result && (filter = JSON.parse(`[[${result}]]`));
   } catch (e) {
     odsMessage({
       type: 'error',
@@ -182,7 +182,7 @@ const getSelectAndExpand = ({
 const initValueData = (item: IRequirementItem, requirement) => {
   let result = '';
 
-  const value = item.value;
+  const value = typeof item.value === 'string' ? item.value.trim() : item.value;
   result += `["${requirement}"`;
 
   switch (item.type) {
