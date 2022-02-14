@@ -12,15 +12,25 @@
       <div>
         <div v-if="list.length > 0" :class="`${prefixCls}-list`">
           <div>
-            <div v-for="(item, index) in list" :key="index" :class="`${prefixCls}-name`">
-              <span style="margin-right: 10px">{{ item.caption }}</span
-              ><span style="width: 50px"
-                ><SvgIcon :name="`mathematic-${summaryTypeMap[item.summaryType]}`"
-              /></span>
+            <div
+              v-for="(item, index) in list"
+              :key="index"
+              :class="`${prefixCls}-name`"
+              :style="index % 2 === 0 ? '' : 'background: #FAFAFA;'"
+            >
+              <div style="display: inline-block; margin-right: 10px">{{ item.caption }}</div
+              ><div style="display: inline-block; width: 25px; font-style: italic">
+                {{ summaryTypeMap[item.summaryType] }}
+              </div>
             </div>
           </div>
           <div>
-            <div v-for="(item, index) in list" :key="index" :class="`${prefixCls}-value`">
+            <div
+              v-for="(item, index) in list"
+              :key="index"
+              :class="`${prefixCls}-value`"
+              :style="index % 2 === 0 ? '' : 'background: #FAFAFA;'"
+            >
               {{ getValue(item) }}
             </div>
           </div>
@@ -97,11 +107,11 @@
       >([]);
 
       const summaryTypeMap = {
-        sum: 'sum',
-        min: 'min',
-        max: 'max',
-        avg: 'mean',
-        count: 'count',
+        sum: 'Sum',
+        min: 'Min',
+        max: 'Max',
+        avg: 'Avg',
+        count: 'Cnt',
       };
 
       const serverSummary = async ({
@@ -203,10 +213,9 @@
     }
 
     &-name {
-      margin-right: 10px;
-      margin-bottom: 10px;
+      padding: 5px 10px;
       font-size: 15px;
-      color: #757575;
+      color: #666;
       text-align: right;
 
       &:last-child {
@@ -215,7 +224,7 @@
     }
 
     &-value {
-      margin-bottom: 10px;
+      padding: 5px 10px 5px 0;
       font-size: 15px;
       font-weight: 700;
       color: #333;
