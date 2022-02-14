@@ -1,6 +1,6 @@
 <template>
   <DxPopup v-model:visible="popupVisible" :close-on-outside-click="true" :show-title="false">
-    <div :class="prefixCls">
+    <div v-loading="popupLoading" :class="prefixCls">
       <Header @on-close-popup="closePopup" />
       <Content />
       <Footer @on-close-popup="closePopup" />
@@ -9,7 +9,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, provide, ref } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -32,6 +32,10 @@
       // 弹窗是否打开
       const popupVisible = ref(false);
 
+      const popupLoading = ref(false);
+
+      provide('popupLoading', popupLoading);
+
       // 打开弹窗
       const openPopup = () => {
         popupVisible.value = true;
@@ -44,6 +48,7 @@
       return {
         prefixCls,
         popupVisible,
+        popupLoading,
         openPopup,
         closePopup,
       };

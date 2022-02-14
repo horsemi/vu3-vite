@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
-    <QueryPlan />
-    <div v-loading="loading" class="table__container">
+    <QueryPlan v-loading="planLoading" />
+    <div v-loading="tableLoading" class="table__container">
       <div class="operation-btn__container">
         <div class="operation-btn__inner">
           <DxButton
@@ -43,6 +43,8 @@
         :filter-scheme="filterScheme"
         :table-key="tableKey"
         @handle-bill-code-click="handleBillCodeClick"
+        @onLoad="tableLoading = true"
+        @onLoaded="tableLoading = false"
       >
       </OdsTable>
     </div>
@@ -85,7 +87,8 @@
       const permissionStore = usePermissionStore();
 
       const dataGrid = ref();
-      const loading = ref(false);
+      const tableLoading = ref(true);
+      const planLoading = ref(true);
 
       const ORDER_CODE = 'shipping-orders';
       const filterScheme = ref<ISchemeItem>();
@@ -108,6 +111,7 @@
       });
 
       const onRefresh = () => {
+        tableLoading.value = true;
         dataGrid.value.search();
       };
 
@@ -126,16 +130,16 @@
           GatheringParentCode: string;
         }[];
         if (isArrayEmpty(selectionData)) {
-          loading.value = true;
+          tableLoading.value = true;
           ShippingOrderApi.onShippingOrderSubmit(
             selectionData.map((item) => item.GatheringParentCode)
           )
             .then(() => {
-              loading.value = false;
+              tableLoading.value = false;
               onRefresh();
             })
             .catch(() => {
-              loading.value = false;
+              tableLoading.value = false;
             });
         }
       };
@@ -145,21 +149,22 @@
           GatheringParentCode: string;
         }[];
         if (isArrayEmpty(selectionData)) {
-          loading.value = true;
+          tableLoading.value = true;
           ShippingOrderApi.onShippingOrderApply(
             selectionData.map((item) => item.GatheringParentCode)
           )
             .then(() => {
-              loading.value = false;
+              tableLoading.value = false;
               onRefresh();
             })
             .catch(() => {
-              loading.value = false;
+              tableLoading.value = false;
             });
         }
       };
 
       const onChangeScheme = (data: ISchemeItem) => {
+        tableLoading.value = true;
         filterScheme.value = cloneDeep(data);
       };
 
@@ -187,6 +192,7 @@
           schemeDefaultIndex.value = schemeData.value.checkedIndex;
           schemeQuickIndex.value = schemeData.value.checkedIndex;
           filterScheme.value = schemeData.value.scheme[schemeData.value.checkedIndex];
+          planLoading.value = false;
         });
       };
 
@@ -204,15 +210,14 @@
       return {
         prefixCls,
         ORDER_CODE,
-        loading,
+        tableLoading,
+        planLoading,
         dataGrid,
         tableKey,
         allColumns,
-        schemeData,
         filterScheme,
         odataParams,
         handleBillCodeClick,
-        onChangeScheme,
         onSubmitClick,
         onApplyClick,
         onRefresh,

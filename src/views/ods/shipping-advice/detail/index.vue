@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-    <div :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
+    <div v-loading="formLoading" :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
       <div class="btn-box">
         <DxDropDownButton
           :element-attr="dropDownButtonAttributes"
@@ -105,31 +105,40 @@
         :focus-state-enabled="false"
         @titleClick="onTableTitleClick"
       >
+        <template #item="{ data }">
+          <div>
+            <div v-if="data.key === 'definite'" v-loading="queryFormLoading" class="search-box">
+              <QueryForm class="query-form" :show-save-fast="false" />
+              <div class="search-btn">
+                <DxButton text="查询" type="default" @click="onSearch" />
+                <DxButton text="重置" @click="onReset" />
+              </div>
+            </div>
+            <div class="tab" :style="data.key === 'definite' ? 'padding-top: 0' : ''">
+              <OdsTable
+                ref="dataGrid"
+                v-loading="data.key === 'definite' ? definiteLoading : recordLoading"
+                :height="tableHeight"
+                :order-code="
+                  data.key === 'definite' ? 'shipping-advice-items' : 'operation-records'
+                "
+                :query-list-permission="shippingAdviceType.shippingAdviceQueryItems"
+                :table-options="data.key === 'definite' ? definiteOptions : recordOptions"
+                :filter-scheme="data.key === 'definite' ? definiteScheme : recordScheme"
+                :all-columns="data.key === 'definite' ? definiteAllColumns : recordAllColumns"
+                :table-key="data.key === 'definite' ? definiteTableKey : recordTableKey"
+                @onLoad="
+                  data.key === 'definite' ? (definiteLoading = true) : (recordLoading = true)
+                "
+                @onLoaded="
+                  data.key === 'definite' ? (definiteLoading = false) : (recordLoading = false)
+                "
+              >
+              </OdsTable>
+            </div>
+          </div>
+        </template>
       </DxTabPanel>
-      <div v-if="tableIndex === 0" class="search-box">
-        <QueryForm
-          ref="queryForm"
-          class="query-form"
-          :show-save-fast="false"
-          @on-search="onSearch"
-        />
-        <div class="search-btn">
-          <DxButton text="查询" type="default" @click="onSearch" />
-          <DxButton text="重置" @click="onReset" />
-        </div>
-      </div>
-      <div class="tab" :style="tableIndex === 0 && 'padding-top: 0'">
-        <OdsTable
-          :height="tableHeight"
-          :order-code="tableIndex === 0 ? 'shipping-advice-items' : 'operation-records'"
-          :query-list-permission="shippingAdviceType.shippingAdviceQueryItems"
-          :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
-          :filter-scheme="tableIndex === 0 ? definiteScheme : recordScheme"
-          :all-columns="tableIndex === 0 ? definiteAllColumns : recordAllColumns"
-          :table-key="tableIndex === 0 ? definiteTableKey : recordTableKey"
-        >
-        </OdsTable>
-      </div>
     </div>
   </div>
 </template>
@@ -138,7 +147,7 @@
   import type { ITableOptions } from '/@/components/Table/types';
   import type { IRequirementItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch, nextTick, provide } from 'vue';
+  import { defineComponent, ref, watch, nextTick, provide, onActivated, onDeactivated } from 'vue';
   import { useRoute } from 'vue-router';
   import { useThrottleFn } from '@vueuse/core';
 
@@ -275,6 +284,7 @@
 
       const {
         formData,
+        formLoading,
         baseFormData,
         receiverFormData,
         logisticsFormData,
@@ -292,22 +302,31 @@
 
       const {
         definiteTableKey,
+        definiteLoading,
+        queryFormLoading,
         definiteScheme,
         definiteAllColumns,
         definiteCustomColumns,
         refreshDefinite,
       } = useDefinite(definiteRequirement);
 
-      const { recordTableKey, recordScheme, recordAllColumns, refreshRecord } = useRecord(BillCode);
+      const {
+        recordTableKey,
+        recordLoading,
+        recordScheme,
+        recordAllColumns,
+        refreshRecord,
+      } = useRecord(BillCode);
       const { onSearch, onReset, schemeData } = useSearchDefinite(
         definiteRequirement,
         definiteCustomColumns,
-        definiteScheme
+        definiteScheme,
+        definiteLoading
       );
       provide('allColumns', definiteAllColumns);
       provide('schemeData', schemeData);
       provide('onChangeScheme', onSearch);
-      provide('schemeDataTemp', ref({}));
+      provide('schemeDataTemp', schemeData);
 
       const {
         tableHeight,
@@ -440,7 +459,17 @@
         handleHeight(multiViewItems.value[sIndex].rowCount, tableIndex.value, opened.value);
       });
 
+      const dataGrid = ref();
+
+      onActivated(() => {
+        dataGrid.value?.scrollToTable();
+      });
+      onDeactivated(() => {
+        dataGrid.value?.resetTableScrollable();
+      });
+
       return {
+        dataGrid,
         tableHeight,
         definiteOptions,
         definiteTableKey,
@@ -465,6 +494,11 @@
         taskFormData,
         otherFormData,
 
+        formLoading,
+        definiteLoading,
+        queryFormLoading,
+        recordLoading,
+
         selectedIndex,
         tableIndex,
         opened,
@@ -480,7 +514,6 @@
         onApplyClickThrottleFn,
         onSendClickThrottleFn,
         onItemButtonClickThrottleFn,
-        onRefresh,
         getDataThrottleFn,
         onChangeOpened,
         getColseHeight,

@@ -68,7 +68,7 @@
 
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
-  import type { IRequirementItem, ISchemeItem } from '../../QueryPopup/content/types';
+  import type { ISchemeItem } from '../../QueryPopup/content/types';
   import type { ISchemeData } from '../types';
   import { computed, Ref } from 'vue';
 
@@ -157,10 +157,6 @@
         opened.value = false;
       };
 
-      const changeQueryList = (data: IRequirementItem[]) => {
-        schemeData.value.scheme[schemeData.value.checkedIndex].fast = cloneDeep(data);
-      };
-
       const onSearch = () => {
         onChangeScheme(schemeData.value.scheme[schemeData.value.checkedIndex]);
       };
@@ -173,7 +169,6 @@
         onAddRequirement,
         onDelRequirement,
         onSaveFast,
-        changeQueryList,
         closePopup,
         onSearch,
       };

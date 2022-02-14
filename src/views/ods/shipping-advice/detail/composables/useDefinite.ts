@@ -167,26 +167,35 @@ export function useDefinite(requirement: IRequirementItem[]) {
     },
   ];
 
+  const definiteLoading = ref(true);
+  const queryFormLoading = ref(true);
+
   const definiteScheme = ref<ISchemeItem>();
   const definiteAllColumns = ref<IColumnItem[]>([]);
   const definiteTableKey = ref<string[]>([]);
-  getDefiniteColumns().then((res) => {
-    if (res) {
-      definiteTableKey.value = [res.key];
-      definiteAllColumns.value = res.columnList;
-      definiteScheme.value = {
-        id: '',
-        title: '',
-        requirement,
-        orderBy: [],
-        columns: definiteCustomColumns,
-        summary: [],
-        relationShips: [],
-      };
-    }
-  });
+  getDefiniteColumns()
+    .then((res) => {
+      if (res) {
+        definiteTableKey.value = [res.key];
+        definiteAllColumns.value = res.columnList;
+        definiteScheme.value = {
+          id: '',
+          title: '',
+          requirement,
+          orderBy: [],
+          columns: definiteCustomColumns,
+          summary: [],
+          relationShips: [],
+        };
+      }
+      queryFormLoading.value = false;
+    })
+    .catch(() => {
+      queryFormLoading.value = false;
+    });
 
   function refreshDefinite() {
+    definiteLoading.value = true;
     definiteScheme.value = {
       id: '',
       title: '',
@@ -200,6 +209,8 @@ export function useDefinite(requirement: IRequirementItem[]) {
 
   return {
     definiteScheme,
+    definiteLoading,
+    queryFormLoading,
     definiteAllColumns,
     definiteCustomColumns,
     definiteTableKey,

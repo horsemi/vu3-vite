@@ -3,6 +3,8 @@ import type { Ref, VNode } from 'vue';
 export type ILoadingOptions = {
   parent?: ILoadingParentElement | null;
   background?: string;
+  svg?: string | null;
+  svgViewBox?: string | null;
   spinner?: boolean | string;
   text?: string | null;
   fullscreen?: boolean;

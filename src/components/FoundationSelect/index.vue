@@ -1,5 +1,5 @@
 <template>
-  <div :class="`${prefixCls}`">
+  <div v-loading="loading" :element-loading-svg="loadingSvg" :class="`${prefixCls}`">
     <DxDropDownBox
       v-model:value="dropDownValueComputed"
       v-model:opened="isGridBoxOpened"
@@ -100,6 +100,11 @@
     setup(props, ctx) {
       const { prefixCls } = useDesign('foundation-select');
 
+      const loading = ref(false);
+      const loadingSvg = `
+          <circle class="path" cx="50" cy="50" r="10" fill="none"/>
+        `;
+
       const dropDownBox = ref();
       const dropDownOptions = {
         width: 270,
@@ -125,6 +130,7 @@
           if (val === null) {
             dataGrid.value.clearSelection();
             options.value = [];
+            ctx.emit('update:value', null);
           }
         },
       });
@@ -242,13 +248,13 @@
         foundationCode: string,
         isSelectFirstRow = false
       ) {
+        loading.value = true;
         let filter = {};
         if (props.filter && props.filter.length > 0) {
           for (let item of props.filter) {
             filter = Object.assign(filter, item);
           }
         }
-
         dataGrid.value && dataGrid.value.beginCustomLoading();
         FoundationApi.getFoundationByCode(foundationCode as FoundationMap, {
           ...searchData,
@@ -265,6 +271,7 @@
           })
           .finally(() => {
             dataGrid.value && dataGrid.value.endCustomLoading();
+            loading.value = false;
           });
       }
 
@@ -361,6 +368,8 @@
 
       return {
         prefixCls,
+        loading,
+        loadingSvg,
         options,
         foundationSelectTable,
         dropDownBox,
