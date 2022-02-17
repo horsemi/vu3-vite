@@ -20,12 +20,12 @@
     setup() {
       const { prefixCls } = useDesign('context-menu');
       const visible = ref(false);
-      const offectX = ref('');
-      const offectY = ref('');
+      const xoffset = ref('');
+      const yoffset = ref('');
 
       function openBox(e) {
-        offectX.value = e.pageX + 'px';
-        offectY.value = e.pageY + 'px';
+        xoffset.value = e.pageX + 'px';
+        yoffset.value = e.pageY + 'px';
         e.preventDefault();
         visible.value = true;
       }
@@ -39,8 +39,8 @@
         visible,
         openBox,
         closeBox,
-        offectX,
-        offectY,
+        xoffset,
+        yoffset,
       };
     },
   });
@@ -51,8 +51,8 @@
     position: relative;
     .contentBox {
       position: fixed;
-      top: v-bind(offecty);
-      left: v-bind(offectx);
+      top: v-bind(yoffset);
+      left: v-bind(xoffset);
       z-index: 200;
       width: 150px;
       padding: 5px;
