@@ -1,6 +1,8 @@
 import type { IColumnItem } from './types';
 
-import IndexedDBService from '/@/utils/indexedDB/index';
+import IndexedDBService from '/@/utils/indexedDB/database';
+
+let firstUseEntityColumn = true;
 
 type EntityType = {
   caption: string;
@@ -28,8 +30,6 @@ Object.keys(modules).forEach((key: string) => {
   });
 });
 
-IndexedDBService.clear('entityColumn');
-
 export const getColumnListByEntityCode = async (entityCodes: string[]) => {
   const entityColumnList: Record<
     string,
@@ -49,20 +49,33 @@ export const getColumnListByEntityCode = async (entityCodes: string[]) => {
 
     if (result) {
       try {
-        // 看一下indexedDB有没有实体数据
-        const list = await IndexedDBService.read('entityColumn', result.caption);
-        if (!list) {
-          // 没有的话，发起请求拿一下
+        if (firstUseEntityColumn) {
+          firstUseEntityColumn = false;
+          await IndexedDBService.clearEntityColumn();
+          // 第一次使用实体数据，直接请求拿
           const entityObj = await result.getColumnFn();
           if (entityObj) {
             // 拿完，记得添加到indexedDB中
-            await IndexedDBService.add('entityColumn', { caption: result.caption, ...entityObj });
+            await IndexedDBService.putEntityColumn({ caption: result.caption, ...entityObj });
             // 给返回结果也赋个值
             entityColumnList[result.caption] = entityObj;
           }
         } else {
-          // 有就直接赋值吧
-          entityColumnList[result.caption] = list;
+          // 看一下indexedDB有没有实体数据
+          const list = await IndexedDBService.readEntityColumn(result.caption);
+          if (!list) {
+            // 没有的话，发起请求拿一下
+            const entityObj = await result.getColumnFn();
+            if (entityObj) {
+              // 拿完，记得添加到indexedDB中
+              await IndexedDBService.putEntityColumn({ caption: result.caption, ...entityObj });
+              // 给返回结果也赋个值
+              entityColumnList[result.caption] = entityObj;
+            }
+          } else {
+            // 有就直接赋值吧
+            entityColumnList[result.caption] = list;
+          }
         }
       } catch (error) {
         console.error(error);

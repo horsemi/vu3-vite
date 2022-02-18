@@ -32,6 +32,7 @@
     "crypto-js": "^4.0.0",
     "devextreme": "21.1.6",
     "devextreme-vue": "21.1.6",
+    "dexie": "^3.2.0",
     "eslint": "^7.24.0",
     "eslint-plugin-vue": "^7.9.0",
     "fuse.js": "^6.4.6",

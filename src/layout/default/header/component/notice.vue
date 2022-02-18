@@ -7,30 +7,31 @@
       target="#noticeIcon"
       position="bottom"
       width="360px"
+      max-height="50vh"
     >
-      <div v-loading="loading">
-        <div v-if="!noticeList.length" :class="`${prefixCls}--empty`">
-          <img src="http://cdn.uviewui.com/uview/empty/message.png" />
-          <div>消息列表为空</div>
-        </div>
-        <div v-else>
-          <div :class="`${prefixCls}--tips`">最近消息</div>
-          <div v-for="(item, index) in noticeList" :key="index">
-            <div>
-              <span :class="`${prefixCls}--module`">
-                {{
-                  item.module && noticeModuleMap[item.module] && noticeModuleMap[item.module].name
-                }}
-              </span>
-              <span :class="`${prefixCls}--time`">{{ item.createdTime }}</span>
-            </div>
-            <div :class="`${prefixCls}--message`" @click="onGoPage(item.module)">
-              <i :class="noticeModuleMap[item.module].icon" />
-              <span>{{ item.message }}</span>
+      <DxScrollView>
+        <div v-loading="loading">
+          <div v-if="!noticeList.length" :class="`${prefixCls}--empty`">
+            <img src="http://cdn.uviewui.com/uview/empty/message.png" />
+            <div>消息列表为空</div>
+          </div>
+          <div v-else>
+            <div :class="`${prefixCls}--tips`">最近消息</div>
+            <div v-for="(item, index) in noticeList" :key="index">
+              <div>
+                <span :class="`${prefixCls}--module`">
+                  {{ noticeModuleMap[item.module] && noticeModuleMap[item.module].name }}
+                </span>
+                <span :class="`${prefixCls}--time`">{{ item.createdTime }}</span>
+              </div>
+              <div :class="`${prefixCls}--message`" @click="onGoPage(item.module)">
+                <i :class="noticeModuleMap[item.module] && noticeModuleMap[item.module].icon" />
+                <span>{{ item.message }}</span>
+              </div>
             </div>
           </div>
         </div>
-      </div>
+      </DxScrollView>
     </DxPopover>
     <span v-if="showNoticeBadge" :class="`${prefixCls}-notice-num__wrapper`"></span>
   </div>
@@ -38,16 +39,20 @@
 
 <script lang="ts">
   import { computed, defineComponent, ref } from 'vue';
+  import { useRouter } from 'vue-router';
+
   import { DxPopover } from 'devextreme-vue/popover';
+  import { DxScrollView } from 'devextreme-vue/scroll-view';
+
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
   import { UserApi } from '/@/api/user';
   import websocketService from '/@/utils/websocket/index';
-  import { useRouter } from 'vue-router';
 
   export default defineComponent({
     components: {
       DxPopover,
+      DxScrollView,
     },
     setup() {
       const { prefixCls } = useDesign('header-notice');
@@ -85,19 +90,21 @@
       }
 
       function handleExportMessage() {
-        websocketService.receiveMessages((res) => {
-          if (res && res.event === 'ExportStatusUpdate') {
-            const {
-              data: { message },
-              module,
-            } = res;
-            if (message && module) {
-              if (showNoticeBadge.value) {
-                userStore.setShowNoticeBadge(true);
+        websocketService.receiveMessages({
+          success(res) {
+            if (res && res.event === 'ExportStatusUpdate') {
+              const {
+                data: { message },
+                module,
+              } = res;
+              if (message && module) {
+                if (showNoticeBadge.value) {
+                  userStore.setShowNoticeBadge(true);
+                }
+                getNoticeList();
               }
-              getNoticeList();
             }
-          }
+          },
         });
       }
 
@@ -180,7 +187,7 @@
       display: flex;
       align-items: center;
       padding: 4px 0 20px 0;
-      color: #337ab7;
+      color: @color-primary;
       cursor: pointer;
 
       i {

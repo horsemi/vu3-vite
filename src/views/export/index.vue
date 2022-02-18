@@ -81,7 +81,7 @@
       function onSearch() {
         pageIndex = 1;
         ExportApi.exprotList({
-          Application: ['OrderServerApi', 'ExpressesApi', 'BmsApi'],
+          applications: ['OdsApi', 'ExpressesApi'],
           pageIndex,
           pageSize,
         }).then((res) => {
@@ -119,14 +119,16 @@
       }
 
       function handleExporting() {
-        websocketService.receiveMessages((res) => {
-          if (res && (res.event === 'Exporting' || res.event === 'ExportStatusUpdate')) {
-            if (route.name === 'ExportList') {
-              throttleSearch();
-            } else {
-              !activatedRefresh && (activatedRefresh = true);
+        websocketService.receiveMessages({
+          success(res) {
+            if (res && (res.event === 'Exporting' || res.event === 'ExportStatusUpdate')) {
+              if (route.name === 'ExportList') {
+                throttleSearch();
+              } else {
+                !activatedRefresh && (activatedRefresh = true);
+              }
             }
-          }
+          },
         });
       }
 

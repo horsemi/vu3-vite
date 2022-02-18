@@ -73,6 +73,7 @@
 
   import QueryPlan from '/@/components/QueryPlan/index.vue';
   import SummaryButton from '/@/components/SummaryButton/index.vue';
+  // import { odsMessage } from '/@/components/Message';
 
   export default defineComponent({
     name: 'OdsShippingAdviceList',
@@ -117,6 +118,12 @@
 
       // const onDownload = () => {
       //   console.log('onDownload');
+      //   odsMessage({
+      //     type: 'success',
+      //     dangerouslyUseHTMLString: true,
+      //     message:
+      //       '<strong>导出任务已添加 <a style="color: #52c41a; text-decoration: underline;" href="#/basic-management/export-configuration/export/list">请点击查看</a> </strong>',
+      //   });
       // };
 
       const handleBillCodeClick = (data) => {

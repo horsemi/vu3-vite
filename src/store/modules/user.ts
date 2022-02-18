@@ -92,7 +92,6 @@ export const useUserStore = defineStore({
 
             try {
               websocketService.openConnect();
-              websocketService.startConnect();
             } catch (error) {
               odsMessage({
                 type: 'error',
