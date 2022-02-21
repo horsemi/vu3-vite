@@ -129,12 +129,12 @@
         allColumns: IColumnItem[];
       }) => {
         const _aggregate = summary.map((item) => {
-          return `${item.type}(${item.key.replaceAll('_', '.')})`;
+          return `${item.type}(${item.key.replace(/_/g, '.')})`;
         });
         const $aggregate = _aggregate.join(',');
         const params = {};
         odataParams.$filter && (params['$filter'] = odataParams.$filter);
-        odataParams.$expand && (params['$expand'] = odataParams.$expand.replaceAll('_', '.'));
+        odataParams.$expand && (params['$expand'] = odataParams.$expand.replace(/_/g, '.'));
         $aggregate && (params['$aggregate'] = $aggregate);
 
         const data = await getOdataList(orderCode, params, systemCode ? systemCode : undefined);

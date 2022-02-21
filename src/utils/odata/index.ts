@@ -37,8 +37,8 @@ const getFilter = (requirements: IRequirementItem[]) => {
     }
 
     const requirement = requireData[i].relationKey
-      ? requireData[i].relationKey.replaceAll('_', '.')
-      : requireData[i].key.replaceAll('_', '.');
+      ? requireData[i].relationKey.replace(/_/g, '.')
+      : requireData[i].key.replace(/_/g, '.');
 
     if (requireData[i].leftParenthesisCount && requireData[i].leftParenthesisCount! > 0) {
       for (let j = 0; j < requireData[i].leftParenthesisCount!; j++) {
@@ -472,10 +472,10 @@ export const getOdataQuery = ({
   const $orderby = orderby.length ? orderby.join(',') : '';
 
   const params: Partial<IOdataParams> = {};
-  $select && (params['$select'] = $select.replaceAll('_', '.'));
+  $select && (params['$select'] = $select.replace(/_/g, '.'));
   $filter && (params['$filter'] = $filter);
-  $orderby && (params['$orderby'] = $orderby.replaceAll('_', '.'));
-  $expand && (params['$expand'] = $expand.replaceAll('_', '.'));
+  $orderby && (params['$orderby'] = $orderby.replace(/_/g, '.'));
+  $expand && (params['$expand'] = $expand.replace(/_/g, '.'));
   return params;
 };
 
