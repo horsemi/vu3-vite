@@ -57,7 +57,7 @@
   import { FoundationApi } from '/@/api/app';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { isUnDef } from '/@/utils/is';
+  import { isNullOrUnDef } from '/@/utils/is';
 
   export default defineComponent({
     name: 'FoundationSelect',
@@ -205,11 +205,21 @@
 
       // 该方法是从两个watch中拆分出来
       function initFoundationList() {
-        if (props.defaultOptions && Object.keys(props.defaultOptions).length) return;
+        if (
+          props.defaultOptions &&
+          Object.keys(props.defaultOptions).length &&
+          !isNullOrUnDef(props.defaultOptions[props.showProperty])
+        )
+          return;
 
         if (props.value) {
           // 若为下拉框点击或默认下拉列为空，则不执行
-          if (!unref(isDropDownBoxClick) && isUnDef(props.defaultOptions)) {
+          if (
+            !unref(isDropDownBoxClick) &&
+            props.defaultOptions &&
+            Object.keys(props.defaultOptions).length &&
+            isNullOrUnDef(props.defaultOptions[props.showProperty])
+          ) {
             getFoundationByCode(
               {
                 codes: [props.value as string],
@@ -222,7 +232,12 @@
         } else {
           dropDownValueComputed.value = '';
 
-          if (props.foundationCode && isUnDef(props.defaultOptions)) {
+          if (
+            props.foundationCode &&
+            props.defaultOptions &&
+            Object.keys(props.defaultOptions).length &&
+            isNullOrUnDef(props.defaultOptions[props.showProperty])
+          ) {
             getFoundationByCode(
               {
                 top: 10,

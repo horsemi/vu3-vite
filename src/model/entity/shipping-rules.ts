@@ -1,6 +1,15 @@
-import type { IColumnItem } from '../types';
+import type { IColumnItem, IRelationShipItem } from '../types';
 
 import { getColumnList } from '../common';
+
+export const relationShips: IRelationShipItem[] = [
+  {
+    key: '',
+    entityCode: 'shipping-rules',
+    caption: '基本',
+    isMainEntity: true,
+  },
+];
 
 export const customColumns: IColumnItem[] = [
   {
