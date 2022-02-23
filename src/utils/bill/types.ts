@@ -69,6 +69,11 @@ export interface IDetailItem {
   showProperty?: string;
 
   /**
+   * @description 关联字段必要的key （基础数据必要的字段，用于查询时使用的key）
+   */
+  relationKey?: string;
+
+  /**
    * @description 过滤类型
    */
   datatypekeies?: string;

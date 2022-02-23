@@ -1,9 +1,13 @@
 import type { IColumnItem } from '/@/model/types';
 import type { IDetailItem } from '/@/utils/bill/types';
 
-import { getFormList } from '/@/utils/bill';
-import { getColumns } from '/@/model/entity/shipping-rules';
 import { Ref, ref } from 'vue';
+import { cloneDeep } from 'lodash-es';
+
+import { getFormList } from '/@/utils/bill';
+import { isUnDef } from '/@/utils/is';
+import { getColumns } from '/@/model/entity/shipping-rules';
+
 import { getOdataList } from '/@/api/ods/common';
 
 export function useDetailForm(
@@ -148,9 +152,41 @@ export function useDetailForm(
     [baseInformation.value].forEach((data, index) => {
       multiViewItems.value[index].rowCount = getRowCount(data);
     });
-    callback();
+    callback && callback();
     formLoading.value = false;
   };
+
+  /**
+   * @description 格式化表单数据，用于表单提交数据时使用
+   * @param formDataArray
+   * @returns
+   */
+  function initFormDataHandle(formDataArray: any[]) {
+    let _resultDataSum = {};
+
+    formDataArray.forEach((item) => {
+      const _resultFormData = cloneDeep(item.formData);
+
+      item.information.forEach((element) => {
+        // 在表单对象中添加基础资料的关联字段并为其赋值，置空基础资料组件的关联字段
+        if (element.relationKey) {
+          const _keyProperty = element.keyProperty ? element.keyProperty : 'Code';
+          const _showProperty = element.showProperty ? element.showProperty : 'Name';
+
+          if (!isUnDef(item.formData[`${element.key}_${_keyProperty}`])) {
+            _resultFormData[element.relationKey] = item.formData[`${element.key}_${_keyProperty}`];
+
+            _resultFormData[`${element.key}_${_keyProperty}`] = undefined;
+            _resultFormData[`${element.key}_${_showProperty}`] = undefined;
+          }
+        }
+      });
+      item.formData = _resultFormData;
+      _resultDataSum = Object.assign(_resultDataSum, _resultFormData);
+    });
+
+    return _resultDataSum;
+  }
 
   getColumns().then((res) => {
     if (res) {
@@ -166,5 +202,6 @@ export function useDetailForm(
     baseFormData,
     baseInformation,
     refreshDetailForm,
+    initFormDataHandle,
   };
 }

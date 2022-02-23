@@ -32,6 +32,7 @@ export const getFormList = (columnList: IColumnItem[], list: IDetailItem[][]) =>
           editorType: getEditorType(col.type),
           type: col.type,
           datatypekeies: col.datatypekeies,
+          relationKey: col.relationKey,
         });
       }
     });

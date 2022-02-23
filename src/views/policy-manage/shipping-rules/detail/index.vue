@@ -74,12 +74,12 @@
       }
 
       const {
-        formData,
         formLoading,
         formEditStatus,
         baseFormData,
         baseInformation,
         refreshDetailForm,
+        initFormDataHandle,
       } = useDetailForm(Id || '', multiViewItems, detailFormCallBack);
 
       const definiteScheme = ref<ISchemeItem>();
@@ -94,8 +94,15 @@
           : !permissionStore.hasPermission(shippingRuleType.shippingRuleUpdate);
       });
       const onSaveClick = () => {
+        const result = initFormDataHandle([
+          {
+            formData: baseFormData.value,
+            information: baseInformation.value,
+          },
+        ]);
+
         if (formEditStatus.value === 'Add') {
-          ShippingRulesApi.onShippingRulesCreate(baseFormData.value).then(() => {
+          ShippingRulesApi.onShippingRulesCreate(result).then(() => {
             viewStore.closeViewByKey(route.fullPath, router);
             odsMessage({
               type: 'success',
@@ -104,17 +111,13 @@
             // onRefresh();
           });
         } else {
-          ShippingRulesApi.onShippingRulesUpdate(Object.assign(baseFormData.value, { Id }))
-            .then(() => {
-              odsMessage({
-                type: 'success',
-                message: '保存成功',
-              });
-              onRefresh();
-            })
-            .catch(() => {
-              onRefresh();
+          ShippingRulesApi.onShippingRulesUpdate(Object.assign(result, { Id })).then(() => {
+            odsMessage({
+              type: 'success',
+              message: '保存成功',
             });
+            onRefresh();
+          });
         }
       };
 
