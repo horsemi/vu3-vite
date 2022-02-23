@@ -8,4 +8,5 @@ export enum shippingAdviceType {
   shippingAdviceRecall = 'Advice_Recall',
   shippingAdviceCancel = 'Advice_Cancel',
   shippingAdviceQueryItems = 'Advice_QueryItems',
+  shippingAdviceExport = 'Export_Advices',
 }

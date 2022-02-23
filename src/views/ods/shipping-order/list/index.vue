@@ -26,7 +26,6 @@
             :odata-params="odataParams"
           />
           <DxButton
-            :width="100"
             icon="refresh"
             :disabled="!permissionStore.hasPermission(shippingOrderType.shippingOrderQueryList)"
             text="刷新"

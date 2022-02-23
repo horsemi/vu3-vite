@@ -2617,6 +2617,11 @@ devextreme@21.1.6:
     showdown "^1.9.1"
     turndown "~7.0.0"
 
+dexie@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/dexie/-/dexie-3.2.0.tgz#a1b0267b111f9422c4126da90d6b121b1deabeab"
+  integrity sha512-OpS8ss1CLHYAhxRu6hT+/Gt1uLhKCf0O18xHBdRGlemOWXXRiiOZ0ty1/bACIJzGt1DGmvarzrPwYYt9EkRZfw==
+
 diff-sequences@^27.0.6:
   version "27.0.6"
   resolved "https://registry.nlark.com/diff-sequences/download/diff-sequences-27.0.6.tgz#3305cb2e55a033924054695cc66019fd7f8e5723"

@@ -1,5 +1,5 @@
 <template>
-  <div class="export-wrap">
+  <div v-loading="tableLoading" class="export-wrap">
     <div class="btn-box">
       <DxButton :width="76" text="查询" type="default" @click="onSearch" />
     </div>
@@ -20,7 +20,7 @@
   import DxButton from 'devextreme-vue/button';
   import websocketService from '/@/utils/websocket/index';
   import { useRoute } from 'vue-router';
-  import { useThrottle } from '/@/hooks/core/useThrottle';
+  import { useThrottleFn } from '@vueuse/core';
 
   export default defineComponent({
     name: 'Export',
@@ -76,23 +76,25 @@
       let pageSize = 50;
       let activatedRefresh = false;
       const dataSource = ref();
+      const tableLoading = ref(true);
       const route = useRoute();
+      const throttleSearch = useThrottleFn(onSearch, 5000);
 
       function onSearch() {
+        tableLoading.value = true;
         pageIndex = 1;
         ExportApi.exprotList({
-          Application: ['OrderServerApi', 'ExpressesApi', 'BmsApi'],
+          applications: ['OdsApi', 'ExpressesApi'],
           pageIndex,
           pageSize,
-        }).then((res) => {
-          dataSource.value = res.records;
-        });
-      }
-
-      function throttleSearch() {
-        useThrottle(() => {
-          onSearch();
-        }, 5000);
+        })
+          .then((res) => {
+            dataSource.value = res.records;
+            tableLoading.value = false;
+          })
+          .catch(() => {
+            tableLoading.value = false;
+          });
       }
 
       function onOptionChanged(e) {
@@ -119,14 +121,16 @@
       }
 
       function handleExporting() {
-        websocketService.receiveMessages((res) => {
-          if (res && (res.event === 'Exporting' || res.event === 'ExportStatusUpdate')) {
-            if (route.name === 'ExportList') {
-              throttleSearch();
-            } else {
-              !activatedRefresh && (activatedRefresh = true);
+        websocketService.receiveMessages({
+          success(res) {
+            if (res && (res.event === 'Exporting' || res.event === 'ExportStatusUpdate')) {
+              if (route.name === 'ExportList') {
+                throttleSearch();
+              } else {
+                !activatedRefresh && (activatedRefresh = true);
+              }
             }
-          }
+          },
         });
       }
 
@@ -140,6 +144,7 @@
       return {
         dataSource,
         columns,
+        tableLoading,
         onSearch,
         onOptionChanged,
         onCellClick,

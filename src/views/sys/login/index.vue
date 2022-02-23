@@ -81,6 +81,7 @@
   import PasswordModal from '/@/components/PasswordModal/index.vue';
   import { PasswordStateEnum } from '/@/enums/appEnum';
   import { removeCookie } from '/@/utils/cache/cookies';
+  import websocketService from '/@/utils/websocket/index';
 
   export default defineComponent({
     name: 'Login',
@@ -100,6 +101,10 @@
       const passwordPattern = ref<string>('');
       const passwordMessage = ref<string>('');
       const loginData = reactive({ userName: '', password: '' });
+
+      if (websocketService && websocketService.state === 'Connected') {
+        websocketService.closeConnect();
+      }
 
       return {
         prefixCls,

@@ -11,7 +11,6 @@
 
   import zhMessages from 'devextreme/localization/messages/zh.json';
   import { locale, loadMessages } from 'devextreme/localization';
-  import IndexedDBService from '/@/utils/indexedDB/index';
 
   export default defineComponent({
     name: 'App',
@@ -19,7 +18,6 @@
       AppProvider,
     },
     setup() {
-      IndexedDBService.openConnect();
       initAppConfigStore();
       loadMessages(zhMessages);
       locale(navigator.language);

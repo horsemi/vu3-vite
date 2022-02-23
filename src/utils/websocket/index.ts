@@ -7,33 +7,39 @@ import { useUserStoreWidthOut } from '/@/store/modules/user';
 // 发起连接的地址
 const connect_url = '/hubs/account';
 
-interface IWebsocket {
+interface ISingleWebsocket {
   state: string;
 
   /**
    * @description 打开连接 - 初始化连接
    */
-  openConnect(): void;
-
-  /**
-   * @description 开始连接
-   */
-  startConnect(onSuccess?: () => void, onError?: (err: any) => void): void;
+  openConnect(options?: { success?: () => void; fail?: (err: any) => void }): void;
 
   /**
    * @description 接受消息
    */
-  receiveMessages(callback: (res: any) => void): void;
+  receiveMessages({
+    success,
+    fail,
+  }: {
+    success: (res: any) => void;
+    fail?: (err: any) => void;
+  }): void;
 
   /**
    * @description 发送消息
    */
-  sendMessage(
-    methodName: string,
-    message: any,
-    onSuccess?: (res: any) => void,
-    onError?: (err: any) => void
-  ): void;
+  sendMessage({
+    methodName,
+    message,
+    success,
+    fail,
+  }: {
+    methodName: string;
+    message: any;
+    success?: (res: any) => void;
+    fail?: (err: any) => void;
+  }): void;
 
   /**
    * @description 重新连接前回调
@@ -48,7 +54,7 @@ interface IWebsocket {
   /**
    * @description 关闭连接
    */
-  closeConnect(onSuccess?: (res: any) => void, onError?: (err: any) => void): void;
+  closeConnect(options?: { success?: (res: any) => void; fail?: (err: any) => void }): void;
 
   /**
    * @description 关闭连接触发回调
@@ -56,28 +62,19 @@ interface IWebsocket {
   onclose(callback: (error?: Error | undefined) => void): void;
 }
 
-class Websocket implements IWebsocket {
+class SingleWebsocket implements ISingleWebsocket {
   private connection: HubConnection | undefined;
 
-  private async start(onSuccess?: () => void, onError?: (err: any) => void) {
-    if (this.connection) {
-      try {
-        await this.connection.start();
-        onSuccess && onSuccess();
-      } catch (err) {
-        onError && onError(err);
-      }
-    }
-  }
+  private sendRetryCount = 0;
 
   /**
-   * @description 当前连接的状态 - Connected | Disconnected | Reconnecting | Uninitialized
+   * @description 当前连接的状态 - Connected | Connecting | Disconnected | Disconnected | Reconnecting | Uninitialized
    */
   get state() {
     return this.connection ? this.connection.state : 'Uninitialized';
   }
 
-  public openConnect() {
+  public async openConnect(options?: { success?: () => void; fail?: (err: any) => void }) {
     const userStore = useUserStoreWidthOut();
     const token = userStore.getToken;
     this.connection = new signalR.HubConnectionBuilder()
@@ -88,42 +85,75 @@ class Websocket implements IWebsocket {
       .withAutomaticReconnect([0, 3000, 5000, 10000, 15000, 30000])
       .withHubProtocol(new MessagePackHubProtocol())
       .build();
+    try {
+      await this.connection.start();
+      this.connection.invoke('InitializeConnection', { application: 'OdsApi' });
+      options?.success && options.success();
+    } catch (err) {
+      options?.fail && options.fail(err);
+    }
   }
 
-  public startConnect(onSuccess?: () => void, onError?: (err: any) => void) {
-    this.start(onSuccess, onError);
-  }
-
-  public receiveMessages(callback: (res: any) => void) {
-    this.connection &&
+  public receiveMessages({
+    success,
+    fail,
+  }: {
+    success: (res: any) => void;
+    fail?: (err: any) => void;
+  }) {
+    if (this.connection && ['Connected', 'Connecting', 'Reconnecting'].includes(this.state)) {
       this.connection.on('ServerNotify', (res) => {
         const message = { ...res };
         if (message.data) {
           message.data = JSON.parse(message.data);
         }
-        callback(message);
+        success(message);
       });
+    } else {
+      fail && fail('SingleWebsocket未初始化或已断开');
+    }
   }
 
-  public sendMessage(
-    methodName: string,
-    message: any,
-    onSuccess?: (res: any) => void,
-    onError?: (err: any) => void
-  ) {
-    this.connection &&
+  public sendMessage({
+    methodName,
+    message,
+    success,
+    fail,
+  }: {
+    methodName: string;
+    message: any;
+    success?: (res: any) => void;
+    fail?: (err: any) => void;
+  }) {
+    if (this.connection && this.state === 'Connected') {
+      // 已连接成功，可以发送消息
+      this.sendRetryCount = 0;
       this.connection
         .send(methodName, message)
         .then((res) => {
-          if (onSuccess) {
-            onSuccess(res);
+          if (success) {
+            success(res);
           }
         })
         .catch((err) => {
-          if (onError) {
-            onError(err);
+          if (fail) {
+            fail(err);
           }
         });
+    } else if (
+      this.connection &&
+      ['Connecting', 'Reconnecting'].includes(this.state) &&
+      this.sendRetryCount < 10
+    ) {
+      // 连接中或重连中，定时重复调用自身，等待连接成功发送消息，最多重复10次
+      this.sendRetryCount++;
+      setTimeout(() => {
+        this.sendMessage({ methodName, message, success, fail });
+      }, this.sendRetryCount * 500);
+    } else {
+      // 状态为Disconnected或Uninitialized
+      fail && fail('SingleWebsocket未初始化或已断开');
+    }
   }
 
   public onReconnecting(callback: (error?: Error | undefined) => void) {
@@ -134,19 +164,15 @@ class Websocket implements IWebsocket {
     this.connection && this.connection.onreconnected(callback);
   }
 
-  public closeConnect(onSuccess?: (res: any) => void, onError?: (err: any) => void) {
+  public closeConnect(options?: { success?: (res: any) => void; fail?: (err: any) => void }) {
     this.connection &&
       this.connection
         .stop()
         .then((res) => {
-          if (onSuccess) {
-            onSuccess(res);
-          }
+          options?.success && options?.success(res);
         })
         .catch((err) => {
-          if (onError) {
-            onError(err);
-          }
+          options?.fail && options?.fail(err);
         });
   }
 
@@ -155,5 +181,5 @@ class Websocket implements IWebsocket {
   }
 }
 
-const websocketService = new Websocket();
+const websocketService = new SingleWebsocket();
 export default websocketService;
