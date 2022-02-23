@@ -128,9 +128,9 @@
       };
 
       // 所有操作设置为节流
-      const getDataThrottleFn = useThrottleFn(onRefresh, DEFAULT_THROTTLE_TIME);
+      const getDataThrottleFn = useThrottleFn(onRefresh, DEFAULT_THROTTLE_TIME, false);
 
-      const onSaveClickThrottleFn = useThrottleFn(onSaveClick, DEFAULT_THROTTLE_TIME);
+      const onSaveClickThrottleFn = useThrottleFn(onSaveClick, DEFAULT_THROTTLE_TIME, false);
 
       return {
         formLoading,

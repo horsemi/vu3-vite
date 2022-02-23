@@ -383,15 +383,19 @@
       };
 
       // 所有操作设置为节流
-      const getDataThrottleFn = useThrottleFn(onRefresh, DEFAULT_THROTTLE_TIME);
+      const getDataThrottleFn = useThrottleFn(onRefresh, DEFAULT_THROTTLE_TIME, false);
 
-      const onSubmitClickThrottleFn = useThrottleFn(onSubmitClick, DEFAULT_THROTTLE_TIME);
+      const onSubmitClickThrottleFn = useThrottleFn(onSubmitClick, DEFAULT_THROTTLE_TIME, false);
 
-      const onApplyClickThrottleFn = useThrottleFn(onApplyClick, DEFAULT_THROTTLE_TIME);
+      const onApplyClickThrottleFn = useThrottleFn(onApplyClick, DEFAULT_THROTTLE_TIME, false);
 
-      const onPushClickThrottleFn = useThrottleFn(onPushClick, DEFAULT_THROTTLE_TIME);
+      const onPushClickThrottleFn = useThrottleFn(onPushClick, DEFAULT_THROTTLE_TIME, false);
 
-      const onItemButtonClickThrottleFn = useThrottleFn(onItemButtonClick, DEFAULT_THROTTLE_TIME);
+      const onItemButtonClickThrottleFn = useThrottleFn(
+        onItemButtonClick,
+        DEFAULT_THROTTLE_TIME,
+        false
+      );
 
       watch(selectedIndex, (sIndex) => {
         handleHeight(multiViewItems.value[sIndex].rowCount, tableIndex.value, opened.value);
