@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-    <div :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
+    <div v-loading="formLoading" :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
       <div class="btn-box">
         <DxButton
           :disabled="savePermission"
@@ -20,12 +20,10 @@
 </template>
 
 <script lang="ts">
-  import type { ITableOptions } from '/@/components/Table/types';
-  import type { IDetailItem } from '/@/utils/bill/types';
   import type { IColumnItem } from '/@/model/types';
   import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch, reactive, nextTick, computed } from 'vue';
+  import { defineComponent, ref, computed } from 'vue';
   import { useRoute, useRouter } from 'vue-router';
   import { useThrottleFn } from '@vueuse/core';
   import { useViewStore } from '/@/store/modules/view';
@@ -33,18 +31,14 @@
 
   import { usePermissionStore } from '/@/store/modules/permission';
   import { shippingRuleType } from '/@/enums/actionPermission/shipping-rules';
-  import { getColumns } from '/@/model/entity/shipping-rules';
+
   import { ShippingRulesApi } from '/@/api/policy-manage/shipping-rules';
-  import { getDetailData, getDetailColumn } from './index';
-  import { getOdsListUrlByCode } from '/@/api/ods/common';
+  import { useDetailForm } from './index';
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
-  import { isFoundationType } from '/@/model/common';
 
   import DxButton from 'devextreme-vue/button';
 
   import DetailForm from '/@/components/DetailForm/index.vue';
-
-  type formEditType = 'Edit' | 'Add';
 
   export default defineComponent({
     name: 'PolicyManageShippingRulesDetail',
@@ -53,7 +47,6 @@
       DetailForm,
     },
     setup() {
-      const formEditStatus = ref<formEditType>('Edit');
       const permissionStore = usePermissionStore();
       const multiViewItems = ref([
         {
@@ -63,50 +56,37 @@
         },
       ]);
 
-      const opened = ref(false);
-      const selectedIndex = ref(0);
-      const tableIndex = ref(0);
-      const tableHeight = ref('');
-      const rowSpan = 8;
-      const formRowHeight = 29;
-      const formRowPaddingTop = 12;
-      const overHeight = 330;
-      const arrowIconHeight = 26;
-      const defaultDefiniteHeight = `calc(100vh - ${overHeight}px)`;
-      const defaultRecordHeight = `calc(100vh - ${overHeight}px)`;
+      const isFixHeight = ref<boolean>(true);
 
       const route = useRoute();
       const router = useRouter();
       const viewStore = useViewStore();
 
       const Id = route.query.Id as string | undefined;
-      const RuleCode = route.query.RuleCode as string;
-      const formData = ref();
 
-      const baseInformation = ref<IDetailItem[]>([]);
+      function detailFormCallBack() {
+        if (formEditStatus.value === 'Add') {
+          baseFormData.value['CreatedTime'] = Date.now();
+          baseFormData.value['UpdatedTime'] = Date.now();
+          baseFormData.value['IsEnabled'] = true;
+          baseFormData.value['MinWeight'] = 0;
+        }
+      }
 
-      const baseFormData = ref<Record<string, unknown>>({});
-
-      const isFixHeight = ref<boolean>(true);
+      const {
+        formLoading,
+        formEditStatus,
+        baseFormData,
+        baseInformation,
+        refreshDetailForm,
+        initFormDataHandle,
+      } = useDetailForm(Id || '', multiViewItems, detailFormCallBack);
 
       const definiteScheme = ref<ISchemeItem>();
       const definiteAllColumns = ref<IColumnItem[]>([]);
-      let columnsData: any = reactive({});
-
-      const recordOptions = ref<Partial<ITableOptions>>({
-        height: defaultRecordHeight,
-        dataSourceOptions: {
-          oDataOptions: {
-            url: getOdsListUrlByCode('operation-records'),
-          },
-        },
-        useScrolling: true,
-      });
-      const recordScheme = ref<ISchemeItem>();
-      const recordAllColumns = ref<IColumnItem[]>([]);
 
       const onRefresh = () => {
-        getData();
+        getDetail();
       };
       const savePermission = computed(() => {
         return formEditStatus.value === 'Add'
@@ -114,121 +94,37 @@
           : !permissionStore.hasPermission(shippingRuleType.shippingRuleUpdate);
       });
       const onSaveClick = () => {
+        const result = initFormDataHandle([
+          {
+            formData: baseFormData.value,
+            information: baseInformation.value,
+          },
+        ]);
+
         if (formEditStatus.value === 'Add') {
-          ShippingRulesApi.onShippingRulesCreate(baseFormData.value).then(() => {
+          ShippingRulesApi.onShippingRulesCreate(result).then(() => {
             viewStore.closeViewByKey(route.fullPath, router);
+            odsMessage({
+              type: 'success',
+              message: '保存成功',
+            });
+            // onRefresh();
+          });
+        } else {
+          ShippingRulesApi.onShippingRulesUpdate(Object.assign(result, { Id })).then(() => {
             odsMessage({
               type: 'success',
               message: '保存成功',
             });
             onRefresh();
           });
-        } else {
-          ShippingRulesApi.onShippingRulesUpdate(Object.assign(baseFormData.value, { Id }))
-            .then(() => {
-              odsMessage({
-                type: 'success',
-                message: '保存成功',
-              });
-              onRefresh();
-            })
-            .catch(() => {
-              onRefresh();
-            });
         }
       };
 
-      const onChangeOpened = () => {
-        opened.value = !opened.value;
-        handleHeight(selectedIndex.value);
-      };
-
-      const handleHeight = (sIndex: number) => {
-        // 表单行数
-        const rowCount = multiViewItems.value[sIndex].rowCount;
-        // 展开按钮高度，超出3行才会出现展开按钮
-        const iconHeight = rowCount > 3 ? arrowIconHeight : 0;
-        // 表格高度
-        let formHeight = 0;
-        if (opened.value || rowCount < 3) {
-          // 表格高度
-          formHeight = formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1);
-        } else {
-          formHeight = formRowHeight * 3 + formRowPaddingTop * 2;
+      const getDetail = () => {
+        if (baseInformation) {
+          refreshDetailForm();
         }
-        // 总裁剪高度
-        const cutHeight = formHeight + iconHeight + overHeight;
-        tableHeight.value = `calc(100vh - ${cutHeight}px)`;
-      };
-
-      const getColseHeight = (rowCount) => {
-        if (rowCount >= 3) {
-          return `${formRowHeight * 3 + formRowPaddingTop * 2}px`;
-        } else {
-          return `${formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1)}px`;
-        }
-      };
-
-      const getRowCount = (data: IDetailItem[]) => {
-        let len = 0;
-        data.forEach((item) => {
-          if (!item.hide) {
-            if (item.colSpan) {
-              len += item.colSpan;
-            } else if (item.editorType === 'dxSwitch') {
-              len += 1;
-            } else {
-              len += 2;
-            }
-          }
-        });
-        return Math.ceil(len / rowSpan);
-      };
-
-      const getDetail = (columnsData: any) => {
-        const baseList = getDetailColumn(columnsData);
-
-        baseFormData.value['CreatedTime'] = Date.now();
-        baseFormData.value['UpdatedTime'] = Date.now();
-        baseFormData.value['IsEnabled'] = true;
-        baseFormData.value['MinWeight'] = 0;
-
-        if (formEditStatus.value === 'Edit' && baseList) {
-          getDetailData(['Id', '=', Id], columnsData).then((res) => {
-            if (res) {
-              const data = res;
-
-              /** 实验性功能 */
-              baseList.forEach((item) => {
-                if (isFoundationType(item)) {
-                  baseFormData.value[item.expand!] = (data as Record<string, unknown>)[
-                    item.expand!
-                  ];
-                }
-                baseFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-              });
-
-              [baseInformation.value].forEach((data, index) => {
-                multiViewItems.value[index].rowCount = getRowCount(data);
-              });
-              handleHeight(selectedIndex.value);
-            }
-          });
-        }
-        // nextTick(() => {
-        //   isFixHeight.value = false;
-        // });
-        baseInformation.value = baseList || [];
-      };
-
-      const getData = async () => {
-        if (JSON.stringify(columnsData) === '{}') {
-          columnsData = await getColumns();
-        }
-
-        formEditStatus.value = Id ? 'Edit' : 'Add';
-
-        getDetail(columnsData);
       };
 
       // 所有操作设置为节流
@@ -236,37 +132,19 @@
 
       const onSaveClickThrottleFn = useThrottleFn(onSaveClick, DEFAULT_THROTTLE_TIME);
 
-      watch(selectedIndex, (sIndex) => {
-        handleHeight(sIndex);
-      });
-
-      onRefresh();
-
       return {
-        tableHeight,
-        formRowHeight,
-        formRowPaddingTop,
+        formLoading,
         definiteScheme,
         definiteAllColumns,
-        recordOptions,
-        recordScheme,
-        recordAllColumns,
 
         baseInformation,
-
         baseFormData,
 
-        selectedIndex,
-        tableIndex,
-        opened,
         multiViewItems,
-        // formData,
-        isFixHeight,
         onSaveClickThrottleFn,
         getDataThrottleFn,
-        onChangeOpened,
-        getColseHeight,
         savePermission,
+        isFixHeight,
       };
     },
   });

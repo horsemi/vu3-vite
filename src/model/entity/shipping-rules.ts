@@ -1,6 +1,15 @@
-import type { IColumnItem } from '../types';
+import type { IColumnItem, IRelationShipItem } from '../types';
 
 import { getColumnList } from '../common';
+
+export const relationShips: IRelationShipItem[] = [
+  {
+    key: '',
+    entityCode: 'shipping-rules',
+    caption: '基本',
+    isMainEntity: true,
+  },
+];
 
 export const customColumns: IColumnItem[] = [
   {
@@ -13,11 +22,13 @@ export const customColumns: IColumnItem[] = [
     key: 'CreatedTime',
     caption: '创建日期',
     type: 'datetime',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'UpdatedTime',
     caption: '更新日期',
     type: 'datetime',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'ShippingType',
@@ -43,10 +54,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'MinWeight',
     caption: '重量下限',
+    summaryList: ['max', 'min', 'avg', 'sum'],
   },
   {
     key: 'MaxWeight',
     caption: '重量上限',
+    summaryList: ['max', 'min', 'avg', 'sum'],
   },
   {
     key: 'IsEnabled',

@@ -4,7 +4,7 @@ import { defHttp } from '/@/utils/http/axios';
 
 enum apiUrl {
   getOdsEnumUrl = '/api/scheme/enumerations',
-  getPpolicyManageEnumUrl = '/api/odata/enums',
+  getPpolicyManageEnumUrl = '/api/scheme/enumerations',
 }
 
 export class AppConfigApi {
