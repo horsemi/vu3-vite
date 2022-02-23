@@ -17,7 +17,12 @@
             :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceApply)"
             @click="onApplyClick"
           />
-          <!-- <DxButton text="导出" icon="download" @click="onDownload" /> -->
+          <DxButton
+            text="导出"
+            icon="download"
+            :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceExport)"
+            @click="onExport"
+          />
         </div>
         <div class="operation-btn__inner">
           <SummaryButton
@@ -68,12 +73,13 @@
   import { initEntityColumn } from '/@/utils/bill/relationship';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { getSchemesData } from '/@/utils/scheme/index';
+  import { ExportApi } from '/@/api/export';
 
   import DxButton from 'devextreme-vue/button';
 
   import QueryPlan from '/@/components/QueryPlan/index.vue';
   import SummaryButton from '/@/components/SummaryButton/index.vue';
-  // import { odsMessage } from '/@/components/Message';
+  import { odsMessage } from '/@/components/Message';
 
   export default defineComponent({
     name: 'OdsShippingAdviceList',
@@ -116,15 +122,22 @@
         dataGrid.value.search();
       };
 
-      // const onDownload = () => {
-      //   console.log('onDownload');
-      //   odsMessage({
-      //     type: 'success',
-      //     dangerouslyUseHTMLString: true,
-      //     message:
-      //       '<strong>导出任务已添加 <a style="color: #52c41a; text-decoration: underline;" href="#/basic-management/export-configuration/export/list">请点击查看</a> </strong>',
-      //   });
-      // };
+      const onExport = () => {
+        const templateModels = dataGrid.value.tableColumns.map((item) => {
+          return {
+            name: item.key,
+            title: item.caption,
+          };
+        });
+        ExportApi.reportExport({ queryParameter: odataParams.value, templateModels }).then(() => {
+          odsMessage({
+            type: 'success',
+            dangerouslyUseHTMLString: true,
+            message:
+              '<strong>导出任务已添加 <a style="color: #52c41a; text-decoration: underline;" href="#/basic-management/export-configuration/export/list">请点击查看</a> </strong>',
+          });
+        });
+      };
 
       const handleBillCodeClick = (data) => {
         router.push({
@@ -232,7 +245,7 @@
         onSubmitClick,
         onApplyClick,
         onRefresh,
-        // onDownload,
+        onExport,
         shippingAdviceType,
         permissionStore,
       };

@@ -1,5 +1,5 @@
 <template>
-  <div :class="prefixCls" @click="showNotice = true">
+  <div :class="prefixCls" @click="onShowNotice">
     <SvgIcon id="noticeIcon" size="24" name="notice"></SvgIcon>
     <DxPopover
       ref="noticePopover"
@@ -98,7 +98,7 @@
                 module,
               } = res;
               if (message && module) {
-                if (showNoticeBadge.value) {
+                if (!showNoticeBadge.value) {
                   userStore.setShowNoticeBadge(true);
                 }
                 getNoticeList();
@@ -116,6 +116,13 @@
           });
       }
 
+      function onShowNotice() {
+        showNotice.value = true;
+        if (showNoticeBadge.value) {
+          userStore.setShowNoticeBadge(false);
+        }
+      }
+
       handleExportMessage();
       getNoticeList();
 
@@ -127,6 +134,7 @@
         noticeList,
         showNoticeBadge,
         onGoPage,
+        onShowNotice,
       };
     },
   });
@@ -185,12 +193,12 @@
     }
     &--message {
       display: flex;
-      align-items: center;
       padding: 4px 0 20px 0;
       color: @color-primary;
       cursor: pointer;
 
       i {
+        margin-top: 1px;
         margin-right: 4px;
         font-size: 18px;
       }
