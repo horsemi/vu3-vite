@@ -233,10 +233,8 @@
           dropDownValueComputed.value = '';
 
           if (
-            props.foundationCode &&
-            props.defaultOptions &&
-            Object.keys(props.defaultOptions).length &&
-            isNullOrUnDef(props.defaultOptions[props.showProperty])
+            (props.foundationCode && isNullOrUnDef(props.defaultOptions)) ||
+            (props.foundationCode && isNullOrUnDef(props.defaultOptions[props.showProperty]))
           ) {
             getFoundationByCode(
               {
