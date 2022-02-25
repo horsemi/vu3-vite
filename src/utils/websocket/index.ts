@@ -78,8 +78,8 @@ class SingleWebsocket implements ISingleWebsocket {
     const userStore = useUserStoreWidthOut();
     const token = userStore.getToken;
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(connect_url, {
-        headers: { access_token: token },
+      .withUrl(`${connect_url}?access_token=${token}`, {
+        // headers: { access_token: token },
         transport: signalR.HttpTransportType.LongPolling,
       })
       .withAutomaticReconnect([0, 3000, 5000, 10000, 15000, 30000])
