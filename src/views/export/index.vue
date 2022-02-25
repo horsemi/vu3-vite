@@ -84,7 +84,7 @@
         tableLoading.value = true;
         pageIndex = 1;
         ExportApi.exprotList({
-          applications: ['OdsApi', 'ExpressesApi'],
+          applications: ['OdsApi', 'ExpressesApi', 'PolicyManage'],
           pageIndex,
           pageSize,
         })
