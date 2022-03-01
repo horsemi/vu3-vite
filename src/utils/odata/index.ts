@@ -144,7 +144,16 @@ const getSelectAndExpand = ({
   relationShips: IRelationShip[];
   tableKey: string[];
 }) => {
-  const select: string[] = [...tableKey];
+  // 不关联明细去掉明细的tableKey
+  let _tableKey: string[] = [];
+  if (relationShips.length) {
+    const _relationShips = relationShips.filter((item) => item.value);
+    _tableKey = tableKey.slice(0, _relationShips.length);
+  } else {
+    _tableKey = tableKey;
+  }
+
+  const select: string[] = [..._tableKey];
   const expand: string[] = [];
 
   const allObj = {};

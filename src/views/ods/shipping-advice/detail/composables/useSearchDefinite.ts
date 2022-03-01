@@ -64,7 +64,6 @@ export function useSearchDefinite(
   }
 
   function onReset() {
-    definiteLoading.value = true;
     schemeData.value.scheme[schemeData.value.checkedIndex] = {
       fast: [
         {
@@ -100,7 +99,7 @@ export function useSearchDefinite(
         },
       ],
     };
-    definiteLoading.value = false;
+    onSearch();
   }
 
   return {
