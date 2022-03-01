@@ -214,12 +214,7 @@
 
         if (props.value) {
           // 若为下拉框点击或默认下拉列为空，则不执行
-          if (
-            !unref(isDropDownBoxClick) &&
-            props.defaultOptions &&
-            Object.keys(props.defaultOptions).length &&
-            isNullOrUnDef(props.defaultOptions[props.showProperty])
-          ) {
+          if (props.foundationCode && !unref(isDropDownBoxClick) && !props.selectDisabled) {
             getFoundationByCode(
               {
                 codes: [props.value as string],
@@ -233,8 +228,12 @@
           dropDownValueComputed.value = '';
 
           if (
-            (props.foundationCode && isNullOrUnDef(props.defaultOptions)) ||
-            (props.foundationCode && isNullOrUnDef(props.defaultOptions[props.showProperty]))
+            (props.foundationCode &&
+              isNullOrUnDef(props.defaultOptions) &&
+              !props.selectDisabled) ||
+            (props.foundationCode &&
+              isNullOrUnDef(props.defaultOptions[props.showProperty]) &&
+              !props.selectDisabled)
           ) {
             getFoundationByCode(
               {

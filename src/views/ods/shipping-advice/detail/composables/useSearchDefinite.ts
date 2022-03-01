@@ -100,6 +100,7 @@ export function useSearchDefinite(
         },
       ],
     };
+    definiteLoading.value = false;
   }
 
   return {
