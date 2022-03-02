@@ -4,8 +4,13 @@ import * as signalR from '@microsoft/signalr';
 import { MessagePackHubProtocol } from '@microsoft/signalr-protocol-msgpack';
 import { useUserStoreWidthOut } from '/@/store/modules/user';
 
-// 发起连接的地址
-const connect_url = '/hubs/account';
+/**
+ * @description 发起连接的地址,`本地开发`时不可以使用框架自带的反向代理来转发,只能通过写死URL的方式
+ * vitejs会发起用于HMR的webSocket,并让同源下的webSocket链接一直为'pending'状态
+ */
+const connect_url = import.meta.env.DEV
+  ? 'http://10.10.14.164:30039/hubs/account'
+  : '/hubs/account';
 
 interface ISingleWebsocket {
   state: string;
@@ -78,9 +83,10 @@ class SingleWebsocket implements ISingleWebsocket {
     const userStore = useUserStoreWidthOut();
     const token = userStore.getToken;
     this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(`${connect_url}?access_token=${token}`, {
-        // headers: { access_token: token },
-        transport: signalR.HttpTransportType.LongPolling,
+      .withUrl(connect_url, {
+        accessTokenFactory: () => `${token}`,
+        skipNegotiation: true,
+        transport: signalR.HttpTransportType.WebSockets,
       })
       .withAutomaticReconnect([0, 3000, 5000, 10000, 15000, 30000])
       .withHubProtocol(new MessagePackHubProtocol())
