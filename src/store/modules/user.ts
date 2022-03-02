@@ -90,18 +90,16 @@ export const useUserStore = defineStore({
             permissionStore.setPermissionCodeList(res.behaviors);
             permissionStore.changePermissionCode();
 
-            try {
-              websocketService.openConnect();
-            } catch (error) {
-              odsMessage({
-                type: 'error',
-                dangerouslyUseHTMLString: true,
-                message:
-                  '<div>您的浏览器版本，未支持WebSocket，<a style="color: #1197b7;padding: 0 2px" href="http://tms.4pl.linshimuye.com:8533/upload-browser.html">请点击将浏览器至最新版本！</a><div>',
-              });
-            } finally {
-              resolve(res);
-            }
+            websocketService.openConnect({
+              fail() {
+                odsMessage({
+                  type: 'error',
+                  dangerouslyUseHTMLString: true,
+                  message:
+                    '<div>您的浏览器版本，未支持WebSocket，<a style="color: #1197b7;padding: 0 2px" href="http://tms.4pl.linshimuye.com:8533/upload-browser.html">请点击将浏览器至最新版本！</a><div>',
+                });
+              },
+            });
             resolve(res);
           })
           .catch((error) => {

@@ -82,16 +82,16 @@ class SingleWebsocket implements ISingleWebsocket {
   public async openConnect(options?: { success?: () => void; fail?: (err: any) => void }) {
     const userStore = useUserStoreWidthOut();
     const token = userStore.getToken;
-    this.connection = new signalR.HubConnectionBuilder()
-      .withUrl(connect_url, {
-        accessTokenFactory: () => `${token}`,
-        skipNegotiation: true,
-        transport: signalR.HttpTransportType.WebSockets,
-      })
-      .withAutomaticReconnect([0, 3000, 5000, 10000, 15000, 30000])
-      .withHubProtocol(new MessagePackHubProtocol())
-      .build();
     try {
+      this.connection = new signalR.HubConnectionBuilder()
+        .withUrl(connect_url, {
+          accessTokenFactory: () => `${token}`,
+          skipNegotiation: true,
+          transport: signalR.HttpTransportType.WebSockets,
+        })
+        .withAutomaticReconnect([0, 3000, 5000, 10000, 15000, 30000])
+        .withHubProtocol(new MessagePackHubProtocol())
+        .build();
       await this.connection.start();
       this.connection.invoke('InitializeConnection', { application: 'OdsApi' });
       options?.success && options.success();
