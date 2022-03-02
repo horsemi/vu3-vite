@@ -282,7 +282,13 @@
 
       // TODO: 表格key待定
       const dataGridKey = computed(() => {
-        return props.tableKey[props.tableKey.length - 1];
+        // 解决不关联明细时使用明细的tableKey
+        let index = props.tableKey.length - 1;
+        if (props.filterScheme.relationShips.length) {
+          const relationShips = props.filterScheme.relationShips.filter((item) => item.value);
+          index = relationShips.length - 1;
+        }
+        return props.tableKey[index];
       });
 
       onActivated(() => {
