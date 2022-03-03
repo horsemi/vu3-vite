@@ -304,11 +304,8 @@ const createBinaryOperationFormatter = (op: string) => {
 };
 const createStringFuncFormatter = (op: string) => {
   return function (prop: string, val: any) {
-    const bag = [op, '('];
-    prop = -1 === prop.indexOf('tolower(') ? 'tolower('.concat(prop, ')') : prop;
-    val = val.toLowerCase();
-    bag.push(prop, ',', typeof val === 'string' ? `'${val}'` : val);
-    bag.push(')');
+    const bag = [prop, ' ', op, ' '];
+    bag.push(typeof val === 'string' ? `'${val}'` : val);
     return bag.join('');
   };
 };
