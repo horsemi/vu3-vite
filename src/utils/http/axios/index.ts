@@ -11,7 +11,7 @@ import { errorResult, tokenHeaderKey } from './const';
 import { useUserStoreWidthOut } from '/@/store/modules/user';
 import { useViewWithOutStore } from '/@/store/modules/view';
 import { useErrorLogStoreWithOut } from '/@/store/modules/error';
-import { errorMessage, successMessage } from '/@/hooks/web/useMessage';
+import { odsMessage } from '/@/components/Message';
 import { checkStatus } from './checkStatues';
 
 /**
@@ -42,7 +42,10 @@ const transform: AxiosTransform = {
     const hasSuccess = result === ResultEnum.SUCCESS; // data && Reflect.has(data, 'code') && result === ResultEnum.SUCCESS
     if (!hasSuccess) {
       if (message) {
-        errorMessage(message);
+        odsMessage({
+          type: 'error',
+          message,
+        });
       }
       Promise.reject(new Error(message));
       return errorResult;
@@ -50,17 +53,27 @@ const transform: AxiosTransform = {
 
     // 接口请求成功，直接返回结果
     if (result === ResultEnum.SUCCESS) {
-      message && successMessage(message);
+      message &&
+        odsMessage({
+          type: 'success',
+          message,
+        });
       return data;
     }
     // 接口请求错误，统一提示错误信息
     if (result === ResultEnum.ERROR || result === ResultEnum.ERR) {
       if (message) {
-        errorMessage(message);
+        odsMessage({
+          type: 'error',
+          message,
+        });
         Promise.reject(new Error(message));
       } else {
         const msg = '后台系统错误';
-        errorMessage(msg);
+        odsMessage({
+          type: 'error',
+          message: msg,
+        });
         Promise.reject(new Error(msg));
       }
       return errorResult;
@@ -125,13 +138,17 @@ const transform: AxiosTransform = {
     // 这里逻辑可以根据项目进行修改
     const hasSuccess = result === ResultEnum.SUCCESS; // data && Reflect.has(data, 'code') && result === ResultEnum.SUCCESS
     // 接口请求错误，统一提示错误信息
-    if (!hasSuccess) {
+    if (!hasSuccess && !resData.value) {
       return Promise.reject(new Error(message));
     }
 
     // 接口请求成功，直接返回结果
     if (result === ResultEnum.SUCCESS) {
-      message && successMessage(message);
+      message &&
+        odsMessage({
+          type: 'success',
+          message,
+        });
       return data;
     }
   },

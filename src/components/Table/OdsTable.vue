@@ -14,12 +14,16 @@
       :show-row-lines="options.showRowLines"
       :show-borders="options.showBorders"
       :row-alternation-enabled="options.rowAlternationEnabled"
-      :remote-operations="true"
+      :cache-enabled="false"
+      :remote-operations="remoteOperationValue"
       @selection-changed="onSelectionChanged"
       @option-changed="onOptionChanged"
       @cellClick="onCellClick"
+      @dataErrorOccurred="onDataErrorOccurred"
+      @cellPrepared="onCellPrepared"
     >
-      <template v-for="(item, index) in tableColumns" :key="index">
+      <DxLoadPanel :enabled="false" />
+      <template v-for="item in tableColumns" :key="item.key">
         <DxColumn
           v-if="!item.hide"
           :css-class="`${item.cssClass || ''} header-bold`"
@@ -34,8 +38,8 @@
               : handleCustomizeText
           "
           :data-type="item.type"
-          :cell-template="getTemplate(item.cellTemplate, item.expand, item.relationKey)"
           :alignment="getAlignment(item)"
+          :cell-template="getTemplate(item)"
         >
           <DxLookup
             v-if="item.type === 'enum'"
@@ -68,36 +72,35 @@
         :mode="options.useScrolling ? 'virtual' : 'standard'"
         :row-rendering-mode="rowRenderingMode"
       />
-      <DxSummary v-if="summaryArray.length > 0">
+      <DxSummary v-if="summaryList.length > 0">
         <DxTotalItem
-          v-for="item in summaryArray"
+          v-for="item in summaryList"
           :key="item.columnName"
-          summary-type="custom"
+          :name="item.columnName"
+          :column="item.columnName"
           :show-in-column="item.columnName"
           :customize-text="item.showSummaryFn"
         >
         </DxTotalItem>
       </DxSummary>
       <template #billCode="{ data }">
-        <div
-          id="billcode"
-          :class="`${prefixCls}__table-billno-column__wrap`"
-          @click="$emit('handleBillCodeClick', data)"
-          @mouseenter="getRowData(data)"
-          >{{ data.value }}</div
-        >
-      </template>
-      <template #foundation="{ data: rowInfo }">
-        <div>{{ getFoundationData(rowInfo) }}</div>
+        <ContextMenu>
+          <template #default>
+            <div
+              id="billcode"
+              :class="`${prefixCls}__table-billno-column__wrap`"
+              @click="$emit('handleBillCodeClick', data)"
+              @mouseenter="getRowData(data)"
+              >{{ data.value }}</div
+            >
+          </template>
+          <template #content>
+            <div class="elementId" :data-clipboard-text="clipValue">复制内容</div>
+          </template>
+        </ContextMenu>
       </template>
     </DxDataGrid>
-    <DxContextMenu :data-source="contentMenuTitle" :width="200" target="#billcode">
-      <template #item="{ data: e }">
-        <div class="elementId" :data-clipboard-text="clipValue">
-          {{ e.text }}
-        </div>
-      </template>
-    </DxContextMenu>
+
     <div
       v-if="options.dataSourceOptions.paginate && !options.useScrolling && tableData"
       :class="`${prefixCls}__jump`"
@@ -107,9 +110,9 @@
 </template>
 
 <script lang="ts">
-  import type { ITableOptions } from './types';
-  import type { IColumnItem, IKeyType } from '/@/model/types';
-  import type { ISchemeItem } from '../QueryPopup/content/types';
+  import type { IOdataParams, ITableOptions, ITableSummary } from './types';
+  import type { IColumnItem } from '/@/model/types';
+  import type { ISchemeItem, ISummaryItem } from '../QueryPopup/content/types';
 
   import {
     defineComponent,
@@ -119,15 +122,17 @@
     watch,
     nextTick,
     computed,
-    onMounted,
     onActivated,
+    onDeactivated,
   } from 'vue';
-  import { cloneDeep, isEmpty } from 'lodash-es';
-
+  import { cloneDeep, isEmpty, merge } from 'lodash-es';
+  import { getOdataList } from '/@/api/ods/common';
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { defaultTableOptions, getCompleteColumns, getTableDataSource } from './common';
+  import { clientSummary, defaultTableOptions, getCompleteColumns } from './common';
+  import { usePermissionStore } from '/@/store/modules/permission';
+
   import { useAppStore } from '/@/store/modules/app';
-  import { deepMerge } from '/@/utils';
+
   import DxContextMenu from 'devextreme-vue/context-menu';
   import DxDataGrid, {
     DxSelection,
@@ -136,12 +141,18 @@
     DxPager,
     DxLookup,
     DxScrolling,
+    DxLoadPanel,
     DxSummary,
     DxTotalItem,
   } from 'devextreme-vue/data-grid';
   import Clipboard from 'clipboard';
-  import { useMessage } from '/@/hooks/web/useMessage';
+  import { odsMessage } from '/@/components/Message';
 
+  import { getOdataQuery } from '/@/utils/odata';
+  import CustomStore from 'devextreme/data/custom_store';
+  import DataSource from 'devextreme/data/data_source';
+
+  import ContextMenu from '/@/components/ContextMenu/index.vue';
   export default defineComponent({
     components: {
       DxDataGrid,
@@ -151,9 +162,10 @@
       DxLookup,
       DxColumn,
       DxScrolling,
-      DxContextMenu,
+      DxLoadPanel,
       DxSummary,
       DxTotalItem,
+      ContextMenu,
     },
     props: {
       tableOptions: {
@@ -165,13 +177,7 @@
       tableKey: {
         type: Array as PropType<string[]>,
         default: () => {
-          return [];
-        },
-      },
-      tableKeyType: {
-        type: Array as PropType<IKeyType[]>,
-        default: () => {
-          return [];
+          return ['Id'];
         },
       },
       dataSource: {
@@ -202,63 +208,122 @@
         type: String,
         default: '',
       },
-      summaryArray: {
-        type: Array as PropType<{ columnName: string; showSummaryFn: (data: unknown) => void }[]>,
-        default: () => {
-          return [];
-        },
+      orderCode: {
+        type: String,
+        default: '',
+      },
+      systemCode: {
+        type: String,
+        default: '',
+      },
+      queryListPermission: {
+        type: String,
+        default: '',
       },
     },
-    emits: ['handleBillCodeClick', 'handleSelectionClick', 'optionChanged', 'cellClick'],
+    emits: [
+      'handleBillCodeClick',
+      'handleSelectionClick',
+      'optionChanged',
+      'cellClick',
+      'onLoaded',
+      'onLoad',
+    ],
     setup(props, ctx) {
       const { prefixCls } = useDesign('ods-table');
+      const permissionStore = usePermissionStore();
       const appStore = useAppStore();
       const dataGrid = ref();
+      const odataParams = ref<Partial<IOdataParams>>();
       const pageIndex = ref(0);
+      const pageSize = ref(50);
       const pageSizes = [50, 100, 1000, 2000, 3000];
       const rowRenderingMode = ref('standard');
-      const contentMenuTitle = [
-        {
-          text: '复制内容',
-        },
-      ];
+      const remoteOperationValue = { paging: true, sorting: true, summary: true };
+      let clipboard: any = null;
+      // 记录滚动条位置
+      const tableScrollable = {
+        top: 0,
+        left: 0,
+      };
+
+      const mergeData: { cols: string[]; rows: number[] } = {
+        cols: [],
+        rows: [],
+      };
 
       const tableData = ref();
       const tableColumns = ref<IColumnItem[]>([]);
+      const summaryList = ref<ITableSummary[]>([]);
       const clipValue = ref('');
       const options = computed(() => {
-        return deepMerge(cloneDeep(defaultTableOptions), props.tableOptions);
+        return merge(cloneDeep(defaultTableOptions), props.tableOptions);
       });
 
-      onMounted(() => {
-        const clipboard = new Clipboard('.elementId');
-        clipboard.on('success', function (e) {
-          useMessage('复制成功', 'success');
-          e.clearSelection();
+      const SearchPermission = computed(() => {
+        return permissionStore.hasPermission(props.queryListPermission);
+      });
+
+      const summaryData = computed(() => {
+        return tableData.value.items().map((item, index) => {
+          const temp = { ...item };
+          if (mergeData.rows.includes(index)) {
+            mergeData.cols.forEach((col) => {
+              temp[col] = '';
+            });
+          }
+          return temp;
         });
-        clipboard.on('error', function () {
-          useMessage('复制失败', 'error');
-        });
+      });
+
+      const mainKey = computed(() => {
+        return props.tableKey[0];
+      });
+
+      // TODO: 表格key待定
+      const dataGridKey = computed(() => {
+        // 解决不关联明细时使用明细的tableKey
+        let index = props.tableKey.length - 1;
+        if (props.filterScheme.relationShips.length) {
+          const relationShips = props.filterScheme.relationShips.filter((item) => item.value);
+          index = relationShips.length - 1;
+        }
+        return props.tableKey[index];
       });
 
       onActivated(() => {
-        hiddenVirtualRow();
+        clipboard = new Clipboard('.elementId');
+        clipboard.on('success', function (e) {
+          odsMessage({
+            type: 'success',
+            message: '复制成功',
+          });
+          e.clearSelection();
+        });
+        clipboard.on('error', function () {
+          odsMessage({
+            type: 'error',
+            message: '复制失败',
+          });
+        });
+        scrollToTable();
+      });
+      onDeactivated(() => {
+        (clipboard as any).destroy();
+        clipboard = null;
+        resetTableScrollable();
       });
 
+      const resetTableScrollable = () => {
+        const { instance } = dataGrid.value;
+        tableScrollable.top = instance.getScrollable().scrollTop();
+        tableScrollable.left = instance.getScrollable().scrollLeft();
+      };
+
       // 处理keep-alive等情况下骨架屏遮挡列表数据，滚动条位置错误问题
-      const hiddenVirtualRow = () => {
-        const { dataSource, instance } = dataGrid.value;
-        if (dataSource && dataSource.key && instance) {
-          const key = dataSource.key();
-          const items = dataSource.items();
-          if (items.length > 1) {
-            const preItem = { [key]: items[0][key] };
-            const nextItem = { [key]: items[1][key] };
-            // 滚动到第二条数据的位置，再回到第一条，刷新滚动状态
-            instance.navigateToRow(nextItem);
-            instance.navigateToRow(preItem);
-          }
-        }
+      const scrollToTable = () => {
+        const { instance } = dataGrid.value;
+        instance.getScrollable().scrollTo(tableScrollable);
       };
 
       const handleCustomizeDecimal = (cellInfo) => {
@@ -279,6 +344,7 @@
         }
       };
 
+      // TODO: 明细可勾选后，数据重复问题
       const onSelectionChanged = ({ selectedRowKeys, selectedRowsData }) => {
         ctx.emit('handleSelectionClick', selectedRowsData);
       };
@@ -288,17 +354,32 @@
         pageIndex.value = index >= 0 ? index : 0;
       };
 
+      // TODO: 是否可精简
+      // 处理汇总信息
+      const handleClientSummary = (summary: ISummaryItem[]) => {
+        if (!summary || !summary.length) return;
+        const _summary: ITableSummary[] = [];
+        summary?.forEach((item) => {
+          item.mode === 'page' &&
+            _summary.push({
+              columnName: item.key,
+              showSummaryFn: () => {
+                return clientSummary({
+                  summary: { columnName: item.key, summaryType: item.type },
+                  source: summaryData.value,
+                  allColumns: props.allColumns,
+                });
+              },
+            });
+        });
+        summaryList.value = _summary;
+      };
+
       const handleFilterScheme = (scheme: ISchemeItem) => {
-        if (
-          !isEmpty(scheme) &&
-          !isEmpty(scheme.columns) &&
-          props.allColumns.length > 0 &&
-          props.tableKey.length > 0 &&
-          props.tableKeyType.length > 0
-        ) {
+        if (scheme.columns && props.allColumns.length > 0) {
           if (dataGrid.value && dataGrid.value.instance) {
             // 清空排序，处理相同字段desc失效
-            dataGrid.value.instance.clearSorting();
+            // dataGrid.value.instance.clearSorting();
             // 回到第一页
             dataGrid.value.instance.pageIndex(0);
             // 刷新表格，解决 tableColumns.value = [] 的时候 表头显示key
@@ -312,16 +393,16 @@
           tableColumns.value = [];
           // 等列数据渲染完后再去获取表格数据，还是解决列数据引起的排序和显示隐藏列问题
           nextTick(() => {
-            // 重新 获取列数据
-            tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
-            // 重新 new datasource
-            tableData.value = getTableDataSource(
-              options.value,
-              scheme,
-              props.allColumns,
-              props.tableKey,
-              props.tableKeyType
-            );
+            if (SearchPermission.value) {
+              // 重新 new datasource
+              getTableData();
+
+              // 重新 获取列数据
+              tableColumns.value = getCompleteColumns(props.allColumns, scheme.columns);
+              nextTick(() => {
+                handleClientSummary(scheme?.summary);
+              });
+            }
           });
         }
       };
@@ -334,6 +415,85 @@
         }
       };
 
+      // 初始化合并列数据
+      const initMergeData = (res) => {
+        const { relationShips } = props.filterScheme;
+        // 判断是否需要合并
+        const mergeFlag =
+          relationShips?.findIndex((item) => !item.isMainEntity && item.value) !== -1;
+        mergeData.cols = [];
+        mergeData.rows = [];
+        if (mergeFlag) {
+          const { columns } = props.filterScheme;
+          const isMainEntityCode = relationShips?.find((item) => item.isMainEntity)?.entityCode;
+          // 查找哪些key需要合并 = 哪些key的属性值要清空
+          columns.forEach((item) => {
+            if (!item.entityKey || item.entityKey === isMainEntityCode) {
+              mergeData.cols.push(item.key);
+            }
+          });
+          // 查找哪些行需要合并
+          // 一般来说第一条不需要合并，第一条以后主键重复的需要合并
+          const obj = {};
+          res.map((item, index) => {
+            obj[item[mainKey.value]]
+              ? mergeData.rows.push(index)
+              : (obj[item[mainKey.value]] = item[mainKey.value]);
+            return item;
+          });
+        }
+      };
+
+      const getTableData = () => {
+        tableData.value = new DataSource({
+          store: new CustomStore({
+            key: dataGridKey.value,
+            load: async (loadOptions) => {
+              if (Object.keys(loadOptions).length) {
+                const params = getOdataQuery({
+                  scheme: props.filterScheme,
+                  allColumns: props.allColumns,
+                  tableSort: loadOptions.sort,
+                  defaultSort: options.value.dataSourceOptions.sort,
+                  tableKey: props.tableKey,
+                });
+                odataParams.value = params;
+
+                const dataParams = { ...params, $top: pageSize.value };
+                dataParams['$skip'] = loadOptions.skip;
+
+                const totalCountParams = { $aggregate: 'count(1)' };
+                params['$filter'] && (totalCountParams['$filter'] = params['$filter']);
+                params['$expand'] && (totalCountParams['$expand'] = params['$expand']);
+
+                const [res, totalCount] = await Promise.all([
+                  getOdataList(
+                    props.orderCode,
+                    dataParams,
+                    props.systemCode ? props.systemCode : undefined
+                  ),
+                  getOdataList(
+                    props.orderCode,
+                    totalCountParams,
+                    props.systemCode ? props.systemCode : undefined
+                  ),
+                ]);
+
+                initMergeData(res);
+
+                return {
+                  data: res,
+                  totalCount: totalCount[0]['Count'] || 0,
+                };
+              }
+            },
+            onLoaded() {
+              ctx.emit('onLoaded');
+            },
+          }),
+        });
+      };
+
       const getSorting = (allowSort, expand, relationKey) => {
         if (expand && relationKey) {
           return false;
@@ -344,11 +504,9 @@
         }
       };
 
-      const getTemplate = (template, expand, relationKey) => {
-        if (expand && relationKey) {
-          return 'foundation';
-        } else if (template) {
-          return template;
+      const getTemplate = (item) => {
+        if (item.cellTemplate) {
+          return item.cellTemplate;
         } else {
           return '';
         }
@@ -361,20 +519,6 @@
           return 'center';
         } else {
           return 'left';
-        }
-      };
-
-      const getFoundationData = (rowInfo) => {
-        // 获取基础数据列的key，并以_分割
-        const keyArr = rowInfo.column.name.split('_');
-        // 获取关联的实体名称
-        const expand = keyArr[0];
-        // 获取实体中指定的属性名称
-        const expandKey = keyArr[1];
-        if (rowInfo.data[expand]) {
-          return rowInfo.data[expand][expandKey];
-        } else {
-          return '—';
         }
       };
 
@@ -426,7 +570,7 @@
         clipValue.value = e.value;
       }
       function getGlobalEnumDataByCode(code: string | undefined) {
-        return code && appStore.getGlobalEnumDataByCode(code);
+        return code && appStore.getGlobalEnumDataByCode(code.toLowerCase());
       }
 
       function getSelectedRowsData() {
@@ -434,10 +578,26 @@
       }
 
       function onOptionChanged(e) {
+        if (e.fullName === 'paging.pageIndex') {
+          pageIndex.value = e.value;
+        }
         if (e.fullName === 'paging.pageSize') {
           // 切换页码也会有滚动条问题
-          hiddenVirtualRow();
+          tableScrollable.top = 0;
+          tableScrollable.left = 0;
+          scrollToTable();
+
+          pageSize.value = e.value;
+          // 切换页码时，切到第一页
+          pageIndex.value = 0;
           rowRenderingMode.value = e.value >= 1000 ? 'virtual' : 'standard';
+        }
+        if (
+          e.fullName.includes('sortOrder') ||
+          e.fullName === 'paging.pageIndex' ||
+          e.fullName === 'paging.pageSize'
+        ) {
+          ctx.emit('onLoad');
         }
         ctx.emit('optionChanged', e);
       }
@@ -446,20 +606,39 @@
         ctx.emit('cellClick', e);
       }
 
+      // 数据发生错误时，把loading取消
+      function onDataErrorOccurred() {
+        ctx.emit('onLoaded');
+      }
+
+      // 合并单元格
+      function onCellPrepared(e) {
+        if (
+          e.rowIndex >= 0 &&
+          mergeData.cols.length &&
+          mergeData.rows.length &&
+          mergeData.cols.includes(e.column.dataField) &&
+          mergeData.rows.includes(e.rowIndex)
+        ) {
+          e.cellElement.innerHTML = '—';
+        }
+      }
+
       return {
         dataGrid,
         options,
         tableData,
         tableColumns,
+        odataParams,
         prefixCls,
         pageIndex,
         pageSizes,
+        summaryList,
         onSelectionChanged,
         handleJump,
         getGlobalEnumDataByCode,
         search,
         getSelectedRowsData,
-        getFoundationData,
         getSorting,
         getTemplate,
         getAlignment,
@@ -467,11 +646,16 @@
         handleCustomizeText,
         getRowData,
         clipValue,
-        contentMenuTitle,
         rowRenderingMode,
         onOptionChanged,
         getTableDataSourceOption,
         onCellClick,
+        onDataErrorOccurred,
+        scrollToTable,
+        resetTableScrollable,
+        onCellPrepared,
+        remoteOperationValue,
+        SearchPermission,
       };
     },
   });
@@ -479,6 +663,10 @@
 
 <style lang="less">
   @prefix-cls: ~'@{namespace}-ods-table';
+
+  .is-not-virtual-row {
+    display: none;
+  }
 
   .@{prefix-cls} {
     position: relative;
@@ -493,7 +681,7 @@
     .dx-header-row
       > td
       > .dx-datagrid-text-content:not(.dx-sort-indicator):not(.dx-header-filter-indicator) {
-      max-width: 102%;
+      max-width: 110%;
     }
     // 给表头单元格加上左右边框
     .dx-datagrid .dx-datagrid-headers .dx-header-filter,
@@ -535,6 +723,12 @@
     .dx-datagrid-table .dx-freespace-row > td {
       // 去掉空余空间的边框，当指定表格高度时，会出现这个占满空余空间
       border: none !important;
+    }
+
+    .dx-datagrid-total-footer > .dx-datagrid-content {
+      padding-top: 0;
+      padding-bottom: 0;
+      background: #f5f5f5;
     }
 
     // 分页器样式

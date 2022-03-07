@@ -1,5 +1,5 @@
 <template>
-  <div class="export-wrap">
+  <div v-loading="tableLoading" class="export-wrap">
     <div class="btn-box">
       <DxButton :width="76" text="查询" type="default" @click="onSearch" />
     </div>
@@ -15,9 +15,12 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, onActivated, onBeforeUnmount, onDeactivated, ref } from 'vue';
+  import { defineComponent, onActivated, ref } from 'vue';
   import { ExportApi } from '/@/api/export';
   import DxButton from 'devextreme-vue/button';
+  import websocketService from '/@/utils/websocket/index';
+  import { useRoute } from 'vue-router';
+  import { useThrottleFn } from '@vueuse/core';
 
   export default defineComponent({
     name: 'Export',
@@ -69,20 +72,31 @@
         },
       ];
 
-      let intervalId: any = null;
       let pageIndex = 1;
       let pageSize = 50;
+      let activatedRefresh = false;
       const dataSource = ref();
+      const tableLoading = ref(true);
+      const route = useRoute();
+      const throttleSearch = useThrottleFn(onSearch, 5000);
 
       function onSearch() {
+        tableLoading.value = true;
+        pageIndex = 1;
         ExportApi.exprotList({
-          Application: ['OrderServerApi', 'ExpressesApi', 'BmsApi'],
+          applications: ['OdsApi', 'ExpressesApi', 'PolicyManage'],
           pageIndex,
           pageSize,
-        }).then((res) => {
-          dataSource.value = res.records;
-        });
+        })
+          .then((res) => {
+            dataSource.value = res.records;
+            tableLoading.value = false;
+          })
+          .catch(() => {
+            tableLoading.value = false;
+          });
       }
+
       function onOptionChanged(e) {
         const { fullName, value } = e;
         if (fullName === 'paging.pageSize') {
@@ -105,38 +119,32 @@
           }
         }
       }
-      function createInterval() {
-        if (intervalId !== null) {
-          clearInterval(intervalId);
-          intervalId = null;
-        }
-        intervalId = setInterval(onSearch, 5000);
-      }
-      function removeInterval() {
-        if (intervalId !== null) {
-          clearInterval(intervalId);
-          intervalId = null;
-        }
+
+      function handleExporting() {
+        websocketService.receiveMessages({
+          success(res) {
+            if (res && (res.event === 'Exporting' || res.event === 'ExportStatusUpdate')) {
+              if (route.name === 'ExportList') {
+                throttleSearch();
+              } else {
+                !activatedRefresh && (activatedRefresh = true);
+              }
+            }
+          },
+        });
       }
 
       onSearch();
-      createInterval();
+      handleExporting();
 
       onActivated(() => {
-        createInterval();
-      });
-
-      onDeactivated(() => {
-        removeInterval();
-      });
-
-      onBeforeUnmount(() => {
-        removeInterval();
+        activatedRefresh && onSearch();
       });
 
       return {
         dataSource,
         columns,
+        tableLoading,
         onSearch,
         onOptionChanged,
         onCellClick,

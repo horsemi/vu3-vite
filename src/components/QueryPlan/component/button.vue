@@ -2,12 +2,18 @@
   <div :class="prefixCls">
     <DxButton :width="76" text="查询" type="default" @click="onSearch" />
     <DxButton :width="76" text="重置" @click="onReset" />
-    <DxButton :width="100" text="查询方案" @click="onQueryPlan" />
+    <DxButton :width="100" text="过滤方案" @click="onQueryPlan" />
   </div>
 </template>
 
 <script lang="ts">
-  import { defineComponent } from 'vue';
+  import type { ISchemeData } from '../types';
+  import type { ISchemeItem } from '../../QueryPopup/content/types';
+  import type { Ref } from 'vue';
+
+  import { defineComponent, inject } from 'vue';
+
+  import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
@@ -17,19 +23,27 @@
     components: {
       DxButton,
     },
-    emits: ['on-search', 'on-queryPlan', 'on-reset'],
+    emits: ['on-queryPlan'],
     setup(props, ctx) {
+      const schemeData = inject('schemeData') as Ref<ISchemeData>;
+      const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
+      const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
+
       const { prefixCls } = useDesign('query-btn');
 
-      const onSearch = () => {
-        ctx.emit('on-search');
-      };
-      const onReset = () => {
-        ctx.emit('on-reset');
-      };
-      const onQueryPlan = () => {
+      function onSearch() {
+        onChangeScheme(schemeData.value.scheme[schemeData.value.checkedIndex]);
+      }
+      function onReset() {
+        if (schemeData.value.checkedIndex < schemeDataTemp.value.scheme.length) {
+          const popupListTemp = schemeDataTemp.value.scheme[schemeData.value.checkedIndex];
+          schemeData.value.scheme[schemeData.value.checkedIndex] = cloneDeep(popupListTemp);
+          onSearch();
+        }
+      }
+      function onQueryPlan() {
         ctx.emit('on-queryPlan');
-      };
+      }
 
       return {
         prefixCls,

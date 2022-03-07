@@ -1,20 +1,23 @@
-import type { IColumnItem, IFieldType, IKeyType } from './types';
+import type { IColumnItem, IFieldType } from './types';
 import type { IDetailItem } from '/@/utils/bill/types';
 
 import { getList } from '/@/api/ods/common';
 
 // columns的dataType 接受的类型有 'string' | 'number' | 'date' | 'boolean' | 'object' | 'datetime'
 
-export const getColumnList = async (
-  code: string,
-  customColumns: IColumnItem[],
-  systemCode = 'ods'
-): Promise<{ columnList: IColumnItem[]; key: string[]; keyType: IKeyType[] } | undefined> => {
+export const getColumnList = async ({
+  code,
+  customColumns,
+  systemCode = 'ods',
+}: {
+  code: string;
+  customColumns: IColumnItem[];
+  systemCode?: string;
+}): Promise<{ columnList: IColumnItem[]; key: string } | undefined> => {
   try {
     const res = await getList(code, systemCode);
-    const fieldTypes = res.store.odata.fieldTypes as IFieldType[];
-    const key = res.store.odata.key as string[];
-    const keyType = res.store.odata.keyType as IKeyType[];
+    const fieldTypes = (res.store.odata.fieldTypes as IFieldType[]) || [];
+    const key = (res.store.odata.key[0] as string) || '';
     const columnList: IColumnItem[] = [];
     customColumns.forEach((column) => {
       const fieldType = fieldTypes.find(
@@ -31,7 +34,6 @@ export const getColumnList = async (
     return {
       columnList,
       key,
-      keyType,
     };
   } catch (err) {
     Promise.reject(err);

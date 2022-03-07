@@ -1,6 +1,21 @@
-import type { IColumnItem } from './types';
+import type { IColumnItem, IRelationShipItem } from '../types';
 
-import { getColumnList } from './common';
+import { getColumnList } from '../common';
+
+export const relationShips: IRelationShipItem[] = [
+  {
+    key: '',
+    entityCode: 'shipping-orders',
+    caption: '基本',
+    isMainEntity: true,
+  },
+  {
+    key: 'Items',
+    entityCode: 'shipping-order-items',
+    caption: '明细',
+    isMainEntity: false,
+  },
+];
 
 export const customColumns: IColumnItem[] = [
   {
@@ -85,6 +100,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalVolume',
     caption: '总体积数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'MarkStatus',
@@ -132,6 +148,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalPackage',
     caption: '总包件数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'Group',
@@ -140,6 +157,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalOrderCount',
     caption: '订单总数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'CustomerSalesman',
@@ -156,6 +174,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'DetailRowsCount',
     caption: '明细行数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'IsGatheringOrder',
@@ -536,5 +555,7 @@ export const customColumns: IColumnItem[] = [
 ];
 
 export const getColumns = async () => {
-  return await getColumnList('shipping-orders', customColumns);
+  return await getColumnList({ code: 'shipping-orders', customColumns });
 };
+
+export default getColumns;

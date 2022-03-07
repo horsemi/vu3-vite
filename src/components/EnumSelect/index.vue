@@ -50,7 +50,7 @@
       const { prefixCls } = useDesign('enum-select');
       const options = ref<{ key: string; value: string; description: string }[]>([]);
       const appStore = useAppStore();
-      options.value = appStore.getGlobalEnumDataByCode(props.expand);
+      options.value = appStore.getGlobalEnumDataByCode(props.expand.toLowerCase());
       return {
         prefixCls,
         options,

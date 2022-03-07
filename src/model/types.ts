@@ -1,4 +1,18 @@
+export type SummaryType = 'sum' | 'min' | 'max' | 'avg' | 'count';
+
 type alignmentType = 'center' | 'left' | 'right';
+
+export interface IColumnItemBase {
+  /**
+   * @description 列的字段 （如果是基础数据，这个key要和后端返回的expand字段一致，用于和后端字段匹配）
+   */
+  key: string;
+
+  /**
+   * @description 所属实体
+   */
+  entityKey?: string;
+}
 
 interface IFoundationItem {
   /**
@@ -12,14 +26,9 @@ interface IFoundationItem {
   caption: string;
 }
 
-export interface IColumnItem {
+export interface IColumnItem extends IColumnItemBase {
   /**
-   * @description 列的字段 （如果是基础数据，这个key要和后端返回的expand字段一致，用于和后端字段匹配）
-   */
-  key: string;
-
-  /**
-   * @description 列的标题
+   * @description 标题
    */
   caption: string;
 
@@ -37,6 +46,16 @@ export interface IColumnItem {
    * @description 字段类型
    */
   type?: string;
+
+  /**
+   * @description 自定义表头样式class
+   */
+  cssClass?: string;
+
+  /**
+   * @description 自定义文本
+   */
+  customizeText?: (cellInfo: any) => string;
 
   /**
    * @description 关联字段
@@ -74,6 +93,11 @@ export interface IColumnItem {
   allowSort?: boolean;
 
   /**
+   * @description 允许哪些类型的汇总
+   */
+  summaryList?: SummaryType[];
+
+  /**
    * @description 过滤类型 (基础数据必要的字段，用于指定请求哪个接口)
    */
   datatypekeies?: string;
@@ -89,14 +113,27 @@ export interface IColumnItem {
   filter?: Array<Record<string, unknown>>;
 }
 
+export interface IRelationShipItem {
+  /**
+   * @description 关联标识
+   */
+  key: string;
+  /**
+   * @description 实体编码
+   */
+  entityCode: string;
+  /**
+   * @description 实体名称
+   */
+  caption: string;
+  /**
+   * @description 是否为主要实体(是为不可编辑)
+   */
+  isMainEntity: boolean;
+}
+
 export interface IFieldType {
   key: string;
   type: string;
   expand: string;
-}
-
-export interface IKeyType {
-  caption?: string;
-  key: string;
-  type: string;
 }

@@ -1,6 +1,6 @@
 <template>
   <div class="detail">
-    <div :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
+    <div v-loading="formLoading" :class="['tab-panel', isFixHeight ? 'fixHeight' : '']">
       <div class="btn-box">
         <DxDropDownButton
           :element-attr="dropDownButtonAttributes"
@@ -8,6 +8,7 @@
           :split-button="true"
           :use-select-mode="false"
           text="提交"
+          :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceSumit)"
           item-template="item"
           display-expr="name"
           key-expr="key"
@@ -20,6 +21,7 @@
           :split-button="true"
           :use-select-mode="false"
           text="审核"
+          :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceApply)"
           display-expr="name"
           key-expr="key"
           @button-click="onApplyClickThrottleFn"
@@ -30,12 +32,17 @@
           :split-button="true"
           :use-select-mode="false"
           text="发送"
+          :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdvicePush)"
           display-expr="name"
           key-expr="key"
           @button-click="onSendClickThrottleFn"
           @item-click="onItemButtonClickThrottleFn"
         />
-        <DxButton text="刷新" @click="getDataThrottleFn" />
+        <DxButton
+          :disabled="!permissionStore.hasPermission(shippingAdviceType.shippingAdviceQueryItems)"
+          text="刷新"
+          @click="getDataThrottleFn"
+        />
       </div>
       <DxTabPanel
         v-model:selected-index="selectedIndex"
@@ -96,52 +103,71 @@
         :loop="true"
         :animation-enabled="true"
         :focus-state-enabled="false"
+        @titleClick="onTableTitleClick"
       >
+        <template #item="{ data }">
+          <div>
+            <div v-if="data.key === 'definite'" v-loading="queryFormLoading" class="search-box">
+              <QueryForm class="query-form" :show-save-fast="false" />
+              <div class="search-btn">
+                <DxButton text="查询" type="default" @click="onSearch" />
+                <DxButton text="重置" @click="onReset" />
+              </div>
+            </div>
+            <div class="tab" :style="data.key === 'definite' ? 'padding-top: 0' : ''">
+              <OdsTable
+                ref="dataGrid"
+                v-loading="data.key === 'definite' ? definiteLoading : recordLoading"
+                :height="tableHeight"
+                :order-code="
+                  data.key === 'definite' ? 'shipping-advice-items' : 'operation-records'
+                "
+                :query-list-permission="shippingAdviceType.shippingAdviceQueryItems"
+                :table-options="data.key === 'definite' ? definiteOptions : recordOptions"
+                :filter-scheme="data.key === 'definite' ? definiteScheme : recordScheme"
+                :all-columns="data.key === 'definite' ? definiteAllColumns : recordAllColumns"
+                :table-key="data.key === 'definite' ? definiteTableKey : recordTableKey"
+                @onLoad="
+                  data.key === 'definite' ? (definiteLoading = true) : (recordLoading = true)
+                "
+                @onLoaded="
+                  data.key === 'definite' ? (definiteLoading = false) : (recordLoading = false)
+                "
+              >
+              </OdsTable>
+            </div>
+          </div>
+        </template>
       </DxTabPanel>
-      <div class="tab">
-        <OdsTable
-          :height="tableHeight"
-          :table-options="tableIndex === 0 ? definiteOptions : recordOptions"
-          :filter-scheme="tableIndex === 0 ? definiteScheme : recordScheme"
-          :all-columns="tableIndex === 0 ? definiteAllColumns : recordAllColumns"
-          :table-key="['Id']"
-          :table-key-type="[
-            {
-              key: 'Id',
-              type: 'string',
-            },
-          ]"
-        >
-        </OdsTable>
-      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
   import type { ITableOptions } from '/@/components/Table/types';
-  import type { IDetailItem } from '/@/utils/bill/types';
-  import type { IColumnItem } from '/@/model/types';
-  import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
+  import type { IRequirementItem } from '/@/components/QueryPopup/content/types';
 
-  import { defineComponent, ref, watch, reactive, nextTick } from 'vue';
+  import { defineComponent, ref, watch, nextTick, provide, onActivated, onDeactivated } from 'vue';
   import { useRoute } from 'vue-router';
   import { useThrottleFn } from '@vueuse/core';
 
-  import { getColumns } from '/@/model/shipping-advices';
-  import { getRecordColumns } from '/@/model/operation-record';
-  import { getDefiniteColumns } from '/@/model/shipping-advice-items';
+  import { usePermissionStore } from '/@/store/modules/permission';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
-  import { getDetailData, getDefiniteData, getRecordData } from './index';
   import { getOdsListUrlByCode } from '/@/api/ods/common';
   import { DEFAULT_THROTTLE_TIME } from '/@/settings/encryptionSetting';
-  import { isFoundationType } from '/@/model/common';
-
+  import { shippingAdviceType } from '/@/enums/actionPermission/shipping-advice';
   import DxTabPanel from 'devextreme-vue/tab-panel';
   import DxDropDownButton from 'devextreme-vue/drop-down-button';
   import DxButton from 'devextreme-vue/button';
 
   import DetailForm from '/@/components/DetailForm/index.vue';
+  import QueryForm from '/@/components/QueryPlan/component/form.vue';
+
+  import { useDetailForm } from './composables/useDetailForm';
+  import { useDefinite } from './composables/useDefinite';
+  import { useRecord } from './composables/useRecord';
+  import { useSearchDefinite } from './composables/useSearchDefinite';
+  import { useHeight } from './composables/useHeight';
 
   export default defineComponent({
     name: 'OdsShippingAdviceDetail',
@@ -150,8 +176,10 @@
       DxButton,
       DxDropDownButton,
       DetailForm,
+      QueryForm,
     },
     setup() {
+      const permissionStore = usePermissionStore();
       const multiViewItems = ref([
         {
           title: '基本信息',
@@ -194,24 +222,26 @@
           key: 'record',
         },
       ];
-
       const dropButtonItems = {
         apply: [
           {
             key: 'redraft',
             name: '反审',
+            disabled: !permissionStore.hasPermission(shippingAdviceType.shippingAdviceRedraft),
           },
         ],
         submit: [
           {
             key: 'revoke',
             name: '撤销',
+            disabled: !permissionStore.hasPermission(shippingAdviceType.shippingAdviceRevoke),
           },
         ],
         send: [
           {
             key: 'recall',
             name: '撤回',
+            disabled: !permissionStore.hasPermission(shippingAdviceType.shippingAdviceRecall),
           },
         ],
       };
@@ -220,37 +250,91 @@
       // const stepActiveIndex = ref(0);
 
       const opened = ref(false);
-      const selectedIndex = ref(0);
-      const tableIndex = ref(0);
-      const tableHeight = ref('');
-      const rowSpan = 8;
-      const formRowHeight = 29;
-      const formRowPaddingTop = 12;
-      const overHeight = 330;
-      const arrowIconHeight = 26;
-      const defaultDefiniteHeight = `calc(100vh - ${overHeight}px)`;
-      const defaultRecordHeight = `calc(100vh - ${overHeight}px)`;
-
       const route = useRoute();
       const Id = route.query.Id as string;
       const BillCode = route.query.BillCode as string;
-      const formData = ref();
-
-      const baseInformation = ref<IDetailItem[]>([]);
-      const receiverInformation = ref<IDetailItem[]>([]);
-      const logisticsInformation = ref<IDetailItem[]>([]);
-      const expressListInformation = ref<IDetailItem[]>([]);
-      const taskInformation = ref<IDetailItem[]>([]);
-      const otherInformation = ref<IDetailItem[]>([]);
-
-      const baseFormData = ref<Record<string, unknown>>({});
-      const receiverFormData = ref<Record<string, unknown>>({});
-      const logisticsFormData = ref<Record<string, unknown>>({});
-      const expressFormData = ref<Record<string, unknown>>({});
-      const taskFormData = ref<Record<string, unknown>>({});
-      const otherFormData = ref<Record<string, unknown>>({});
-
+      const selectedIndex = ref(0);
+      const tableIndex = ref(0);
       const isFixHeight = ref<boolean>(true);
+
+      const definiteRequirement: IRequirementItem[] = [
+        {
+          key: 'ShippingAdviceId',
+          operator: '=',
+          value: Id,
+          operatorList: [],
+          type: 'string',
+          relationKey: '',
+          datatypekeies: '',
+          logic: 'and',
+          entityKey: '',
+        },
+      ];
+
+      function detailFormCallBack() {
+        handleHeight(
+          multiViewItems.value[selectedIndex.value].rowCount,
+          tableIndex.value,
+          opened.value
+        );
+        nextTick(() => {
+          isFixHeight.value = false;
+        });
+      }
+
+      const {
+        formData,
+        formLoading,
+        baseFormData,
+        receiverFormData,
+        logisticsFormData,
+        expressFormData,
+        taskFormData,
+        otherFormData,
+        baseInformation,
+        receiverInformation,
+        logisticsInformation,
+        expressListInformation,
+        taskInformation,
+        otherInformation,
+        refreshDetailForm,
+      } = useDetailForm(Id, multiViewItems, detailFormCallBack);
+
+      const {
+        definiteTableKey,
+        definiteLoading,
+        queryFormLoading,
+        definiteScheme,
+        definiteAllColumns,
+        definiteCustomColumns,
+        refreshDefinite,
+      } = useDefinite(definiteRequirement);
+
+      const {
+        recordTableKey,
+        recordLoading,
+        recordScheme,
+        recordAllColumns,
+        refreshRecord,
+      } = useRecord(BillCode);
+      const { onSearch, onReset, schemeData } = useSearchDefinite(
+        definiteRequirement,
+        definiteCustomColumns,
+        definiteScheme,
+        definiteLoading
+      );
+      provide('allColumns', definiteAllColumns);
+      provide('schemeData', schemeData);
+      provide('onChangeScheme', onSearch);
+      provide('schemeDataTemp', schemeData);
+
+      const {
+        tableHeight,
+        defaultDefiniteHeight,
+        defaultRecordHeight,
+        handleHeight,
+        getColseHeight,
+      } = useHeight();
 
       const definiteOptions = ref<Partial<ITableOptions>>({
         height: defaultDefiniteHeight,
@@ -261,11 +345,7 @@
         },
         useScrolling: true,
       });
-      const definiteScheme = ref<ISchemeItem>();
-      const definiteAllColumns = ref<IColumnItem[]>([]);
-      let columnsData: any = reactive({});
-      let recordColumnsData: any = reactive({});
-      let definiteColumnsData: any = reactive({});
+
       const recordOptions = ref<Partial<ITableOptions>>({
         height: defaultRecordHeight,
         dataSourceOptions: {
@@ -275,75 +355,53 @@
         },
         useScrolling: true,
       });
-      const recordScheme = ref<ISchemeItem>();
-      const recordAllColumns = ref<IColumnItem[]>([]);
 
       const onRefresh = () => {
-        getData();
-        getDefinite();
-        getRecord();
+        refreshDetailForm(detailFormCallBack);
+        refreshDefinite();
+        refreshRecord();
       };
 
       const onSubmitClick = () => {
-        ShippingAdviceApi.onShippingAdviceSubmit([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingAdviceApi.onShippingAdviceSubmit([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
-
       const onApplyClick = () => {
-        ShippingAdviceApi.onShippingAdviceApply([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingAdviceApi.onShippingAdviceApply([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
-
       const onSendClick = () => {
-        ShippingAdviceApi.onShippingAdviceSend([formData.value.GatheringParentCode])
-          .then(() => {
-            onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+        ShippingAdviceApi.onShippingAdviceSend([formData.value.GatheringParentCode]).finally(() => {
+          onRefresh();
+        });
       };
-
       const onRecallClick = () => {
-        ShippingAdviceApi.onShippingAdviceRecall([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingAdviceApi.onShippingAdviceRecall([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
-
       const onRedraftClick = () => {
-        ShippingAdviceApi.onShippingAdviceRedraft([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingAdviceApi.onShippingAdviceRedraft([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
-
       const onRevokeClick = () => {
-        ShippingAdviceApi.onShippingAdviceRevoke([formData.value.GatheringParentCode])
-          .then(() => {
+        ShippingAdviceApi.onShippingAdviceRevoke([formData.value.GatheringParentCode]).finally(
+          () => {
             onRefresh();
-          })
-          .catch(() => {
-            onRefresh();
-          });
+          }
+        );
       };
-
       const onItemButtonClick = (e) => {
         switch (e.itemData.key) {
           case 'redraft': {
@@ -360,52 +418,20 @@
           }
         }
       };
-
+      const onTableTitleClick = () => {
+        handleHeight(
+          multiViewItems.value[selectedIndex.value].rowCount,
+          tableIndex.value,
+          opened.value
+        );
+      };
       const onChangeOpened = () => {
         opened.value = !opened.value;
-        handleHeight(selectedIndex.value);
-      };
-
-      const handleHeight = (sIndex: number) => {
-        // 表单行数
-        const rowCount = multiViewItems.value[sIndex].rowCount;
-        // 展开按钮高度，超出3行才会出现展开按钮
-        const iconHeight = rowCount > 3 ? arrowIconHeight : 0;
-        // 表格高度
-        let formHeight = 0;
-        if (opened.value) {
-          // 表格高度
-          formHeight = formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1);
-        } else {
-          formHeight = formRowHeight * 3 + formRowPaddingTop * 2;
-        }
-        // 总裁剪高度
-        const cutHeight = formHeight + iconHeight + overHeight;
-        tableHeight.value = `calc(100vh - ${cutHeight}px)`;
-      };
-
-      const getColseHeight = (rowCount) => {
-        if (rowCount >= 3) {
-          return `${formRowHeight * 3 + formRowPaddingTop * 2}px`;
-        } else {
-          return `${formRowHeight * rowCount + formRowPaddingTop * (rowCount - 1)}px`;
-        }
-      };
-
-      const getRowCount = (data: IDetailItem[]) => {
-        let len = 0;
-        data.forEach((item) => {
-          if (!item.hide) {
-            if (item.colSpan) {
-              len += item.colSpan;
-            } else if (item.editorType === 'dxSwitch') {
-              len += 1;
-            } else {
-              len += 2;
-            }
-          }
-        });
-        return Math.ceil(len / rowSpan);
+        handleHeight(
+          multiViewItems.value[selectedIndex.value].rowCount,
+          tableIndex.value,
+          opened.value
+        );
       };
 
       // const handleStepActiveIndex = () => {
@@ -418,184 +444,43 @@
       //   }
       // };
 
-      const getDetail = (columnsData) => {
-        getDetailData(['Id', '=', Id], columnsData).then((res) => {
-          if (res) {
-            const {
-              baseList,
-              receiverList,
-              logisticsList,
-              expressList,
-              taskList,
-              otherList,
-              data,
-            } = res;
-
-            // 页面中业务操作需要使用的字段
-            formData.value = {
-              GatheringParentCode: (data as Record<string, unknown>).GatheringParentCode,
-            };
-
-            /** 实验性功能 */
-            baseList.forEach((item) => {
-              if (isFoundationType(item)) {
-                baseFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
-              }
-              baseFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            receiverList.forEach((item) => {
-              if (isFoundationType(item)) {
-                receiverFormData.value[item.expand!] = (data as Record<string, unknown>)[
-                  item.expand!
-                ];
-              }
-              receiverFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            logisticsList.forEach((item) => {
-              if (isFoundationType(item)) {
-                logisticsFormData.value[item.expand!] = (data as Record<string, unknown>)[
-                  item.expand!
-                ];
-              }
-              logisticsFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            expressList.forEach((item) => {
-              if (isFoundationType(item)) {
-                expressFormData.value[item.expand!] = (data as Record<string, unknown>)[
-                  item.expand!
-                ];
-              }
-              expressFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            taskList.forEach((item) => {
-              if (isFoundationType(item)) {
-                taskFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
-              }
-              taskFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            otherList.forEach((item) => {
-              if (isFoundationType(item)) {
-                otherFormData.value[item.expand!] = (data as Record<string, unknown>)[item.expand!];
-              }
-              otherFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-            });
-
-            baseInformation.value = baseList;
-            receiverInformation.value = receiverList;
-            logisticsInformation.value = logisticsList;
-            expressListInformation.value = expressList;
-            taskInformation.value = taskList;
-            otherInformation.value = otherList;
-            [
-              baseInformation.value,
-              receiverInformation.value,
-              logisticsInformation.value,
-              expressListInformation.value,
-              taskInformation.value,
-              otherInformation.value,
-            ].forEach((data, index) => {
-              multiViewItems.value[index].rowCount = getRowCount(data);
-            });
-            handleHeight(selectedIndex.value);
-            // handleStepActiveIndex();
-            nextTick(() => {
-              isFixHeight.value = false;
-            });
-          }
-        });
-      };
-
-      const getData = async () => {
-        if (JSON.stringify(columnsData) === '{}') {
-          columnsData = await getColumns();
-        }
-        getDetail(columnsData);
-      };
-
-      const getDefinite = async () => {
-        if (JSON.stringify(definiteColumnsData) === '{}') {
-          definiteColumnsData = await getDefiniteColumns();
-        }
-        getDefiniteData(definiteColumnsData).then((res) => {
-          if (res) {
-            definiteAllColumns.value = res.columnList;
-            definiteScheme.value = {
-              id: '',
-              title: '',
-              requirement: [
-                {
-                  requirement: 'ShippingAdviceId',
-                  operator: '=',
-                  value: Id,
-                  operatorList: [],
-                  type: 'string',
-                  relationKey: '',
-                  datatypekeies: '',
-                },
-              ],
-              orderBy: [],
-              columns: res.definite,
-            };
-          }
-        });
-      };
-
-      const getRecord = async () => {
-        if (JSON.stringify(recordColumnsData) === '{}') {
-          recordColumnsData = await getRecordColumns();
-        }
-        getRecordData(recordColumnsData).then((res) => {
-          if (res) {
-            recordAllColumns.value = res.columnList;
-            recordScheme.value = {
-              id: '',
-              title: '',
-              requirement: [
-                {
-                  requirement: 'BillCode',
-                  operator: '=',
-                  value: BillCode,
-                  operatorList: [],
-                  type: 'string',
-                  relationKey: '',
-                  datatypekeies: '',
-                },
-              ],
-              orderBy: [],
-              columns: res.record,
-            };
-          }
-        });
-      };
-
       // 所有操作设置为节流
-      const getDataThrottleFn = useThrottleFn(onRefresh, DEFAULT_THROTTLE_TIME);
+      const getDataThrottleFn = useThrottleFn(onRefresh, DEFAULT_THROTTLE_TIME, false);
 
-      const onSubmitClickThrottleFn = useThrottleFn(onSubmitClick, DEFAULT_THROTTLE_TIME);
+      const onSubmitClickThrottleFn = useThrottleFn(onSubmitClick, DEFAULT_THROTTLE_TIME, false);
 
-      const onApplyClickThrottleFn = useThrottleFn(onApplyClick, DEFAULT_THROTTLE_TIME);
+      const onApplyClickThrottleFn = useThrottleFn(onApplyClick, DEFAULT_THROTTLE_TIME, false);
 
-      const onSendClickThrottleFn = useThrottleFn(onSendClick, DEFAULT_THROTTLE_TIME);
+      const onSendClickThrottleFn = useThrottleFn(onSendClick, DEFAULT_THROTTLE_TIME, false);
 
-      const onItemButtonClickThrottleFn = useThrottleFn(onItemButtonClick, DEFAULT_THROTTLE_TIME);
+      const onItemButtonClickThrottleFn = useThrottleFn(
+        onItemButtonClick,
+        DEFAULT_THROTTLE_TIME,
+        false
+      );
 
       watch(selectedIndex, (sIndex) => {
-        handleHeight(sIndex);
+        handleHeight(multiViewItems.value[sIndex].rowCount, tableIndex.value, opened.value);
       });
 
-      onRefresh();
+      const dataGrid = ref();
+
+      onActivated(() => {
+        dataGrid.value?.scrollToTable();
+      });
+      onDeactivated(() => {
+        dataGrid.value?.resetTableScrollable();
+      });
 
       return {
+        dataGrid,
         tableHeight,
         definiteOptions,
+        definiteTableKey,
         definiteScheme,
         definiteAllColumns,
         recordOptions,
+        recordTableKey,
         recordScheme,
         recordAllColumns,
 
@@ -613,12 +498,18 @@
         taskFormData,
         otherFormData,
 
+        formLoading,
+        definiteLoading,
+        queryFormLoading,
+        recordLoading,
+
         selectedIndex,
         tableIndex,
         opened,
         multiViewItems,
         multiEntityItems,
         dropButtonItems,
+
         // formData,
         // stepData,
         // stepActiveIndex,
@@ -627,13 +518,17 @@
         onApplyClickThrottleFn,
         onSendClickThrottleFn,
         onItemButtonClickThrottleFn,
-        onRefresh,
         getDataThrottleFn,
         onChangeOpened,
         getColseHeight,
+        onSearch,
+        onReset,
+        onTableTitleClick,
         dropDownButtonAttributes: {
           class: 'first-dropButton',
         },
+        shippingAdviceType,
+        permissionStore,
       };
     },
   });
@@ -680,6 +575,23 @@
         flex: 1;
         margin-top: 16px;
       }
+      .search-box {
+        display: flex;
+
+        .query-form {
+          .vue3-vite-query-form__box {
+            padding-left: 16px;
+          }
+        }
+
+        .search-btn {
+          display: flex;
+          align-items: center;
+          > * {
+            margin-left: 8px;
+          }
+        }
+      }
       .tab {
         padding: 12px 16px;
         background-color: #fff;
@@ -713,7 +625,8 @@
       padding-top: 12px;
     }
 
-    .dx-texteditor-input {
+    .dx-texteditor-input,
+    .dx-placeholder::before {
       min-height: 0;
       padding: 4px 8px 4px;
     }

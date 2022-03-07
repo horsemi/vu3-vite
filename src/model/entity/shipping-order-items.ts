@@ -1,11 +1,11 @@
-import type { IColumnItem } from './types';
+import type { IColumnItem } from '../types';
 
-import { getColumnList } from './common';
+import { getColumnList } from '../common';
 
 export const customColumns: IColumnItem[] = [
   {
-    key: 'ShippingAdviceId',
-    caption: 'ShippingAdviceId',
+    key: 'ShippingOrderId',
+    caption: 'ShippingOrderId',
     hide: true,
   },
   {
@@ -14,7 +14,7 @@ export const customColumns: IColumnItem[] = [
   },
   {
     key: 'Material',
-    caption: '物料编码',
+    caption: '物料',
     relationKey: 'MaterialCode',
     foundationList: [
       {
@@ -26,26 +26,12 @@ export const customColumns: IColumnItem[] = [
         caption: '物料分组',
       },
     ],
-    datatypekeies: 'material',
+    datatypekeies: 'materials',
   },
   // {
   //   key: '',
   //   caption: '规格描述',
   // },
-  // {
-  //   key: '',
-  //   caption: '小商品条码',
-  // },
-  {
-    key: 'DefaultAreaCode',
-    caption: '默认区域',
-    foundationList: [
-      {
-        key: 'DefaultArea_Name',
-        caption: '默认区域',
-      },
-    ],
-  },
   {
     key: 'UnitCode',
     caption: '单位编码',
@@ -60,11 +46,12 @@ export const customColumns: IColumnItem[] = [
         caption: '单位',
       },
     ],
-    datatypekeies: 'unit',
+    datatypekeies: 'units',
   },
   {
     key: 'Qty',
     caption: '数量',
+    summaryList: ['sum', 'max', 'min'],
   },
   // {
   //   key: 'LotCode',
@@ -85,7 +72,7 @@ export const customColumns: IColumnItem[] = [
     foundationList: [
       {
         key: 'DeliveryWarehouse_Name',
-        caption: '仓库',
+        caption: '仓库名称',
       },
       {
         key: 'DeliveryWarehouse_GroupName',
@@ -97,31 +84,31 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'PackageQuantity',
     caption: '包件数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'PackageCount',
     caption: '总包件数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'VolumeQuantity',
     caption: '体积',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'VolumeCount',
     caption: '总体积',
+    summaryList: ['sum', 'max', 'min'],
   },
   // {
   //   key: 'CustomerMaterialName',
   //   caption: '客户物料名称',
   // },
   // {
-  //   key: 'IsMarble',
-  //   caption: '大理石',
+  //   key: 'ParentMaterialCode',
+  //   caption: '父项物料编码',
   // },
-  {
-    key: 'IsGaAllows',
-    caption: '打木架',
-  },
   {
     key: 'ActualSalePrice',
     caption: '实际售价',
@@ -138,30 +125,6 @@ export const customColumns: IColumnItem[] = [
     key: 'TaoBaoSubCode',
     caption: '平台子单号',
   },
-  // {
-  //   key: 'IsVerification',
-  //   caption: '是否核销',
-  // },
-  {
-    key: 'Channel',
-    caption: '渠道',
-  },
-  // {
-  //   key: 'CategoryLCode',
-  //   caption: '产品大类',
-  // },
-  // {
-  //   key: 'CategoryMCode',
-  //   caption: '产品中类',
-  // },
-  // {
-  //   key: 'CategorySCode',
-  //   caption: '产品小类',
-  // },
-  // {
-  //   key: 'CategoryXSCode',
-  //   caption: '产品细类',
-  // },
   {
     key: 'Shop',
     caption: '店铺',
@@ -194,23 +157,6 @@ export const customColumns: IColumnItem[] = [
     key: 'Texture',
     caption: '材质',
   },
-  {
-    key: 'Area',
-    caption: '区域',
-    relationKey: 'AreaCode',
-    foundationList: [
-      {
-        key: 'Area_Name',
-        caption: '区域',
-      },
-    ],
-    datatypekeies: 'area',
-  },
-  {
-    key: 'AreaCode',
-    caption: '区域编码',
-    datatypekeies: 'area',
-  },
   // {
   //   key: 'SourceMaterialCode',
   //   caption: '来源商品编码',
@@ -226,5 +172,7 @@ export const customColumns: IColumnItem[] = [
 ];
 
 export const getDefiniteColumns = async () => {
-  return await getColumnList('shipping-advice-items', customColumns);
+  return await getColumnList({ code: 'shipping-order-items', customColumns });
 };
+
+export default getDefiniteColumns;

@@ -1,5 +1,5 @@
 <template>
-  <div :class="`${prefixCls}`">
+  <div v-loading="loading" :element-loading-svg="loadingSvg" :class="`${prefixCls}`">
     <DxDropDownBox
       v-model:value="dropDownValueComputed"
       v-model:opened="isGridBoxOpened"
@@ -18,12 +18,14 @@
     >
       <template #content>
         <DxDataGrid
+          ref="foundationSelectTable"
           v-model:selected-row-keys="gridValueComputed"
           :data-source="options"
           :hover-state-enabled="true"
           height="100%"
           :on-initialized="onInitialized"
           @row-click="onDataGridRowClick"
+          @contentReady="onContentReady"
         >
           <DxColumn caption="名称" data-field="name"> </DxColumn>
           <DxColumn caption="编码" data-field="code"> </DxColumn>
@@ -55,14 +57,14 @@
   import { FoundationApi } from '/@/api/app';
 
   import { useDesign } from '/@/hooks/web/useDesign';
-  import { isUnDef } from '/@/utils/is';
+  import { isNullOrUnDef } from '/@/utils/is';
 
   export default defineComponent({
     name: 'FoundationSelect',
     components: { DxDropDownBox, DxDataGrid, DxColumn, DxSelection, DxScrolling },
     props: {
       value: {
-        type: [String, Number, Boolean],
+        type: [String, Number, Boolean, Date] as PropType<string | number | boolean | Date>,
         default: '',
       },
       width: {
@@ -98,12 +100,19 @@
     setup(props, ctx) {
       const { prefixCls } = useDesign('foundation-select');
 
+      const loading = ref(false);
+      const loadingSvg = `
+          <circle class="path" cx="50" cy="50" r="10" fill="none"/>
+        `;
+
       const dropDownBox = ref();
       const dropDownOptions = {
         width: 270,
       };
 
       const dataGrid = ref();
+
+      const foundationSelectTable = ref();
 
       // 下拉框组件文本框绑定的文本
       const dropDownValue = ref('');
@@ -121,6 +130,7 @@
           if (val === null) {
             dataGrid.value.clearSelection();
             options.value = [];
+            ctx.emit('update:value', null);
           }
         },
       });
@@ -183,7 +193,7 @@
             getFoundationByCode(
               {
                 top: 10,
-                isall: props.filter && props.filter.length > 0 ? false : true,
+                isall: props.filter && props.filter.length > 0 ? true : false,
               },
               value
             );
@@ -195,25 +205,19 @@
 
       // 该方法是从两个watch中拆分出来
       function initFoundationList() {
-        if (props.foundationCode && isUnDef(props.defaultOptions)) {
-          getFoundationByCode(
-            {
-              top: 10,
-              isall: props.filter && props.filter.length > 0 ? false : true,
-            },
-            props.foundationCode
-          );
-        } else {
-          options.value = [];
-        }
+        if (
+          props.defaultOptions &&
+          Object.keys(props.defaultOptions).length &&
+          !isNullOrUnDef(props.defaultOptions[props.showProperty])
+        )
+          return;
 
         if (props.value) {
           // 若为下拉框点击或默认下拉列为空，则不执行
-          if (!unref(isDropDownBoxClick) && isUnDef(props.defaultOptions)) {
+          if (props.foundationCode && !unref(isDropDownBoxClick) && !props.selectDisabled) {
             getFoundationByCode(
               {
                 codes: [props.value as string],
-                names: [props.value as string],
               },
               props.foundationCode,
               true
@@ -222,6 +226,24 @@
           isDropDownBoxClick.value = false;
         } else {
           dropDownValueComputed.value = '';
+
+          if (
+            (props.foundationCode &&
+              isNullOrUnDef(props.defaultOptions) &&
+              !props.selectDisabled) ||
+            (props.foundationCode &&
+              isNullOrUnDef(props.defaultOptions[props.showProperty]) &&
+              !props.selectDisabled)
+          ) {
+            getFoundationByCode(
+              {
+                top: 10,
+              },
+              props.foundationCode
+            );
+          } else {
+            options.value = [];
+          }
         }
       }
 
@@ -238,13 +260,13 @@
         foundationCode: string,
         isSelectFirstRow = false
       ) {
+        loading.value = true;
         let filter = {};
         if (props.filter && props.filter.length > 0) {
           for (let item of props.filter) {
             filter = Object.assign(filter, item);
           }
         }
-
         dataGrid.value && dataGrid.value.beginCustomLoading();
         FoundationApi.getFoundationByCode(foundationCode as FoundationMap, {
           ...searchData,
@@ -261,7 +283,25 @@
           })
           .finally(() => {
             dataGrid.value && dataGrid.value.endCustomLoading();
+            loading.value = false;
           });
+      }
+
+      function handleIsNotEnabled() {
+        if (options.value && options.value.length) {
+          options.value.forEach((item, index) => {
+            if (item.isEnabled === false) {
+              const rowEl = foundationSelectTable.value.instance.getRowElement(index);
+              rowEl &&
+                rowEl.length === 1 &&
+                (rowEl[0].className += ' foundation-select-table-is-not-enabled');
+            }
+          });
+        }
+      }
+
+      function onContentReady() {
+        handleIsNotEnabled();
       }
 
       function onFocusIn() {
@@ -293,6 +333,7 @@
               names: [value],
               codes: [value],
               isPrecised: false,
+              allowDisabled: true,
             },
             props.foundationCode
           );
@@ -300,7 +341,7 @@
           getFoundationByCode(
             {
               top: 10,
-              isall: props.filter && props.filter.length > 0 ? false : true,
+              isall: true,
             },
             props.foundationCode
           );
@@ -339,7 +380,10 @@
 
       return {
         prefixCls,
+        loading,
+        loadingSvg,
         options,
+        foundationSelectTable,
         dropDownBox,
         isGridBoxOpened,
         dropDownValue,
@@ -353,6 +397,7 @@
         onDataGridRowClick,
         onFocusIn,
         onInput,
+        onContentReady,
       };
     },
   });
@@ -364,5 +409,12 @@
   .@{prefix-cls} {
     display: inline-block;
     width: 100%;
+  }
+</style>
+
+<style lang="less">
+  .foundation-select-table-is-not-enabled {
+    pointer-events: none;
+    background-color: @disabled-color;
   }
 </style>

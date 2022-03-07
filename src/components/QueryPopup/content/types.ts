@@ -1,6 +1,10 @@
-import type { IQueryItem } from '../../QueryPlan/types';
+import type { IColumnItemBase, SummaryType } from '/@/model/types';
+import type { IQueryItem } from '/@/components/QueryPlan/types';
+import type { IRelationShipItem } from '/@/model/types';
 
-type logicType = 'and' | 'or';
+type LogicType = 'and' | 'or';
+
+export type SummaryMode = 'page' | 'all';
 
 export interface IRequirementItem extends IQueryItem {
   /**
@@ -19,12 +23,7 @@ export interface IRequirementItem extends IQueryItem {
   logic?: string;
 }
 
-export interface IOrderByItem {
-  /**
-   * @description 字段
-   */
-  key: string;
-
+export interface IOrderByItem extends IColumnItemBase {
   /**
    * @description 标题
    */
@@ -36,12 +35,7 @@ export interface IOrderByItem {
   desc: boolean;
 }
 
-export interface ISchemeColumnsItem {
-  /**
-   * @description 字段
-   */
-  key: string;
-
+export interface ISchemeColumnsItem extends IColumnItemBase {
   /**
    * @description 标题
    */
@@ -61,6 +55,28 @@ export interface ISchemeColumnsItem {
    * @description 是否必要
    */
   mustKey?: boolean;
+}
+
+export interface ISummaryItem extends IColumnItemBase {
+  /**
+   * @description 标题
+   */
+  caption: string;
+
+  /**
+   * @description 汇总方式
+   */
+  mode: SummaryMode;
+
+  /**
+   * @description 汇总类型
+   */
+  type: SummaryType;
+
+  /**
+   * @description 汇总配置
+   */
+  options: { name: string; type: SummaryType }[];
 }
 
 export interface IFieldItem extends ISchemeColumnsItem {
@@ -117,6 +133,11 @@ export interface ISchemeItem {
   columns: ISchemeColumnsItem[];
 
   /**
+   * @description 汇总
+   */
+  summary: ISummaryItem[];
+
+  /**
    * @description 快速过滤
    */
   fast?: IQueryItem[];
@@ -125,6 +146,18 @@ export interface ISchemeItem {
    * @description 是否共享
    */
   isShare?: boolean;
+
+  /**
+   * @description 关联关系
+   */
+  relationShips: IRelationShip[];
+}
+
+export interface IRelationShip extends IRelationShipItem {
+  /**
+   * @description 值
+   */
+  value?: boolean;
 }
 
 export interface ISortOptions {
@@ -148,7 +181,7 @@ export interface ILogicOptions {
   /**
    * @description 值
    */
-  value: logicType;
+  value: LogicType;
 }
 
 export interface IMultiViewItem {

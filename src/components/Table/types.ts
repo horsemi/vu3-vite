@@ -1,4 +1,5 @@
-import type { IODataStore, ISortItem } from '/@/api/ods/types';
+import type { ISortItem } from '/@/api/ods/types';
+import type { SummaryType } from '/@/model/types';
 
 type allModeType = 'allPages' | 'page';
 
@@ -37,7 +38,7 @@ interface IDataSourceOptions {
   /**
    * @description oData配置
    */
-  oDataOptions: IODataStore;
+  oDataOptions: { url: string };
 
   /**
    * @description 是否分页
@@ -105,4 +106,24 @@ export interface ITableOptions {
    * @description 分页配置
    */
   page: IPage;
+}
+
+export interface ITableSummary {
+  columnName: string;
+  showSummaryFn: () => string;
+}
+
+export interface IPropsSummary {
+  columnName: string;
+  summaryType: SummaryType;
+}
+
+export interface IOdataParams {
+  $select: string;
+  $filter: string;
+  $orderby: string;
+  $expand: string;
+  $count: string;
+  $top: number;
+  $skip: string | number;
 }

@@ -1,7 +1,7 @@
 import type { EditorType, IDetailItem } from './types';
 import type { IColumnItem } from '/@/model/types';
 
-import { warningMessage } from '/@/hooks/web/useMessage';
+import { odsMessage } from '/@/components/Message';
 
 const getEditorType = (type) => {
   let editorType: EditorType | undefined = undefined;
@@ -22,7 +22,9 @@ export const getFormList = (columnList: IColumnItem[], list: IDetailItem[][]) =>
   list.forEach((el) => {
     const newEl: IDetailItem[] = [];
     el.forEach((item) => {
-      const col = columnList.find((col) => item.key === col.key);
+      const col = columnList.find(
+        (col) => item.key === col.key || (item.key === col.expand && col.relationKey)
+      );
       if (col) {
         newEl.push({
           ...item,
@@ -30,6 +32,7 @@ export const getFormList = (columnList: IColumnItem[], list: IDetailItem[][]) =>
           editorType: getEditorType(col.type),
           type: col.type,
           datatypekeies: col.datatypekeies,
+          relationKey: col.relationKey,
         });
       }
     });
@@ -48,7 +51,10 @@ export const isArrayEmpty = (array: any[], msg = '请选择操作项'): boolean 
   if (Array.isArray(array) && array.length > 0) {
     return true;
   } else {
-    warningMessage(msg);
+    odsMessage({
+      type: 'warning',
+      message: msg,
+    });
     return false;
   }
 };

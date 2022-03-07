@@ -12,11 +12,9 @@
         <DxItem
           v-if="!item.hide"
           :label="{ text: item.caption }"
-          :data-field="item.key"
           :editor-type="item.editorType"
           :validation-rules="item.validate"
           :disabled="item.disabled"
-          :editor-options="handleEditorOptions(item)"
           :col-span="item.colSpan ? item.colSpan : item.editorType === 'dxSwitch' ? 1 : 2"
           :template="
             item.template
@@ -27,11 +25,13 @@
               ? 'expand'
               : ''
           "
+          :data-field="getDataField(item)"
+          :editor-options="getEditorOptions(item)"
         />
       </template>
       <template #OdsSwitch="{ data }">
         <Switch
-          :style="{ opacity: !data.editorType.disabled ? 0.6 : 1, margin: '2.5px 0' }"
+          style="margin-bottom: 3px"
           :read-only="readOnly"
           :value="formData[data.dataField]"
           @update:value="onChangeData($event, data.dataField)"
@@ -51,12 +51,12 @@
         />
         <FoundationSelect
           v-else
-          :value="formData[data.dataField]"
           :select-disabled="readOnly"
+          :value="formData[data.dataField]"
           :show-property="data.editorOptions.showProperty"
           :key-property="data.editorOptions.keyProperty"
           :foundation-code="data.editorOptions.datatypekeies"
-          :default-options="formData[data.editorOptions.expand]"
+          :default-options="getDefaultOptions(data)"
           @update:value="onChangeData($event, data.dataField)"
         />
       </template>
@@ -126,9 +126,12 @@
     setup(props) {
       const { prefixCls } = useDesign('detail-form');
 
-      let data = {};
+      function onChangeData($event, key) {
+        const temp = props.formData;
+        temp[key] = $event;
+      }
 
-      const handleEditorOptions = (item: IDetailItem) => {
+      function getEditorOptions(item: IDetailItem) {
         let editorOptions;
         if (item.editorType === 'dxNumberBox') {
           editorOptions = {
@@ -144,18 +147,34 @@
           editorOptions = { ...item };
         }
         return editorOptions;
-      };
+      }
 
-      function onChangeData($event, key) {
-        data = props.formData;
-        data[key] = $event;
+      function getDataField(item) {
+        const { key, expand, keyProperty } = item;
+        return expand && key === expand ? `${key}_${keyProperty ?? 'Code'}` : key;
+      }
+
+      function getDefaultOptions(data) {
+        const defaultOptions = {};
+        const {
+          editorOptions: { key, expand, keyProperty, showProperty },
+        } = data;
+        if (expand && key === expand) {
+          const _keyProperty = keyProperty ?? 'Code';
+          const _showProperty = showProperty ?? 'Name';
+          defaultOptions[_keyProperty] = props.formData[`${key}_${_keyProperty}`];
+          defaultOptions[_showProperty] = props.formData[`${key}_${_showProperty}`];
+        }
+        return defaultOptions;
       }
 
       return {
         prefixCls,
-        handleEditorOptions,
         camelCaseToHyphenCase,
         onChangeData,
+        getEditorOptions,
+        getDataField,
+        getDefaultOptions,
       };
     },
   });

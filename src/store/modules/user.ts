@@ -7,16 +7,20 @@ import { store } from '/@/store';
 
 import { usePermissionStore } from '/@/store/modules/permission';
 import { useAppStore } from '/@/store/modules/app';
-import { TOKEN_KEY, USER_INFO_KEY } from '/@/enums/cacheEnum';
+import { TOKEN_KEY, USER_INFO_KEY, SHOW_NOTICE_BADGE_KEY } from '/@/enums/cacheEnum';
 import { getAuthCache, setAuthCache } from '/@/utils/auth';
 
 import { UserApi, IUserData } from '/@/api/user';
 import { setCookie } from '/@/utils/cache/cookies';
 import { getToken } from '/@/utils/auth';
+import { Persistent } from '/@/utils/cache/persistent';
+import websocketService from '/@/utils/websocket/index';
+import odsMessage from '/@/components/Message';
 
 interface UserState {
   token?: string;
   userInfo: Nullable<UserInfo>;
+  showNoticeBadge: boolean;
 }
 interface MenuType {
   code: string;
@@ -29,6 +33,7 @@ export const useUserStore = defineStore({
   state: (): UserState => ({
     token: undefined,
     userInfo: null,
+    showNoticeBadge: !!Persistent.getLocal(SHOW_NOTICE_BADGE_KEY),
   }),
   getters: {
     getToken(): string {
@@ -36,6 +41,9 @@ export const useUserStore = defineStore({
     },
     getUserInfo(): UserInfo {
       return this.userInfo || getAuthCache<UserInfo>(USER_INFO_KEY) || {};
+    },
+    getShowNoticeBadge(): boolean {
+      return this.showNoticeBadge;
     },
   },
   actions: {
@@ -46,6 +54,10 @@ export const useUserStore = defineStore({
     setUserInfo(info: UserInfo): void {
       this.userInfo = info;
       setAuthCache(USER_INFO_KEY, info);
+    },
+    setShowNoticeBadge(value: boolean): void {
+      this.showNoticeBadge = value;
+      Persistent.setLocal(SHOW_NOTICE_BADGE_KEY, value);
     },
     resetState(): void {
       this.userInfo = null;
@@ -75,7 +87,19 @@ export const useUserStore = defineStore({
               roles: [],
               permissions: res.behaviors,
             });
+            permissionStore.setPermissionCodeList(res.behaviors);
             permissionStore.changePermissionCode();
+
+            websocketService.openConnect({
+              fail() {
+                odsMessage({
+                  type: 'error',
+                  dangerouslyUseHTMLString: true,
+                  message:
+                    '<div>您的浏览器版本，未支持WebSocket，<a style="color: #1197b7;padding: 0 2px" href="http://tms.4pl.linshimuye.com:8533/upload-browser.html">请点击将浏览器至最新版本！</a><div>',
+                });
+              },
+            });
             resolve(res);
           })
           .catch((error) => {

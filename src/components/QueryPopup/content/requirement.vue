@@ -1,6 +1,17 @@
 <template>
   <DxScrollView direction="both">
     <div :class="prefixCls">
+      <div v-if="relationShipsCpt.length > 0" class="entity-list__container">
+        <DxCheckBox
+          v-for="(item, index) in relationShipsCpt"
+          :key="index"
+          v-model:value="item.value"
+          class="entity-item__container"
+          :text="item.caption"
+          :disabled="item.isMainEntity"
+          @valueChanged="onRelationShipChangeHandle($event, item)"
+        />
+      </div>
       <div :class="`${prefixCls}__header`">
         <span style="width: 100px">(</span>
         <span style="width: 180px">字段</span>
@@ -11,7 +22,7 @@
         <span style="width: 120px">操作</span>
       </div>
       <div>
-        <div v-for="(item, index) in dataSource" :key="index" :class="`${prefixCls}__item`">
+        <div v-for="(item, index) in requirement" :key="index" :class="`${prefixCls}__item`">
           <DxSelectBox
             v-model:value="item.leftParenthesisCount"
             :data-source="leftParenthesisOptions"
@@ -23,12 +34,13 @@
           ></DxSelectBox>
           <DynamicSelect
             v-model:value="item.value"
-            v-model:paramKey="item.requirement"
+            v-model:paramKey="item.key"
             v-model:operation="item.operator"
             v-model:paramDataType="item.type"
             v-model:paramOperations="item.operatorList"
             v-model:paramDatatypekeies="item.datatypekeies"
             v-model:paramRelationKey="item.relationKey"
+            v-model:entity-key="item.entityKey"
             :param-list="allColumns"
           />
           <DxSelectBox
@@ -51,7 +63,7 @@
           <div :class="`${prefixCls}__handle`">
             <span @click="onUpAdd(index)">上加</span>
             <span @click="onDownAdd(index)">下加</span>
-            <span v-if="dataSource.length > 1" @click="onDel(index)">删除</span>
+            <span v-if="requirement.length > 1" @click="onDel(index)">删除</span>
           </div>
         </div>
       </div>
@@ -60,14 +72,18 @@
 </template>
 
 <script lang="ts">
-  import type { ILogicOptions, IRequirementItem } from './types';
+  import type { ILogicOptions, IRelationShip, ISchemeItem } from './types';
   import type { IColumnItem } from '/@/model/types';
+  import type { ISchemeData } from '../../QueryPlan/types';
 
-  import { defineComponent, PropType, ref, watch } from 'vue';
+  import type { Ref } from 'vue';
+
+  import { defineComponent, unref, computed, inject } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
   import DxSelectBox from 'devextreme-vue/select-box';
+  import { DxCheckBox } from 'devextreme-vue/check-box';
   import { DxScrollView } from 'devextreme-vue/scroll-view';
 
   import DynamicSelect from '/@/components/DynamicSelect/index.vue';
@@ -76,24 +92,49 @@
     components: {
       DynamicSelect,
       DxSelectBox,
+      DxCheckBox,
       DxScrollView,
     },
-    props: {
-      requirement: {
-        type: Array as PropType<IRequirementItem[]>,
-        default: () => {
+    setup() {
+      const allColumns = inject<Ref<IColumnItem[]>>('allColumns');
+      const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
+        'initEntityColumnHandle'
+      );
+      const schemeData = inject<Ref<ISchemeData>>('schemeData');
+      const relationShips = inject<IRelationShip[]>('relationShips');
+
+      const requirement = computed(() => {
+        if (
+          schemeData?.value.scheme[schemeData.value.checkedIndex] &&
+          schemeData.value.scheme[schemeData.value.checkedIndex].requirement
+        ) {
+          return schemeData.value.scheme[schemeData.value.checkedIndex].requirement;
+        } else {
           return [];
-        },
-      },
-      allColumns: {
-        type: Array as PropType<IColumnItem[]>,
-        default: () => {
+        }
+      });
+
+      const relationShipsCpt = computed(() => {
+        if (
+          schemeData?.value.scheme[schemeData.value.checkedIndex] &&
+          schemeData.value.scheme[schemeData.value.checkedIndex].relationShips &&
+          relationShips
+        ) {
+          const relationObj: Record<string, boolean | undefined> = {};
+          schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.forEach((rel) => {
+            relationObj[rel.entityCode] = rel.value;
+          });
+          return unref(relationShips).map((item) => {
+            return {
+              ...item,
+              value: relationObj[item.entityCode] ?? false,
+            };
+          });
+        } else {
           return [];
-        },
-      },
-    },
-    emits: ['on-change-requirement'],
-    setup(props, ctx) {
+        }
+      });
+
       const { prefixCls } = useDesign('content-requirement');
       // 逻辑下拉框配置项
       const logicOptions: ILogicOptions[] = [
@@ -129,20 +170,13 @@
         },
       ];
 
-      // 条件列表数据
-      const dataSource = ref<IRequirementItem[]>([]);
-
-      // 外派条件更新事件
-      const onChangeRequirement = (data: IRequirementItem[]) => {
-        ctx.emit('on-change-requirement', data);
-      };
-
       // 点击上加触发
       const onUpAdd = (index) => {
-        dataSource.value.splice(index, 0, {
+        schemeData?.value.scheme[schemeData.value.checkedIndex].requirement.splice(index, 0, {
           leftParenthesisCount: undefined,
           rightParenthesisCount: undefined,
-          requirement: '',
+          entityKey: '',
+          key: '',
           operator: '',
           operatorList: [],
           value: undefined,
@@ -151,14 +185,14 @@
           relationKey: '',
           logic: 'and',
         });
-        onChangeRequirement(dataSource.value);
       };
       // 点击下加触发
       const onDownAdd = (index) => {
-        dataSource.value.splice(index + 1, 0, {
+        schemeData?.value.scheme[schemeData.value.checkedIndex].requirement.splice(index + 1, 0, {
           leftParenthesisCount: undefined,
           rightParenthesisCount: undefined,
-          requirement: '',
+          entityKey: '',
+          key: '',
           operator: '',
           operatorList: [],
           value: undefined,
@@ -167,30 +201,34 @@
           relationKey: '',
           logic: 'and',
         });
-        onChangeRequirement(dataSource.value);
       };
       // 点击删除触发
       const onDel = (index) => {
         // 删除到只剩下一个不能删除
-        if (dataSource.value.length > 1) {
-          dataSource.value.splice(index, 1);
-          onChangeRequirement(dataSource.value);
+        if (schemeData!.value.scheme[schemeData!.value.checkedIndex].requirement.length > 1) {
+          schemeData!.value.scheme[schemeData!.value.checkedIndex].requirement.splice(index, 1);
         }
       };
 
-      // 更新条件列表数据
-      watch(
-        () => props.requirement,
-        (val) => {
-          dataSource.value = val;
-        },
-        {
-          immediate: true,
+      const onRelationShipChangeHandle = (e, item: IRelationShip) => {
+        if (e.event && schemeData) {
+          if (schemeData.value.scheme[schemeData.value.checkedIndex].relationShips) {
+            const relationShipsItem = schemeData.value.scheme[
+              schemeData.value.checkedIndex
+            ].relationShips.find((rel) => rel.entityCode === item.entityCode);
+            relationShipsItem
+              ? (relationShipsItem.value = item.value)
+              : schemeData.value.scheme[schemeData.value.checkedIndex].relationShips.push(item);
+          }
+          // 只有点击行为才执行更新全部列
+          initEntityColumnHandle!(schemeData.value.scheme[schemeData.value.checkedIndex]);
         }
-      );
+      };
 
       return {
-        dataSource,
+        requirement,
+        relationShipsCpt,
+        allColumns,
         prefixCls,
         logicOptions,
         leftParenthesisOptions,
@@ -198,7 +236,7 @@
         onUpAdd,
         onDownAdd,
         onDel,
-        onChangeRequirement,
+        onRelationShipChangeHandle,
       };
     },
   });
@@ -209,6 +247,14 @@
 
   .@{prefix-cls} {
     height: 100%;
+
+    .entity-list__container {
+      padding-bottom: 10px;
+      border-bottom: 1px #e4e7ed solid;
+      .entity-item__container {
+        margin-right: 10px;
+      }
+    }
 
     &__header {
       display: flex;

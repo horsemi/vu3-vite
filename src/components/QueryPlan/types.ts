@@ -1,9 +1,8 @@
 import type { ISchemeItem } from '/@/components/QueryPopup/content/types';
-
-export interface IQueryItem {
-  requirement: string;
+import type { IColumnItemBase } from '/@/model/types';
+export interface IQueryItem extends IColumnItemBase {
   operator: string;
-  operatorList: string[];
+  operatorList: { key: string; value: string; name: string }[];
   value: string | number | boolean | Date | undefined;
   type: string;
   relationKey: string;

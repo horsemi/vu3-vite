@@ -5,6 +5,7 @@
       :style="{
         boxShadow: opened ? '0 10px 12px 0 rgb(0 0 0 / 10%)' : '',
         height: opened ? 'auto' : '64px',
+        zIndex: opened ? 1500 : 1,
       }"
     >
       <span :class="`${prefixCls}__title`">快捷过滤：</span>
@@ -12,7 +13,7 @@
         <span
           :class="[
             `${prefixCls}__span`,
-            checkedIndex === index ? `${prefixCls}__span--active` : '',
+            schemeQuickIndex === index ? `${prefixCls}__span--active` : '',
           ]"
           @click="onActive(index)"
           >{{ item.title }}</span
@@ -28,33 +29,40 @@
 </template>
 
 <script lang="ts">
+  import type { ISchemeData } from '../types';
   import type { ISchemeItem } from '../../QueryPopup/content/types';
+  import type { Ref } from 'vue';
 
-  import { defineComponent, PropType, ref } from 'vue';
+  import { defineComponent, inject, ref, computed } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
 
   export default defineComponent({
-    props: {
-      schemeListTemp: {
-        type: Array as PropType<ISchemeItem[]>,
-        default: () => {
-          return [];
-        },
-      },
-      checkedIndex: {
-        type: Number,
-        default: 0,
-      },
-    },
     emits: ['on-change-checked-index'],
-    setup(props, ctx) {
+    setup() {
+      const schemeData = inject('schemeData') as Ref<ISchemeData>;
+      const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
+      const schemeQuickIndex = inject('schemeQuickIndex') as Ref<number>;
+      const onChangeScheme = inject('onChangeScheme') as (data: ISchemeItem) => void;
+      const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
+        'initEntityColumnHandle'
+      );
+
+      const schemeListTemp = computed(() => {
+        return (schemeDataTemp.value && schemeDataTemp.value.scheme) || [];
+      });
+
       const { prefixCls } = useDesign('query-quick');
-      const quick = ref();
       const opened = ref<boolean>(false);
 
       const onActive = (index: number): void => {
-        ctx.emit('on-change-checked-index', index);
+        schemeData.value.checkedIndex = index;
+        schemeQuickIndex.value = index;
+
+        // 切换过滤方案前需要获取最新的全部列
+        initEntityColumnHandle!(schemeListTemp.value[index]).then(() => {
+          onChangeScheme(schemeListTemp.value[index]);
+        });
       };
 
       const closePopup = () => {
@@ -63,8 +71,9 @@
 
       return {
         prefixCls,
-        quick,
         opened,
+        schemeListTemp,
+        schemeQuickIndex,
         onActive,
         closePopup,
       };
@@ -85,7 +94,6 @@
       position: absolute;
       top: -32px;
       right: 0;
-      z-index: @page-popup-z-index;
       display: flex;
       align-items: center;
       flex-wrap: wrap;

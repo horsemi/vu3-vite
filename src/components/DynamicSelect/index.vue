@@ -102,7 +102,7 @@
 <script lang="ts">
   import type { IColumnItem } from '/@/model/types';
 
-  import { defineComponent, watch, PropType, computed, ref } from 'vue';
+  import { defineComponent, watch, PropType, computed, ref, nextTick } from 'vue';
 
   import { useAppStore } from '/@/store/modules/app';
   import { useDesign } from '/@/hooks/web/useDesign';
@@ -120,7 +120,9 @@
     components: { DxSelectBox, DxTextBox, DxNumberBox, DxDateBox, FoundationSelect },
     props: {
       value: {
-        type: [String, Number, Boolean, Date],
+        type: [String, Number, Boolean, Date] as PropType<
+          string | number | boolean | Date | undefined
+        >,
         default: undefined,
       },
       paramKey: {
@@ -148,8 +150,12 @@
         default: '',
       },
       paramOperations: {
-        type: Array as PropType<string[]>,
-        default: () => [] as PropType<string[]>,
+        type: Array as PropType<{ key: string; value: string; name: string }[]>,
+        default: () => [] as PropType<{ key: string; value: string; name: string }[]>,
+      },
+      entitykey: {
+        type: String,
+        default: '',
       },
     },
     emits: [
@@ -160,6 +166,7 @@
       'update:paramOperations',
       'update:paramRelationKey',
       'update:paramDatatypekeies',
+      'update:entityKey',
     ],
     setup(props, context) {
       const appStore = useAppStore();
@@ -171,7 +178,7 @@
       let paramFilter = ref();
 
       const paramListComputed = computed(() =>
-        props.paramList.filter((item) => !item.notAllowQuery)
+        props.paramList.filter((item) => !item.notAllowQuery && !item.hide)
       );
 
       let booleanOptions = [
@@ -197,14 +204,14 @@
       function initData(paramKey: string) {
         if (paramKey) {
           if (paramListComputed.value.length === 0) return;
-          let {
-            type,
-            operations,
-            datatypekeies,
-            relationKey,
-            expand,
-            filter,
-          } = (paramListComputed.value as IColumnItem[]).filter((item) => paramKey === item.key)[0];
+
+          const col = (paramListComputed.value as IColumnItem[]).find(
+            (item) => paramKey === item.key
+          );
+
+          if (!col) return;
+
+          let { type, operations, datatypekeies, relationKey, expand, filter, entityKey } = col;
 
           paramFilter.value = filter;
 
@@ -213,13 +220,21 @@
             context.emit('update:paramOperations', operatorOptions.value);
           }
 
+          context.emit('update:entityKey', entityKey);
           context.emit('update:paramDataType', type);
           context.emit('update:paramDatatypekeies', datatypekeies);
           context.emit('update:paramRelationKey', relationKey);
-          if (!props.operation) {
-            context.emit('update:operation', '=');
-          }
           initOption(type!, datatypekeies!, expand!);
+
+          // 初始化运算符，取运算符列表第一个
+          nextTick(() => {
+            if (
+              !props.operation ||
+              operatorOptions.value.findIndex((item) => item.key === props.operation) === -1
+            ) {
+              context.emit('update:operation', operatorOptions.value[0].key);
+            }
+          });
         } else {
           operatorOptions.value = [];
           context.emit('update:paramOperations', operatorOptions.value);
@@ -228,6 +243,7 @@
           context.emit('update:paramDatatypekeies', '');
           context.emit('update:paramRelationKey', '');
           context.emit('update:value', undefined);
+          context.emit('update:entityKey', '');
         }
       }
 
@@ -235,7 +251,7 @@
         options.value.splice(0, options.value.length);
         dataType.value = type;
         if (type === 'enum' && expand) {
-          options.value.push(...appStore.getGlobalEnumDataByCode(expand));
+          options.value.push(...appStore.getGlobalEnumDataByCode(expand.toLowerCase()));
         }
 
         operatorOptions.value = getOperatorByType(datatypekeies ? 'foundation' : type);

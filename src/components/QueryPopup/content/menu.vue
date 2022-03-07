@@ -1,7 +1,7 @@
 <template>
   <div :class="prefixCls">
     <div :class="`${prefixCls}__btn`">
-      <span :class="{ notClick: !isDisabledComputed }" @click="onSubmitScheme">保存</span>
+      <span :class="{ notClick: !isDisabledComputed || edit }" @click="onSubmitScheme">保存</span>
       <span @click="onSaveScheme">另存</span>
       <span @click="onResetScheme">重置</span>
       <span :class="{ notClick: !isDisabledComputed }" @click="onEditScheme">修改</span>
@@ -33,82 +33,131 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref, nextTick, PropType, inject, computed } from 'vue';
+  import type { ISchemeData } from '../../QueryPlan/types';
+  import type { ISchemeItem } from './types';
+  import type { Ref } from 'vue';
+
+  import { defineComponent, ref, nextTick, inject, computed } from 'vue';
+  import { cloneDeep } from 'lodash-es';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useUserStore } from '/@/store/modules/user';
   import { DxScrollView } from 'devextreme-vue/scroll-view';
+  import { saveSchemesData, deleteSchemes } from '/@/utils/scheme/index';
 
   export default defineComponent({
     components: {
       DxScrollView,
     },
-    props: {
-      checkedIndex: {
-        type: Number,
-        required: true,
-      },
-      menuList: {
-        type: Array as PropType<string[]>,
-        default: () => {
-          return [];
-        },
-      },
-    },
-    emits: [
-      'on-submit-scheme',
-      'on-save-scheme',
-      'on-reset-scheme',
-      'on-title-change',
-      'on-del-scheme',
-      'on-change-checked-index',
-    ],
-    setup(props, ctx) {
+    setup() {
+      const schemeData = inject('schemeData') as Ref<ISchemeData>;
+      const schemeDataTemp = inject('schemeDataTemp') as Ref<ISchemeData>;
+      const schemeQuickIndex = inject('schemeQuickIndex') as Ref<number>;
+      const popupLoading = inject('popupLoading') as Ref<boolean>;
+      const initEntityColumnHandle = inject<(scheme?: ISchemeItem) => Promise<ISchemeItem>>(
+        'initEntityColumnHandle'
+      );
+
+      // 标题列表数据
+      const menuList = computed(() => {
+        const data = schemeData.value.scheme.map((item) => {
+          return item.title;
+        });
+        return data;
+      });
+
+      const checkedIndex = computed(() => {
+        return schemeData.value.checkedIndex;
+      });
+
       const { prefixCls } = useDesign('content-menu');
       const userStore = useUserStore();
       // 是否是修改状态
       const edit = ref(false);
       // 输入框dom
       const textBox = ref();
-      const currentSchemeItem = inject<{ creatorId: string; isShare: boolean }>(
-        'currentSchemeItem'
-      );
       const isDisabledComputed = computed(() => {
-        return currentSchemeItem?.creatorId === userStore.getUserInfo.accountId;
+        return (
+          schemeData.value.scheme[checkedIndex.value]?.creatorId === userStore.getUserInfo.accountId
+        );
       });
       // 点击标题触发
-      const onChangeCheckedIndex = (index: number) => {
+      function onChangeCheckedIndex(index: number) {
         // 标题不为空才切换下标
-        if (props.menuList[props.checkedIndex]) {
-          ctx.emit('on-change-checked-index', index);
+        if (menuList.value[checkedIndex.value]) {
+          // ctx.emit('on-change-checked-index', index);
+          schemeData.value.checkedIndex = index;
+          initEntityColumnHandle!(schemeData.value.scheme[schemeData.value.checkedIndex]);
         }
-      };
+      }
       // 点击保存触发
-      const onSubmitScheme = () => {
+      function onSubmitScheme() {
         if (!edit.value) {
-          if (props.checkedIndex === 0) {
-            ctx.emit('on-save-scheme');
+          if (checkedIndex.value === 0) {
+            onSaveScheme();
           } else {
-            ctx.emit('on-submit-scheme');
+            popupLoading.value = true;
+            saveSchemesData(schemeData.value.scheme[schemeData.value.checkedIndex])
+              .then((data) => {
+                if (data) {
+                  schemeData.value.scheme[schemeData.value.checkedIndex] = cloneDeep(data);
+                }
+                schemeDataTemp.value.scheme[schemeData.value.checkedIndex] = cloneDeep(
+                  schemeData.value.scheme[schemeData.value.checkedIndex]
+                );
+              })
+              .finally(() => {
+                popupLoading.value = false;
+              });
           }
         }
-      };
+      }
       // 点击另存触发
-      const onSaveScheme = () => {
+      function onSaveScheme() {
         if (!edit.value) {
-          ctx.emit('on-save-scheme');
+          schemeData.value.scheme.push({
+            ...cloneDeep(schemeData.value.scheme[checkedIndex.value]),
+            title: '',
+            id: '0',
+            creatorId: userStore.getUserInfo.accountId,
+            isShare: false,
+          });
+          schemeData.value.checkedIndex = schemeData.value.scheme.length - 1;
+          edit.value = true;
         }
-      };
+      }
       // 点击重置触发
       const onResetScheme = () => {
         if (!edit.value) {
-          ctx.emit('on-reset-scheme');
+          const popupUuid = schemeData.value.scheme[checkedIndex.value].id;
+          const popupListTemp = schemeDataTemp.value.scheme.find((item) => item.id === popupUuid);
+
+          if (popupListTemp) {
+            schemeQuickIndex.value = checkedIndex.value;
+            schemeData.value.scheme[checkedIndex.value] = cloneDeep(popupListTemp);
+            initEntityColumnHandle!(schemeData.value.scheme[checkedIndex.value]);
+          }
         }
       };
       // 点击删除触发
       const onDelScheme = () => {
-        if (props.checkedIndex !== 0) {
-          ctx.emit('on-del-scheme');
+        if (checkedIndex.value !== 0) {
+          const id = schemeData.value.scheme[checkedIndex.value].id;
+          if (id !== '0') {
+            popupLoading.value = true;
+            deleteSchemes(id, userStore.getUserInfo.accountId).finally(() => {
+              popupLoading.value = false;
+            });
+          }
+
+          // 两个数据都需要删除
+          const index = checkedIndex.value;
+          schemeData.value.scheme.splice(index, 1);
+          schemeData.value.checkedIndex = index - 1;
+
+          if (index < schemeDataTemp.value.scheme.length) {
+            schemeDataTemp.value.scheme.splice(index, 1);
+          }
           edit.value = false;
         }
       };
@@ -128,8 +177,9 @@
       // 处理标题修改
       const handleText = (title: string) => {
         if (title) {
-          ctx.emit('on-title-change', title);
+          schemeData.value.scheme[checkedIndex.value].title = title;
           edit.value = false;
+          onSubmitScheme();
         }
       };
       // 失去焦点触发
@@ -139,6 +189,8 @@
 
       return {
         prefixCls,
+        menuList,
+        checkedIndex,
         edit,
         textBox,
         onSubmitScheme,

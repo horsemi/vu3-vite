@@ -1,6 +1,6 @@
-import type { IColumnItem } from './types';
+import type { IColumnItem } from '../types';
 
-import { getColumnList } from './common';
+import { getColumnList } from '../common';
 
 export const customColumns: IColumnItem[] = [
   {
@@ -52,5 +52,7 @@ export const customColumns: IColumnItem[] = [
 ];
 
 export const getRecordColumns = async () => {
-  return await getColumnList('operation-records', customColumns);
+  return await getColumnList({ code: 'operation-records', customColumns });
 };
+
+export default getRecordColumns;

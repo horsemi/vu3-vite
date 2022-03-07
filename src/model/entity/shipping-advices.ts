@@ -1,6 +1,21 @@
-import type { IColumnItem } from './types';
+import type { IColumnItem, IRelationShipItem } from '../types';
 
-import { getColumnList } from './common';
+import { getColumnList } from '../common';
+
+export const relationShips: IRelationShipItem[] = [
+  {
+    key: '',
+    entityCode: 'shipping-advices',
+    caption: '基本',
+    isMainEntity: true,
+  },
+  {
+    key: 'Items',
+    entityCode: 'shipping-advice-items',
+    caption: '明细',
+    isMainEntity: false,
+  },
+];
 
 export const customColumns: IColumnItem[] = [
   {
@@ -18,6 +33,7 @@ export const customColumns: IColumnItem[] = [
     key: 'BillDate',
     caption: '单据日期',
     type: 'date',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'BatchCode',
@@ -26,6 +42,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalPackage',
     caption: '总包件数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'BillType',
@@ -60,6 +77,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalPack',
     caption: '总包裹数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'DocumentStatus',
@@ -72,6 +90,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalVolume',
     caption: '总体积数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'OperationStatus',
@@ -109,6 +128,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalOrderCount',
     caption: '总订单数',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'IsPicking',
@@ -141,6 +161,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalActualPrice',
     caption: '实际售价汇总',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'Province',
@@ -469,6 +490,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'DeliveryCos',
     caption: '提货费',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'LogisticCode',
@@ -494,10 +516,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'ThreeServiceCostPrice',
     caption: '三包成本',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'LogisticsCostPrice',
     caption: '物流成本',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'FreightTypeCode',
@@ -647,6 +671,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'SentDate',
     caption: '发送时间',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'InterceptReasonCode',
@@ -659,6 +684,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'CreatedTime',
     caption: '创建时间',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'CreatorId',
@@ -684,6 +710,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'AppliedTime',
     caption: '审核时间',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'ApplierId',
@@ -713,6 +740,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'UpdatedTime',
     caption: '修改时间',
+    summaryList: ['max', 'min'],
   },
   {
     key: 'UpdaterId',
@@ -755,6 +783,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalWeight',
     caption: '重量',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'AreaName',
@@ -771,6 +800,7 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'TotalMarble',
     caption: '大理石数量',
+    summaryList: ['sum', 'max', 'min'],
   },
   {
     key: 'TaoBaoCode',
@@ -799,9 +829,12 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'DetailRowsCount',
     caption: '明细行数',
+    summaryList: ['sum', 'max', 'min'],
   },
 ];
 
 export const getColumns = async () => {
-  return await getColumnList('shipping-advices', customColumns);
+  return await getColumnList({ code: 'shipping-advices', customColumns });
 };
+
+export default getColumns;

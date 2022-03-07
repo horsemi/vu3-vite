@@ -10,7 +10,9 @@ function pathResolve(dir: string) {
   return resolve(process.cwd(), '.', dir);
 }
 
-// https://vitejs.dev/config/
+/**
+ * @see {@link https://vitejs.dev/config/}
+ */
 export default defineConfig(
   ({ command }: ConfigEnv): UserConfig => {
     const isBuild = command === 'build';
@@ -73,6 +75,19 @@ export default defineConfig(
             target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
           },
+          '/noticication': {
+            target: 'http://test.api.otwb.linshimuye.com:30024',
+            changeOrigin: true,
+          },
+          /**
+           * @description 发起连接的地址,`本地开发`时不可以使用框架自带的反向代理来转发,只能通过写死URL的方式
+           * vitejs会发起用于HMR的webSocket,并让同源下的webSocket链接一直为'pending'状态
+           * {@see src\utils\websocket\index.ts}
+           */
+          // '/hubs': {
+          //   target: 'http://10.10.14.164:30039',
+          //   changeOrigin: true,
+          // },
         },
         cors: true,
       },
