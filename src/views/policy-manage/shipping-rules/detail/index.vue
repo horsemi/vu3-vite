@@ -48,13 +48,6 @@
     },
     setup() {
       const permissionStore = usePermissionStore();
-      const multiViewItems = ref([
-        {
-          title: '基本信息',
-          key: 'base',
-          rowCount: 0,
-        },
-      ]);
 
       const isFixHeight = ref<boolean>(true);
 
@@ -80,7 +73,7 @@
         baseInformation,
         refreshDetailForm,
         initFormDataHandle,
-      } = useDetailForm(Id || '', multiViewItems, detailFormCallBack);
+      } = useDetailForm(Id || '', detailFormCallBack);
 
       const definiteScheme = ref<ISchemeItem>();
       const definiteAllColumns = ref<IColumnItem[]>([]);
@@ -140,7 +133,6 @@
         baseInformation,
         baseFormData,
 
-        multiViewItems,
         onSaveClickThrottleFn,
         getDataThrottleFn,
         savePermission,

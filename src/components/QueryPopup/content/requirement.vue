@@ -110,7 +110,19 @@
         ) {
           return schemeData.value.scheme[schemeData.value.checkedIndex].requirement;
         } else {
-          return [];
+          return [
+            {
+              key: '',
+              operator: '=',
+              operatorList: [],
+              value: undefined,
+              type: '',
+              datatypekeies: '',
+              relationKey: '',
+              logic: 'and',
+              entityKey: '',
+            },
+          ];
         }
       });
 

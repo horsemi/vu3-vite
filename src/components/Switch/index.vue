@@ -93,6 +93,10 @@
       transition: all 0.2s ease-in-out;
       &::before {
         position: absolute;
+
+        /* 宽高要加100%，低版本有兼容性问题 */
+        width: 100%;
+        height: 100%;
         background-color: #fff;
         border-radius: 9px;
         content: '';

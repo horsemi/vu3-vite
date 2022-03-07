@@ -1,7 +1,7 @@
 import type { IColumnItem } from '/@/model/types';
 import type { IDetailItem } from '/@/utils/bill/types';
 
-import { Ref, ref } from 'vue';
+import { ref } from 'vue';
 import { cloneDeep } from 'lodash-es';
 
 import { getFormList } from '/@/utils/bill';
@@ -10,17 +10,7 @@ import { getColumns } from '/@/model/entity/shipping-rules';
 
 import { getOdataList } from '/@/api/ods/common';
 
-export function useDetailForm(
-  Id: string,
-  multiViewItems: Ref<
-    {
-      title: string;
-      key: string;
-      rowCount: number;
-    }[]
-  >,
-  callback: () => void
-) {
+export function useDetailForm(Id: string, callback: () => void) {
   const base: IDetailItem[] = [
     {
       key: 'RuleCode',
@@ -73,23 +63,6 @@ export function useDetailForm(
 
   let columnList: IColumnItem[] = [];
 
-  function getRowCount(data: IDetailItem[]) {
-    const rowSpan = 8;
-    let len = 0;
-    data.forEach((item) => {
-      if (!item.hide) {
-        if (item.colSpan) {
-          len += item.colSpan;
-        } else if (item.editorType === 'dxSwitch') {
-          len += 1;
-        } else {
-          len += 2;
-        }
-      }
-    });
-    return Math.ceil(len / rowSpan);
-  }
-
   const refreshDetailForm = async (callback?) => {
     if (!columnList || columnList.length === 0) return;
     formLoading.value = true;
@@ -98,19 +71,17 @@ export function useDetailForm(
     const select: string[] = [];
     const expand: string[] = [];
 
-    [baseList].forEach((list) => {
-      list.forEach((item) => {
-        if (item.expand && item.expand === item.key) {
-          const { key, keyProperty, showProperty } = item;
-          const _keyProperty = keyProperty ?? 'Code';
-          const _showProperty = showProperty ?? 'Name';
-          expand.push(key);
-          select.push(`${key}.${_keyProperty}`);
-          select.push(`${key}.${_showProperty}`);
-        } else {
-          select.push(item.key);
-        }
-      });
+    baseList.forEach((item) => {
+      if (item.expand && item.expand === item.key) {
+        const { key, keyProperty, showProperty } = item;
+        const _keyProperty = keyProperty ?? 'Code';
+        const _showProperty = showProperty ?? 'Name';
+        expand.push(key);
+        select.push(`${key}.${_keyProperty}`);
+        select.push(`${key}.${_showProperty}`);
+      } else {
+        select.push(item.key);
+      }
     });
 
     formEditStatus.value = Id ? 'Edit' : 'Add';
@@ -128,30 +99,25 @@ export function useDetailForm(
 
       const data = detailRes[0];
       /** 实验性功能 */
-      [{ list: baseList, refData: baseFormData }].forEach(({ list, refData }) => {
-        list.forEach((item) => {
-          if (item.expand && item.expand === item.key) {
-            const { key, keyProperty, showProperty } = item;
-            const _keyProperty = keyProperty ?? 'Code';
-            const _showProperty = showProperty ?? 'Name';
-            refData.value[`${key}_${_keyProperty}`] = (data as Record<string, unknown>)[
-              `${key}_${_keyProperty}`
-            ];
-            refData.value[`${key}_${_showProperty}`] = (data as Record<string, unknown>)[
-              `${key}_${_showProperty}`
-            ];
-          } else {
-            refData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
-          }
-        });
+      baseList.forEach((item) => {
+        if (item.expand && item.expand === item.key) {
+          const { key, keyProperty, showProperty } = item;
+          const _keyProperty = keyProperty ?? 'Code';
+          const _showProperty = showProperty ?? 'Name';
+          baseFormData.value[`${key}_${_keyProperty}`] = (data as Record<string, unknown>)[
+            `${key}_${_keyProperty}`
+          ];
+          baseFormData.value[`${key}_${_showProperty}`] = (data as Record<string, unknown>)[
+            `${key}_${_showProperty}`
+          ];
+        } else {
+          baseFormData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+        }
       });
     }
 
     baseInformation.value = baseList;
 
-    [baseInformation.value].forEach((data, index) => {
-      multiViewItems.value[index].rowCount = getRowCount(data);
-    });
     callback && callback();
     formLoading.value = false;
   };

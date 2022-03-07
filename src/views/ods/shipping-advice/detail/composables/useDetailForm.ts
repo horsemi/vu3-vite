@@ -1,22 +1,20 @@
 import type { IColumnItem } from '/@/model/types';
 import type { IDetailItem } from '/@/utils/bill/types';
 
+import { ref } from 'vue';
 import { getFormList } from '/@/utils/bill';
 import { getColumns } from '/@/model/entity/shipping-advices';
-import { Ref, ref } from 'vue';
 import { getOdataList } from '/@/api/ods/common';
 
-export function useDetailForm(
-  Id: string,
-  multiViewItems: Ref<
-    {
-      title: string;
-      key: string;
-      rowCount: number;
-    }[]
-  >,
-  callback: () => void
-) {
+interface IMultiView {
+  title: string;
+  key: string;
+  rowCount: number;
+  formData: Record<string, unknown>;
+  formList: IDetailItem[];
+}
+
+export function useDetailForm(Id: string, detailFormInitHeight: () => void) {
   const base: IDetailItem[] = [
     {
       key: 'BillCode',
@@ -459,19 +457,52 @@ export function useDetailForm(
 
   const formLoading = ref(true);
 
-  const baseFormData = ref<Record<string, unknown>>({});
-  const receiverFormData = ref<Record<string, unknown>>({});
-  const logisticsFormData = ref<Record<string, unknown>>({});
-  const expressFormData = ref<Record<string, unknown>>({});
-  const taskFormData = ref<Record<string, unknown>>({});
-  const otherFormData = ref<Record<string, unknown>>({});
+  const multiViewItems = ref<IMultiView[]>([]);
 
-  const baseInformation = ref<IDetailItem[]>([]);
-  const receiverInformation = ref<IDetailItem[]>([]);
-  const logisticsInformation = ref<IDetailItem[]>([]);
-  const expressListInformation = ref<IDetailItem[]>([]);
-  const taskInformation = ref<IDetailItem[]>([]);
-  const otherInformation = ref<IDetailItem[]>([]);
+  const multiViewInitData: IMultiView[] = [
+    {
+      title: '基本信息',
+      key: 'base',
+      rowCount: 0,
+      formData: {},
+      formList: [],
+    },
+    {
+      title: '收货人信息',
+      key: 'receiver',
+      rowCount: 0,
+      formData: {},
+      formList: [],
+    },
+    {
+      title: '物流信息',
+      key: 'logistics',
+      rowCount: 0,
+      formData: {},
+      formList: [],
+    },
+    {
+      title: '快递信息',
+      key: 'expressList',
+      rowCount: 0,
+      formData: {},
+      formList: [],
+    },
+    {
+      title: '作业信息',
+      key: 'task',
+      rowCount: 0,
+      formData: {},
+      formList: [],
+    },
+    {
+      title: '其他信息',
+      key: 'other',
+      rowCount: 0,
+      formData: {},
+      formList: [],
+    },
+  ];
 
   let columnList: IColumnItem[] = [];
 
@@ -495,19 +526,17 @@ export function useDetailForm(
   const refreshDetailForm = async (callback) => {
     if (!columnList || columnList.length === 0) return;
     formLoading.value = true;
-    const [
-      baseList,
-      receiverList,
-      logisticsList,
-      expressList,
-      taskList,
-      otherList,
-    ] = getFormList(columnList, [base, receiver, logistics, express, task, other]);
+    const allList = getFormList(columnList, [base, receiver, logistics, express, task, other]);
+
+    multiViewInitData.forEach((item, index) => {
+      item.formList = allList[index];
+      item.rowCount = getRowCount(allList[index]);
+    });
 
     const select: string[] = [];
     const expand: string[] = [];
 
-    [baseList, receiverList, logisticsList, expressList, taskList, otherList].forEach((list) => {
+    allList.forEach((list) => {
       list.forEach((item) => {
         if (item.expand && item.expand === item.key) {
           const { key, keyProperty, showProperty } = item;
@@ -535,74 +564,40 @@ export function useDetailForm(
     };
 
     /** 实验性功能 */
-    [
-      { list: baseList, refData: baseFormData },
-      { list: receiverList, refData: receiverFormData },
-      { list: logisticsList, refData: logisticsFormData },
-      { list: expressList, refData: expressFormData },
-      { list: taskList, refData: taskFormData },
-      { list: otherList, refData: otherFormData },
-    ].forEach(({ list, refData }) => {
-      list.forEach((item) => {
+    multiViewInitData.forEach(({ formList, formData }) => {
+      formList.forEach((item) => {
         if (item.expand && item.expand === item.key) {
           const { key, keyProperty, showProperty } = item;
           const _keyProperty = keyProperty ?? 'Code';
           const _showProperty = showProperty ?? 'Name';
-          refData.value[`${key}_${_keyProperty}`] = (data as Record<string, unknown>)[
+          formData[`${key}_${_keyProperty}`] = (data as Record<string, unknown>)[
             `${key}_${_keyProperty}`
           ];
-          refData.value[`${key}_${_showProperty}`] = (data as Record<string, unknown>)[
+          formData[`${key}_${_showProperty}`] = (data as Record<string, unknown>)[
             `${key}_${_showProperty}`
           ];
         } else {
-          refData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
+          formData[item.key!] = (data as Record<string, unknown>)[item.key!];
         }
-        refData.value[item.key!] = (data as Record<string, unknown>)[item.key!];
       });
     });
 
-    baseInformation.value = baseList;
-    receiverInformation.value = receiverList;
-    logisticsInformation.value = logisticsList;
-    expressListInformation.value = expressList;
-    taskInformation.value = taskList;
-    otherInformation.value = otherList;
-    [
-      baseInformation.value,
-      receiverInformation.value,
-      logisticsInformation.value,
-      expressListInformation.value,
-      taskInformation.value,
-      otherInformation.value,
-    ].forEach((data, index) => {
-      multiViewItems.value[index].rowCount = getRowCount(data);
-    });
-    callback();
+    multiViewItems.value = multiViewInitData;
+    detailFormInitHeight();
     formLoading.value = false;
   };
 
   getColumns().then((res) => {
     if (res) {
       columnList = res.columnList;
-      refreshDetailForm(callback);
+      refreshDetailForm(detailFormInitHeight);
     }
   });
 
   return {
     formData,
     formLoading,
-    baseFormData,
-    receiverFormData,
-    logisticsFormData,
-    expressFormData,
-    taskFormData,
-    otherFormData,
-    baseInformation,
-    receiverInformation,
-    logisticsInformation,
-    expressListInformation,
-    taskInformation,
-    otherInformation,
+    multiViewItems,
     refreshDetailForm,
   };
 }

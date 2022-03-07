@@ -54,35 +54,7 @@
         <template #item="{ data }">
           <div class="tab">
             <div class="form-box" :style="{ height: opened ? '' : getColseHeight(data.rowCount) }">
-              <DetailForm
-                :read-only="true"
-                :form-data="
-                  data.key === 'base'
-                    ? baseFormData
-                    : data.key === 'receiver'
-                    ? receiverFormData
-                    : data.key === 'logistics'
-                    ? logisticsFormData
-                    : data.key === 'expressList'
-                    ? expressFormData
-                    : data.key === 'task'
-                    ? taskFormData
-                    : otherFormData
-                "
-                :form-list="
-                  data.key === 'base'
-                    ? baseInformation
-                    : data.key === 'receiver'
-                    ? receiverInformation
-                    : data.key === 'logistics'
-                    ? logisticsInformation
-                    : data.key === 'expressList'
-                    ? expressListInformation
-                    : data.key === 'task'
-                    ? taskInformation
-                    : otherInformation
-                "
-              />
+              <DetailForm :read-only="true" :form-data="data.formData" :form-list="data.formList" />
             </div>
             <div v-if="data.rowCount > 3" class="icon-box">
               <SvgIcon
@@ -180,38 +152,6 @@
     },
     setup() {
       const permissionStore = usePermissionStore();
-      const multiViewItems = ref([
-        {
-          title: '基本信息',
-          key: 'base',
-          rowCount: 0,
-        },
-        {
-          title: '收货人信息',
-          key: 'receiver',
-          rowCount: 0,
-        },
-        {
-          title: '物流信息',
-          key: 'logistics',
-          rowCount: 0,
-        },
-        {
-          title: '快递信息',
-          key: 'expressList',
-          rowCount: 0,
-        },
-        {
-          title: '作业信息',
-          key: 'task',
-          rowCount: 0,
-        },
-        {
-          title: '其他信息',
-          key: 'other',
-          rowCount: 0,
-        },
-      ]);
       const multiEntityItems = [
         {
           title: '明细信息',
@@ -271,7 +211,7 @@
         },
       ];
 
-      function detailFormCallBack() {
+      function detailFormInitHeight() {
         handleHeight(
           multiViewItems.value[selectedIndex.value].rowCount,
           tableIndex.value,
@@ -282,23 +222,10 @@
         });
       }
 
-      const {
-        formData,
-        formLoading,
-        baseFormData,
-        receiverFormData,
-        logisticsFormData,
-        expressFormData,
-        taskFormData,
-        otherFormData,
-        baseInformation,
-        receiverInformation,
-        logisticsInformation,
-        expressListInformation,
-        taskInformation,
-        otherInformation,
-        refreshDetailForm,
-      } = useDetailForm(Id, multiViewItems, detailFormCallBack);
+      const { formData, formLoading, multiViewItems, refreshDetailForm } = useDetailForm(
+        Id,
+        detailFormInitHeight
+      );
 
       const {
         definiteTableKey,
@@ -357,7 +284,7 @@
       });
 
       const onRefresh = () => {
-        refreshDetailForm(detailFormCallBack);
+        refreshDetailForm(detailFormInitHeight);
         refreshDefinite();
         refreshRecord();
       };
@@ -483,20 +410,6 @@
         recordTableKey,
         recordScheme,
         recordAllColumns,
-
-        baseInformation,
-        receiverInformation,
-        logisticsInformation,
-        expressListInformation,
-        taskInformation,
-        otherInformation,
-
-        baseFormData,
-        receiverFormData,
-        logisticsFormData,
-        expressFormData,
-        taskFormData,
-        otherFormData,
 
         formLoading,
         definiteLoading,
