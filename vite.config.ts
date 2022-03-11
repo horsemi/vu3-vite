@@ -79,15 +79,11 @@ export default defineConfig(
             target: 'http://test.api.otwb.linshimuye.com:30024',
             changeOrigin: true,
           },
-          /**
-           * @description 发起连接的地址,`本地开发`时不可以使用框架自带的反向代理来转发,只能通过写死URL的方式
-           * vitejs会发起用于HMR的webSocket,并让同源下的webSocket链接一直为'pending'状态
-           * {@see src\utils\websocket\index.ts}
-           */
-          // '/hubs': {
-          //   target: 'http://10.10.14.164:30039',
-          //   changeOrigin: true,
-          // },
+          '/hubs': {
+            target: 'ws://10.10.14.164:30039',
+            changeOrigin: true,
+            ws: true,
+          },
         },
         cors: true,
       },
