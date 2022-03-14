@@ -55,7 +55,7 @@ export interface IColumnItem extends IColumnItemBase {
   /**
    * @description 自定义文本
    */
-  customizeText?: (cellInfo: any) => string;
+  customizeText?: string[];
 
   /**
    * @description 关联字段

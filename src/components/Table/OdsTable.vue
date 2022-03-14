@@ -32,12 +32,16 @@
           :caption="item.caption"
           :customize-text="
             item.customizeText
-              ? item.customizeText
+              ? genFunction(item.customizeText)
               : item.type === 'decimal'
               ? handleCustomizeDecimal
               : handleCustomizeText
           "
-          :data-type="item.type"
+          :data-type="
+            item.type === 'boolean' && item.customOption && item.customOption.length
+              ? 'string'
+              : item.type
+          "
           :alignment="getAlignment(item)"
           :cell-template="getTemplate(item)"
         >
@@ -343,12 +347,9 @@
         }
       };
 
-      const handleCustomOptionText = (cellInfo) => {
-        if (cellInfo.value) {
-          return '生效';
-        } else {
-          return '失效';
-        }
+      // 将字符串转化为函数
+      const genFunction = (target: string[]) => {
+        return new Function(...target);
       };
 
       // TODO: 明细可勾选后，数据重复问题
@@ -651,7 +652,7 @@
         getAlignment,
         handleCustomizeDecimal,
         handleCustomizeText,
-        handleCustomOptionText,
+        genFunction,
         getRowData,
         clipValue,
         rowRenderingMode,

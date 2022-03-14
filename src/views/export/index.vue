@@ -32,7 +32,7 @@
         key: string;
         caption: string;
         cssClass?: string;
-        customizeText?: (cellInfo: any) => string;
+        customizeText?: string[];
       }> = [
         {
           key: 'reportName',
@@ -62,13 +62,14 @@
           key: 'downloadUrl',
           caption: '下载',
           cssClass: 'export-download-highlighted',
-          customizeText: function (cellInfo) {
-            if (cellInfo.value) {
-              return '下载';
-            } else {
-              return '';
-            }
-          },
+          customizeText: ['cellInfo', 'if (cellInfo.value) {return "下载";} else {return "";}'],
+          // function (cellInfo) {
+          //   if (cellInfo.value) {
+          //     return '下载';
+          //   } else {
+          //     return '';
+          //   }
+          // },
         },
       ];
 

@@ -74,6 +74,7 @@ export const customColumns: IColumnItem[] = [
         value: '失效',
       },
     ],
+    customizeText: ['cellInfo', 'if (cellInfo.value) {return "生效";} else {return "失效";}'],
   },
 ];
 
