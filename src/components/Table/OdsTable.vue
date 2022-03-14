@@ -35,9 +35,11 @@
               ? item.customizeText
               : item.type === 'decimal'
               ? handleCustomizeDecimal
+              : item.customOption && item.customOption.length
+              ? handleCustomOptionText
               : handleCustomizeText
           "
-          :data-type="item.type"
+          :data-type="item.type === 'boolean' && item.customOption.length ? 'string' : item.type"
           :alignment="getAlignment(item)"
           :cell-template="getTemplate(item)"
         >
@@ -133,7 +135,6 @@
 
   import { useAppStore } from '/@/store/modules/app';
 
-  import DxContextMenu from 'devextreme-vue/context-menu';
   import DxDataGrid, {
     DxSelection,
     DxPaging,
@@ -341,6 +342,14 @@
           return '—';
         } else {
           return valueText;
+        }
+      };
+
+      const handleCustomOptionText = (cellInfo) => {
+        if (cellInfo.value) {
+          return '生效';
+        } else {
+          return '失效';
         }
       };
 
@@ -644,6 +653,7 @@
         getAlignment,
         handleCustomizeDecimal,
         handleCustomizeText,
+        handleCustomOptionText,
         getRowData,
         clipValue,
         rowRenderingMode,

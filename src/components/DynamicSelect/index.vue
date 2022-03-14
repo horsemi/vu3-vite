@@ -41,7 +41,7 @@
       <DxSelectBox
         v-else-if="paramDataType === 'boolean'"
         :value="value"
-        :data-source="booleanOptions"
+        :data-source="customOption.length ? customOption : booleanOptions"
         :show-clear-button="true"
         value-expr="key"
         :disabled="selectDisabled"
@@ -181,6 +181,11 @@
         props.paramList.filter((item) => !item.notAllowQuery && !item.hide)
       );
 
+      const customOption = computed(() => {
+        const target = props.paramList.filter((item) => item.key === props.paramKey);
+        return target[0].customOption || [];
+      });
+
       let booleanOptions = [
         {
           key: true,
@@ -282,6 +287,7 @@
         dataType,
         paramFilter,
         paramListComputed,
+        customOption,
         operatorOptions,
         booleanOptions,
         selectDisabled,

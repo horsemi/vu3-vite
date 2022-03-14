@@ -64,6 +64,16 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'IsEnabled',
     caption: '状态',
+    customOption: [
+      {
+        key: true,
+        value: '生效',
+      },
+      {
+        key: false,
+        value: '失效',
+      },
+    ],
   },
 ];
 

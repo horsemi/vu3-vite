@@ -111,6 +111,10 @@ export interface IColumnItem extends IColumnItemBase {
    * @description 用于基础资料字段默认筛选条件
    */
   filter?: Array<Record<string, unknown>>;
+  /**
+   * @description 用于下拉框组件可自定义下拉选项
+   */
+  customOption?: Array<{ key: string | boolean; value: string }>;
 }
 
 export interface IRelationShipItem {
