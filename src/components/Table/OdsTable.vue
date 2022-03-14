@@ -35,11 +35,9 @@
               ? item.customizeText
               : item.type === 'decimal'
               ? handleCustomizeDecimal
-              : item.customOption && item.customOption.length
-              ? handleCustomOptionText
               : handleCustomizeText
           "
-          :data-type="item.type === 'boolean' && item.customOption.length ? 'string' : item.type"
+          :data-type="item.type"
           :alignment="getAlignment(item)"
           :cell-template="getTemplate(item)"
         >
