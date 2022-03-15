@@ -63,13 +63,6 @@
           caption: '下载',
           cssClass: 'export-download-highlighted',
           customizeText: ['cellInfo', 'if (cellInfo.value) {return "下载";} else {return "";}'],
-          // function (cellInfo) {
-          //   if (cellInfo.value) {
-          //     return '下载';
-          //   } else {
-          //     return '';
-          //   }
-          // },
         },
       ];
 
