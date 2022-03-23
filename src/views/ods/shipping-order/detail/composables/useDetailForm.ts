@@ -311,6 +311,7 @@ export function useDetailForm(Id: string, detailFormInitHeight: () => void) {
   ];
 
   let columnList: IColumnItem[] = [];
+  let key = '';
 
   function getRowCount(data: IDetailItem[]) {
     const rowSpan = 8;
@@ -339,7 +340,7 @@ export function useDetailForm(Id: string, detailFormInitHeight: () => void) {
       item.rowCount = getRowCount(allList[index]);
     });
 
-    const select: string[] = [];
+    const select: string[] = [key];
     const expand: string[] = [];
 
     allList.forEach((list) => {
@@ -396,6 +397,7 @@ export function useDetailForm(Id: string, detailFormInitHeight: () => void) {
   getColumns().then((res) => {
     if (res) {
       columnList = res.columnList;
+      key = res.key;
       refreshDetailForm(detailFormInitHeight);
     }
   });

@@ -116,10 +116,10 @@ export function useDetailForm(Id: string, detailFormInitHeight: () => void) {
       key: 'Agency',
       caption: '经销商',
     },
-    {
-      key: 'PromisedDeliveryDate',
-      caption: '承诺发货时间',
-    },
+    // {
+    //   key: 'PromisedDeliveryDate',
+    //   caption: '承诺发货时间',
+    // },
     {
       key: 'DetailAddress',
       caption: '详细地址',
@@ -506,6 +506,8 @@ export function useDetailForm(Id: string, detailFormInitHeight: () => void) {
 
   let columnList: IColumnItem[] = [];
 
+  let key = '';
+
   function getRowCount(data: IDetailItem[]) {
     const rowSpan = 8;
     let len = 0;
@@ -533,7 +535,7 @@ export function useDetailForm(Id: string, detailFormInitHeight: () => void) {
       item.rowCount = getRowCount(allList[index]);
     });
 
-    const select: string[] = [];
+    const select: string[] = [key];
     const expand: string[] = [];
 
     allList.forEach((list) => {
@@ -590,6 +592,7 @@ export function useDetailForm(Id: string, detailFormInitHeight: () => void) {
   getColumns().then((res) => {
     if (res) {
       columnList = res.columnList;
+      key = res.key;
       refreshDetailForm(detailFormInitHeight);
     }
   });
