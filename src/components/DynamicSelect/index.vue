@@ -45,7 +45,7 @@
         :show-clear-button="true"
         value-expr="key"
         :disabled="selectDisabled"
-        display-expr="value"
+        display-expr="description"
         width="180"
         @update:value="$emit('update:value', $event)"
       >
@@ -189,11 +189,11 @@
       let booleanOptions = [
         {
           key: true,
-          value: '是',
+          description: '是',
         },
         {
           key: false,
-          value: '否',
+          description: '否',
         },
       ];
       watch(

@@ -33,6 +33,7 @@ export const getFormList = (columnList: IColumnItem[], list: IDetailItem[][]) =>
           type: col.type,
           datatypekeies: col.datatypekeies,
           relationKey: col.relationKey,
+          customOption: col.customOption,
         });
       }
     });

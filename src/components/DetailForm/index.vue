@@ -15,14 +15,14 @@
           :editor-type="item.editorType"
           :validation-rules="item.validate"
           :disabled="item.disabled"
-          :col-span="item.colSpan ? item.colSpan : item.editorType === 'dxSwitch' ? 1 : 2"
+          :col-span="2"
           :template="
             item.template
               ? item.template
-              : item.editorType === 'dxSwitch'
-              ? 'OdsSwitch'
               : item.expand
               ? 'expand'
+              : item.editorType === 'dxSwitch'
+              ? 'OdsSwitch'
               : ''
           "
           :data-field="getDataField(item)"
@@ -37,16 +37,14 @@
           @update:value="onChangeData($event, data.dataField)"
         />
       </template>
-      <!-- <template #stepBar>
-        <StepBar :step-data="stepData" :step-active-index="stepActiveIndex" />
-      </template> -->
       <template #expand="{ data }">
         <EnumSelect
-          v-if="data.editorOptions.type === 'enum'"
+          v-if="data.editorOptions.type === 'enum' || data.editorOptions.customOption"
           :value="formData[data.dataField]"
           :read-only="readOnly"
           width="100%"
           :expand="data.editorOptions.expand"
+          :option="data.editorOptions.customOption"
           @update:value="onChangeData($event, data.dataField)"
         />
         <FoundationSelect
@@ -76,7 +74,6 @@
   import FoundationSelect from '/@/components/FoundationSelect/index.vue';
 
   import EnumSelect from '/@/components/EnumSelect/index.vue';
-  // import StepBar from '/@/components/StepBar/index.vue';
   import Switch from '/@/components/Switch/index.vue';
   import { camelCaseToHyphenCase } from '/@/utils/helper/dataHelper';
 
@@ -86,7 +83,6 @@
       DxItem,
       FoundationSelect,
       EnumSelect,
-      // StepBar,
       Switch,
     },
     props: {
@@ -114,14 +110,6 @@
         type: Number,
         default: 8,
       },
-      // stepData: {
-      //   type: Array as PropType<string[]>,
-      //   default: () => [],
-      // },
-      // stepActiveIndex: {
-      //   type: Number,
-      //   default: 0,
-      // },
     },
     setup(props) {
       const { prefixCls } = useDesign('detail-form');
@@ -133,6 +121,7 @@
 
       function getEditorOptions(item: IDetailItem) {
         let editorOptions;
+
         if (item.editorType === 'dxNumberBox') {
           editorOptions = {
             showSpinButtons: true,
@@ -146,6 +135,7 @@
         } else {
           editorOptions = { ...item };
         }
+
         return editorOptions;
       }
 

@@ -17,7 +17,7 @@
 </template>
 
 <script lang="ts">
-  import { defineComponent, ref } from 'vue';
+  import { defineComponent, ref, PropType, onMounted } from 'vue';
 
   import { useDesign } from '/@/hooks/web/useDesign';
   import { useAppStore } from '/@/store/modules/app';
@@ -40,6 +40,10 @@
         type: String,
         default: '',
       },
+      option: {
+        type: Array as PropType<{ key: string; value: string; description: string }[]>,
+        default: () => [] as PropType<{ key: string; value: string; description: string }[]>,
+      },
       readOnly: {
         type: Boolean,
         default: false,
@@ -50,7 +54,15 @@
       const { prefixCls } = useDesign('enum-select');
       const options = ref<{ key: string; value: string; description: string }[]>([]);
       const appStore = useAppStore();
+
+      onMounted(() => {
+        if (props.option.length > 0) {
+          options.value = props.option;
+        }
+      });
+
       options.value = appStore.getGlobalEnumDataByCode(props.expand.toLowerCase());
+
       return {
         prefixCls,
         options,

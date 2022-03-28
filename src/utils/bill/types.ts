@@ -87,4 +87,9 @@ export interface IDetailItem {
    * @description 占多少列（全部分为8列）
    */
   colSpan?: number;
+
+  /**
+   * @description 自定义下拉选项
+   */
+  customOption?: Array<{ key: string | boolean; description: string }>;
 }

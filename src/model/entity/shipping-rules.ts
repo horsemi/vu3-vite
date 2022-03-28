@@ -64,14 +64,15 @@ export const customColumns: IColumnItem[] = [
   {
     key: 'IsEnabled',
     caption: '状态',
+    expand: 'CustomizeEnum',
     customOption: [
       {
         key: true,
-        value: '生效',
+        description: '生效',
       },
       {
         key: false,
-        value: '失效',
+        description: '失效',
       },
     ],
     customizeText: ['cellInfo', 'if (cellInfo.value) {return "生效";} else {return "失效";}'],

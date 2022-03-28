@@ -114,7 +114,7 @@ export interface IColumnItem extends IColumnItemBase {
   /**
    * @description 用于下拉框组件可自定义下拉选项
    */
-  customOption?: Array<{ key: string | boolean; value: string }>;
+  customOption?: Array<{ key: string | boolean; description: string }>;
 }
 
 export interface IRelationShipItem {
