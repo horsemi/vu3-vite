@@ -11,7 +11,9 @@ export const isUuidRoute = async (routes: Array<AppRouteRecordRaw>) => {
     const basicPath = targetRoutes[0].path + '/' + middlePath;
     targetChildren &&
       targetChildren[i].children?.forEach((routeItem) => {
-        result.push(basicPath + '/' + routeItem.path);
+        if (!routeItem.meta.isUuid) {
+          result.push(basicPath + '/' + routeItem.path);
+        }
       });
   }
   return result;

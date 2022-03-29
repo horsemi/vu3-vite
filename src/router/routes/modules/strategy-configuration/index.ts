@@ -28,6 +28,7 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
             meta: {
               title: '发运方式策略',
               permissions: ['PolicyManageShippingRulesList'],
+              isUuid: true,
             },
           },
           {
@@ -37,6 +38,7 @@ const strategyConfiguration: Array<AppRouteRecordRaw> = [
             meta: {
               title: '发运方式策略详情',
               hideMenu: true,
+              isUuid: true,
             },
           },
         ],

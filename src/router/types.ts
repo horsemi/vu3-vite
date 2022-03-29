@@ -54,6 +54,9 @@ export interface RouteMeta {
 
   // Sort menu
   order?: number;
+
+  // Use  uuid
+  isUuid?: boolean;
 }
 
 // @ts-ignore

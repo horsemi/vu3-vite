@@ -28,6 +28,7 @@ const orderManagement: Array<AppRouteRecordRaw> = [
             meta: {
               title: '发货单',
               permissions: ['OdsShippingOrderList'],
+              isUuid: true,
             },
           },
           {
@@ -37,6 +38,7 @@ const orderManagement: Array<AppRouteRecordRaw> = [
             meta: {
               title: '发货通知单',
               permissions: ['OdsShippingAdviceList'],
+              isUuid: true,
             },
           },
           {
@@ -46,6 +48,7 @@ const orderManagement: Array<AppRouteRecordRaw> = [
             meta: {
               title: '发货单详情',
               hideMenu: true,
+              isUuid: true,
             },
           },
           {
@@ -55,6 +58,7 @@ const orderManagement: Array<AppRouteRecordRaw> = [
             meta: {
               title: '发货通知单详情',
               hideMenu: true,
+              isUuid: true,
             },
           },
         ],
