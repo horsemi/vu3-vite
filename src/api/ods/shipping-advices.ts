@@ -7,6 +7,7 @@ enum apiUrl {
   onShippingAdviceRecallUrl = '/ods/api/shipping-advices/recall',
   onShippingAdviceRevokeUrl = '/ods/api/shipping-advices/revoke',
   onShippingAdviceRedraftUrl = '/ods/api/shipping-advices/redraft',
+  onShippingAdviceExportUrl = '/ods/api/shipping-advices/export',
 }
 
 export class ShippingAdviceApi {
@@ -49,6 +50,13 @@ export class ShippingAdviceApi {
     return defHttp.post({
       url: apiUrl.onShippingAdviceRedraftUrl,
       params: { GatheringParentCodes: codes },
+    });
+  }
+
+  static onShippingAdviceExport(data) {
+    return defHttp.post({
+      url: apiUrl.onShippingAdviceExportUrl,
+      params: data,
     });
   }
 }

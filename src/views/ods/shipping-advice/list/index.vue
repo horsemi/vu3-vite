@@ -73,7 +73,6 @@
   import { initEntityColumn } from '/@/utils/bill/relationship';
   import { ShippingAdviceApi } from '/@/api/ods/shipping-advices';
   import { getSchemesData } from '/@/utils/scheme/index';
-  import { ExportApi } from '/@/api/export';
 
   import DxButton from 'devextreme-vue/button';
 
@@ -129,7 +128,10 @@
             title: item.caption,
           };
         });
-        ExportApi.reportExport({ queryParameter: odataParams.value, templateModels }).then(() => {
+        ShippingAdviceApi.onShippingAdviceExport({
+          queryParameter: odataParams.value,
+          templateModels,
+        }).then(() => {
           odsMessage({
             type: 'success',
             dangerouslyUseHTMLString: true,
